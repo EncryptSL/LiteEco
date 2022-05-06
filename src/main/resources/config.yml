@@ -1,0 +1,16 @@
+#Plugin settings
+plugin:
+  translation: CS_CZ
+  economy:
+    prefix: €
+    name: LE
+    default_money: 30
+# Settings for Database or SQLite connection.
+database:
+    connection:
+      #Settings for JDBC_HOST example for connection to mysql: jdbc:mysql://your_host:port/name_of_database
+      jdbc_host: "jdbc:sqlite:plugins/LiteEco/database.db"
+      #User = username of user to connection your database.
+      user: user_name
+      #Pass = password of user to connection your database.
+      pass: password
