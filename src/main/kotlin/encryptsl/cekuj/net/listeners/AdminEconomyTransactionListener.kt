@@ -40,7 +40,7 @@ class AdminEconomyTransactionListener(private val liteEco: LiteEco) : Listener {
                         TagResolver.resolver(Placeholder.parsed("sender", sender.name), Placeholder.parsed("money", money.toString()))))
                 }
             } else {
-                liteEco.logger.warning(economyResponse?.errorMessage)
+                sender.sendMessage(ModernText.miniModernText(economyResponse!!.errorMessage))
             }
             return
         }
@@ -65,7 +65,7 @@ class AdminEconomyTransactionListener(private val liteEco: LiteEco) : Listener {
                             TagResolver.resolver(Placeholder.parsed("sender", sender.name), Placeholder.parsed("money", money.toString()))))
                 }
             } else {
-                liteEco.logger.warning(economyResponse?.errorMessage)
+                sender.sendMessage(ModernText.miniModernText(economyResponse!!.errorMessage))
             }
             return
         }
