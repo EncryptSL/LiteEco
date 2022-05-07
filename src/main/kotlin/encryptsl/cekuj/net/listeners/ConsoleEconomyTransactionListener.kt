@@ -42,12 +42,12 @@ class ConsoleEconomyTransactionListener(private val liteEco: LiteEco) : Listener
             if (economyResponse?.transactionSuccess() == true) {
                 sender.sendMessage(
                     ModernText.miniModernText(
-                        liteEco.translationConfig.getMessage("messages.sender_of_withdraw"),
+                        liteEco.translationConfig.getMessage("messages.sender_success_withdraw"),
                         TagResolver.resolver(Placeholder.parsed("target", target.name.toString()), Placeholder.parsed("money", money.toString()))))
                 if (target.isOnline) {
                     target.player?.sendMessage(
                         ModernText.miniModernText(
-                            liteEco.translationConfig.getMessage("messages.target_of_withdraw"),
+                            liteEco.translationConfig.getMessage("messages.target_success_withdraw"),
                             TagResolver.resolver(Placeholder.parsed("sender", sender.name), Placeholder.parsed("money", money.toString()))))
                 }
             } else {
@@ -60,11 +60,11 @@ class ConsoleEconomyTransactionListener(private val liteEco: LiteEco) : Listener
             if (liteEco.econ?.hasAccount(target) == true) {
                 liteEco.preparedStatements.setMoney(target.uniqueId, money)
                 sender.sendMessage(ModernText.miniModernText(
-                    liteEco.translationConfig.getMessage("messages.sender_of_set"),
+                    liteEco.translationConfig.getMessage("messages.sender_success_set"),
                     TagResolver.resolver(Placeholder.parsed("target", target.name.toString()), Placeholder.parsed("money", money.toString()))))
                 if (target.isOnline) {
                     target.player?.sendMessage(ModernText.miniModernText(
-                        liteEco.translationConfig.getMessage("messages.target_of_set"),
+                        liteEco.translationConfig.getMessage("messages.target_success_set"),
                         TagResolver.resolver(Placeholder.parsed("sender", sender.name), Placeholder.parsed("money", money.toString()))))
                 }
             } else {
