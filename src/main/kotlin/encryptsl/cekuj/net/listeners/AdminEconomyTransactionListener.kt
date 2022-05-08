@@ -4,6 +4,7 @@ import encryptsl.cekuj.net.LiteEco
 import encryptsl.cekuj.net.api.enums.TransactionType
 import encryptsl.cekuj.net.api.events.AdminEconomyTransactionEvent
 import encryptsl.cekuj.net.api.objects.ModernText
+import encryptsl.cekuj.net.extensions.isNegative
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import net.milkbowl.vault.economy.EconomyResponse
@@ -25,19 +26,19 @@ class AdminEconomyTransactionListener(private val liteEco: LiteEco) : Listener {
                 if (sender.player?.name == target.name) {
                     sender.sendMessage(
                         ModernText.miniModernText(
-                            liteEco.translationConfig.getMessage("messages.self_add_money"), TagResolver.resolver(Placeholder.parsed("money", money.toString()))))
+                            liteEco.translationConfig.getMessage("messages.self_add_money"), TagResolver.resolver(Placeholder.parsed("money", liteEco.econ!!.format(money)))))
                     return
                 }
 
                 sender.sendMessage(
                     ModernText.miniModernText(
                     liteEco.translationConfig.getMessage("messages.sender_success_pay"),
-                    TagResolver.resolver(Placeholder.parsed("target", target.player?.name.toString()), Placeholder.parsed("money", money.toString()))))
+                    TagResolver.resolver(Placeholder.parsed("target", target.player?.name.toString()), Placeholder.parsed("money", liteEco.econ!!.format(money)))))
                 if (target.isOnline) {
                     target.player?.sendMessage(
                         ModernText.miniModernText(
                         liteEco.translationConfig.getMessage("messages.target_success_pay"),
-                        TagResolver.resolver(Placeholder.parsed("sender", sender.name), Placeholder.parsed("money", money.toString()))))
+                        TagResolver.resolver(Placeholder.parsed("sender", sender.name), Placeholder.parsed("money", liteEco.econ!!.format(money)))))
                 }
             } else {
                 sender.sendMessage(ModernText.miniModernText(economyResponse!!.errorMessage))
@@ -51,18 +52,18 @@ class AdminEconomyTransactionListener(private val liteEco: LiteEco) : Listener {
                 if (sender.name == target.name) {
                     sender.sendMessage(
                         ModernText.miniModernText(
-                            liteEco.translationConfig.getMessage("messages.self_withdraw_money"), TagResolver.resolver(Placeholder.parsed("money", money.toString()))))
+                            liteEco.translationConfig.getMessage("messages.self_withdraw_money"), TagResolver.resolver(Placeholder.parsed("money", liteEco.econ!!.format(money)))))
                     return
                 }
                 sender.sendMessage(
                     ModernText.miniModernText(
                         liteEco.translationConfig.getMessage("messages.sender_success_withdraw"),
-                        TagResolver.resolver(Placeholder.parsed("target", target.player?.name.toString()), Placeholder.parsed("money", money.toString()))))
+                        TagResolver.resolver(Placeholder.parsed("target", target.player?.name.toString()), Placeholder.parsed("money", liteEco.econ!!.format(money)))))
                 if (target.isOnline) {
                     target.player?.sendMessage(
                         ModernText.miniModernText(
                             liteEco.translationConfig.getMessage("messages.target_success_withdraw"),
-                            TagResolver.resolver(Placeholder.parsed("sender", sender.name), Placeholder.parsed("money", money.toString()))))
+                            TagResolver.resolver(Placeholder.parsed("sender", sender.name), Placeholder.parsed("money", liteEco.econ!!.format(money)))))
                 }
             } else {
                 sender.sendMessage(ModernText.miniModernText(economyResponse!!.errorMessage))
@@ -72,21 +73,26 @@ class AdminEconomyTransactionListener(private val liteEco: LiteEco) : Listener {
 
         if (event.transactionType == TransactionType.SET) {
             if (liteEco.econ?.hasAccount(target) == true) {
+                if (money.isNegative()) {
+                    sender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.negative_amount_error")))
+                    return
+                }
+                liteEco.preparedStatements.setMoney(target.uniqueId, money)
                 if (sender.player?.name == target.name) {
                     sender.sendMessage(
                         ModernText.miniModernText(
-                            liteEco.translationConfig.getMessage("messages.self_set_money"), TagResolver.resolver(Placeholder.parsed("money", money.toString()))))
+                            liteEco.translationConfig.getMessage("messages.self_set_money"), TagResolver.resolver(Placeholder.parsed("money", liteEco.econ!!.format(money)))))
                     return
                 }
                 sender.sendMessage(
                     ModernText.miniModernText(
                         liteEco.translationConfig.getMessage("messages.sender_of_set"),
-                        TagResolver.resolver(Placeholder.parsed("target", target.name.toString()), Placeholder.parsed("money", money.toString()))))
+                        TagResolver.resolver(Placeholder.parsed("target", target.name.toString()), Placeholder.parsed("money", liteEco.econ!!.format(money)))))
                 if (target.isOnline) {
                     target.player?.sendMessage(
                         ModernText.miniModernText(
                             liteEco.translationConfig.getMessage("messages.target_of_set"),
-                            TagResolver.resolver(Placeholder.parsed("sender", sender.name), Placeholder.parsed("money", money.toString()))))
+                            TagResolver.resolver(Placeholder.parsed("sender", sender.name), Placeholder.parsed("money", liteEco.econ!!.format(money)))))
                 }
             } else {
                 sender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.account_not_exist"),

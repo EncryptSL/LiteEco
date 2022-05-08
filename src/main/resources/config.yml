@@ -1,16 +1,21 @@
-#Plugin settings
+#Official settings for this plugin.
 plugin:
-  translation: CS_CZ
+  # Translations list of supported locales below
+  # https://github.com/EncryptSL/LiteEco/blob/main/src/main/kotlin/encryptsl/cekuj/net/api/enums/TranslationKey.kt
+  translation: EN_US
   economy:
+    # Prefix of Currency
     prefix: €
+    # Name of Currency
     name: LE
+    # This amount is added to player from first connection.
     default_money: 30
 # Settings for Database or SQLite connection.
 database:
     connection:
-      #Settings for JDBC_HOST example for connection to mysql: jdbc:mysql://your_host:port/name_of_database
+      # Settings for JDBC_HOST example for connection to mysql: jdbc:mysql://your_host:port/name_of_database
       jdbc_host: "jdbc:sqlite:plugins/LiteEco/database.db"
-      #User = username of user to connection your database.
+      # User = username of user to connection your database.
       user: user_name
-      #Pass = password of user to connection your database.
+      # Pass = password of user to connection your database.
       pass: password

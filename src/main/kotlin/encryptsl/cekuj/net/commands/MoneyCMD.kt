@@ -27,7 +27,7 @@ class MoneyCMD(private val liteEco: LiteEco) : BaseCommand() {
             commandSender.sendMessage(
                 ModernText.miniModernText(
                     liteEco.translationConfig.getMessage("messages.balance_format"),
-                    TagResolver.resolver(Placeholder.parsed("money", liteEco.econ?.getBalance(commandSender.player).toString()))
+                    TagResolver.resolver(Placeholder.parsed("money", liteEco.econ?.format(liteEco.econ!!.getBalance(commandSender.player)).toString()))
                 )
             )
         } else {
@@ -45,7 +45,7 @@ class MoneyCMD(private val liteEco: LiteEco) : BaseCommand() {
             ModernText.miniModernText(
                 liteEco.translationConfig.getMessage("messages.balance_format_target"),
                 TagResolver.resolver(Placeholder.parsed("target", offlinePlayer.name.toString()),
-                    Placeholder.parsed("money", liteEco.econ?.getBalance(offlinePlayer).toString()))
+                    Placeholder.parsed("money", liteEco.econ?.format(liteEco.econ!!.getBalance(offlinePlayer)).toString()))
             )
         )
     }
@@ -80,17 +80,6 @@ class MoneyCMD(private val liteEco: LiteEco) : BaseCommand() {
         }
     }
 
-    @Subcommand("remove")
-    @CommandPermission("lite.eco.remove")
-    @CommandCompletion("@offlinePlayers")
-    fun onRemoveAccount(commandSender: CommandSender, @Values("@offlinePlayers") offlinePlayer: OfflinePlayer, amount: Double) {
-        if (commandSender is Player) {
-            liteEco.pluginManger.callEvent(AdminEconomyTransactionEvent(commandSender, offlinePlayer,TransactionType.WITHDRAW, amount))
-        } else {
-            liteEco.pluginManger.callEvent(ConsoleEconomyTransactionEvent(commandSender, offlinePlayer,TransactionType.WITHDRAW, amount))
-        }
-    }
-
     @Subcommand("set")
     @CommandPermission("lite.eco.set")
     @CommandCompletion("@offlinePlayers")
@@ -99,6 +88,17 @@ class MoneyCMD(private val liteEco: LiteEco) : BaseCommand() {
             liteEco.pluginManger.callEvent(AdminEconomyTransactionEvent(commandSender, offlinePlayer, TransactionType.SET, amount))
         } else {
             liteEco.pluginManger.callEvent(ConsoleEconomyTransactionEvent(commandSender, offlinePlayer, TransactionType.SET, amount))
+        }
+    }
+
+    @Subcommand("remove")
+    @CommandPermission("lite.eco.remove")
+    @CommandCompletion("@offlinePlayers")
+    fun onRemoveAccount(commandSender: CommandSender, @Values("@offlinePlayers") offlinePlayer: OfflinePlayer, amount: Double) {
+        if (commandSender is Player) {
+            liteEco.pluginManger.callEvent(AdminEconomyTransactionEvent(commandSender, offlinePlayer,TransactionType.WITHDRAW, amount))
+        } else {
+            liteEco.pluginManger.callEvent(ConsoleEconomyTransactionEvent(commandSender, offlinePlayer,TransactionType.WITHDRAW, amount))
         }
     }
 

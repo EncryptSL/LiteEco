@@ -1,6 +1,7 @@
 package encryptsl.cekuj.net.api
 
 import encryptsl.cekuj.net.LiteEco
+import encryptsl.cekuj.net.extensions.isNegative
 import encryptsl.cekuj.net.extensions.moneyFormat
 import net.milkbowl.vault.economy.Economy
 import net.milkbowl.vault.economy.EconomyResponse
@@ -29,7 +30,7 @@ class AdaptiveEconomyProvider(private val liteEco: LiteEco) : Economy {
     }
 
     override fun format(amount: Double): String {
-        return amount.moneyFormat()
+        return amount.moneyFormat(currencyNameSingular().toString(), currencyNamePlural().toString())
     }
 
     override fun currencyNamePlural(): String? {
@@ -98,7 +99,7 @@ class AdaptiveEconomyProvider(private val liteEco: LiteEco) : Economy {
         if (player == null) {
             return EconomyResponse(0.0, 0.0, ResponseType.FAILURE, liteEco.translationConfig.getMessage("messages.player_is_null_error"))
         }
-        if (amount < 0) {
+        if (amount.isNegative()) {
             return EconomyResponse(0.0, 0.0, ResponseType.FAILURE, liteEco.translationConfig.getMessage("messages.negative_amount_error"))
         }
 
@@ -128,7 +129,8 @@ class AdaptiveEconomyProvider(private val liteEco: LiteEco) : Economy {
         if (player == null) {
             return EconomyResponse(0.0, 0.0, ResponseType.FAILURE, liteEco.translationConfig.getMessage("messages.player_is_null_error"))
         }
-        if (amount < 0) {
+
+        if (amount.isNegative()) {
             return EconomyResponse(0.0, 0.0, ResponseType.FAILURE, liteEco.translationConfig.getMessage("messages.negative_amount_error"))
         }
 

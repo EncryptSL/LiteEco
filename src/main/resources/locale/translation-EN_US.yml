@@ -1,8 +1,8 @@
 messages:
   balance_format: "<green>[<white>LITE_ECO<green>] <white>Status of balance is <green><money><white> !"
   balance_format_target: "<green>[<white>LITE_ECO<green>] <white>Status of <target> balance is <green><money><white> !"
-  player_is_null_error: "<green>[<white>LITE_ECO<green>] <red> Jméno hráče musí být vyplněno !"
-  negative_amount_error: "<green>[<white>LITE_ECO<green>] <red>Cannot withdraw negative funds !"
+  player_is_null_error: "<green>[<white>LITE_ECO<green>] <red>Player name must be filled !"
+  negative_amount_error: "<green>[<white>LITE_ECO<green>] <red>Detected negative number !"
   sender_error_enough_pay: "<green>[<white>LITE_ECO<green>] <red>You don't have enough money !"
   sender_success_pay: "<green>[<white>LITE_ECO<green>] <white>You sent to <green><target> <money> money<white>."
   target_success_pay: "<green>[<white>LITE_ECO<green>] <green><sender> <white>sent you <green><money> <white>money."

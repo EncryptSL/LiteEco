@@ -11,7 +11,6 @@ import org.bukkit.event.HandlerList
 class AdminEconomyTransactionEvent(val player: Player, val offlinePlayer: OfflinePlayer, val transactionType: TransactionType, val money: Double) : Event(), Cancellable {
 
     private var isCancelled: Boolean = false
-
     override fun getHandlers(): HandlerList {
         return HANDLERS
     }
@@ -31,5 +30,4 @@ class AdminEconomyTransactionEvent(val player: Player, val offlinePlayer: Offlin
             return HANDLERS
         }
     }
-
 }

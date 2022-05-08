@@ -48,7 +48,7 @@ class PreparedStatements(private val liteEco: LiteEco) : DatabaseSQLProvider {
                 preparedStatement = connection?.prepareStatement("INSERT INTO lite_eco (uuid, money) VALUES (?,?)")
                 preparedStatement?.setString(1, uuid.toString())
                 preparedStatement?.setDouble(2, money)
-                preparedStatement?.executeUpdate()
+                preparedStatement?.execute()
                 liteEco.logger.info("User $uuid was inserted into table lite_eco.")
             }
         } catch (exc: SQLException) {
@@ -78,7 +78,7 @@ class PreparedStatements(private val liteEco: LiteEco) : DatabaseSQLProvider {
             connection = liteEco.databaseConnector.getDatabase()
             preparedStatement = connection?.prepareStatement("DELETE FROM lite_eco WHERE uuid=?")
             preparedStatement?.setString(1, uuid.toString())
-            preparedStatement?.executeUpdate()
+            preparedStatement?.execute()
             liteEco.logger.info("User $uuid was deleted from table lite_eco.")
         } catch (exc: SQLException) {
             exc.printStackTrace()
@@ -190,7 +190,7 @@ class PreparedStatements(private val liteEco: LiteEco) : DatabaseSQLProvider {
                 ?.prepareStatement("UPDATE lite_eco SET money=? WHERE uuid=?")
             preparedStatement?.setDouble(1, getBalance(uuid) + money)
             preparedStatement?.setString(2, uuid.toString())
-            preparedStatement?.executeUpdate()
+            preparedStatement?.execute()
         } catch (exc: SQLException) {
             exc.printStackTrace()
         } finally {
@@ -250,7 +250,7 @@ class PreparedStatements(private val liteEco: LiteEco) : DatabaseSQLProvider {
                 ?.prepareStatement("UPDATE lite_eco SET money=? WHERE uuid=?")
             preparedStatement?.setDouble(1, money)
             preparedStatement?.setString(2, uuid.toString())
-            preparedStatement?.executeUpdate()
+            preparedStatement?.execute()
         } catch (exc: SQLException) {
             exc.printStackTrace()
         } finally {

@@ -26,12 +26,12 @@ class PlayerEconomyPayListener(private val liteEco: LiteEco) : Listener {
                 sender.sendMessage(
                     ModernText.miniModernText(
                         liteEco.translationConfig.getMessage("messages.sender_success_pay"),
-                        TagResolver.resolver(Placeholder.parsed("target", target.name.toString()), Placeholder.parsed("money", money.toString()))))
+                        TagResolver.resolver(Placeholder.parsed("target", target.name.toString()), Placeholder.parsed("money", liteEco.econ!!.format(money)))))
                 if (target.isOnline) {
                     target.player?.sendMessage(
                         ModernText.miniModernText(
                             liteEco.translationConfig.getMessage("messages.target_success_pay"),
-                            TagResolver.resolver(Placeholder.parsed("sender", sender.name), Placeholder.parsed("money", money.toString()))))
+                            TagResolver.resolver(Placeholder.parsed("sender", sender.name), Placeholder.parsed("money", liteEco.econ!!.format(money)))))
                 }
             } else {
                 sender.sendMessage(ModernText.miniModernText(economyResponse!!.errorMessage))
