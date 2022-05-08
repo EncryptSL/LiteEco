@@ -4,11 +4,12 @@ import co.aikar.commands.CommandCompletions
 import co.aikar.commands.PaperCommandManager
 import encryptsl.cekuj.net.api.AdaptiveEconomyProvider
 import encryptsl.cekuj.net.api.ConfigLoaderAPI
-import encryptsl.cekuj.net.api.objects.CommandsCompletions
 import encryptsl.cekuj.net.commands.MoneyCMD
 import encryptsl.cekuj.net.config.TranslationConfig
 import encryptsl.cekuj.net.database.DatabaseConnector
 import encryptsl.cekuj.net.database.PreparedStatements
+import encryptsl.cekuj.net.extensions.registerOfflinePlayers
+import encryptsl.cekuj.net.extensions.registerTranslationKeys
 import net.milkbowl.vault.economy.Economy
 import org.bukkit.plugin.PluginManager
 import org.bukkit.plugin.ServicePriority
@@ -59,8 +60,8 @@ class LiteEco : JavaPlugin() {
         logger.info("Registering commands with Aikar Commands Framework !")
         val commandCompletions: CommandCompletions<*> = commandManager.commandCompletions
         commandManager.registerCommand(MoneyCMD(this))
-        CommandsCompletions.registerOfflinePlayers(commandCompletions)
-        CommandsCompletions.registerTranslationKeys(commandCompletions)
+        commandCompletions.registerOfflinePlayers()
+        commandCompletions.registerTranslationKeys()
     }
 
     private fun setupEconomy(): Boolean {
