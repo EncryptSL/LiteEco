@@ -109,8 +109,7 @@ class PreparedStatements(private val liteEco: LiteEco) : DatabaseSQLProvider {
             preparedStatement = connection?.prepareStatement("SELECT * FROM lite_eco WHERE uuid=?")
             preparedStatement?.setString(1, uuid.toString())
             resultSet = preparedStatement?.executeQuery()
-            resultSet?.next()
-            if (resultSet?.getObject("uuid") != null) {
+            if (resultSet?.next() == true && resultSet.getObject("uuid") != null) {
                 return true
             }
         } catch (exc: SQLException) {
