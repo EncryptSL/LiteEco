@@ -13,8 +13,6 @@ class PlayerJoinListener(private val liteEco: LiteEco) : Listener {
     @EventHandler
     fun onJoin(event: PlayerJoinEvent) {
         val player: Player = event.player
-        if (!player.hasPlayedBefore()) {
-            liteEco.pluginManger.callEvent(AccountEconomyManageEvent(player, OperationType.CREATE_ACCOUNT))
-        }
+        liteEco.pluginManger.callEvent(AccountEconomyManageEvent(player, OperationType.CREATE_ACCOUNT))
     }
 }
