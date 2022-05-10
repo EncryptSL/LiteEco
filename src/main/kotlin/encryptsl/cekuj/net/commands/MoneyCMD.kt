@@ -31,7 +31,7 @@ class MoneyCMD(private val liteEco: LiteEco) : BaseCommand() {
             commandSender.sendMessage(
                 ModernText.miniModernText(
                     liteEco.translationConfig.getMessage("messages.balance_format"),
-                    TagResolver.resolver(Placeholder.parsed("money", liteEco.econ?.format(liteEco.econ!!.getBalance(commandSender.player)).toString()))
+                    TagResolver.resolver(Placeholder.parsed("money", liteEco.econ.format(liteEco.econ.getBalance(commandSender.player)).toString()))
                 )
             )
         } else {
@@ -49,7 +49,7 @@ class MoneyCMD(private val liteEco: LiteEco) : BaseCommand() {
             ModernText.miniModernText(
                 liteEco.translationConfig.getMessage("messages.balance_format_target"),
                 TagResolver.resolver(Placeholder.parsed("target", offlinePlayer.name.toString()),
-                    Placeholder.parsed("money", liteEco.econ?.format(liteEco.econ!!.getBalance(offlinePlayer)).toString()))
+                    Placeholder.parsed("money", liteEco.econ.format(liteEco.econ.getBalance(offlinePlayer)).toString()))
             )
         )
     }
@@ -71,7 +71,7 @@ class MoneyCMD(private val liteEco: LiteEco) : BaseCommand() {
                 TagResolver.resolver(
                     Placeholder.parsed("position", index.toString()),
                     Placeholder.parsed("player", Bukkit.getOfflinePlayer(UUID.fromString(entry.key)).name.toString()),
-                    Placeholder.parsed("money", liteEco.econ?.format(entry.value.toDouble()).toString()))
+                    Placeholder.parsed("money", liteEco.econ.format(entry.value.toDouble()).toString()))
                 ))
         }
         commandSender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.balance_top_line_second")))

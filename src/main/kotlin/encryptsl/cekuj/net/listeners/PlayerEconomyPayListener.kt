@@ -20,18 +20,18 @@ class PlayerEconomyPayListener(private val liteEco: LiteEco) : Listener {
         val money: Double = event.money
 
         if (event.transactionType == TransactionType.PAY) {
-            val economyResponse: EconomyResponse? = liteEco.econ?.depositPlayer(target.player, money)
+            val economyResponse: EconomyResponse? = liteEco.econ.depositPlayer(target.player, money)
             if (economyResponse?.transactionSuccess() == true) {
-                liteEco.econ?.depositPlayer(sender, money)
+                liteEco.econ.withdrawPlayer(sender, money)
                 sender.sendMessage(
                     ModernText.miniModernText(
                         liteEco.translationConfig.getMessage("messages.sender_success_pay"),
-                        TagResolver.resolver(Placeholder.parsed("target", target.name.toString()), Placeholder.parsed("money", liteEco.econ!!.format(money)))))
+                        TagResolver.resolver(Placeholder.parsed("target", target.name.toString()), Placeholder.parsed("money", liteEco.econ.format(money)))))
                 if (target.isOnline) {
                     target.player?.sendMessage(
                         ModernText.miniModernText(
                             liteEco.translationConfig.getMessage("messages.target_success_pay"),
-                            TagResolver.resolver(Placeholder.parsed("sender", sender.name), Placeholder.parsed("money", liteEco.econ!!.format(money)))))
+                            TagResolver.resolver(Placeholder.parsed("sender", sender.name), Placeholder.parsed("money", liteEco.econ.format(money)))))
                 }
             } else {
                 sender.sendMessage(ModernText.miniModernText(economyResponse!!.errorMessage))
