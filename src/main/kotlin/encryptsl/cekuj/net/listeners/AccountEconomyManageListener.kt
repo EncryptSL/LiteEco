@@ -13,12 +13,9 @@ class AccountEconomyManageListener(private val liteEco: LiteEco) : Listener {
     fun onEconomyManage(event: AccountEconomyManageEvent) {
         val player: Player = event.player
 
-        if (event.operationType == OperationType.CREATE_ACCOUNT) {
-            liteEco.econ?.createPlayerAccount(player)
-        }
-
-        if (event.operationType == OperationType.REMOVE_ACCOUNT) {
-            liteEco.preparedStatements.deletePlayerAccount(player.uniqueId)
+        when (event.operationType) {
+            OperationType.CREATE_ACCOUNT -> liteEco.econ?.createPlayerAccount(player)
+            OperationType.REMOVE_ACCOUNT -> liteEco.preparedStatements.deletePlayerAccount(player.uniqueId)
         }
     }
 }

@@ -24,6 +24,12 @@ class ConsoleEconomyTransactionListener(private val liteEco: LiteEco) : Listener
         if (event.transactionType == TransactionType.ADD) {
             val economyResponse: EconomyResponse? = liteEco.econ?.depositPlayer(target, money)
             if (economyResponse?.transactionSuccess() == true) {
+                if (sender.name == target.name) {
+                    sender.sendMessage(
+                        ModernText.miniModernText(
+                            liteEco.translationConfig.getMessage("messages.self_add_money"), TagResolver.resolver(Placeholder.parsed("money", liteEco.econ!!.format(money)))))
+                    return
+                }
                 sender.sendMessage(ModernText.miniModernText(
                     liteEco.translationConfig.getMessage("messages.sender_of_pay"),
                     TagResolver.resolver(Placeholder.parsed("target", target.name.toString()), Placeholder.parsed("money", liteEco.econ!!.format(money)))))
@@ -41,6 +47,12 @@ class ConsoleEconomyTransactionListener(private val liteEco: LiteEco) : Listener
         if (event.transactionType == TransactionType.WITHDRAW) {
             val economyResponse: EconomyResponse? = liteEco.econ?.withdrawPlayer(target, money)
             if (economyResponse?.transactionSuccess() == true) {
+                if (sender.name == target.name) {
+                    sender.sendMessage(
+                        ModernText.miniModernText(
+                            liteEco.translationConfig.getMessage("messages.self_withdraw_money"), TagResolver.resolver(Placeholder.parsed("money", liteEco.econ!!.format(money)))))
+                    return
+                }
                 sender.sendMessage(
                     ModernText.miniModernText(
                         liteEco.translationConfig.getMessage("messages.sender_success_withdraw"),
@@ -64,6 +76,12 @@ class ConsoleEconomyTransactionListener(private val liteEco: LiteEco) : Listener
                     return
                 }
                 liteEco.preparedStatements.setMoney(target.uniqueId, money)
+                if (sender.name == target.name) {
+                    sender.sendMessage(
+                        ModernText.miniModernText(
+                            liteEco.translationConfig.getMessage("messages.self_set_money"), TagResolver.resolver(Placeholder.parsed("money", liteEco.econ!!.format(money)))))
+                    return
+                }
                 sender.sendMessage(ModernText.miniModernText(
                     liteEco.translationConfig.getMessage("messages.sender_success_set"),
                     TagResolver.resolver(Placeholder.parsed("target", target.name.toString()), Placeholder.parsed("money", liteEco.econ!!.format(money)))))

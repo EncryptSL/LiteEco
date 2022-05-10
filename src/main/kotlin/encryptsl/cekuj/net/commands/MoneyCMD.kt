@@ -5,7 +5,6 @@ import co.aikar.commands.annotation.*
 import encryptsl.cekuj.net.LiteEco
 import encryptsl.cekuj.net.api.enums.TransactionType
 import encryptsl.cekuj.net.api.enums.TranslationKey
-import encryptsl.cekuj.net.api.events.AdminEconomyTransactionEvent
 import encryptsl.cekuj.net.api.events.ConsoleEconomyTransactionEvent
 import encryptsl.cekuj.net.api.events.PlayerEconomyPayEvent
 import encryptsl.cekuj.net.api.objects.ModernText
@@ -73,33 +72,21 @@ class MoneyCMD(private val liteEco: LiteEco) : BaseCommand() {
     @CommandPermission("lite.eco.add")
     @CommandCompletion("@offlinePlayers")
     fun onAddMoney(commandSender: CommandSender, @Values("@offlinePlayers") offlinePlayer: OfflinePlayer, amount: Double) {
-        if (commandSender is Player) {
-            liteEco.pluginManger.callEvent(AdminEconomyTransactionEvent(commandSender, offlinePlayer, TransactionType.ADD, amount))
-        } else {
-            liteEco.pluginManger.callEvent(ConsoleEconomyTransactionEvent(commandSender, offlinePlayer, TransactionType.ADD, amount))
-        }
+        liteEco.pluginManger.callEvent(ConsoleEconomyTransactionEvent(commandSender, offlinePlayer, TransactionType.ADD, amount))
     }
 
     @Subcommand("set")
     @CommandPermission("lite.eco.set")
     @CommandCompletion("@offlinePlayers")
     fun onSetBalance(commandSender: CommandSender, @Values("@offlinePlayers") offlinePlayer: OfflinePlayer , amount: Double) {
-        if (commandSender is Player) {
-            liteEco.pluginManger.callEvent(AdminEconomyTransactionEvent(commandSender, offlinePlayer, TransactionType.SET, amount))
-        } else {
-            liteEco.pluginManger.callEvent(ConsoleEconomyTransactionEvent(commandSender, offlinePlayer, TransactionType.SET, amount))
-        }
+        liteEco.pluginManger.callEvent(ConsoleEconomyTransactionEvent(commandSender, offlinePlayer, TransactionType.SET, amount))
     }
 
     @Subcommand("remove")
     @CommandPermission("lite.eco.remove")
     @CommandCompletion("@offlinePlayers")
     fun onRemoveAccount(commandSender: CommandSender, @Values("@offlinePlayers") offlinePlayer: OfflinePlayer, amount: Double) {
-        if (commandSender is Player) {
-            liteEco.pluginManger.callEvent(AdminEconomyTransactionEvent(commandSender, offlinePlayer,TransactionType.WITHDRAW, amount))
-        } else {
-            liteEco.pluginManger.callEvent(ConsoleEconomyTransactionEvent(commandSender, offlinePlayer,TransactionType.WITHDRAW, amount))
-        }
+        liteEco.pluginManger.callEvent(ConsoleEconomyTransactionEvent(commandSender, offlinePlayer,TransactionType.WITHDRAW, amount))
     }
 
     @Subcommand("lang")
