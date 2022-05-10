@@ -59,7 +59,7 @@ tasks {
         minimize {
             relocate("co.aikar.commands", "encryptsl.cekuj.net.co.aikar.commands")
             relocate("co.aikar.locale", "encryptsl.cekuj.net.co.aikar.locale")
-            relocate("org.bstats.bukkit", "encryptsl.cekuj.net.api")
+            relocate("org.bstats", "encryptsl.cekuj.net.api.bstats")
         }
     }
 }
