@@ -1,4 +1,7 @@
 messages:
+  balance_top_line_first: "<gray>>>>>>>>> [<gold>RICHEST PLAYER<gray>] <<<<<<<<"
+  balance_top_format: "<yellow><position># <gold><player> <gray>- <green><money>"
+  balance_top_line_second: "<gray>>>>>>>>> [<gold>RICHEST PLAYER<gray>] <<<<<<<<"
   balance_format: "<green>[<white>LITE_ECO<green>] <white>Status of balance is <green><money><white> !"
   balance_format_target: "<green>[<white>LITE_ECO<green>] <white>Status of <target> balance is <green><money><white> !"
   player_is_null_error: "<green>[<white>LITE_ECO<green>] <red>Player name must be filled !"
