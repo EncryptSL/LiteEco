@@ -6,7 +6,7 @@ class TestNotifierUpdate {
 
     @Test
     fun assertTest() {
-        val updateNotifier =  UpdateNotifier("85531", "1.0.1.9")
+        val updateNotifier =  UpdateNotifier("101934", "1.0.0-SNAPSHOT")
         assertSame("<green>You are using current version !", updateNotifier.checkPluginVersion())
     }
 

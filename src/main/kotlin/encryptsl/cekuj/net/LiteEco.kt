@@ -20,7 +20,7 @@ import org.bukkit.plugin.java.JavaPlugin
 class LiteEco : JavaPlugin() {
 
     lateinit var econ: Economy
-    //lateinit var updateNotifier: UpdateNotifier
+    lateinit var updateNotifier: UpdateNotifier
     val pluginManger: PluginManager = server.pluginManager
     val databaseConnector: DatabaseConnector by lazy { DatabaseConnector() }
     val preparedStatements: PreparedStatements by lazy { PreparedStatements(this) }
@@ -40,8 +40,8 @@ class LiteEco : JavaPlugin() {
             server.pluginManager.disablePlugin(this)
             return
         }
-        //updateNotifier = UpdateNotifier("", description.version)
-        //slF4JLogger.info(updateNotifier.checkPluginVersion())
+        updateNotifier = UpdateNotifier("101934", description.version)
+        slF4JLogger.info(updateNotifier.checkPluginVersion())
         registerCommands()
         databaseConnector.initConnect(
             config.getString("database.connection.jdbc_host")!!,
