@@ -10,7 +10,6 @@ class HandlerListeners(private val liteEco: LiteEco) {
         val list: List<Listener> = arrayListOf(
             AccountEconomyManageListener(liteEco),
             PlayerEconomyPayListener(liteEco),
-            AdminEconomyTransactionListener(liteEco),
             ConsoleEconomyTransactionListener(liteEco),
             PlayerJoinListener(liteEco)
         )
