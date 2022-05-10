@@ -14,8 +14,8 @@ class HandlerListeners(private val liteEco: LiteEco) {
             PlayerJoinListener(liteEco)
         )
         list.forEach { listener -> liteEco.pluginManger.registerEvents(listener, liteEco)
-           liteEco.logger.info("Bukkit Listener ${listener.javaClass.simpleName} registered () -> ok")
+           liteEco.slF4JLogger.info("Bukkit Listener ${listener.javaClass.simpleName} registered () -> ok")
         }
-        liteEco.logger.info("Listeners registered(${list.size}) in time ${System.currentTimeMillis() - start} ms -> ok")
+        liteEco.slF4JLogger.info("Listeners registered(${list.size}) in time ${System.currentTimeMillis() - start} ms -> ok")
     }
 }
