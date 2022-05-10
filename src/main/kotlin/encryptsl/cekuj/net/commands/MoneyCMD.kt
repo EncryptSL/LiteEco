@@ -8,11 +8,16 @@ import encryptsl.cekuj.net.api.enums.TranslationKey
 import encryptsl.cekuj.net.api.events.ConsoleEconomyTransactionEvent
 import encryptsl.cekuj.net.api.events.PlayerEconomyPayEvent
 import encryptsl.cekuj.net.api.objects.ModernText
+import encryptsl.cekuj.net.extensions.playerPosition
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
+import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import java.util.*
+import java.util.Map.Entry.comparingByValue
+import java.util.stream.Collectors.toMap
 
 @Suppress("UNUSED")
 @CommandAlias("money")
@@ -47,6 +52,29 @@ class MoneyCMD(private val liteEco: LiteEco) : BaseCommand() {
                     Placeholder.parsed("money", liteEco.econ?.format(liteEco.econ!!.getBalance(offlinePlayer)).toString()))
             )
         )
+    }
+
+    @Subcommand("top")
+    @CommandPermission("lite.eco.top")
+    fun onTopBalance(commandSender: CommandSender) {
+        val sorted: LinkedHashMap<String, Int> = liteEco.preparedStatements.getTopBalance(10)
+            .entries
+            .stream()
+            .sorted(comparingByValue())
+            .collect(
+                toMap({ e -> e.key }, { e -> e.value }, { _, e2 -> e2 }) { LinkedHashMap() })
+
+        commandSender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.balance_top_line_first")))
+        sorted.playerPosition { index, entry ->
+            commandSender.sendMessage(ModernText.miniModernText(
+                liteEco.translationConfig.getMessage("messages.balance_top_format"),
+                TagResolver.resolver(
+                    Placeholder.parsed("position", index.toString()),
+                    Placeholder.parsed("player", Bukkit.getOfflinePlayer(UUID.fromString(entry.key)).name.toString()),
+                    Placeholder.parsed("money", liteEco.econ?.format(entry.value.toDouble()).toString()))
+                ))
+        }
+        commandSender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.balance_top_line_second")))
     }
 
     @Subcommand("help")
