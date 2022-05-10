@@ -24,6 +24,7 @@ class ConsoleEconomyTransactionListener(private val liteEco: LiteEco) : Listener
         if (event.transactionType == TransactionType.ADD) {
             val economyResponse: EconomyResponse? = liteEco.econ.depositPlayer(target, money)
             if (economyResponse?.transactionSuccess() == true) {
+                liteEco.transactions["transactions"] = liteEco.transactions.getOrDefault("transactions", 0) + 1
                 if (sender.name == target.name) {
                     sender.sendMessage(
                         ModernText.miniModernText(
@@ -47,6 +48,7 @@ class ConsoleEconomyTransactionListener(private val liteEco: LiteEco) : Listener
         if (event.transactionType == TransactionType.WITHDRAW) {
             val economyResponse: EconomyResponse? = liteEco.econ.withdrawPlayer(target, money)
             if (economyResponse?.transactionSuccess() == true) {
+                liteEco.transactions["transactions"] = liteEco.transactions.getOrDefault("transactions", 0) + 1
                 if (sender.name == target.name) {
                     sender.sendMessage(
                         ModernText.miniModernText(
@@ -75,6 +77,7 @@ class ConsoleEconomyTransactionListener(private val liteEco: LiteEco) : Listener
                     sender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.negative_amount_error")))
                     return
                 }
+                liteEco.transactions["transactions"] = liteEco.transactions.getOrDefault("transactions", 0) + 1
                 liteEco.preparedStatements.setMoney(target.uniqueId, money)
                 if (sender.name == target.name) {
                     sender.sendMessage(

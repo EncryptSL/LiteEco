@@ -12,6 +12,8 @@ import encryptsl.cekuj.net.database.PreparedStatements
 import encryptsl.cekuj.net.extensions.registerOfflinePlayers
 import encryptsl.cekuj.net.extensions.registerTranslationKeys
 import net.milkbowl.vault.economy.Economy
+import org.bstats.bukkit.Metrics
+import org.bstats.charts.SingleLineChart
 import org.bukkit.plugin.PluginManager
 import org.bukkit.plugin.ServicePriority
 import org.bukkit.plugin.ServicesManager
@@ -19,8 +21,10 @@ import org.bukkit.plugin.java.JavaPlugin
 
 class LiteEco : JavaPlugin() {
 
+    lateinit var metrics: Metrics
     lateinit var econ: Economy
     lateinit var updateNotifier: UpdateNotifier
+    lateinit var transactions: LinkedHashMap<String, Int>
     val pluginManger: PluginManager = server.pluginManager
     val databaseConnector: DatabaseConnector by lazy { DatabaseConnector() }
     val preparedStatements: PreparedStatements by lazy { PreparedStatements(this) }
@@ -40,6 +44,11 @@ class LiteEco : JavaPlugin() {
             server.pluginManager.disablePlugin(this)
             return
         }
+        transactions = LinkedHashMap()
+        metrics = Metrics(this, 15144)
+        metrics.addCustomChart(SingleLineChart("transactions") {
+            transactions["transactions"]
+        })
         updateNotifier = UpdateNotifier("101934", description.version)
         slF4JLogger.info(updateNotifier.checkPluginVersion())
         registerCommands()

@@ -27,6 +27,7 @@ dependencies {
     }
     compileOnly("com.zaxxer:HikariCP:5.0.1")
     implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
+    implementation("org.bstats:bstats-bukkit:3.0.0")
     testImplementation(kotlin("test"))
 }
 
@@ -55,7 +56,10 @@ tasks {
     }
 
     shadowJar {
-        relocate("co.aikar.commands", "encryptsl.cekuj.net.co.aikar.commands")
-        relocate("co.aikar.locale", "encryptsl.cekuj.net.co.aikar.locale")
+        minimize {
+            relocate("co.aikar.commands", "encryptsl.cekuj.net.co.aikar.commands")
+            relocate("co.aikar.locale", "encryptsl.cekuj.net.co.aikar.locale")
+            relocate("org.bstats.bukkit", "encryptsl.cekuj.net.api")
+        }
     }
 }
