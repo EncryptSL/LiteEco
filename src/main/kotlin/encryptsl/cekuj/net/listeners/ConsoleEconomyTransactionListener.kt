@@ -23,8 +23,8 @@ class ConsoleEconomyTransactionListener(private val liteEco: LiteEco) : Listener
 
         if (event.transactionType == TransactionType.ADD) {
             val economyResponse: EconomyResponse? = liteEco.econ.depositPlayer(target, money)
-            if (economyResponse?.transactionSuccess() != false) {
-                sender.sendMessage(ModernText.miniModernText(economyResponse!!.errorMessage))
+            if (economyResponse?.transactionSuccess() == false) {
+                sender.sendMessage(ModernText.miniModernText(economyResponse.errorMessage))
                 return
             }
             liteEco.transactions["transactions"] = liteEco.transactions.getOrDefault("transactions", 0) + 1
@@ -47,8 +47,8 @@ class ConsoleEconomyTransactionListener(private val liteEco: LiteEco) : Listener
 
         if (event.transactionType == TransactionType.WITHDRAW) {
             val economyResponse: EconomyResponse? = liteEco.econ.withdrawPlayer(target, money)
-            if (economyResponse?.transactionSuccess() != false) {
-                sender.sendMessage(ModernText.miniModernText(economyResponse!!.errorMessage))
+            if (economyResponse?.transactionSuccess() == false) {
+                sender.sendMessage(ModernText.miniModernText(economyResponse.errorMessage))
                 return
             }
             liteEco.transactions["transactions"] = liteEco.transactions.getOrDefault("transactions", 0) + 1
