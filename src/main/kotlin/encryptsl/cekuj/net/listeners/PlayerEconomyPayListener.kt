@@ -21,21 +21,23 @@ class PlayerEconomyPayListener(private val liteEco: LiteEco) : Listener {
 
         if (event.transactionType == TransactionType.PAY) {
             val economyResponse: EconomyResponse? = liteEco.econ.depositPlayer(target.player, money)
-            if (economyResponse?.transactionSuccess() == true) {
-                liteEco.transactions["transactions"] = liteEco.transactions.getOrDefault("transactions", 0) + 1
-                liteEco.econ.withdrawPlayer(sender, money)
-                sender.sendMessage(
-                    ModernText.miniModernText(
-                        liteEco.translationConfig.getMessage("messages.sender_success_pay"),
-                        TagResolver.resolver(Placeholder.parsed("target", target.name.toString()), Placeholder.parsed("money", liteEco.econ.format(money)))))
-                if (target.isOnline) {
-                    target.player?.sendMessage(
-                        ModernText.miniModernText(
-                            liteEco.translationConfig.getMessage("messages.target_success_pay"),
-                            TagResolver.resolver(Placeholder.parsed("sender", sender.name), Placeholder.parsed("money", liteEco.econ.format(money)))))
-                }
-            } else {
+
+            if (economyResponse?.transactionSuccess() != false) {
                 sender.sendMessage(ModernText.miniModernText(economyResponse!!.errorMessage))
+                return
+            }
+            
+            liteEco.transactions["transactions"] = liteEco.transactions.getOrDefault("transactions", 0) + 1
+            liteEco.econ.withdrawPlayer(sender, money)
+            sender.sendMessage(
+                ModernText.miniModernText(
+                    liteEco.translationConfig.getMessage("messages.sender_success_pay"),
+                    TagResolver.resolver(Placeholder.parsed("target", target.name.toString()), Placeholder.parsed("money", liteEco.econ.format(money)))))
+            if (target.isOnline) {
+                target.player?.sendMessage(
+                    ModernText.miniModernText(
+                        liteEco.translationConfig.getMessage("messages.target_success_pay"),
+                        TagResolver.resolver(Placeholder.parsed("sender", sender.name), Placeholder.parsed("money", liteEco.econ.format(money)))))
             }
         }
     }

@@ -34,10 +34,11 @@ class MoneyCMD(private val liteEco: LiteEco) : BaseCommand() {
                     TagResolver.resolver(Placeholder.parsed("money", liteEco.econ.format(liteEco.econ.getBalance(commandSender.player)).toString()))
                 )
             )
-        } else {
-            liteEco.translationConfig.getList("messages.help")?.forEach { s ->
-                commandSender.sendMessage(ModernText.miniModernText(s.toString()))
-            }
+            return
+        }
+
+        liteEco.translationConfig.getList("messages.help")?.forEach { s ->
+            commandSender.sendMessage(ModernText.miniModernText(s.toString()))
         }
     }
 
