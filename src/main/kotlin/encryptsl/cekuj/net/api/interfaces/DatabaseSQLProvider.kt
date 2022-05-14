@@ -4,7 +4,7 @@ import java.util.*
 import kotlin.collections.HashMap
 
 interface DatabaseSQLProvider {
-    fun createTable()
+    fun createTable(mode: String)
     fun createPlayerAccount(uuid: UUID, money: Double)
     fun deletePlayerAccount(uuid: UUID)
     fun getExistPlayerAccount(uuid: UUID): Boolean

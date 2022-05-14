@@ -57,7 +57,7 @@ class LiteEco : JavaPlugin() {
             config.getString("database.connection.user")!!,
             config.getString("database.connection.pass")!!
         )
-        preparedStatements.createTable()
+        preparedStatements.createTable(config.getString("database.connection.jdbc_host").toString())
         val handlerListeners = HandlerListeners(this)
         handlerListeners.registerListener()
         slF4JLogger.info("Plugin enabled in time ${System.currentTimeMillis() - start} ms")

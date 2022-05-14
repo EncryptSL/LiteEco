@@ -12,13 +12,18 @@ import kotlin.collections.LinkedHashMap
 
 class PreparedStatements(private val liteEco: LiteEco) : DatabaseSQLProvider {
 
-    override fun createTable() {
+    override fun createTable(mode: String) {
         var connection: Connection? = null
         var preparedStatement: PreparedStatement? = null
         try {
             connection = liteEco.databaseConnector.getDatabase()
-            preparedStatement = connection
-                ?.prepareStatement("CREATE TABLE IF NOT EXISTS lite_eco (id INTEGER PRIMARY KEY AUTOINCREMENT, uuid VARCHAR(36) NOT NULL, money DOUBLE)")
+            preparedStatement = if (mode.contains("jdbc:sqlite")) {
+                connection
+                    ?.prepareStatement("CREATE TABLE IF NOT EXISTS lite_eco (id INTEGER PRIMARY KEY AUTOINCREMENT, uuid VARCHAR(36) NOT NULL, money DOUBLE)")
+            } else {
+                connection
+                    ?.prepareStatement("CREATE TABLE IF NOT EXISTS lite_eco (id INTEGER PRIMARY KEY AUTO_INCREMENT, uuid VARCHAR(36) NOT NULL, money DOUBLE)")
+            }
             preparedStatement?.execute()
             liteEco.logger.info("Table lite_eco was successfully created.")
         } catch (exc: SQLException) {
