@@ -4,6 +4,7 @@ import co.aikar.commands.CommandCompletions
 import co.aikar.commands.PaperCommandManager
 import encryptsl.cekuj.net.api.AdaptiveEconomyProvider
 import encryptsl.cekuj.net.api.ConfigLoaderAPI
+import encryptsl.cekuj.net.api.PlaceHolderExtensionProvider
 import encryptsl.cekuj.net.api.UpdateNotifier
 import encryptsl.cekuj.net.commands.MoneyCMD
 import encryptsl.cekuj.net.config.TranslationConfig
@@ -16,7 +17,6 @@ import org.bstats.bukkit.Metrics
 import org.bstats.charts.SingleLineChart
 import org.bukkit.plugin.PluginManager
 import org.bukkit.plugin.ServicePriority
-import org.bukkit.plugin.ServicesManager
 import org.bukkit.plugin.java.JavaPlugin
 
 class LiteEco : JavaPlugin() {
@@ -39,7 +39,8 @@ class LiteEco : JavaPlugin() {
 
     override fun onEnable() {
         val start = System.currentTimeMillis()
-        if (!setupEconomy()) {
+        setupPAPI()
+        if (!connectToVault()) {
             slF4JLogger.info("[%s] - Disabled due to no Vault dependency found!".format(description.name))
             server.pluginManager.disablePlugin(this)
             return
@@ -75,11 +76,10 @@ class LiteEco : JavaPlugin() {
         commandCompletions.registerTranslationKeys()
     }
 
-    private fun setupEconomy(): Boolean {
+    private fun connectToVault(): Boolean {
         return if (pluginManger.isPluginEnabled("Vault")) {
-            val sm: ServicesManager = server.servicesManager
-            sm.register(Economy::class.java, AdaptiveEconomyProvider(this), this, ServicePriority.Highest)
-            slF4JLogger.info("Registered Vault interface.")
+            server.servicesManager.register(Economy::class.java, AdaptiveEconomyProvider(this), this, ServicePriority.Highest)
+            slF4JLogger.warn("Registered Vault interface.")
             val rsp = server.servicesManager.getRegistration(
                 Economy::class.java
             )
@@ -88,8 +88,17 @@ class LiteEco : JavaPlugin() {
             }
             true
         } else {
-            slF4JLogger.error("Vault not found. Please download Vault to use iConomy " + server.version)
+            slF4JLogger.error("Vault not found. Please download Vault to use LiteEco " + server.version)
             false
+        }
+    }
+
+    private fun setupPAPI()  {
+        if (pluginManger.getPlugin("PlaceholderAPI") != null) {
+            slF4JLogger.warn("PlaceholderAPI hook initialized")
+            PlaceHolderExtensionProvider(this).register()
+        } else {
+            slF4JLogger.error("PlaceholderAPI hook not found")
         }
     }
 

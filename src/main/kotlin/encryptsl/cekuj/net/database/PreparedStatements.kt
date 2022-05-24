@@ -7,8 +7,6 @@ import java.sql.PreparedStatement
 import java.sql.ResultSet
 import java.sql.SQLException
 import java.util.*
-import kotlin.collections.HashMap
-import kotlin.collections.LinkedHashMap
 
 class PreparedStatements(private val liteEco: LiteEco) : DatabaseSQLProvider {
 

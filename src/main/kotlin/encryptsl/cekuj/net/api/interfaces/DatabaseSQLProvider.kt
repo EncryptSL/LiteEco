@@ -1,7 +1,6 @@
 package encryptsl.cekuj.net.api.interfaces
 
 import java.util.*
-import kotlin.collections.HashMap
 
 interface DatabaseSQLProvider {
     fun createTable(mode: String)
