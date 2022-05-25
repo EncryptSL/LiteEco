@@ -61,6 +61,8 @@ All available permissions for commands:
   Permission: lite.eco.reload
 ```
 
+![hologram](https://user-images.githubusercontent.com/9441083/170329930-9e457436-fd89-4fde-ab19-0dbc843d12bd.png)
+
 ## Translation
 My plugin support's translation but must be included in plugin.
 Plugin use for enabling Enums with available locales.
