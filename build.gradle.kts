@@ -14,6 +14,7 @@ repositories {
     mavenLocal()
     mavenCentral()
     maven { url = uri("https://jitpack.io") }
+    maven { url = uri("https://repo.extendedclip.com/content/repositories/placeholderapi/") }
     flatDir {
         dirs("lib")
     }
@@ -26,6 +27,7 @@ dependencies {
         exclude("org.bukkit", "bukkit")
     }
     compileOnly("com.zaxxer:HikariCP:5.0.1")
+    compileOnly("me.clip:placeholderapi:2.11.1")
     implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
     implementation("org.bstats:bstats-bukkit:3.0.0")
     testImplementation(kotlin("test"))
