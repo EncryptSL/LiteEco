@@ -81,7 +81,7 @@ Link to files: https://github.com/EncryptSL/LiteEco/tree/main/src/main/resources
    - This show player name on position of your set number.
 - %liteeco_top_balance_<number>%
    - Max number is 10, this show balance of player on position of your set number.
-- %liteeco_top_balance_formatted_<number>% 
+- %liteeco_top_formatted_<number>% 
    - Max number is 10, this show balance of player on position of your set number but fancy.
 
 ## Contribution Guide
