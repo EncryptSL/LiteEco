@@ -83,6 +83,8 @@ Link to files: https://github.com/EncryptSL/LiteEco/tree/main/src/main/resources
    - Max number is 10, this show balance of player on position of your set number.
 - %liteeco_top_formatted_<number>% 
    - Max number is 10, this show balance of player on position of your set number but fancy.
+  
+![hologram](https://user-images.githubusercontent.com/9441083/170329930-9e457436-fd89-4fde-ab19-0dbc843d12bd.png)
 
 ## Contribution Guide
 
