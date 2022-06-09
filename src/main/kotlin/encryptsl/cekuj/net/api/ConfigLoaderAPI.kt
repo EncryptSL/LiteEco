@@ -19,17 +19,13 @@ class ConfigLoaderAPI(private val liteEco: LiteEco) : ConfigLoaderProvider {
     }
 
     override fun load() : ConfigLoaderAPI {
-        loadFromPlugin()
-        return this
-    }
-
-    override fun loadFromPlugin() {
         val file = File(liteEco.dataFolder, this.configName)
         if (!file.exists()) {
             liteEco.saveResource(configName, false)
         } else {
             liteEco.logger.info("Configuration $configName exist !")
         }
+        return this
     }
     override fun checkDependency(pluginName: String): ConfigLoaderAPI {
         if (Bukkit.getPluginManager().getPlugin(pluginName) == null) {
