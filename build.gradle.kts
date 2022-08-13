@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("io.papermc.paperweight.userdev") version "1.3.6"
     id("com.github.johnrengelman.shadow") version "7.1.2"
-    kotlin("jvm") version "1.7.0" apply true
+    kotlin("jvm") version "1.7.10" apply true
 }
 
 group = "encryptsl.cekuj.net"
@@ -22,7 +22,7 @@ repositories {
 
 dependencies {
     paperDevBundle(providers.gradleProperty("server_version").get())
-    compileOnly(kotlin("stdlib", "1.7.0"))
+    compileOnly(kotlin("stdlib", "1.7.10"))
     compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
         exclude("org.bukkit", "bukkit")
     }
