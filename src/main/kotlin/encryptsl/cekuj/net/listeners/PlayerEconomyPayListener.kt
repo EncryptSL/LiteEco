@@ -27,7 +27,7 @@ class PlayerEconomyPayListener(private val liteEco: LiteEco) : Listener {
                 return
             }
 
-            val targetResponse: EconomyResponse? = liteEco.econ.depositPlayer(target.player, money)
+            val targetResponse: EconomyResponse? = liteEco.econ.depositPlayer(target, money)
 
             if (targetResponse?.transactionSuccess() == false) {
                 sender.sendMessage(ModernText.miniModernText(targetResponse.errorMessage))
