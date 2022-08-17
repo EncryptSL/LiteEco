@@ -7,7 +7,7 @@ messages:
   player_is_null_error: "<green>[<white>LITE_ECO<green>] <red>Jméno hráče musí být vyplněno !"
   negative_amount_error: "<green>[<white>LITE_ECO<green>] <red>Detekovano negativní číslo !"
   sender_error_enough_pay: "<green>[<white>LITE_ECO<green>] <red>Nemáš dostatek peněz !"
-  sender_success_pay: "<green>[<white>LITE_ECO<green>] <white>Poslal jsi <green><target> <money> peněz<white>."
+  sender_success_pay: "<green>[<white>LITE_ECO<green>] <white>Poslal jsi <green><target> <money> <white>peněz."
   target_success_pay: "<green>[<white>LITE_ECO<green>] <green><sender> <white>vám poslal <green><money> <white>peněz."
   sender_success_withdraw: "<green>[<white>LITE_ECO<green>] <white>Odebral jsi <green><target> <money> <white>peněz."
   target_success_withdraw: "<green>[<white>LITE_ECO<green>] <green><sender> <white>vám odebral <green><money> <white>peněz."
