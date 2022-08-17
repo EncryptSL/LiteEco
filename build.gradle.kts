@@ -15,6 +15,9 @@ repositories {
     mavenCentral()
     maven { url = uri("https://jitpack.io") }
     maven { url = uri("https://repo.extendedclip.com/content/repositories/placeholderapi/") }
+    maven {
+        url = uri("https://oss.sonatype.org/content/repositories/snapshots")
+    }
     flatDir {
         dirs("lib")
     }
@@ -28,7 +31,8 @@ dependencies {
     }
     compileOnly("com.zaxxer:HikariCP:5.0.1")
     compileOnly("me.clip:placeholderapi:2.11.1")
-    implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
+    implementation("cloud.commandframework:cloud-annotations:1.7.0")
+    implementation("cloud.commandframework:cloud-paper:1.7.0")
     implementation("org.bstats:bstats-bukkit:3.0.0")
     testImplementation(kotlin("test"))
 }
@@ -59,8 +63,7 @@ tasks {
 
     shadowJar {
         minimize {
-            relocate("co.aikar.commands", "encryptsl.cekuj.net.co.aikar.commands")
-            relocate("co.aikar.locale", "encryptsl.cekuj.net.co.aikar.locale")
+            relocate("cloud.commandframework", "encryptsl.cekuj.net.cloud")
             relocate("org.bstats", "encryptsl.cekuj.net.api.bstats")
         }
     }

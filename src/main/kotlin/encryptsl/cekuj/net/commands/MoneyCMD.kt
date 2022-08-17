@@ -1,7 +1,9 @@
 package encryptsl.cekuj.net.commands
 
-import co.aikar.commands.BaseCommand
-import co.aikar.commands.annotation.*
+import cloud.commandframework.annotations.Argument
+import cloud.commandframework.annotations.CommandDescription
+import cloud.commandframework.annotations.CommandMethod
+import cloud.commandframework.annotations.CommandPermission
 import encryptsl.cekuj.net.LiteEco
 import encryptsl.cekuj.net.api.enums.TransactionType
 import encryptsl.cekuj.net.api.enums.TranslationKey
@@ -19,18 +21,22 @@ import java.util.*
 import java.util.stream.Collectors.toMap
 
 @Suppress("UNUSED")
-@CommandAlias("money")
-@Description("Provided plugin by LiteEco")
-class MoneyCMD(private val liteEco: LiteEco) : BaseCommand() {
+@CommandDescription("Provided plugin by LiteEco")
+class MoneyCMD(private val liteEco: LiteEco) {
 
-    @Default
+    @CommandMethod("money")
     @CommandPermission("lite.eco.money")
     fun onBalance(commandSender: CommandSender) {
         if (commandSender is Player) {
             commandSender.sendMessage(
                 ModernText.miniModernText(
                     liteEco.translationConfig.getMessage("messages.balance_format"),
-                    TagResolver.resolver(Placeholder.parsed("money", liteEco.econ.format(liteEco.econ.getBalance(commandSender.player)).toString()))
+                    TagResolver.resolver(
+                        Placeholder.parsed(
+                            "money",
+                            liteEco.econ.format(liteEco.econ.getBalance(commandSender.player)).toString()
+                        )
+                    )
                 )
             )
             return
@@ -41,44 +47,54 @@ class MoneyCMD(private val liteEco: LiteEco) : BaseCommand() {
         }
     }
 
-    @Subcommand("t|target")
-    @CommandCompletion("@offlinePlayers")
+    @CommandMethod("money target|t <player>")
     @CommandPermission("lite.eco.target")
-    fun onTargetBalance(commandSender: CommandSender, @Values("@offlinePlayers") offlinePlayer: OfflinePlayer) {
+    fun onTargetBalance(
+        commandSender: CommandSender,
+        @Argument(value = "player", suggestions = "offlinePlayers") offlinePlayer: OfflinePlayer
+    ) {
         commandSender.sendMessage(
             ModernText.miniModernText(
                 liteEco.translationConfig.getMessage("messages.balance_format_target"),
-                TagResolver.resolver(Placeholder.parsed("target", offlinePlayer.name.toString()),
-                    Placeholder.parsed("money", liteEco.econ.format(liteEco.econ.getBalance(offlinePlayer)).toString()))
+                TagResolver.resolver(
+                    Placeholder.parsed("target", offlinePlayer.name.toString()),
+                    Placeholder.parsed("money", liteEco.econ.format(liteEco.econ.getBalance(offlinePlayer)).toString())
+                )
             )
         )
     }
 
-    @Subcommand("top")
+    @CommandMethod("money top")
     @CommandPermission("lite.eco.top")
     fun onTopBalance(commandSender: CommandSender) {
         val sorted = liteEco.preparedStatements.getTopBalance(10)
             .entries
             .stream()
-            .sorted(compareByDescending{ o1 -> o1.value})
+            .sorted(compareByDescending { o1 -> o1.value })
             .collect(
                 toMap({ e -> e.key }, { e -> e.value }, { _, e2 -> e2 }) { LinkedHashMap() })
 
         commandSender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.balance_top_line_first")))
 
         sorted.playerPosition { index, entry ->
-            commandSender.sendMessage(ModernText.miniModernText(
-                liteEco.translationConfig.getMessage("messages.balance_top_format"),
-                TagResolver.resolver(
-                    Placeholder.parsed("position", index.toString()),
-                    Placeholder.parsed("player", Bukkit.getOfflinePlayer(UUID.fromString(entry.key)).name.toString()),
-                    Placeholder.parsed("money", liteEco.econ.format(entry.value).toString()))
-                ))
+            commandSender.sendMessage(
+                ModernText.miniModernText(
+                    liteEco.translationConfig.getMessage("messages.balance_top_format"),
+                    TagResolver.resolver(
+                        Placeholder.parsed("position", index.toString()),
+                        Placeholder.parsed(
+                            "player",
+                            Bukkit.getOfflinePlayer(UUID.fromString(entry.key)).name.toString()
+                        ),
+                        Placeholder.parsed("money", liteEco.econ.format(entry.value).toString())
+                    )
+                )
+            )
         }
         commandSender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.balance_top_line_second")))
     }
 
-    @Subcommand("help")
+    @CommandMethod("money help")
     @CommandPermission("lite.eco.help")
     fun onHelp(commandSender: CommandSender) {
         liteEco.translationConfig.getList("messages.help")?.forEach { s ->
@@ -86,57 +102,102 @@ class MoneyCMD(private val liteEco: LiteEco) : BaseCommand() {
         }
     }
 
-    @Subcommand("pay")
+    @CommandMethod("money pay <player> <amount>")
     @CommandPermission("lite.eco.pay")
-    @CommandCompletion("@offlinePlayers")
-    fun onPayMoney(player: Player, @Values("@offlinePlayers") offlinePlayer: OfflinePlayer, amount: Double) {
+    fun onPayMoney(
+        player: Player,
+        @Argument(value = "player", suggestions = "offlinePlayers") offlinePlayer: OfflinePlayer,
+        @Argument(value = "amount") amount: Double
+    ) {
         if (player.name == offlinePlayer.name) {
             player.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.self_pay_error")))
             return
         }
-        liteEco.pluginManger.callEvent(PlayerEconomyPayEvent(player, offlinePlayer,TransactionType.PAY, amount))
+        liteEco.server.scheduler.runTask(liteEco) { ->
+            liteEco.pluginManger.callEvent(PlayerEconomyPayEvent(player, offlinePlayer, TransactionType.PAY, amount))
+        }
     }
 
-    @Subcommand("add")
+    @CommandMethod("money add <player> <amount>")
     @CommandPermission("lite.eco.add")
-    @CommandCompletion("@offlinePlayers")
-    fun onAddMoney(commandSender: CommandSender, @Values("@offlinePlayers") offlinePlayer: OfflinePlayer, amount: Double) {
-        liteEco.pluginManger.callEvent(ConsoleEconomyTransactionEvent(commandSender, offlinePlayer, TransactionType.ADD, amount))
+    fun onAddMoney(
+        commandSender: CommandSender,
+        @Argument(value = "player", suggestions = "offlinePlayers") offlinePlayer: OfflinePlayer,
+        @Argument(value = "amount") amount: Double
+    ) {
+        liteEco.server.scheduler.runTask(liteEco) { ->
+            liteEco.pluginManger.callEvent(ConsoleEconomyTransactionEvent(commandSender, offlinePlayer, TransactionType.ADD, amount))
+        }
     }
 
-    @Subcommand("set")
+    @CommandMethod("money set <player> <amount>")
     @CommandPermission("lite.eco.set")
-    @CommandCompletion("@offlinePlayers")
-    fun onSetBalance(commandSender: CommandSender, @Values("@offlinePlayers") offlinePlayer: OfflinePlayer , amount: Double) {
-        liteEco.pluginManger.callEvent(ConsoleEconomyTransactionEvent(commandSender, offlinePlayer, TransactionType.SET, amount))
+    fun onSetBalance(
+        commandSender: CommandSender,
+        @Argument(value = "player", suggestions = "offlinePlayers") offlinePlayer: OfflinePlayer,
+        @Argument(value = "amount") amount: Double
+    ) {
+        liteEco.server.scheduler.runTask(liteEco) { ->
+            liteEco.pluginManger.callEvent(
+                ConsoleEconomyTransactionEvent(
+                    commandSender,
+                    offlinePlayer,
+                    TransactionType.SET,
+                    amount
+                )
+            )
+        }
     }
 
-    @Subcommand("remove")
+    @CommandMethod("money remove <player> <amount>")
     @CommandPermission("lite.eco.remove")
-    @CommandCompletion("@offlinePlayers")
-    fun onRemoveAccount(commandSender: CommandSender, @Values("@offlinePlayers") offlinePlayer: OfflinePlayer, amount: Double) {
-        liteEco.pluginManger.callEvent(ConsoleEconomyTransactionEvent(commandSender, offlinePlayer,TransactionType.WITHDRAW, amount))
+    fun onRemoveAccount(
+        commandSender: CommandSender,
+        @Argument(value = "player", suggestions = "offlinePlayers") offlinePlayer: OfflinePlayer,
+        @Argument(value = "amount") amount: Double
+    ) {
+        liteEco.server.scheduler.runTask(liteEco) { ->
+            liteEco.pluginManger.callEvent(
+                ConsoleEconomyTransactionEvent(
+                    commandSender,
+                    offlinePlayer,
+                    TransactionType.WITHDRAW,
+                    amount
+                )
+            )
+        }
     }
 
-    @Subcommand("lang")
+    @CommandMethod("money lang <isoKey>")
     @CommandPermission("lite.eco.lang")
-    @CommandCompletion("@translationKeys")
-    fun onLangSwitch(commandSender: CommandSender, @Values("@translationKeys") translationKey: TranslationKey) {
+    fun onLangSwitch(
+        commandSender: CommandSender,
+        @Argument(value = "isoKey", suggestions = "translationKeys") translationKey: TranslationKey
+    ) {
         when (translationKey) {
             TranslationKey.CS_CZ -> {
                 liteEco.translationConfig.setTranslationFile(TranslationKey.CS_CZ)
-                commandSender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.translation_switch"),
-                    TagResolver.resolver(Placeholder.parsed("locale", translationKey.name))))
+                commandSender.sendMessage(
+                    ModernText.miniModernText(
+                        liteEco.translationConfig.getMessage("messages.translation_switch"),
+                        TagResolver.resolver(Placeholder.parsed("locale", translationKey.name))
+                    )
+                )
             }
+
             TranslationKey.EN_US -> {
                 liteEco.translationConfig.setTranslationFile(TranslationKey.EN_US)
-                commandSender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.translation_switch"),
-                    TagResolver.resolver(Placeholder.parsed("locale", translationKey.name))))
+                commandSender.sendMessage(
+                    ModernText.miniModernText(
+                        liteEco.translationConfig.getMessage("messages.translation_switch"),
+                        TagResolver.resolver(Placeholder.parsed("locale", translationKey.name))
+                    )
+                )
             }
         }
     }
 
-    @Subcommand("reload")
+    @CommandMethod("money reload")
     @CommandPermission("lite.eco.reload")
     fun onReload(commandSender: CommandSender) {
         liteEco.reloadConfig()
