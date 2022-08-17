@@ -2,10 +2,7 @@ package encryptsl.cekuj.net
 
 import co.aikar.commands.CommandCompletions
 import co.aikar.commands.PaperCommandManager
-import encryptsl.cekuj.net.api.AdaptiveEconomyProvider
-import encryptsl.cekuj.net.api.ConfigLoaderAPI
-import encryptsl.cekuj.net.api.PlaceHolderExtensionProvider
-import encryptsl.cekuj.net.api.UpdateNotifier
+import encryptsl.cekuj.net.api.*
 import encryptsl.cekuj.net.commands.MoneyCMD
 import encryptsl.cekuj.net.config.TranslationConfig
 import encryptsl.cekuj.net.database.DatabaseConnector

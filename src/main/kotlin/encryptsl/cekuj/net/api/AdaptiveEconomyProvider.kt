@@ -2,6 +2,7 @@ package encryptsl.cekuj.net.api
 
 import encryptsl.cekuj.net.LiteEco
 import encryptsl.cekuj.net.extensions.isNegative
+import encryptsl.cekuj.net.extensions.isZero
 import encryptsl.cekuj.net.extensions.moneyFormat
 import net.milkbowl.vault.economy.Economy
 import net.milkbowl.vault.economy.EconomyResponse
@@ -78,7 +79,7 @@ class AdaptiveEconomyProvider(private val liteEco: LiteEco) : Economy {
     }
 
     override fun has(player: OfflinePlayer?, amount: Double): Boolean {
-        return (getBalance(player) >= amount)
+        return amount <= getBalance(player)
     }
 
     @Deprecated("Deprecated in Java", ReplaceWith("has(player, amount)"))
@@ -99,7 +100,7 @@ class AdaptiveEconomyProvider(private val liteEco: LiteEco) : Economy {
         if (player == null) {
             return EconomyResponse(0.0, 0.0, ResponseType.FAILURE, liteEco.translationConfig.getMessage("messages.player_is_null_error"))
         }
-        if (amount.isNegative()) {
+        if (amount.isNegative() || amount.isZero()) {
             return EconomyResponse(0.0, 0.0, ResponseType.FAILURE, liteEco.translationConfig.getMessage("messages.negative_amount_error"))
         }
 
@@ -130,7 +131,7 @@ class AdaptiveEconomyProvider(private val liteEco: LiteEco) : Economy {
             return EconomyResponse(0.0, 0.0, ResponseType.FAILURE, liteEco.translationConfig.getMessage("messages.player_is_null_error"))
         }
 
-        if (amount.isNegative()) {
+        if (amount.isNegative() || amount.isZero()) {
             return EconomyResponse(0.0, 0.0, ResponseType.FAILURE, liteEco.translationConfig.getMessage("messages.negative_amount_error"))
         }
 

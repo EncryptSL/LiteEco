@@ -20,15 +20,21 @@ class PlayerEconomyPayListener(private val liteEco: LiteEco) : Listener {
         val money: Double = event.money
 
         if (event.transactionType == TransactionType.PAY) {
-            val economyResponse: EconomyResponse? = liteEco.econ.depositPlayer(target.player, money)
 
-            if (economyResponse?.transactionSuccess() == false) {
-                sender.sendMessage(ModernText.miniModernText(economyResponse.errorMessage))
+            val senderResponse: EconomyResponse? = liteEco.econ.withdrawPlayer(sender, money)
+            if (senderResponse?.transactionSuccess() == false) {
+                sender.sendMessage(ModernText.miniModernText(senderResponse.errorMessage))
                 return
             }
-            
+
+            val targetResponse: EconomyResponse? = liteEco.econ.depositPlayer(target.player, money)
+
+            if (targetResponse?.transactionSuccess() == false) {
+                sender.sendMessage(ModernText.miniModernText(targetResponse.errorMessage))
+                return
+            }
+
             liteEco.transactions["transactions"] = liteEco.transactions.getOrDefault("transactions", 0) + 1
-            liteEco.econ.withdrawPlayer(sender, money)
             sender.sendMessage(
                 ModernText.miniModernText(
                     liteEco.translationConfig.getMessage("messages.sender_success_pay"),

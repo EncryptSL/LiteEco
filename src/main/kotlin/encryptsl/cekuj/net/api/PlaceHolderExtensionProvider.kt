@@ -6,7 +6,6 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import java.util.*
-import java.util.Map.Entry.comparingByValue
 import java.util.stream.Collectors
 
 class PlaceHolderExtensionProvider(private val liteEco: LiteEco) : PlaceholderExpansion() {
@@ -62,7 +61,7 @@ class PlaceHolderExtensionProvider(private val liteEco: LiteEco) : PlaceholderEx
     }
 
     private fun nameByRank(rank: Int): String {
-        topBalance().playerPosition { index, entry ->
+        topBalance()?.playerPosition { index, entry ->
             if (index == rank) {
                 return entry.key.ifEmpty { "EMPTY" }
             }
@@ -71,20 +70,20 @@ class PlaceHolderExtensionProvider(private val liteEco: LiteEco) : PlaceholderEx
     }
 
     private fun balanceByRank(rank: Int): Double {
-        topBalance().playerPosition { index, entry ->
+        topBalance()?.playerPosition { index, entry ->
             if (index == rank) {
-                return entry.value.toDouble()
+                return entry.value
             }
         }
 
         return 0.0
     }
 
-    private fun topBalance(): LinkedHashMap<String, Int> {
-        return liteEco.preparedStatements.getTopBalance(10)
+    private fun topBalance(): LinkedHashMap<String, Double>? {
+          return liteEco.preparedStatements.getTopBalance(10)
             .entries
             .stream()
-            .sorted(comparingByValue())
+            .sorted(compareByDescending{o1 -> o1.value})
             .collect(
                 Collectors.toMap({ e -> e.key }, { e -> e.value }, { _, e2 -> e2 }) { LinkedHashMap() })
     }

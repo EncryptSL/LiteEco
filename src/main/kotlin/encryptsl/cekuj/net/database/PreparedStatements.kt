@@ -7,6 +7,7 @@ import java.sql.PreparedStatement
 import java.sql.ResultSet
 import java.sql.SQLException
 import java.util.*
+import kotlin.collections.HashMap
 
 class PreparedStatements(private val liteEco: LiteEco) : DatabaseSQLProvider {
 
@@ -145,20 +146,20 @@ class PreparedStatements(private val liteEco: LiteEco) : DatabaseSQLProvider {
         return false
     }
 
-    override fun getTopBalance(top: Int): HashMap<String, Double> {
+    override fun getTopBalance(top: Int): MutableMap<String, Double> {
         var connection: Connection? = null
         var preparedStatement: PreparedStatement? = null
         var resultSet: ResultSet? = null
+        val mutableMap: MutableMap<String, Double> = HashMap()
         try {
             connection = liteEco.databaseConnector.getDatabase()
-            preparedStatement = connection?.prepareStatement("SELECT * FROM lite_eco ORDER BY money DESC LIMIT ?")
+            preparedStatement = connection?.prepareStatement("SELECT * FROM lite_eco LIMIT ?")
             preparedStatement?.setInt(1, top)
             resultSet = preparedStatement?.executeQuery()
             while (resultSet?.next() == true) {
-                val map: LinkedHashMap<String, Double> = LinkedHashMap()
-                map[resultSet.getString("uuid")] = resultSet.getDouble("money")
-                return map
+                mutableMap[resultSet.getString("uuid")] = resultSet.getDouble("money")
             }
+            return mutableMap
         } catch (exc: SQLException) {
             exc.printStackTrace()
         } finally {
@@ -185,7 +186,7 @@ class PreparedStatements(private val liteEco: LiteEco) : DatabaseSQLProvider {
             }
         }
 
-        return kotlin.collections.HashMap()
+        return mutableMap
     }
 
     override fun getBalance(uuid: UUID): Double {

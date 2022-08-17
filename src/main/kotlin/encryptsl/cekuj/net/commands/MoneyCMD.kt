@@ -16,7 +16,6 @@ import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.util.*
-import java.util.Map.Entry.comparingByValue
 import java.util.stream.Collectors.toMap
 
 @Suppress("UNUSED")
@@ -58,21 +57,22 @@ class MoneyCMD(private val liteEco: LiteEco) : BaseCommand() {
     @Subcommand("top")
     @CommandPermission("lite.eco.top")
     fun onTopBalance(commandSender: CommandSender) {
-        val sorted: LinkedHashMap<String, Int> = liteEco.preparedStatements.getTopBalance(10)
+        val sorted = liteEco.preparedStatements.getTopBalance(10)
             .entries
             .stream()
-            .sorted(comparingByValue())
+            .sorted(compareByDescending{ o1 -> o1.value})
             .collect(
                 toMap({ e -> e.key }, { e -> e.value }, { _, e2 -> e2 }) { LinkedHashMap() })
 
         commandSender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.balance_top_line_first")))
+
         sorted.playerPosition { index, entry ->
             commandSender.sendMessage(ModernText.miniModernText(
                 liteEco.translationConfig.getMessage("messages.balance_top_format"),
                 TagResolver.resolver(
                     Placeholder.parsed("position", index.toString()),
                     Placeholder.parsed("player", Bukkit.getOfflinePlayer(UUID.fromString(entry.key)).name.toString()),
-                    Placeholder.parsed("money", liteEco.econ.format(entry.value.toDouble()).toString()))
+                    Placeholder.parsed("money", liteEco.econ.format(entry.value).toString()))
                 ))
         }
         commandSender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.balance_top_line_second")))
