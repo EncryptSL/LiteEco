@@ -10,6 +10,6 @@ softdepend: [PlaceholderAPI]
 api-version: 1.13
 libraries:
   - com.zaxxer:HikariCP:5.0.1
-  - org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10
+  - org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.20
 
 description: ${description}
