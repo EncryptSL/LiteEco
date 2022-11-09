@@ -153,7 +153,7 @@ class PreparedStatements(private val liteEco: LiteEco) : DatabaseSQLProvider {
         val mutableMap: MutableMap<String, Double> = HashMap()
         try {
             connection = liteEco.databaseConnector.getDatabase()
-            preparedStatement = connection?.prepareStatement("SELECT * FROM lite_eco LIMIT ?")
+            preparedStatement = connection?.prepareStatement("SELECT * FROM lite_eco ORDER BY money DESC LIMIT ?")
             preparedStatement?.setInt(1, top)
             resultSet = preparedStatement?.executeQuery()
             while (resultSet?.next() == true) {
