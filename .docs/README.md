@@ -25,6 +25,11 @@ plugin:
     name: LE
     # This amount is added to player from first connection.
     default_money: 30
+  # This settings disable messages.
+  disableMessages:
+    target_success_pay: false
+    target_success_withdraw: false
+    target_success_set: false
 # Settings for Database or SQLite connection.
 database:
     connection:
