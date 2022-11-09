@@ -1,7 +1,8 @@
 messages:
-  balance_top_line_first: "<gray>>>>>>>>> [<gold>BOHATÍ HRÁČI<gray>] <<<<<<<<"
+  balance_top_line_first: "<gray>>>>>>>>> [<gold>BOHATÍ HRÁČI <page> z <maxpage><gray>] <<<<<<<<"
   balance_top_format: "<yellow><position># <gold><player> <gray>- <green><money>"
   balance_top_line_second: "<gray>>>>>>>>> [<gold>BOHATÍ HRÁČI<gray>] <<<<<<<<"
+  balance_top_page_error: "<red>Limit stránkování je <maxpage>"
   balance_format: "<green>[<white>LITE_ECO<green>] <white>Stav tvého účtu je <green><money><white> !"
   balance_format_target: "<green>[<white>LITE_ECO<green>] <white>Stav účtu <target> je <green><money><white> !"
   player_is_null_error: "<green>[<white>LITE_ECO<green>] <red>Jméno hráče musí být vyplněno !"

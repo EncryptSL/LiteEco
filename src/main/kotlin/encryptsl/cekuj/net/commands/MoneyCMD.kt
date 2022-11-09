@@ -2,20 +2,22 @@ package encryptsl.cekuj.net.commands
 
 import cloud.commandframework.annotations.*
 import encryptsl.cekuj.net.LiteEco
+import encryptsl.cekuj.net.api.Paginator
 import encryptsl.cekuj.net.api.enums.TransactionType
 import encryptsl.cekuj.net.api.enums.TranslationKey
 import encryptsl.cekuj.net.api.events.ConsoleEconomyTransactionEvent
 import encryptsl.cekuj.net.api.events.PlayerEconomyPayEvent
 import encryptsl.cekuj.net.api.objects.ModernText
-import encryptsl.cekuj.net.extensions.playerPosition
+import encryptsl.cekuj.net.extensions.positionIndexed
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.Bukkit
+import org.bukkit.ChatColor
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.util.*
-import java.util.stream.Collectors.toMap
 
 @Suppress("UNUSED")
 @CommandDescription("Provided plugin by LiteEco")
@@ -69,33 +71,37 @@ class MoneyCMD(private val liteEco: LiteEco) {
     }
 
     @ProxiedBy("baltop")
-    @CommandMethod("money top")
+    @CommandMethod("money top [page]")
     @CommandPermission("lite.eco.top")
-    fun onTopBalance(commandSender: CommandSender) {
-        val sorted = liteEco.preparedStatements.getTopBalance(10)
-            .entries
-            .stream()
-            .sorted(compareByDescending { o1 -> o1.value })
-            .collect(
-                toMap({ e -> e.key }, { e -> e.value }, { _, e2 -> e2 }) { LinkedHashMap() })
-
-        commandSender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.balance_top_line_first")))
-
-        sorted.playerPosition { index, entry ->
-            commandSender.sendMessage(
-                ModernText.miniModernText(
-                    liteEco.translationConfig.getMessage("messages.balance_top_format"),
-                    TagResolver.resolver(
-                        Placeholder.parsed("position", index.toString()),
-                        Placeholder.parsed(
-                            "player",
-                            Bukkit.getOfflinePlayer(UUID.fromString(entry.key)).name.toString()
-                        ),
-                        Placeholder.parsed("money", liteEco.econ.format(entry.value).toString())
-                    )
+    fun onTopBalance(commandSender: CommandSender, @Argument(value = "page") page: Int) {
+        val balances = liteEco.preparedStatements.getTopBalance(10000).entries.sortedByDescending { e -> e.value }
+            .positionIndexed { index, mutableEntry -> LegacyComponentSerializer.legacyAmpersand().serialize(ModernText.miniModernText(
+                liteEco.translationConfig.getMessage("messages.balance_top_format"),
+                TagResolver.resolver(
+                    Placeholder.parsed("position", index.toString()),
+                    Placeholder.parsed(
+                        "player",
+                        Bukkit.getOfflinePlayer(UUID.fromString(mutableEntry.key)).name.toString()
+                    ),
+                    Placeholder.parsed("money", liteEco.econ.format(mutableEntry.value).toString())
                 )
+            )) }
+
+        val pagination = Paginator(balances).apply { page(page) }
+
+        if (page > pagination.maxPages) {
+            commandSender.sendMessage(
+                ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.balance_top_page_error"),
+                    TagResolver.resolver(Placeholder.parsed("maxpage", pagination.maxPages.toString())))
             )
+            return
         }
+
+        commandSender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.balance_top_line_first"),
+            TagResolver.resolver(Placeholder.parsed("page", pagination.page().toString()), Placeholder.parsed("maxpage", pagination.maxPages.toString()))))
+
+        commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', pagination.display()))
+
         commandSender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.balance_top_line_second")))
     }
 
