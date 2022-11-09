@@ -30,6 +30,8 @@ dependencies {
     implementation("cloud.commandframework:cloud-paper:1.7.1")
     implementation("org.bstats:bstats-bukkit:3.0.0")
     testImplementation(kotlin("test"))
+    testImplementation("com.zaxxer:HikariCP:5.0.1")
+    testImplementation("org.xerial:sqlite-jdbc:3.39.4.0")
 }
 
 tasks {
