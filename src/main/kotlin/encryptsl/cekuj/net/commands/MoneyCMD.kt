@@ -172,7 +172,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
     fun onRemoveAccount(
         commandSender: CommandSender,
         @Argument(value = "player", suggestions = "offlinePlayers") offlinePlayer: OfflinePlayer,
-        @Argument(value = "amount") amount: Double
+        @Argument(value = "amount") @Range(min = "1.00", max = "") amount: Double
     ) {
         liteEco.server.scheduler.runTask(liteEco) { ->
             liteEco.pluginManger.callEvent(
