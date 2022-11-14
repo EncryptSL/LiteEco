@@ -79,9 +79,9 @@ class MoneyCMD(private val liteEco: LiteEco) {
     @ProxiedBy("baltop")
     @CommandMethod("money top [page]")
     @CommandPermission("lite.eco.top")
-    fun onTopBalance(commandSender: CommandSender, @Argument(value = "page") @Range(min = "1", max="10") page: Int?) {
+    fun onTopBalance(commandSender: CommandSender, @Argument(value = "page") @Range(min = "1", max="") page: Int?) {
         val p = page ?: 1
-        val balances = liteEco.preparedStatements.getTopBalance(100).entries.sortedByDescending { e -> e.value }
+        val balances = liteEco.preparedStatements.getTopBalance().entries.sortedByDescending { e -> e.value }
             .positionIndexed { index, mutableEntry -> LegacyComponentSerializer.legacyAmpersand().serialize(ModernText.miniModernText(
                 liteEco.translationConfig.getMessage("messages.balance_top_format"),
                 TagResolver.resolver(
