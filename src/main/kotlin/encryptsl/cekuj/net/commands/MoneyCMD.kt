@@ -1,6 +1,7 @@
 package encryptsl.cekuj.net.commands
 
 import cloud.commandframework.annotations.*
+import cloud.commandframework.annotations.specifier.Range
 import encryptsl.cekuj.net.LiteEco
 import encryptsl.cekuj.net.api.Paginator
 import encryptsl.cekuj.net.api.enums.TransactionType
@@ -25,7 +26,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
 
     @CommandMethod("money|bal|balance [player]")
     @CommandPermission("lite.eco.money")
-    fun onBalance(commandSender: CommandSender, @Argument(value = "player", suggestions = "offlinePlayers") offlinePlayer: OfflinePlayer?) {
+    fun onBalance(commandSender: CommandSender, @Argument(value = "player", suggestions = "players") offlinePlayer: OfflinePlayer?) {
         if (commandSender is Player) {
             if (offlinePlayer == null) {
                 commandSender.sendMessage(
@@ -39,42 +40,48 @@ class MoneyCMD(private val liteEco: LiteEco) {
                         )
                     )
                 )
-            } else {
-                commandSender.sendMessage(
-                    ModernText.miniModernText(
-                        liteEco.translationConfig.getMessage("messages.balance_format_target"),
-                        TagResolver.resolver(
-                            Placeholder.parsed("target", offlinePlayer.name.toString()),
-                            Placeholder.parsed("money", liteEco.econ.format(liteEco.econ.getBalance(offlinePlayer)).toString())
-                        )
-                    )
-                )
+                return
             }
-            return
-        }
-
-        if (offlinePlayer == null) {
-            liteEco.translationConfig.getList("messages.help")?.forEach { s ->
-                commandSender.sendMessage(ModernText.miniModernText(s.toString()))
-            }
-        } else {
             commandSender.sendMessage(
                 ModernText.miniModernText(
                     liteEco.translationConfig.getMessage("messages.balance_format_target"),
                     TagResolver.resolver(
                         Placeholder.parsed("target", offlinePlayer.name.toString()),
-                        Placeholder.parsed("money", liteEco.econ.format(liteEco.econ.getBalance(offlinePlayer)).toString())
+                        Placeholder.parsed(
+                            "money",
+                            liteEco.econ.format(liteEco.econ.getBalance(offlinePlayer)).toString()
+                        )
                     )
                 )
             )
+        } else {
+            if (offlinePlayer != null) {
+                commandSender.sendMessage(
+                    ModernText.miniModernText(
+                        liteEco.translationConfig.getMessage("messages.balance_format_target"),
+                        TagResolver.resolver(
+                            Placeholder.parsed("target", offlinePlayer.name.toString()),
+                            Placeholder.parsed(
+                                "money",
+                                liteEco.econ.format(liteEco.econ.getBalance(offlinePlayer)).toString()
+                            )
+                        )
+                    )
+                )
+                return
+            }
+            liteEco.translationConfig.getList("messages.help")?.forEach { s ->
+                commandSender.sendMessage(ModernText.miniModernText(s.toString()))
+            }
         }
     }
 
     @ProxiedBy("baltop")
     @CommandMethod("money top [page]")
     @CommandPermission("lite.eco.top")
-    fun onTopBalance(commandSender: CommandSender, @Argument(value = "page") page: Int) {
-        val balances = liteEco.preparedStatements.getTopBalance(10000).entries.sortedByDescending { e -> e.value }
+    fun onTopBalance(commandSender: CommandSender, @Argument(value = "page") @Range(min = "1", max="10") page: Int?) {
+        val p = page ?: 1
+        val balances = liteEco.preparedStatements.getTopBalance(100).entries.sortedByDescending { e -> e.value }
             .positionIndexed { index, mutableEntry -> LegacyComponentSerializer.legacyAmpersand().serialize(ModernText.miniModernText(
                 liteEco.translationConfig.getMessage("messages.balance_top_format"),
                 TagResolver.resolver(
@@ -87,9 +94,9 @@ class MoneyCMD(private val liteEco: LiteEco) {
                 )
             )) }
 
-        val pagination = Paginator(balances).apply { page(page) }
+        val pagination = Paginator(balances).apply { page(p) }
 
-        if (page > pagination.maxPages) {
+        if (p > pagination.maxPages) {
             commandSender.sendMessage(
                 ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.balance_top_page_error"),
                     TagResolver.resolver(Placeholder.parsed("maxpage", pagination.maxPages.toString())))
@@ -118,7 +125,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
     fun onPayMoney(
         player: Player,
         @Argument(value = "player", suggestions = "offlinePlayers") offlinePlayer: OfflinePlayer,
-        @Argument(value = "amount") amount: Double
+        @Argument(value = "amount") @Range(min = "1.00", max = "") amount: Double
     ) {
         if (player.name == offlinePlayer.name) {
             player.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.self_pay_error")))
@@ -134,7 +141,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
     fun onAddMoney(
         commandSender: CommandSender,
         @Argument(value = "player", suggestions = "offlinePlayers") offlinePlayer: OfflinePlayer,
-        @Argument(value = "amount") amount: Double
+        @Argument(value = "amount") @Range(min = "1.00", max = "") amount: Double
     ) {
         liteEco.server.scheduler.runTask(liteEco) { ->
             liteEco.pluginManger.callEvent(ConsoleEconomyTransactionEvent(commandSender, offlinePlayer, TransactionType.ADD, amount))
