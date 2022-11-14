@@ -189,6 +189,48 @@ class PreparedStatements(private val liteEco: LiteEco) : DatabaseSQLProvider {
         return mutableMap
     }
 
+    override fun getTopBalance(): MutableMap<String, Double> {
+        var connection: Connection? = null
+        var preparedStatement: PreparedStatement? = null
+        var resultSet: ResultSet? = null
+        val mutableMap: MutableMap<String, Double> = HashMap()
+        try {
+            connection = liteEco.databaseConnector.getDatabase()
+            preparedStatement = connection?.prepareStatement("SELECT * FROM lite_eco ORDER BY money DESC")
+            resultSet = preparedStatement?.executeQuery()
+            while (resultSet?.next() == true) {
+                mutableMap[resultSet.getString("uuid")] = resultSet.getDouble("money")
+            }
+            return mutableMap
+        } catch (exc: SQLException) {
+            exc.printStackTrace()
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close()
+                } catch (e: SQLException) {
+                    e.printStackTrace()
+                }
+            }
+            if (preparedStatement != null) {
+                try {
+                    preparedStatement.close()
+                } catch (e: SQLException) {
+                    e.printStackTrace()
+                }
+            }
+            if (resultSet != null) {
+                try {
+                    resultSet.close()
+                } catch (e: SQLException) {
+                    e.printStackTrace()
+                }
+            }
+        }
+
+        return mutableMap
+    }
+
     override fun getBalance(uuid: UUID): Double {
         var connection: Connection? = null
         var preparedStatement: PreparedStatement? = null
