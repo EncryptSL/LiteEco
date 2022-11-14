@@ -100,7 +100,7 @@ class AdaptiveEconomyProvider(private val liteEco: LiteEco) : Economy {
         if (player == null) {
             return EconomyResponse(0.0, 0.0, ResponseType.FAILURE, liteEco.translationConfig.getMessage("messages.player_is_null_error"))
         }
-        if (amount.isNegative() || amount.isZero()) {
+        if (amount.isNegative() || amount.isZero() || amount.moneyFormat() == "0.00") {
             return EconomyResponse(0.0, 0.0, ResponseType.FAILURE, liteEco.translationConfig.getMessage("messages.negative_amount_error"))
         }
 
@@ -131,7 +131,7 @@ class AdaptiveEconomyProvider(private val liteEco: LiteEco) : Economy {
             return EconomyResponse(0.0, 0.0, ResponseType.FAILURE, liteEco.translationConfig.getMessage("messages.player_is_null_error"))
         }
 
-        if (amount.isNegative() || amount.isZero()) {
+        if (amount.isNegative() || amount.isZero() || amount.moneyFormat() == "0.00") {
             return EconomyResponse(0.0, 0.0, ResponseType.FAILURE, liteEco.translationConfig.getMessage("messages.negative_amount_error"))
         }
 
