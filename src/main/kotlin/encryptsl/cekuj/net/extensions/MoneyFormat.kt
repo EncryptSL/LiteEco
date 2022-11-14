@@ -8,3 +8,8 @@ fun Double.moneyFormat(prefix: String, currencyName: String): String {
     val formatter = DecimalFormat("$prefix###,###,##0.00 $currencyName", DecimalFormatSymbols.getInstance(Locale.ENGLISH))
     return formatter.format(this)
 }
+
+fun Double.moneyFormat(): String {
+    val formatter = DecimalFormat("###,###,##0.00", DecimalFormatSymbols.getInstance(Locale.ENGLISH))
+    return formatter.format(this)
+}
