@@ -44,13 +44,13 @@ database:
 ## Permission
 All available permissions for commands:
 ```YAML
-/money: This show your currency
+/money [username]: This show your currency or another player
   Permission: lite.eco.money
+  This is a permissions for admins to suggestions player names.
+  Permission: lite.eco.suggestion.players
 /money help: This show commands
   Permission: lite.eco.help
-/money t|target <player>: This show target currency
-  Permission: lite.eco.target
-/money top: This show richest players
+/money top [page]: This show richest players
   Permission: lite.eco.top
 /money pay <player> <amount>: This command you send your money to another.
   Permission: lite.eco.pay
