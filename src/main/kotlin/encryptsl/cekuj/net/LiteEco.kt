@@ -106,9 +106,19 @@ class LiteEco : JavaPlugin() {
             CommandSender::class.java,  /* Mapper for command meta instances */
             commandMetaFunction
         )
+        commandManager.parserRegistry().registerSuggestionProvider("players") { commandSender, input ->
+                Bukkit.getOfflinePlayers().toList().stream()
+                    .map(OfflinePlayer::getName).filter { p ->
+                        commandSender.hasPermission("lite.eco.suggestion.players") && (p?.startsWith(
+                            input
+                        ) ?: false)
+                    }.toList()
+        }
         commandManager.parserRegistry().registerSuggestionProvider("offlinePlayers") { _, input ->
             Bukkit.getOfflinePlayers().toList().stream()
-                .map(OfflinePlayer::getName).filter { p -> p?.startsWith(input) ?: false }.toList()
+                .map(OfflinePlayer::getName).filter { p ->
+                    p?.startsWith(input) ?: false
+                }.toList()
         }
         commandManager.parserRegistry().registerSuggestionProvider("translationKeys") { _, _ ->
             TranslationKey.values().map { key -> key.name }.toList()
