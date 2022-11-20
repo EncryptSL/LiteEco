@@ -4,15 +4,16 @@ import encryptsl.cekuj.net.LiteEco
 import encryptsl.cekuj.net.extensions.isNegative
 import encryptsl.cekuj.net.extensions.isZero
 import encryptsl.cekuj.net.extensions.moneyFormat
-import net.milkbowl.vault.economy.Economy
+import net.milkbowl.vault.economy.AbstractEconomy
 import net.milkbowl.vault.economy.EconomyResponse
 import net.milkbowl.vault.economy.EconomyResponse.ResponseType
+import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import java.util.*
 
 
 @Suppress("DEPRECATION")
-class AdaptiveEconomyProvider(private val liteEco: LiteEco) : Economy {
+class AdaptiveEconomyProvider(private val liteEco: LiteEco) : AbstractEconomy() {
 
     override fun isEnabled(): Boolean {
         return liteEco.isEnabled
@@ -48,12 +49,12 @@ class AdaptiveEconomyProvider(private val liteEco: LiteEco) : Economy {
 
     @Deprecated("Deprecated in Java", ReplaceWith("hasAccount(player)"))
     override fun hasAccount(playerName: String?): Boolean {
-        return hasAccount(playerName)
+        return hasAccount(playerName, null)
     }
 
     @Deprecated("Deprecated in Java", ReplaceWith("hasAccount(player)"))
     override fun hasAccount(playerName: String?, worldName: String?): Boolean {
-        return hasAccount(playerName)
+        return hasAccount(Bukkit.getOfflinePlayer(playerName.toString()))
     }
 
     override fun hasAccount(player: OfflinePlayer?, worldName: String?): Boolean {
@@ -66,12 +67,12 @@ class AdaptiveEconomyProvider(private val liteEco: LiteEco) : Economy {
 
     @Deprecated("Deprecated in Java", ReplaceWith("getBalance(player)"))
     override fun getBalance(playerName: String?): Double {
-        return getBalance(playerName)
+        return getBalance(Bukkit.getOfflinePlayer(playerName.toString()))
     }
 
     @Deprecated("Deprecated in Java", ReplaceWith("getBalance(player)"))
     override fun getBalance(playerName: String?, world: String?): Double {
-        return getBalance(playerName)
+        return getBalance(Bukkit.getOfflinePlayer(playerName.toString()))
     }
 
     override fun getBalance(player: OfflinePlayer?, world: String?): Double {
@@ -84,7 +85,7 @@ class AdaptiveEconomyProvider(private val liteEco: LiteEco) : Economy {
 
     @Deprecated("Deprecated in Java", ReplaceWith("has(player, amount)"))
     override fun has(playerName: String?, amount: Double): Boolean {
-        return has(playerName, amount)
+        return has(Bukkit.getOfflinePlayer(playerName.toString()), amount)
     }
 
     @Deprecated("Deprecated in Java", ReplaceWith("has(player, amount)"))
@@ -114,12 +115,12 @@ class AdaptiveEconomyProvider(private val liteEco: LiteEco) : Economy {
 
     @Deprecated("Deprecated in Java", ReplaceWith("withdrawPlayer(player, amount)"))
     override fun withdrawPlayer(playerName: String?, amount: Double): EconomyResponse {
-        return withdrawPlayer(playerName, amount)
+        return withdrawPlayer(Bukkit.getOfflinePlayer(playerName.toString()), amount)
     }
 
     @Deprecated("Deprecated in Java", ReplaceWith("withdrawPlayer(player, amount)"))
     override fun withdrawPlayer(playerName: String?, worldName: String?, amount: Double): EconomyResponse {
-        return withdrawPlayer(playerName, amount)
+        return withdrawPlayer(Bukkit.getOfflinePlayer(playerName.toString()), amount)
     }
 
     override fun withdrawPlayer(player: OfflinePlayer?, worldName: String?, amount: Double): EconomyResponse {
@@ -142,7 +143,7 @@ class AdaptiveEconomyProvider(private val liteEco: LiteEco) : Economy {
 
     @Deprecated("Deprecated in Java", ReplaceWith("depositPlayer(player, amount)"))
     override fun depositPlayer(playerName: String?, amount: Double): EconomyResponse {
-        return depositPlayer(playerName, amount)
+        return depositPlayer(Bukkit.getOfflinePlayer(playerName.toString()), amount)
     }
 
     @Deprecated("Deprecated in Java", ReplaceWith("depositPlayer(player, amount)"))
@@ -164,12 +165,12 @@ class AdaptiveEconomyProvider(private val liteEco: LiteEco) : Economy {
 
     @Deprecated("Deprecated in Java", ReplaceWith("createPlayerAccount(player)"))
     override fun createPlayerAccount(playerName: String?): Boolean {
-        return createPlayerAccount(playerName)
+        return createPlayerAccount(Bukkit.getOfflinePlayer(playerName.toString()))
     }
 
     @Deprecated("Deprecated in Java", ReplaceWith("createPlayerAccount(playerName)"))
     override fun createPlayerAccount(playerName: String?, worldName: String?): Boolean {
-        return createPlayerAccount(playerName)
+        return createPlayerAccount(Bukkit.getOfflinePlayer(playerName.toString()))
     }
 
     override fun createPlayerAccount(player: OfflinePlayer?, worldName: String?): Boolean {
