@@ -12,14 +12,9 @@ import java.io.File
  * Called static in mainMethod.
  */
 class ConfigLoaderAPI(private val liteEco: LiteEco) : ConfigLoaderProvider {
-    private var configName: String = ""
-    override fun setConfigName(configName: String): ConfigLoaderAPI {
-        this.configName = configName
-        return this
-    }
 
-    override fun load() : ConfigLoaderAPI {
-        val file = File(liteEco.dataFolder, this.configName)
+    override fun create(configName: String) : ConfigLoaderAPI {
+        val file = File(liteEco.dataFolder, configName)
         if (!file.exists()) {
             liteEco.saveResource(configName, false)
         } else {
