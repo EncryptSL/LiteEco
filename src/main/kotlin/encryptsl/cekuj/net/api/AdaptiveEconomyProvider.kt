@@ -105,7 +105,7 @@ class AdaptiveEconomyProvider(private val liteEco: LiteEco) : AbstractEconomy() 
         }
 
         return if (has(player, amount)) {
-            liteEco.preparedStatements.withdrawMoney(player.uniqueId, amount)
+            liteEco.preparedStatements.withdrawMoney(player.uniqueId, getBalance(player).minus(amount))
             EconomyResponse(amount, getBalance(player), ResponseType.SUCCESS, null)
         } else {
             EconomyResponse(0.0, getBalance(player), ResponseType.FAILURE, liteEco.translationConfig.getMessage("messages.sender_error_enough_pay"))
@@ -135,7 +135,7 @@ class AdaptiveEconomyProvider(private val liteEco: LiteEco) : AbstractEconomy() 
             return EconomyResponse(0.0, 0.0, ResponseType.FAILURE, liteEco.translationConfig.getMessage("messages.negative_amount_error"))
         }
 
-        liteEco.preparedStatements.depositMoney(player.uniqueId, amount)
+        liteEco.preparedStatements.depositMoney(player.uniqueId, getBalance(player).plus(amount))
 
         return EconomyResponse(amount, getBalance(player), ResponseType.SUCCESS, null)
     }
