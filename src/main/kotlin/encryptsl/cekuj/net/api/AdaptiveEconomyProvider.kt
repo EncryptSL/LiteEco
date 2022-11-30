@@ -127,7 +127,7 @@ class AdaptiveEconomyProvider(private val liteEco: LiteEco) : AbstractEconomy() 
     }
 
     override fun depositPlayer(player: OfflinePlayer?, amount: Double): EconomyResponse {
-        if (player == null || hasAccount(player)) {
+        if (player == null || !hasAccount(player)) {
             return EconomyResponse(0.0, 0.0, ResponseType.FAILURE, liteEco.translationConfig.getMessage("messages.player_is_null_error"))
         }
 
