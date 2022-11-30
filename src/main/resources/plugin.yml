@@ -11,5 +11,7 @@ api-version: 1.13
 libraries:
   - com.zaxxer:HikariCP:5.0.1
   - org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.20
+  - org.jetbrains.exposed:exposed-core:0.40.1
+  - org.jetbrains.exposed:exposed-jdbc:0.40.1
 
 description: ${description}
