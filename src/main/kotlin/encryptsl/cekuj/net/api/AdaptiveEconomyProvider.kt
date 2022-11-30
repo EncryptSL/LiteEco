@@ -49,7 +49,7 @@ class AdaptiveEconomyProvider(private val liteEco: LiteEco) : AbstractEconomy() 
 
     @Deprecated("Deprecated in Java", ReplaceWith("hasAccount(player)"))
     override fun hasAccount(playerName: String?): Boolean {
-        return hasAccount(playerName, null)
+        return hasAccount(Bukkit.getOfflinePlayer(playerName.toString()))
     }
 
     @Deprecated("Deprecated in Java", ReplaceWith("hasAccount(player)"))
@@ -148,7 +148,7 @@ class AdaptiveEconomyProvider(private val liteEco: LiteEco) : AbstractEconomy() 
 
     @Deprecated("Deprecated in Java", ReplaceWith("depositPlayer(player, amount)"))
     override fun depositPlayer(playerName: String?, worldName: String?, amount: Double): EconomyResponse {
-        return depositPlayer(playerName, amount)
+        return depositPlayer(Bukkit.getOfflinePlayer(playerName.toString()), amount)
     }
 
     override fun depositPlayer(player: OfflinePlayer?, worldName: String?, amount: Double): EconomyResponse {
