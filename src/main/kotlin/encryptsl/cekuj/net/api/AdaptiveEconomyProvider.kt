@@ -12,7 +12,6 @@ import org.bukkit.OfflinePlayer
 import java.util.*
 
 
-@Suppress("DEPRECATION")
 class AdaptiveEconomyProvider(private val liteEco: LiteEco) : AbstractEconomy() {
 
     override fun isEnabled(): Boolean {
@@ -62,7 +61,7 @@ class AdaptiveEconomyProvider(private val liteEco: LiteEco) : AbstractEconomy() 
     }
 
     override fun getBalance(player: OfflinePlayer?): Double {
-        return liteEco.preparedStatements.getBalance(player!!.uniqueId)
+        return if (hasAccount(player)) liteEco.preparedStatements.getBalance(player!!.uniqueId) else 0.0
     }
 
     @Deprecated("Deprecated in Java", ReplaceWith("getBalance(player)"))
@@ -90,7 +89,7 @@ class AdaptiveEconomyProvider(private val liteEco: LiteEco) : AbstractEconomy() 
 
     @Deprecated("Deprecated in Java", ReplaceWith("has(player, amount)"))
     override fun has(playerName: String?, worldName: String?, amount: Double): Boolean {
-        return has(playerName, amount)
+        return has(Bukkit.getOfflinePlayer(playerName.toString()), amount)
     }
 
     override fun has(player: OfflinePlayer?, worldName: String?, amount: Double): Boolean {
@@ -128,7 +127,7 @@ class AdaptiveEconomyProvider(private val liteEco: LiteEco) : AbstractEconomy() 
     }
 
     override fun depositPlayer(player: OfflinePlayer?, amount: Double): EconomyResponse {
-        if (player == null) {
+        if (player == null || hasAccount(player)) {
             return EconomyResponse(0.0, 0.0, ResponseType.FAILURE, liteEco.translationConfig.getMessage("messages.player_is_null_error"))
         }
 
