@@ -34,7 +34,7 @@ class PlayerEconomyPayListener(private val liteEco: LiteEco) : Listener {
                 return
             }
 
-            liteEco.transactions["transactions"] = liteEco.transactions.getOrDefault("transactions", 0) + 1
+            liteEco.countTransactions["transactions"] = liteEco.countTransactions.getOrDefault("transactions", 0) + 1
             sender.sendMessage(
                 ModernText.miniModernText(
                     liteEco.translationConfig.getMessage("messages.sender_success_pay"),

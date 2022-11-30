@@ -27,7 +27,7 @@ class ConsoleEconomyTransactionListener(private val liteEco: LiteEco) : Listener
                 sender.sendMessage(ModernText.miniModernText(economyResponse.errorMessage))
                 return
             }
-            liteEco.transactions["transactions"] = liteEco.transactions.getOrDefault("transactions", 0) + 1
+            liteEco.countTransactions["transactions"] = liteEco.countTransactions.getOrDefault("transactions", 0) + 1
             if (sender.name == target.name) {
                 sender.sendMessage(
                     ModernText.miniModernText(
@@ -52,7 +52,7 @@ class ConsoleEconomyTransactionListener(private val liteEco: LiteEco) : Listener
                 sender.sendMessage(ModernText.miniModernText(economyResponse.errorMessage))
                 return
             }
-            liteEco.transactions["transactions"] = liteEco.transactions.getOrDefault("transactions", 0) + 1
+            liteEco.countTransactions["transactions"] = liteEco.countTransactions.getOrDefault("transactions", 0) + 1
             if (sender.name == target.name) {
                 sender.sendMessage(
                     ModernText.miniModernText(
@@ -88,7 +88,7 @@ class ConsoleEconomyTransactionListener(private val liteEco: LiteEco) : Listener
                 sender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.negative_amount_error")))
                 return
             }
-            liteEco.transactions["transactions"] = liteEco.transactions.getOrDefault("transactions", 0) + 1
+            liteEco.countTransactions["transactions"] = liteEco.countTransactions.getOrDefault("transactions", 0) + 1
             liteEco.preparedStatements.setMoney(target.uniqueId, money)
             if (sender.name == target.name) {
                 sender.sendMessage(
