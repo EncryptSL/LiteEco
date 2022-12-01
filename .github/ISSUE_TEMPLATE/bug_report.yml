@@ -1,5 +1,5 @@
 name: Bug Report
-description: File a bug report
+description: Template for bug report
 title: "[Bug]: "
 labels: ["Bug", "NotFixed"]
 assignees:
