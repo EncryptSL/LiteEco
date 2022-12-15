@@ -30,9 +30,9 @@ import java.util.function.Function
 class LiteEco : JavaPlugin() {
 
     private val databaseConnector: DatabaseConnector by lazy { DatabaseConnector() }
-    lateinit var metrics: Metrics
+    private lateinit var metrics: Metrics
     lateinit var econ: Economy
-    lateinit var updateNotifier: UpdateNotifier
+    private lateinit var updateNotifier: UpdateNotifier
     var countTransactions: LinkedHashMap<String, Int> = LinkedHashMap()
     val pluginManger: PluginManager = server.pluginManager
     val preparedStatements: PreparedStatements by lazy { PreparedStatements() }
@@ -77,7 +77,7 @@ class LiteEco : JavaPlugin() {
 
     private fun registerCommands() {
         slF4JLogger.info("Registering commands with Cloud Command Framework !")
-        val executionCoordinatorFunction = AsynchronousCommandExecutionCoordinator.newBuilder<CommandSender>().build()
+        val executionCoordinatorFunction = AsynchronousCommandExecutionCoordinator.builder<CommandSender>().build()
         val mapperFunction = Function.identity<CommandSender>()
         val commandManager: PaperCommandManager<CommandSender> = PaperCommandManager(
             this,
