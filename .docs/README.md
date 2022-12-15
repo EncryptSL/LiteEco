@@ -56,10 +56,16 @@ All available permissions for commands:
   Permission: lite.eco.pay
 /money add <player> <amount>: This command is for admins - add money to player.
   Permission: lite.eco.add
+/money gadd <amount>: This command is for admins- add for everyone money
+  Permissions: lite.eco.gadd
 /money set <player> <amount>: This command is for admins - set fixed amount to player.
   Permission: lite.eco.set
-/money remove <player>: This command remove player money account from database.
+/money gset <amount>: This command is for admins - set fixed amount to everyone.
+  Permissions: lite.eco.gset
+/money remove <player> <amount>: This command is for admins - withdraw money from player.
   Permission: lite.eco.remove
+/money gremove <amount>: This command is for admins - withdraw money from everyone.
+  Permissions: lite.eco.gremove
 /money lang [CS_CZ, EN_US]: This command switch translations files.
   Permission: lite.eco.lang
 /money reload: This command reload configs.
