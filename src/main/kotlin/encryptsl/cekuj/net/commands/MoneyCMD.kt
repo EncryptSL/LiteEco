@@ -6,6 +6,7 @@ import encryptsl.cekuj.net.LiteEco
 import encryptsl.cekuj.net.api.Paginator
 import encryptsl.cekuj.net.api.enums.TransactionType
 import encryptsl.cekuj.net.api.enums.TranslationKey
+import encryptsl.cekuj.net.api.events.ConsoleEconomyGlobalTransactionEvent
 import encryptsl.cekuj.net.api.events.ConsoleEconomyTransactionEvent
 import encryptsl.cekuj.net.api.events.PlayerEconomyPayEvent
 import encryptsl.cekuj.net.api.objects.ModernText
@@ -148,6 +149,19 @@ class MoneyCMD(private val liteEco: LiteEco) {
         }
     }
 
+    @CommandMethod("money|bal|balance gadd <amount>")
+    @CommandPermission("lite.eco.gadd")
+    fun onGlobalAddMoney(
+        commandSender: CommandSender,
+        @Argument("amount") @Range(min = "1.0", max = "") amount: Double
+    ) {
+        liteEco.server.scheduler.runTask(liteEco) { ->
+            liteEco.pluginManger.callEvent(
+                ConsoleEconomyGlobalTransactionEvent(commandSender, TransactionType.GLOBAL_ADD, amount)
+            )
+        }
+    }
+
     @CommandMethod("money|bal|balance set <player> <amount>")
     @CommandPermission("lite.eco.set")
     fun onSetBalance(
@@ -167,9 +181,22 @@ class MoneyCMD(private val liteEco: LiteEco) {
         }
     }
 
+    @CommandMethod("money|bal|balance gset <amount>")
+    @CommandPermission("lite.eco.gset")
+    fun onGlobalSetMoney(
+        commandSender: CommandSender,
+        @Argument("amount") @Range(min = "1.0", max = "") amount: Double
+    ) {
+        liteEco.server.scheduler.runTask(liteEco) { ->
+            liteEco.pluginManger.callEvent(
+                ConsoleEconomyGlobalTransactionEvent(commandSender, TransactionType.GLOBAL_SET, amount)
+            )
+        }
+    }
+
     @CommandMethod("money|bal|balance remove <player> <amount>")
     @CommandPermission("lite.eco.remove")
-    fun onRemoveAccount(
+    fun onRemoveMoney(
         commandSender: CommandSender,
         @Argument(value = "player", suggestions = "offlinePlayers") offlinePlayer: OfflinePlayer,
         @Argument(value = "amount") @Range(min = "1.00", max = "") amount: Double
@@ -182,6 +209,19 @@ class MoneyCMD(private val liteEco: LiteEco) {
                     TransactionType.WITHDRAW,
                     amount
                 )
+            )
+        }
+    }
+
+    @CommandMethod("money|bal|balance gremove <amount>")
+    @CommandPermission("lite.eco.gremove")
+    fun onGlobalRemoveMoney(
+        commandSender: CommandSender,
+        @Argument("amount") @Range(min = "1.0", max = "") amount: Double
+    ) {
+        liteEco.server.scheduler.runTask(liteEco) { ->
+            liteEco.pluginManger.callEvent(
+                ConsoleEconomyGlobalTransactionEvent(commandSender, TransactionType.GLOBAL_WITHDRAW, amount)
             )
         }
     }
