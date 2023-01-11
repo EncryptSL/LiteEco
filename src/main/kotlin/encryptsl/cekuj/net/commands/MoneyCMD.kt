@@ -6,9 +6,7 @@ import encryptsl.cekuj.net.LiteEco
 import encryptsl.cekuj.net.api.Paginator
 import encryptsl.cekuj.net.api.enums.TransactionType
 import encryptsl.cekuj.net.api.enums.TranslationKey
-import encryptsl.cekuj.net.api.events.ConsoleEconomyGlobalTransactionEvent
-import encryptsl.cekuj.net.api.events.ConsoleEconomyTransactionEvent
-import encryptsl.cekuj.net.api.events.PlayerEconomyPayEvent
+import encryptsl.cekuj.net.api.events.*
 import encryptsl.cekuj.net.api.objects.ModernText
 import encryptsl.cekuj.net.extensions.isNegative
 import encryptsl.cekuj.net.extensions.isZero
@@ -160,7 +158,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
         }
 
         liteEco.server.scheduler.runTask(liteEco) { ->
-            liteEco.pluginManger.callEvent(ConsoleEconomyTransactionEvent(commandSender, offlinePlayer, TransactionType.ADD, amount))
+            liteEco.pluginManger.callEvent(AdminEconomyMoneyDepositEvent(commandSender, offlinePlayer, amount))
         }
     }
 
@@ -177,7 +175,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
 
         liteEco.server.scheduler.runTask(liteEco) { ->
             liteEco.pluginManger.callEvent(
-                ConsoleEconomyGlobalTransactionEvent(commandSender, TransactionType.GLOBAL_ADD, amount)
+                AdminEconomyGlobalDepositEvent(commandSender, amount)
             )
         }
     }
@@ -195,10 +193,9 @@ class MoneyCMD(private val liteEco: LiteEco) {
         }
         liteEco.server.scheduler.runTask(liteEco) { ->
             liteEco.pluginManger.callEvent(
-                ConsoleEconomyTransactionEvent(
+                AdminEconomyMoneySetEvent(
                     commandSender,
                     offlinePlayer,
-                    TransactionType.SET,
                     amount
                 )
             )
@@ -218,7 +215,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
 
         liteEco.server.scheduler.runTask(liteEco) { ->
             liteEco.pluginManger.callEvent(
-                ConsoleEconomyGlobalTransactionEvent(commandSender, TransactionType.GLOBAL_SET, amount)
+                AdminEconomyGlobalSetEvent(commandSender, amount)
             )
         }
     }
@@ -238,10 +235,9 @@ class MoneyCMD(private val liteEco: LiteEco) {
 
         liteEco.server.scheduler.runTask(liteEco) { ->
             liteEco.pluginManger.callEvent(
-                ConsoleEconomyTransactionEvent(
+                AdminEconomyMoneyWithdrawEvent(
                     commandSender,
                     offlinePlayer,
-                    TransactionType.WITHDRAW,
                     amount
                 )
             )
@@ -256,7 +252,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
     ) {
         liteEco.server.scheduler.runTask(liteEco) { ->
             liteEco.pluginManger.callEvent(
-                ConsoleEconomyGlobalTransactionEvent(commandSender, TransactionType.GLOBAL_WITHDRAW, amount)
+                AdminEconomyGlobalWithdrawEvent(commandSender, amount)
             )
         }
     }
