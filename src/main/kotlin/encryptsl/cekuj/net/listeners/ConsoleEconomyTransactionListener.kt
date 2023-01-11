@@ -43,7 +43,7 @@ class ConsoleEconomyTransactionListener(private val liteEco: LiteEco) : Listener
         if (event.transactionType == TransactionType.WITHDRAW) {
 
             liteEco.countTransactions["transactions"] = liteEco.countTransactions.getOrDefault("transactions", 0) + 1
-            liteEco.api.withDrawMoney(target, money)
+            liteEco.api.withDrawMoney(target, liteEco.api.getBalance(target).minus(money))
             if (sender.name == target.name) {
                 sender.sendMessage(
                     ModernText.miniModernText(
