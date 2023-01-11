@@ -17,6 +17,7 @@ object ModernText {
 
     private fun miniModernText(): MiniMessage {
         return MiniMessage.builder()
+            .strict(false)
             .tags(
                 TagResolver.builder()
                 .resolver(StandardTags.color())
