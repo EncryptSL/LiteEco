@@ -5,9 +5,10 @@ import encryptsl.cekuj.net.api.enums.TransactionType
 import encryptsl.cekuj.net.api.events.ConsoleEconomyTransactionEvent
 import encryptsl.cekuj.net.api.objects.ModernText
 import encryptsl.cekuj.net.extensions.isNegative
+import encryptsl.cekuj.net.extensions.isZero
+import encryptsl.cekuj.net.extensions.moneyFormat
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
-import net.milkbowl.vault.economy.EconomyResponse
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import org.bukkit.event.EventHandler
@@ -22,11 +23,11 @@ class ConsoleEconomyTransactionListener(private val liteEco: LiteEco) : Listener
         val money: Double = event.money
 
         if (event.transactionType == TransactionType.ADD) {
-            val economyResponse: EconomyResponse? = liteEco.econ.depositPlayer(target, money)
-            if (economyResponse?.transactionSuccess() == false) {
-                sender.sendMessage(ModernText.miniModernText(economyResponse.errorMessage))
+            if (money.isNegative() || money.isZero() || money.moneyFormat() == "0.00") {
+                sender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.negative_amount_error")))
                 return
             }
+
             liteEco.countTransactions["transactions"] = liteEco.countTransactions.getOrDefault("transactions", 0) + 1
             if (sender.name == target.name) {
                 sender.sendMessage(
@@ -34,6 +35,7 @@ class ConsoleEconomyTransactionListener(private val liteEco: LiteEco) : Listener
                         liteEco.translationConfig.getMessage("messages.self_add_money"), TagResolver.resolver(Placeholder.parsed("money", liteEco.econ.format(money)))))
                 return
             }
+            liteEco.api.depositMoney(target, money)
             sender.sendMessage(ModernText.miniModernText(
                 liteEco.translationConfig.getMessage("messages.sender_success_pay"),
                 TagResolver.resolver(Placeholder.parsed("target", target.name.toString()), Placeholder.parsed("money", liteEco.econ.format(money)))))
@@ -47,11 +49,11 @@ class ConsoleEconomyTransactionListener(private val liteEco: LiteEco) : Listener
         }
 
         if (event.transactionType == TransactionType.WITHDRAW) {
-            val economyResponse: EconomyResponse? = liteEco.econ.withdrawPlayer(target, money)
-            if (economyResponse?.transactionSuccess() == false) {
-                sender.sendMessage(ModernText.miniModernText(economyResponse.errorMessage))
+            if (money.isNegative() || money.isZero() || money.moneyFormat() == "0.00") {
+                sender.sendMessage(ModernText.miniModernText(liteEco.config.getString("messages.negative_amount_error").toString()))
                 return
             }
+
             liteEco.countTransactions["transactions"] = liteEco.countTransactions.getOrDefault("transactions", 0) + 1
             if (sender.name == target.name) {
                 sender.sendMessage(
@@ -63,6 +65,7 @@ class ConsoleEconomyTransactionListener(private val liteEco: LiteEco) : Listener
                 return
             }
 
+            liteEco.api.withDrawMoney(target, money)
             sender.sendMessage(
                 ModernText.miniModernText(
                     liteEco.translationConfig.getMessage("messages.sender_success_withdraw"),
@@ -78,7 +81,6 @@ class ConsoleEconomyTransactionListener(private val liteEco: LiteEco) : Listener
         }
 
         if (event.transactionType == TransactionType.SET) {
-
             if (!liteEco.econ.hasAccount(target)) {
                 sender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.account_not_exist"),
                     TagResolver.resolver(Placeholder.parsed("account", target.name.toString()))))
@@ -89,7 +91,7 @@ class ConsoleEconomyTransactionListener(private val liteEco: LiteEco) : Listener
                 return
             }
             liteEco.countTransactions["transactions"] = liteEco.countTransactions.getOrDefault("transactions", 0) + 1
-            liteEco.preparedStatements.setMoney(target.uniqueId, money)
+            liteEco.api.setMoney(target, money)
             if (sender.name == target.name) {
                 sender.sendMessage(
                     ModernText.miniModernText(

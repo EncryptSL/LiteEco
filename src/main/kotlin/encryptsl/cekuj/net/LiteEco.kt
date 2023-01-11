@@ -7,10 +7,7 @@ import cloud.commandframework.bukkit.CloudBukkitCapabilities
 import cloud.commandframework.execution.AsynchronousCommandExecutionCoordinator
 import cloud.commandframework.meta.CommandMeta
 import cloud.commandframework.paper.PaperCommandManager
-import encryptsl.cekuj.net.api.AdaptiveEconomyProvider
-import encryptsl.cekuj.net.api.ConfigLoaderAPI
-import encryptsl.cekuj.net.api.PlaceHolderExtensionProvider
-import encryptsl.cekuj.net.api.UpdateNotifier
+import encryptsl.cekuj.net.api.*
 import encryptsl.cekuj.net.api.enums.TranslationKey
 import encryptsl.cekuj.net.commands.MoneyCMD
 import encryptsl.cekuj.net.config.TranslationConfig
@@ -37,6 +34,7 @@ class LiteEco : JavaPlugin() {
     val pluginManger: PluginManager = server.pluginManager
     val preparedStatements: PreparedStatements by lazy { PreparedStatements() }
     val translationConfig: TranslationConfig by lazy { TranslationConfig(this) }
+    val api: LiteEcoEconomyAPI by lazy { LiteEcoEconomyAPI(this) }
     private val configLoaderAPI: ConfigLoaderAPI by lazy { ConfigLoaderAPI(this) }
     override fun onLoad() {
         configLoaderAPI
@@ -128,7 +126,7 @@ class LiteEco : JavaPlugin() {
 
     private fun connectToVault(): Boolean {
         return if (pluginManger.isPluginEnabled("Vault")) {
-            server.servicesManager.register(Economy::class.java, AdaptiveEconomyProvider(this), this, ServicePriority.Highest)
+            server.servicesManager.register(Economy::class.java, AdaptiveEconomyVaultAPI(this), this, ServicePriority.Highest)
             slF4JLogger.warn("Registered Vault interface.")
             val rsp = server.servicesManager.getRegistration(
                 Economy::class.java

@@ -36,7 +36,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
                         TagResolver.resolver(
                             Placeholder.parsed(
                                 "money",
-                                liteEco.econ.format(liteEco.econ.getBalance(commandSender.player)).toString()
+                                liteEco.api.formatting(liteEco.api.getBalance(commandSender))
                             )
                         )
                     )
@@ -50,7 +50,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
                         Placeholder.parsed("target", offlinePlayer.name.toString()),
                         Placeholder.parsed(
                             "money",
-                            liteEco.econ.format(liteEco.econ.getBalance(offlinePlayer)).toString()
+                            liteEco.api.formatting(liteEco.api.getBalance(offlinePlayer))
                         )
                     )
                 )
@@ -64,7 +64,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
                             Placeholder.parsed("target", offlinePlayer.name.toString()),
                             Placeholder.parsed(
                                 "money",
-                                liteEco.econ.format(liteEco.econ.getBalance(offlinePlayer)).toString()
+                                liteEco.api.formatting(liteEco.api.getBalance(offlinePlayer))
                             )
                         )
                     )
@@ -82,7 +82,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
     @CommandPermission("lite.eco.top")
     fun onTopBalance(commandSender: CommandSender, @Argument(value = "page") @Range(min = "1", max="") page: Int?) {
         val p = page ?: 1
-        val balances = liteEco.preparedStatements.getTopBalance().entries.sortedByDescending { e -> e.value }
+        val balances = liteEco.api.getTopBalance().entries.sortedByDescending { e -> e.value }
             .positionIndexed { index, mutableEntry -> LegacyComponentSerializer.legacyAmpersand().serialize(ModernText.miniModernText(
                 liteEco.translationConfig.getMessage("messages.balance_top_format"),
                 TagResolver.resolver(

@@ -31,7 +31,7 @@ class PlaceHolderExtensionProvider(private val liteEco: LiteEco) : PlaceholderEx
 
         if (identifier.startsWith("top_formatted_")) {
             val split = this.splitator(identifier, 2)
-            return liteEco.econ.format(balanceByRank(split.toInt()))
+            return liteEco.api.formatting(balanceByRank(split.toInt()))
         }
 
         if (identifier.startsWith("top_balance_")) {
@@ -48,8 +48,8 @@ class PlaceHolderExtensionProvider(private val liteEco: LiteEco) : PlaceholderEx
         }
 
         return when(identifier) {
-            "balance" -> liteEco.econ.getBalance(player).toString()
-            "balance_formatted" -> liteEco.econ.format(liteEco.econ.getBalance(player))
+            "balance" -> liteEco.api.getBalance(player).toString()
+            "balance_formatted" -> liteEco.api.formatting(liteEco.api.getBalance(player))
             "top_rank_player" -> nameByRank(1)
             else -> null
         }

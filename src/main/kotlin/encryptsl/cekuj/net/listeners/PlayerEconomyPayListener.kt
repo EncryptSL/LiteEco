@@ -4,9 +4,11 @@ import encryptsl.cekuj.net.LiteEco
 import encryptsl.cekuj.net.api.enums.TransactionType
 import encryptsl.cekuj.net.api.events.PlayerEconomyPayEvent
 import encryptsl.cekuj.net.api.objects.ModernText
+import encryptsl.cekuj.net.extensions.isNegative
+import encryptsl.cekuj.net.extensions.isZero
+import encryptsl.cekuj.net.extensions.moneyFormat
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
-import net.milkbowl.vault.economy.EconomyResponse
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -21,18 +23,24 @@ class PlayerEconomyPayListener(private val liteEco: LiteEco) : Listener {
 
         if (event.transactionType == TransactionType.PAY) {
 
-            val senderResponse: EconomyResponse? = liteEco.econ.withdrawPlayer(sender, money)
-            if (senderResponse?.transactionSuccess() == false) {
-                sender.sendMessage(ModernText.miniModernText(senderResponse.errorMessage))
+            if (!liteEco.api.hasAccount(target)) {
+                sender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.account_not_exist"),
+                    TagResolver.resolver(Placeholder.parsed("account", target.name.toString()))))
                 return
             }
 
-            val targetResponse: EconomyResponse? = liteEco.econ.depositPlayer(target, money)
-
-            if (targetResponse?.transactionSuccess() == false) {
-                sender.sendMessage(ModernText.miniModernText(targetResponse.errorMessage))
+            if (money.isNegative() || money.isZero() || money.moneyFormat() == "0.00") {
+                sender.sendMessage(ModernText.miniModernText(liteEco.config.getString("messages.negative_amount_error").toString()))
                 return
             }
+
+            if (liteEco.api.getBalance(sender) < money) {
+                sender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.sender_error_enough_pay")))
+                return
+            }
+
+            liteEco.api.withDrawMoney(sender, liteEco.api.getBalance(sender).minus(money))
+            liteEco.api.depositMoney(target, liteEco.api.getBalance(target).plus(money))
 
             liteEco.countTransactions["transactions"] = liteEco.countTransactions.getOrDefault("transactions", 0) + 1
             sender.sendMessage(
