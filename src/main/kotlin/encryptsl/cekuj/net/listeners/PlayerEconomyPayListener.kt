@@ -4,9 +4,6 @@ import encryptsl.cekuj.net.LiteEco
 import encryptsl.cekuj.net.api.enums.TransactionType
 import encryptsl.cekuj.net.api.events.PlayerEconomyPayEvent
 import encryptsl.cekuj.net.api.objects.ModernText
-import encryptsl.cekuj.net.extensions.isNegative
-import encryptsl.cekuj.net.extensions.isZero
-import encryptsl.cekuj.net.extensions.moneyFormat
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.OfflinePlayer
@@ -26,11 +23,6 @@ class PlayerEconomyPayListener(private val liteEco: LiteEco) : Listener {
             if (!liteEco.api.hasAccount(target)) {
                 sender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.account_not_exist"),
                     TagResolver.resolver(Placeholder.parsed("account", target.name.toString()))))
-                return
-            }
-
-            if (money.isNegative() || money.isZero() || money.moneyFormat() == "0.00") {
-                sender.sendMessage(ModernText.miniModernText(liteEco.config.getString("messages.negative_amount_error").toString()))
                 return
             }
 

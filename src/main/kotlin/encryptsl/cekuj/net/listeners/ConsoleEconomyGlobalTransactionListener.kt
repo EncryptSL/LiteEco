@@ -4,9 +4,6 @@ import encryptsl.cekuj.net.LiteEco
 import encryptsl.cekuj.net.api.enums.TransactionType
 import encryptsl.cekuj.net.api.events.ConsoleEconomyGlobalTransactionEvent
 import encryptsl.cekuj.net.api.objects.ModernText
-import encryptsl.cekuj.net.extensions.isNegative
-import encryptsl.cekuj.net.extensions.isZero
-import encryptsl.cekuj.net.extensions.moneyFormat
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.Bukkit
@@ -23,27 +20,22 @@ class ConsoleEconomyGlobalTransactionListener(private val liteEco: LiteEco) : Li
 
         if (event.transactionType == TransactionType.GLOBAL_ADD) {
 
-            if (money.isNegative() || money.isZero() || money.moneyFormat() == "0.00") {
-                sender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.negative_amount_error")))
-                return
-            }
-
             offlinePlayers.filter { p -> liteEco.econ.hasAccount(p) }.forEach { a ->
-                liteEco.api.depositMoney(a, money)
+                liteEco.api.depositMoney(a, liteEco.api.getBalance(a).plus(money))
             }
 
             liteEco.countTransactions["transactions"] = liteEco.countTransactions.getOrDefault("transactions", 0) + offlinePlayers.size
 
             sender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.sender_global_add"),
                 TagResolver.resolver(
-                    Placeholder.parsed("money", liteEco.econ.format(money))
+                    Placeholder.parsed("money", liteEco.api.formatting(money))
                 )
             ))
             if (!liteEco.config.getBoolean("plugin.disableMessages.g_broadcast_pay")) {
                 Bukkit.broadcast(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.g_broadcast_add"),
                         TagResolver.resolver(
                             Placeholder.parsed("sender", sender.name),
-                            Placeholder.parsed("money", liteEco.econ.format(money))
+                            Placeholder.parsed("money", liteEco.api.formatting(money))
                         )
                 ))
             }
@@ -51,13 +43,8 @@ class ConsoleEconomyGlobalTransactionListener(private val liteEco: LiteEco) : Li
 
         if (event.transactionType == TransactionType.GLOBAL_WITHDRAW) {
 
-            if (money.isNegative() || money.isZero() || money.moneyFormat() == "0.00") {
-                sender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.negative_amount_error")))
-                return
-            }
-
             offlinePlayers.filter { p -> liteEco.econ.hasAccount(p) }.forEach { a ->
-                liteEco.api.withDrawMoney(a, money)
+                liteEco.api.withDrawMoney(a, liteEco.api.getBalance(a).minus(money))
             }
 
             liteEco.countTransactions["transactions"] = liteEco.countTransactions.getOrDefault("transactions", 0) + 1
@@ -81,12 +68,6 @@ class ConsoleEconomyGlobalTransactionListener(private val liteEco: LiteEco) : Li
         }
 
         if (event.transactionType == TransactionType.GLOBAL_SET) {
-
-            if (money.isNegative()) {
-                sender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.negative_amount_error")))
-                return
-            }
-
             offlinePlayers.filter { a -> liteEco.api.hasAccount(a) }.forEach { offlinePlayer ->
                 liteEco.preparedStatements.setMoney(offlinePlayer.uniqueId, money)
             }

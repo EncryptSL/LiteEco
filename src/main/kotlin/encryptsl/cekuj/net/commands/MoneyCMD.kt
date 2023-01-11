@@ -10,6 +10,9 @@ import encryptsl.cekuj.net.api.events.ConsoleEconomyGlobalTransactionEvent
 import encryptsl.cekuj.net.api.events.ConsoleEconomyTransactionEvent
 import encryptsl.cekuj.net.api.events.PlayerEconomyPayEvent
 import encryptsl.cekuj.net.api.objects.ModernText
+import encryptsl.cekuj.net.extensions.isNegative
+import encryptsl.cekuj.net.extensions.isZero
+import encryptsl.cekuj.net.extensions.moneyFormat
 import encryptsl.cekuj.net.extensions.positionIndexed
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
@@ -132,6 +135,12 @@ class MoneyCMD(private val liteEco: LiteEco) {
             player.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.self_pay_error")))
             return
         }
+
+        if (amount.isNegative() || amount.isZero() || amount.moneyFormat() == "0.00") {
+            player.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.negative_amount_error")))
+            return
+        }
+
         liteEco.server.scheduler.runTask(liteEco) { ->
             liteEco.pluginManger.callEvent(PlayerEconomyPayEvent(player, offlinePlayer, TransactionType.PAY, amount))
         }
@@ -144,6 +153,12 @@ class MoneyCMD(private val liteEco: LiteEco) {
         @Argument(value = "player", suggestions = "offlinePlayers") offlinePlayer: OfflinePlayer,
         @Argument(value = "amount") @Range(min = "1.00", max = "") amount: Double
     ) {
+
+        if (amount.isNegative() || amount.isZero() || amount.moneyFormat() == "0.00") {
+            commandSender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.negative_amount_error")))
+            return
+        }
+
         liteEco.server.scheduler.runTask(liteEco) { ->
             liteEco.pluginManger.callEvent(ConsoleEconomyTransactionEvent(commandSender, offlinePlayer, TransactionType.ADD, amount))
         }
@@ -155,6 +170,11 @@ class MoneyCMD(private val liteEco: LiteEco) {
         commandSender: CommandSender,
         @Argument("amount") @Range(min = "1.0", max = "") amount: Double
     ) {
+        if (amount.isNegative() || amount.isZero() || amount.moneyFormat() == "0.00") {
+            commandSender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.negative_amount_error")))
+            return
+        }
+
         liteEco.server.scheduler.runTask(liteEco) { ->
             liteEco.pluginManger.callEvent(
                 ConsoleEconomyGlobalTransactionEvent(commandSender, TransactionType.GLOBAL_ADD, amount)
@@ -169,6 +189,10 @@ class MoneyCMD(private val liteEco: LiteEco) {
         @Argument(value = "player", suggestions = "offlinePlayers") offlinePlayer: OfflinePlayer,
         @Argument(value = "amount") amount: Double
     ) {
+        if (amount.isNegative()) {
+            commandSender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.negative_amount_error")))
+            return
+        }
         liteEco.server.scheduler.runTask(liteEco) { ->
             liteEco.pluginManger.callEvent(
                 ConsoleEconomyTransactionEvent(
@@ -187,6 +211,11 @@ class MoneyCMD(private val liteEco: LiteEco) {
         commandSender: CommandSender,
         @Argument("amount") @Range(min = "1.0", max = "") amount: Double
     ) {
+        if (amount.isNegative()) {
+            commandSender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.negative_amount_error")))
+            return
+        }
+
         liteEco.server.scheduler.runTask(liteEco) { ->
             liteEco.pluginManger.callEvent(
                 ConsoleEconomyGlobalTransactionEvent(commandSender, TransactionType.GLOBAL_SET, amount)
@@ -201,6 +230,12 @@ class MoneyCMD(private val liteEco: LiteEco) {
         @Argument(value = "player", suggestions = "offlinePlayers") offlinePlayer: OfflinePlayer,
         @Argument(value = "amount") @Range(min = "1.00", max = "") amount: Double
     ) {
+
+        if (amount.isNegative() || amount.isZero() || amount.moneyFormat() == "0.00") {
+            commandSender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.negative_amount_error")))
+            return
+        }
+
         liteEco.server.scheduler.runTask(liteEco) { ->
             liteEco.pluginManger.callEvent(
                 ConsoleEconomyTransactionEvent(
