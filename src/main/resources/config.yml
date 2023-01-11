@@ -12,6 +12,9 @@ plugin:
     default_money: 30
   # This settings disable messages.
   disableMessages:
+    g_broadcast_pay: false
+    g_broadcast_withdraw: false
+    g_broadcast_set: false
     target_success_pay: false
     target_success_withdraw: false
     target_success_set: false

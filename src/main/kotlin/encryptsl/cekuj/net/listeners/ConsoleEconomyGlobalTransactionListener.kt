@@ -14,7 +14,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 
 class ConsoleEconomyGlobalTransactionListener(private val liteEco: LiteEco) : Listener {
-    @EventHandler()
+    @EventHandler
     fun onGlobalTransaction(event: ConsoleEconomyGlobalTransactionEvent) {
         val sender: CommandSender = event.commandSender
         val money = event.money
@@ -32,6 +32,20 @@ class ConsoleEconomyGlobalTransactionListener(private val liteEco: LiteEco) : Li
                 return
             }
             liteEco.countTransactions["transactions"] = liteEco.countTransactions.getOrDefault("transactions", 0) + offlinePlayers.size
+
+            sender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.sender_global_add"),
+                TagResolver.resolver(
+                    Placeholder.parsed("money", liteEco.econ.format(money))
+                )
+            ))
+            if (!liteEco.config.getBoolean("plugin.disableMessages.g_broadcast_pay")) {
+                Bukkit.broadcast(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.g_broadcast_add"),
+                        TagResolver.resolver(
+                            Placeholder.parsed("sender", sender.name),
+                            Placeholder.parsed("money", money.toString())
+                        )
+                ))
+            }
         }
 
         if (event.transactionType == TransactionType.GLOBAL_WITHDRAW) {
@@ -45,10 +59,21 @@ class ConsoleEconomyGlobalTransactionListener(private val liteEco: LiteEco) : Li
             }
             liteEco.countTransactions["transactions"] = liteEco.countTransactions.getOrDefault("transactions", 0) + 1
 
-            sender.sendMessage(
-                ModernText.miniModernText(
-                    liteEco.translationConfig.getMessage("messages.sender_success_withdraw"),
-                    TagResolver.resolver(Placeholder.parsed("money", liteEco.econ.format(money)))))
+            sender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.sender_global_withdraw"),
+                TagResolver.resolver(
+                    Placeholder.parsed("money", liteEco.econ.format(money))
+                )
+            ))
+
+            if (!liteEco.config.getBoolean("plugin.disableMessages.g_broadcast_withdraw")) {
+                Bukkit.broadcast(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.g_broadcast_withdraw"),
+                        TagResolver.resolver(
+                            Placeholder.parsed("sender", sender.name),
+                            Placeholder.parsed("money", money.toString())
+                        )
+                ))
+            }
+
             return
         }
 
@@ -65,13 +90,20 @@ class ConsoleEconomyGlobalTransactionListener(private val liteEco: LiteEco) : Li
 
             liteEco.countTransactions["transactions"] = liteEco.countTransactions.getOrDefault("transactions", 0) + offlinePlayers.size
 
-            sender.sendMessage(
-                ModernText.miniModernText(
-                liteEco.translationConfig.getMessage("messages.sender_success_set"),
-                TagResolver.resolver(Placeholder.parsed("money", liteEco.econ.format(money))))
-            )
+            sender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.sender_global_set"),
+                TagResolver.resolver(
+                    Placeholder.parsed("money", liteEco.econ.format(money))
+                )
+            ))
 
-            Bukkit.broadcast(ModernText.miniModernText(""))
+            if (!liteEco.config.getBoolean("plugin.disableMessages.g_broadcast_set")) {
+                Bukkit.broadcast(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.g_broadcast_set"),
+                        TagResolver.resolver(
+                            Placeholder.parsed("sender", sender.name),
+                            Placeholder.parsed("money", money.toString())
+                        )
+                ))
+            }
             return
         }
     }
