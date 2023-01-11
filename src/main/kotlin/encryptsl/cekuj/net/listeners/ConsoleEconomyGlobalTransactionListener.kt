@@ -42,7 +42,7 @@ class ConsoleEconomyGlobalTransactionListener(private val liteEco: LiteEco) : Li
                 Bukkit.broadcast(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.g_broadcast_add"),
                         TagResolver.resolver(
                             Placeholder.parsed("sender", sender.name),
-                            Placeholder.parsed("money", money.toString())
+                            Placeholder.parsed("money", liteEco.econ.format(money))
                         )
                 ))
             }
@@ -69,7 +69,7 @@ class ConsoleEconomyGlobalTransactionListener(private val liteEco: LiteEco) : Li
                 Bukkit.broadcast(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.g_broadcast_withdraw"),
                         TagResolver.resolver(
                             Placeholder.parsed("sender", sender.name),
-                            Placeholder.parsed("money", money.toString())
+                            Placeholder.parsed("money", liteEco.econ.format(money))
                         )
                 ))
             }
@@ -100,7 +100,7 @@ class ConsoleEconomyGlobalTransactionListener(private val liteEco: LiteEco) : Li
                 Bukkit.broadcast(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.g_broadcast_set"),
                         TagResolver.resolver(
                             Placeholder.parsed("sender", sender.name),
-                            Placeholder.parsed("money", money.toString())
+                            Placeholder.parsed("money", liteEco.econ.format(money))
                         )
                 ))
             }
