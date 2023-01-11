@@ -10,8 +10,12 @@ class HandlerListeners(private val liteEco: LiteEco) {
         val list: List<Listener> = arrayListOf(
             AccountEconomyManageListener(liteEco),
             PlayerEconomyPayListener(liteEco),
-            ConsoleEconomyTransactionListener(liteEco),
-            ConsoleEconomyGlobalTransactionListener(liteEco),
+            AdminEconomyGlobalDepositListener(liteEco),
+            AdminEconomyGlobalSetListener(liteEco),
+            AdminEconomyGlobalWithdrawListener(liteEco),
+            AdminEconomyMoneyDepositListener(liteEco),
+            AdminEconomyMoneyWithdrawListener(liteEco),
+            AdminEconomyMoneySetListener(liteEco),
             PlayerJoinListener(liteEco)
         )
         list.forEach { listener -> liteEco.pluginManger.registerEvents(listener, liteEco)
