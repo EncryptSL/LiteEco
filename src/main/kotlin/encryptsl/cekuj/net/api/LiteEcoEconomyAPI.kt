@@ -28,16 +28,20 @@ class LiteEcoEconomyAPI(private val liteEco: LiteEco) : LiteEconomyAPIProvider {
         return liteEco.preparedStatements.getExistPlayerAccount(player.uniqueId)
     }
 
+    override fun has(player: OfflinePlayer, amount: Double): Boolean {
+        return amount <= getBalance(player)
+    }
+
     override fun getBalance(player: OfflinePlayer): Double {
         return liteEco.preparedStatements.getBalance(player.uniqueId)
     }
 
     override fun depositMoney(player: OfflinePlayer, amount: Double) {
-        liteEco.preparedStatements.depositMoney(player.uniqueId, amount)
+        liteEco.preparedStatements.depositMoney(player.uniqueId, getBalance(player).plus(amount))
     }
 
     override fun withDrawMoney(player: OfflinePlayer, amount: Double) {
-        liteEco.preparedStatements.withdrawMoney(player.uniqueId, amount)
+        liteEco.preparedStatements.withdrawMoney(player.uniqueId, getBalance(player).minus(amount))
     }
 
     override fun setMoney(player: OfflinePlayer, amount: Double) {

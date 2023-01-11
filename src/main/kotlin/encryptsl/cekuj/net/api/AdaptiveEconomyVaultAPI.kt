@@ -79,7 +79,7 @@ class AdaptiveEconomyVaultAPI(private val liteEco: LiteEco) : AbstractEconomy() 
     }
 
     override fun has(player: OfflinePlayer?, amount: Double): Boolean {
-        return amount <= getBalance(player)
+        return liteEco.api.has(player!!, amount)
     }
 
     @Deprecated("Deprecated in Java", ReplaceWith("has(player, amount)"))

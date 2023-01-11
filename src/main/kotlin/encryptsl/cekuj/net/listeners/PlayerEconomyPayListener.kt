@@ -26,24 +26,24 @@ class PlayerEconomyPayListener(private val liteEco: LiteEco) : Listener {
                 return
             }
 
-            if (liteEco.api.getBalance(sender) < money) {
+            if (!liteEco.api.has(sender, money)) {
                 sender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.sender_error_enough_pay")))
                 return
             }
 
-            liteEco.api.withDrawMoney(sender, liteEco.api.getBalance(sender).minus(money))
-            liteEco.api.depositMoney(target, liteEco.api.getBalance(target).plus(money))
+            liteEco.api.withDrawMoney(sender, money)
+            liteEco.api.depositMoney(target, money)
 
             liteEco.countTransactions["transactions"] = liteEco.countTransactions.getOrDefault("transactions", 0) + 1
             sender.sendMessage(
                 ModernText.miniModernText(
                     liteEco.translationConfig.getMessage("messages.sender_success_pay"),
-                    TagResolver.resolver(Placeholder.parsed("target", target.name.toString()), Placeholder.parsed("money", liteEco.econ.format(money)))))
+                    TagResolver.resolver(Placeholder.parsed("target", target.name.toString()), Placeholder.parsed("money", liteEco.api.formatting(money)))))
             if (target.isOnline) {
                 target.player?.sendMessage(
                     ModernText.miniModernText(
                         liteEco.translationConfig.getMessage("messages.target_success_pay"),
-                        TagResolver.resolver(Placeholder.parsed("sender", sender.name), Placeholder.parsed("money", liteEco.econ.format(money)))))
+                        TagResolver.resolver(Placeholder.parsed("sender", sender.name), Placeholder.parsed("money", liteEco.api.formatting(money)))))
             }
         }
     }
