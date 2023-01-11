@@ -28,6 +28,7 @@ object ModernText {
                 .resolver(StandardTags.rainbow())
                 .resolver(StandardTags.newline())
                 .resolver(StandardTags.transition())
+                .resolver(StandardTags.gradient())
                 .build()
             )
             .build()
