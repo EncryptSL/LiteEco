@@ -12,7 +12,7 @@ import org.bukkit.OfflinePlayer
 import java.util.*
 
 
-class AdaptiveEconomyProvider(private val liteEco: LiteEco) : AbstractEconomy() {
+class AdaptiveEconomyVaultAPI(private val liteEco: LiteEco) : AbstractEconomy() {
 
     override fun isEnabled(): Boolean {
         return liteEco.isEnabled
@@ -31,7 +31,7 @@ class AdaptiveEconomyProvider(private val liteEco: LiteEco) : AbstractEconomy() 
     }
 
     override fun format(amount: Double): String {
-        return amount.moneyFormat(currencyNameSingular().toString(), currencyNamePlural().toString())
+        return liteEco.api.formatting(amount)
     }
 
     override fun currencyNamePlural(): String? {
@@ -43,7 +43,7 @@ class AdaptiveEconomyProvider(private val liteEco: LiteEco) : AbstractEconomy() 
     }
 
     override fun hasAccount(player: OfflinePlayer?): Boolean {
-        return liteEco.preparedStatements.getExistPlayerAccount(player!!.uniqueId)
+        return liteEco.api.hasAccount(player!!)
     }
 
     @Deprecated("Deprecated in Java", ReplaceWith("hasAccount(player)"))
@@ -61,7 +61,7 @@ class AdaptiveEconomyProvider(private val liteEco: LiteEco) : AbstractEconomy() 
     }
 
     override fun getBalance(player: OfflinePlayer?): Double {
-        return if (hasAccount(player)) liteEco.preparedStatements.getBalance(player!!.uniqueId) else 0.0
+        return if (hasAccount(player)) liteEco.api.getBalance(player!!) else 0.0
     }
 
     @Deprecated("Deprecated in Java", ReplaceWith("getBalance(player)"))
@@ -98,17 +98,17 @@ class AdaptiveEconomyProvider(private val liteEco: LiteEco) : AbstractEconomy() 
 
     override fun withdrawPlayer(player: OfflinePlayer?, amount: Double): EconomyResponse {
         if (player == null) {
-            return EconomyResponse(0.0, 0.0, ResponseType.FAILURE, liteEco.translationConfig.getMessage("messages.player_is_null_error"))
+            return EconomyResponse(0.0, 0.0, ResponseType.FAILURE, null)
         }
         if (amount.isNegative() || amount.isZero() || amount.moneyFormat() == "0.00") {
-            return EconomyResponse(0.0, 0.0, ResponseType.FAILURE, liteEco.translationConfig.getMessage("messages.negative_amount_error"))
+            return EconomyResponse(0.0, 0.0, ResponseType.FAILURE, null)
         }
 
         return if (has(player, amount)) {
-            liteEco.preparedStatements.withdrawMoney(player.uniqueId, getBalance(player).minus(amount))
+            liteEco.api.withDrawMoney(player, getBalance(player).minus(amount))
             EconomyResponse(amount, getBalance(player), ResponseType.SUCCESS, null)
         } else {
-            EconomyResponse(0.0, getBalance(player), ResponseType.FAILURE, liteEco.translationConfig.getMessage("messages.sender_error_enough_pay"))
+            EconomyResponse(0.0, getBalance(player), ResponseType.FAILURE, null)
         }
     }
 
@@ -128,14 +128,14 @@ class AdaptiveEconomyProvider(private val liteEco: LiteEco) : AbstractEconomy() 
 
     override fun depositPlayer(player: OfflinePlayer?, amount: Double): EconomyResponse {
         if (player == null || !hasAccount(player)) {
-            return EconomyResponse(0.0, 0.0, ResponseType.FAILURE, liteEco.translationConfig.getMessage("messages.player_is_null_error"))
+            return EconomyResponse(0.0, 0.0, ResponseType.FAILURE, null)
         }
 
         if (amount.isNegative() || amount.isZero() || amount.moneyFormat() == "0.00") {
-            return EconomyResponse(0.0, 0.0, ResponseType.FAILURE, liteEco.translationConfig.getMessage("messages.negative_amount_error"))
+            return EconomyResponse(0.0, 0.0, ResponseType.FAILURE, null)
         }
 
-        liteEco.preparedStatements.depositMoney(player.uniqueId, getBalance(player).plus(amount))
+        liteEco.api.depositMoney(player, getBalance(player).plus(amount))
 
         return EconomyResponse(amount, getBalance(player), ResponseType.SUCCESS, null)
     }
@@ -155,11 +155,7 @@ class AdaptiveEconomyProvider(private val liteEco: LiteEco) : AbstractEconomy() 
     }
 
     override fun createPlayerAccount(player: OfflinePlayer?): Boolean {
-        if (hasAccount(player)) {
-            return false
-        }
-        liteEco.preparedStatements.createPlayerAccount(player!!.uniqueId, liteEco.config.getDouble("plugin.economy.default_money"))
-        return true
+        return liteEco.api.createAccount(player!!, liteEco.config.getDouble("plugin.economy.default_money"))
     }
 
     @Deprecated("Deprecated in Java", ReplaceWith("createPlayerAccount(player)"))
