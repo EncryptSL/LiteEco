@@ -1,4 +1,4 @@
-package encryptsl.cekuj.net.api
+package encryptsl.cekuj.net.api.economy
 
 import encryptsl.cekuj.net.LiteEco
 import encryptsl.cekuj.net.api.interfaces.LiteEconomyAPIProvider
@@ -55,5 +55,4 @@ class LiteEcoEconomyAPI(private val liteEco: LiteEco) : LiteEconomyAPIProvider {
     override fun formatting(amount: Double): String {
         return amount.moneyFormat(liteEco.config.getString("plugin.economy.prefix").toString(), liteEco.config.getString("plugin.economy.name").toString())
     }
-
 }

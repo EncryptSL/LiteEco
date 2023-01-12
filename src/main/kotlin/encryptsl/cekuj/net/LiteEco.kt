@@ -8,6 +8,8 @@ import cloud.commandframework.execution.AsynchronousCommandExecutionCoordinator
 import cloud.commandframework.meta.CommandMeta
 import cloud.commandframework.paper.PaperCommandManager
 import encryptsl.cekuj.net.api.*
+import encryptsl.cekuj.net.api.economy.vault.AdaptiveEconomyVaultAPI
+import encryptsl.cekuj.net.api.economy.LiteEcoEconomyAPI
 import encryptsl.cekuj.net.api.enums.TranslationKey
 import encryptsl.cekuj.net.commands.MoneyCMD
 import encryptsl.cekuj.net.config.TranslationConfig
