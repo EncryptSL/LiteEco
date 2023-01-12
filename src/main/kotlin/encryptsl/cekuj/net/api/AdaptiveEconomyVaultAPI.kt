@@ -105,7 +105,7 @@ class AdaptiveEconomyVaultAPI(private val liteEco: LiteEco) : AbstractEconomy() 
         }
 
         return if (has(player, amount)) {
-            liteEco.api.withDrawMoney(player, getBalance(player).minus(amount))
+            liteEco.api.withDrawMoney(player, amount)
             EconomyResponse(amount, getBalance(player), ResponseType.SUCCESS, null)
         } else {
             EconomyResponse(0.0, getBalance(player), ResponseType.FAILURE, null)
@@ -135,7 +135,7 @@ class AdaptiveEconomyVaultAPI(private val liteEco: LiteEco) : AbstractEconomy() 
             return EconomyResponse(0.0, 0.0, ResponseType.FAILURE, null)
         }
 
-        liteEco.api.depositMoney(player, getBalance(player).plus(amount))
+        liteEco.api.depositMoney(player, amount)
 
         return EconomyResponse(amount, getBalance(player), ResponseType.SUCCESS, null)
     }
