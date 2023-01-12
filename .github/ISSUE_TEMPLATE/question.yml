@@ -1,0 +1,20 @@
+name: Question
+description: Template for question
+title: "[Question]: "
+labels: ["Question"]
+assignees:
+  - EncryptSL
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this form!
+  - type: textarea
+    id: question
+    attributes:
+      label: Your Question
+      description: There you can write your question.
+      placeholder: Tell what is your question.
+      value: "I have question aboout...."
+    validations:
+      required: true

@@ -1,0 +1,28 @@
+name: Feature request
+description: Template for future request
+title: "[Feature Request]: "
+labels: ["Improvements"]
+assignees:
+  - EncryptSL
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this form!
+  - type: dropdown
+    id: type_of_feature
+    attributes:
+      label: Type of function to add or improvement
+      multiple: true
+      options:
+        - API
+        - Others
+  - type: textarea
+    id: relevant_area
+    attributes:
+      label: Your ideas
+      description: There you can write your idea for implement.
+      placeholder: Tell whats is your idea about feature request.
+      value: "I have something new for plugin !"
+    validations:
+      required: true
