@@ -28,6 +28,7 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.1")
     compileOnly("org.jetbrains.exposed:exposed-core:0.40.1")
     compileOnly("org.jetbrains.exposed:exposed-jdbc:0.40.1")
+    compileOnly("com.squareup.okhttp3:okhttp:4.10.0")
     implementation("cloud.commandframework:cloud-annotations:1.8.0")
     implementation("cloud.commandframework:cloud-paper:1.8.0")
     implementation("org.bstats:bstats-bukkit:3.0.0")
@@ -36,6 +37,7 @@ dependencies {
     testImplementation("org.xerial:sqlite-jdbc:3.40.0.0")
     testImplementation("org.jetbrains.exposed:exposed-core:0.40.1")
     testImplementation("org.jetbrains.exposed:exposed-jdbc:0.40.1")
+    testImplementation("com.squareup.okhttp3:okhttp:4.10.0")
 }
 
 tasks {

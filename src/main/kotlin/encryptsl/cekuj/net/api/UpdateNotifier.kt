@@ -1,25 +1,29 @@
 package encryptsl.cekuj.net.api
 
 import com.google.gson.Gson
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import java.net.MalformedURLException
-import java.net.URI
-import java.net.http.HttpClient
-import java.net.http.HttpRequest
-import java.net.http.HttpResponse
+import java.net.URL
 
-class UpdateNotifier(val id: String, val pluginVersion: String) {
+class UpdateNotifier(private val id: String, private val pluginVersion: String) {
 
-    private val client = HttpClient.newHttpClient()
-    private val httpRequest = HttpRequest.newBuilder()
+    private val okHttpClient = OkHttpClient()
+    private val requestClient = Request.Builder()
 
     private fun makeCheckRequest(): String {
-        httpRequest.uri(URI("https://api.spiget.org/v2/resources/$id/versions/latest"))
-        val response = client.send(httpRequest.build(), HttpResponse.BodyHandlers.ofString())
+        val request = requestClient.url(URL(String.format("https://api.spiget.org/v2/resources/%s/versions/latest", id))).build()
+        okHttpClient.newCall(request).execute().use { response ->
+            if (!response.isSuccessful) {
+                response.close()
+                throw MalformedURLException("Request error > ${response.code}")
+            }
 
-        return response.body() ?: throw MalformedURLException("Request error > ${response.statusCode()}")
+            return response.body!!.string()
+        }
     }
 
-    private fun getVersion(): String {
+     private fun getVersion(): String {
         val data = makeCheckRequest()
         val gson = Gson()
         return gson.fromJson(data, Version::class.java).name
