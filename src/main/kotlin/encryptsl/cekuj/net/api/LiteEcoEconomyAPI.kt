@@ -33,7 +33,7 @@ class LiteEcoEconomyAPI(private val liteEco: LiteEco) : LiteEconomyAPIProvider {
     }
 
     override fun getBalance(player: OfflinePlayer): Double {
-        return liteEco.preparedStatements.getBalance(player.uniqueId)
+        return if(hasAccount(player)) liteEco.preparedStatements.getBalance(player.uniqueId) else 0.0
     }
 
     override fun depositMoney(player: OfflinePlayer, amount: Double) {
