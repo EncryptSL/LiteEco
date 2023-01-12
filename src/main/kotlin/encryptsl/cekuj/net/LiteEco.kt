@@ -10,11 +10,14 @@ import cloud.commandframework.paper.PaperCommandManager
 import encryptsl.cekuj.net.api.*
 import encryptsl.cekuj.net.api.economy.vault.AdaptiveEconomyVaultAPI
 import encryptsl.cekuj.net.api.economy.LiteEcoEconomyAPI
+import encryptsl.cekuj.net.api.economy.treasury.TreasureCurrency
+import encryptsl.cekuj.net.api.economy.treasury.TreasuryEconomyAPI
 import encryptsl.cekuj.net.api.enums.TranslationKey
 import encryptsl.cekuj.net.commands.MoneyCMD
 import encryptsl.cekuj.net.config.TranslationConfig
 import encryptsl.cekuj.net.database.DatabaseConnector
 import encryptsl.cekuj.net.database.models.PreparedStatements
+import me.lokka30.treasury.api.economy.EconomyProvider
 import net.milkbowl.vault.economy.Economy
 import org.bstats.bukkit.Metrics
 import org.bstats.charts.SingleLineChart
@@ -54,29 +57,25 @@ class LiteEco : JavaPlugin() {
     override fun onEnable() {
         val start = System.currentTimeMillis()
         setupPAPI()
-        if (!connectToVault()) {
-            slF4JLogger.info("[%s] - Disabled due to no Vault dependency found!".format(description.name))
-            server.pluginManager.disablePlugin(this)
-            return
-        }
+        hookRegister()
         metrics = Metrics(this, 15144)
         metrics.addCustomChart(SingleLineChart("transactions") {
             countTransactions["transactions"]
         })
         updateNotifier = UpdateNotifier("101934", description.version)
-        slF4JLogger.info(updateNotifier.checkPluginVersion())
+        logger.info(updateNotifier.checkPluginVersion())
         registerCommands()
         val handlerListeners = HandlerListeners(this)
         handlerListeners.registerListener()
-        slF4JLogger.info("Plugin enabled in time ${System.currentTimeMillis() - start} ms")
+        logger.info("Plugin enabled in time ${System.currentTimeMillis() - start} ms")
     }
 
     override fun onDisable() {
-        slF4JLogger.info("Plugin is disabled")
+        logger.info("Plugin is disabled")
     }
 
     private fun registerCommands() {
-        slF4JLogger.info("Registering commands with Cloud Command Framework !")
+        logger.info("Registering commands with Cloud Command Framework !")
         val executionCoordinatorFunction = AsynchronousCommandExecutionCoordinator.builder<CommandSender>().build()
         val mapperFunction = Function.identity<CommandSender>()
         val commandManager: PaperCommandManager<CommandSender> = PaperCommandManager(
@@ -126,19 +125,30 @@ class LiteEco : JavaPlugin() {
         annotationParser.parse(MoneyCMD(this))
     }
 
+    private fun hookRegister() {
+        if (!connectToVault() || !connectToTreasury()) {
+            logger.warning("[%s] - Recommended is use Vault or Treasure for better experience!".format(description.name))
+        }
+    }
+
     private fun connectToVault(): Boolean {
         return if (pluginManger.isPluginEnabled("Vault")) {
             server.servicesManager.register(Economy::class.java, AdaptiveEconomyVaultAPI(this), this, ServicePriority.Highest)
-            slF4JLogger.warn("Registered Vault interface.")
-            val rsp = server.servicesManager.getRegistration(
-                Economy::class.java
-            )
-            if (rsp != null) {
-                econ = rsp.provider
-            }
+            logger.info("Registered Vault interface.")
             true
         } else {
-            slF4JLogger.error("Vault not found. Please download Vault to use LiteEco " + server.version)
+            logger.info("Vault not found. Please download Vault to use LiteEco " + server.version)
+            false
+        }
+    }
+
+    private fun connectToTreasury(): Boolean {
+        return if (pluginManger.isPluginEnabled("Treasury")) {
+            server.servicesManager.register(EconomyProvider::class.java, TreasuryEconomyAPI(this, TreasureCurrency(this)), this, ServicePriority.Highest)
+            logger.info("Registered Treasury interface.")
+            true
+        } else {
+            logger.info("Treasury not found. Please download Treasury to use LiteEco " + server.version)
             false
         }
     }

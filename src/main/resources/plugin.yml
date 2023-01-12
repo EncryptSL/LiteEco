@@ -5,8 +5,7 @@ version: ${version}
 author: EncryptSL
 website: http://www.encryptsl.cekuj.net
 load: STARTUP
-depend: [Vault]
-softdepend: [PlaceholderAPI]
+softdepend: [PlaceholderAPI, Vault, Treasury]
 api-version: 1.13
 libraries:
   - com.zaxxer:HikariCP:5.0.1

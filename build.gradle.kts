@@ -16,6 +16,9 @@ repositories {
     maven {
         url = uri("https://oss.sonatype.org/content/repositories/snapshots")
     }
+    maven {
+        url = uri("https://repo.codemc.io/repository/maven-public/")
+    }
 }
 
 dependencies {
@@ -29,6 +32,7 @@ dependencies {
     compileOnly("org.jetbrains.exposed:exposed-core:0.40.1")
     compileOnly("org.jetbrains.exposed:exposed-jdbc:0.40.1")
     compileOnly("com.squareup.okhttp3:okhttp:4.10.0")
+    compileOnly("me.lokka30:treasury-api:1.2.1")
     implementation("cloud.commandframework:cloud-annotations:1.8.0")
     implementation("cloud.commandframework:cloud-paper:1.8.0")
     implementation("org.bstats:bstats-bukkit:3.0.0")
