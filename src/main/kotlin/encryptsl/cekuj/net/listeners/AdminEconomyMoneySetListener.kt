@@ -18,7 +18,7 @@ class AdminEconomyMoneySetListener(private val liteEco: LiteEco) : Listener {
         val target: OfflinePlayer = event.offlinePlayer
         val money: Double = event.money
 
-        if (!liteEco.econ.hasAccount(target)) {
+        if (!liteEco.api.hasAccount(target)) {
             sender.sendMessage(
                 ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.account_not_exist"),
                 TagResolver.resolver(Placeholder.parsed("account", target.name.toString()))))

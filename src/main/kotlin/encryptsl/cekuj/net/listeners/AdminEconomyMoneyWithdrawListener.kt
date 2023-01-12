@@ -18,11 +18,15 @@ class AdminEconomyMoneyWithdrawListener(private val liteEco: LiteEco) : Listener
         val target: OfflinePlayer = event.offlinePlayer
         val money: Double = event.money
 
-        if (!liteEco.econ.hasAccount(target)) {
+        if (!liteEco.api.hasAccount(target)) {
             sender.sendMessage(
                 ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.account_not_exist"),
                 TagResolver.resolver(Placeholder.parsed("account", target.name.toString()))))
             return
+        }
+
+        if (!liteEco.api.has(target, money)) {
+            sender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.sender_error_enough_pay")))
         }
 
         liteEco.countTransactions["transactions"] = liteEco.countTransactions.getOrDefault("transactions", 0) + 1
