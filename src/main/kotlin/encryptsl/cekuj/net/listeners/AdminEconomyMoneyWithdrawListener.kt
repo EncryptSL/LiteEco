@@ -27,6 +27,7 @@ class AdminEconomyMoneyWithdrawListener(private val liteEco: LiteEco) : Listener
 
         if (!liteEco.api.has(target, money)) {
             sender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.sender_error_enough_pay")))
+            return
         }
 
         liteEco.countTransactions["transactions"] = liteEco.countTransactions.getOrDefault("transactions", 0) + 1
