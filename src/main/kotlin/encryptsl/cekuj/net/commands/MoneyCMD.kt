@@ -4,7 +4,6 @@ import cloud.commandframework.annotations.*
 import cloud.commandframework.annotations.specifier.Range
 import encryptsl.cekuj.net.LiteEco
 import encryptsl.cekuj.net.api.Paginator
-import encryptsl.cekuj.net.api.enums.TransactionType
 import encryptsl.cekuj.net.api.enums.TranslationKey
 import encryptsl.cekuj.net.api.events.*
 import encryptsl.cekuj.net.api.objects.ModernText
@@ -92,7 +91,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
                         "player",
                         Bukkit.getOfflinePlayer(UUID.fromString(mutableEntry.key)).name.toString()
                     ),
-                    Placeholder.parsed("money", liteEco.econ.format(mutableEntry.value).toString())
+                    Placeholder.parsed("money", liteEco.api.formatting(mutableEntry.value))
                 )
             )) }
 
@@ -140,7 +139,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
         }
 
         liteEco.server.scheduler.runTask(liteEco) { ->
-            liteEco.pluginManger.callEvent(PlayerEconomyPayEvent(player, offlinePlayer, TransactionType.PAY, amount))
+            liteEco.pluginManger.callEvent(PlayerEconomyPayEvent(player, offlinePlayer, amount))
         }
     }
 
