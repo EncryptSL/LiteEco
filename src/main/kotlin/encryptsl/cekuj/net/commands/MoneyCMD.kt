@@ -121,6 +121,14 @@ class MoneyCMD(private val liteEco: LiteEco) {
         }
     }
 
+    @CommandMethod("money|bal|balance adminhelp")
+    @CommandPermission("lite.eco.admin.help")
+    fun adminHelp(commandSender: CommandSender) {
+        liteEco.translationConfig.getList("messages.admin-help")?.forEach { s ->
+            commandSender.sendMessage(ModernText.miniModernText(s.toString()))
+        }
+    }
+
     @CommandMethod("money|bal|balance pay <player> <amount>")
     @CommandPermission("lite.eco.pay")
     fun onPayMoney(

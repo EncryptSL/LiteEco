@@ -35,6 +35,11 @@ messages:
     - "<white>[+] <gray>/money help <white>- <gray>Vypíše příkazy pluginu"
     - "<white>[+] <gray>/money top [page] <white>- <gray>Vypíše nejbohatší hráče"
     - "<white>[+] <gray>/money pay <yellow><username> <amount> <white>- <gray>Pošle hráči peníze."
+    - " "
+    - "<green>===========<white>[<green>LITE_ECO<white>]<green>==========="
+  admin-help:
+    - "<green>===========<white>[<green>LITE_ECO<white>]<green>==========="
+    - " "
     - "<white>[+] <gray>/money add <yellow><username> <amount> <white>- <gray>Přičte hráči peníze."
     - "<white>[+] <gray>/money set <yellow><username> <amount> <white>- <gray>Nastaví hráči určitou částku."
     - "<white>[+] <gray>/money remove <yellow><username> <amount> <white>- <gray>Odstraní hráči peníze."
