@@ -33,7 +33,6 @@ class LiteEco : JavaPlugin() {
 
     private val databaseConnector: DatabaseConnector by lazy { DatabaseConnector() }
     private lateinit var metrics: Metrics
-    lateinit var econ: Economy
     private lateinit var updateNotifier: UpdateNotifier
     var countTransactions: LinkedHashMap<String, Int> = LinkedHashMap()
     val pluginManger: PluginManager = server.pluginManager
