@@ -15,3 +15,25 @@ libraries:
   - com.squareup.okhttp3:okhttp:4.10.0
 
 description: ${description}
+
+permissions:
+  lite.eco.player:
+    description: Gives access to all player commands
+    children:
+      lite.eco.help: true
+      lite.eco.money: true
+      lite.eco.top: true
+      lite.eco.pay: true
+  lite.eco.admin:
+    description: Gives access to all admin commands
+    children:
+      lite.eco.admin.help: true
+      lite.eco.suggestion.players: true
+      lite.eco.add: true
+      lite.eco.gadd: true
+      lite.eco.set: true
+      lite.eco.gset: true
+      lite.eco.remove: true
+      lite.eco.gremove: true
+      lite.eco.lang: true
+      lite.eco.reload: true
