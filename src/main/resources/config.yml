@@ -10,7 +10,7 @@ plugin:
     name: LE
     # This amount is added to player from first connection.
     default_money: 30
-  # This settings disable messages.
+  # These settings disable messages.
   disableMessages:
     g_broadcast_pay: false
     g_broadcast_withdraw: false
