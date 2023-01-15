@@ -5,7 +5,7 @@ interface LiteEconomyAPIProvider {
     /**
      * Create player account from database
      * @param player is OfflinePlayer
-     * @param startAmount a amount added to player when accounts is created.
+     * @param startAmount an amount added to player when accounts is created.
      * @return Boolean
      * @see Boolean
      * @see OfflinePlayer
