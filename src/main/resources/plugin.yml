@@ -36,4 +36,5 @@ permissions:
       lite.eco.remove: true
       lite.eco.gremove: true
       lite.eco.lang: true
+      lite.eco.purge: true
       lite.eco.reload: true

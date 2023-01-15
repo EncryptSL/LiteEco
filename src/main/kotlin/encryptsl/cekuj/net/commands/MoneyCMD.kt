@@ -293,6 +293,13 @@ class MoneyCMD(private val liteEco: LiteEco) {
         }
     }
 
+    @CommandMethod("money|bal|balance purge [argument]")
+    @CommandPermission("lite.eco.purge")
+    fun onPurge(commandSender: CommandSender, @Argument(value = "argument") argument: String? = "")
+    {
+        TODO("Need implementation")
+    }
+
     @CommandMethod("money|bal|balance reload")
     @CommandPermission("lite.eco.reload")
     fun onReload(commandSender: CommandSender) {
