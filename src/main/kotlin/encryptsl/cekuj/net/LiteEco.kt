@@ -40,6 +40,7 @@ class LiteEco : JavaPlugin() {
     val translationConfig: TranslationConfig by lazy { TranslationConfig(this) }
     val api: LiteEcoEconomyAPI by lazy { LiteEcoEconomyAPI(this) }
     private val configLoaderAPI: ConfigLoaderAPI by lazy { ConfigLoaderAPI(this) }
+    private val hookManager: HookManager by lazy { HookManager(this) }
     override fun onLoad() {
         configLoaderAPI
             .create("database.db")
@@ -55,8 +56,8 @@ class LiteEco : JavaPlugin() {
 
     override fun onEnable() {
         val start = System.currentTimeMillis()
-        setupPAPI()
-        hookRegister()
+        blockPlugins()
+        hookRegistration()
         metrics = Metrics(this, 15144)
         metrics.addCustomChart(SingleLineChart("transactions") {
             countTransactions["transactions"]
@@ -124,40 +125,34 @@ class LiteEco : JavaPlugin() {
         annotationParser.parse(MoneyCMD(this))
     }
 
-    private fun hookRegister() {
-        if (!connectToVault() || !connectToTreasury()) {
+    private fun blockPlugins() {
+        hookManager.blockPlugin("Treasury")
+    }
+
+    private fun hookRegistration() {
+        val vaultFound: Boolean =
+            hookManager.serviceRegister(
+                "Vault",
+                Economy::class.java,
+                AdaptiveEconomyVaultAPI(this),
+                this,
+                ServicePriority.Highest
+            )
+
+        val treasuryFound: Boolean =
+            hookManager.
+            serviceRegister(
+                "Treasury",
+                EconomyProvider::class.java,
+                TreasuryEconomyAPI(this, TreasureCurrency(this)),
+                this,
+                ServicePriority.Highest
+            )
+
+        hookManager.hookPAPI()
+
+        if (!vaultFound || !treasuryFound) {
             logger.warning("[%s] - Recommended is use Vault or Treasure for better experience!".format(description.name))
-        }
-    }
-
-    private fun connectToVault(): Boolean {
-        return if (pluginManger.isPluginEnabled("Vault")) {
-            server.servicesManager.register(Economy::class.java, AdaptiveEconomyVaultAPI(this), this, ServicePriority.Highest)
-            logger.info("Registered Vault interface.")
-            true
-        } else {
-            logger.info("Vault not found. Please download Vault to use LiteEco " + server.version)
-            false
-        }
-    }
-
-    private fun connectToTreasury(): Boolean {
-        return if (pluginManger.isPluginEnabled("Treasury")) {
-            server.servicesManager.register(EconomyProvider::class.java, TreasuryEconomyAPI(this, TreasureCurrency(this)), this, ServicePriority.Highest)
-            logger.info("Registered Treasury interface.")
-            true
-        } else {
-            logger.info("Treasury not found. Please download Treasury to use LiteEco " + server.version)
-            false
-        }
-    }
-
-    private fun setupPAPI()  {
-        if (pluginManger.getPlugin("PlaceholderAPI") != null) {
-            slF4JLogger.warn("PlaceholderAPI hook initialized")
-            PlaceHolderExtensionProvider(this).register()
-        } else {
-            slF4JLogger.error("PlaceholderAPI hook not found")
         }
     }
 
