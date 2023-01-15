@@ -2,7 +2,6 @@ package encryptsl.cekuj.net.api
 
 import encryptsl.cekuj.net.LiteEco
 import encryptsl.cekuj.net.api.interfaces.ConfigLoaderProvider
-import org.bukkit.Bukkit
 import java.io.File
 
 /**
@@ -19,13 +18,6 @@ class ConfigLoaderAPI(private val liteEco: LiteEco) : ConfigLoaderProvider {
             liteEco.saveResource(configName, false)
         } else {
             liteEco.logger.info("Configuration $configName exist !")
-        }
-        return this
-    }
-    override fun checkDependency(pluginName: String): ConfigLoaderAPI {
-        if (Bukkit.getPluginManager().getPlugin(pluginName) == null) {
-            liteEco.logger.info("Plugin $pluginName not found")
-            Bukkit.getPluginManager().disablePlugin(liteEco)
         }
         return this
     }
