@@ -51,8 +51,10 @@ All available permissions for commands:
   Permission: lite.eco.money
   This is a permissions for admins to suggestions player names.
   Permission: lite.eco.suggestion.players
-/money help: This show commands
+/money help: This show commands for players
   Permission: lite.eco.help
+/money adminhelp: This show commands for admins
+  Permission: lite.eco.admin.help
 /money top [page]: This show richest players
   Permission: lite.eco.top
 /money pay <player> <amount>: This command you send your money to another.
