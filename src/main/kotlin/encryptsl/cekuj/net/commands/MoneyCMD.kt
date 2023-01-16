@@ -83,6 +83,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
     fun onTopBalance(commandSender: CommandSender, @Argument(value = "page") @Range(min = "1", max="") page: Int?) {
         val p = page ?: 1
         val balances = liteEco.api.getTopBalance().entries.sortedByDescending { e -> e.value }
+            .filter { data -> Bukkit.getOfflinePlayer(UUID.fromString(data.key)).hasPlayedBefore() }
             .positionIndexed { index, mutableEntry -> LegacyComponentSerializer.legacyAmpersand().serialize(ModernText.miniModernText(
                 liteEco.translationConfig.getMessage("messages.balance_top_format"),
                 TagResolver.resolver(
