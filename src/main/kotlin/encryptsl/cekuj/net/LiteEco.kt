@@ -7,25 +7,22 @@ import cloud.commandframework.bukkit.CloudBukkitCapabilities
 import cloud.commandframework.execution.AsynchronousCommandExecutionCoordinator
 import cloud.commandframework.meta.CommandMeta
 import cloud.commandframework.paper.PaperCommandManager
-import encryptsl.cekuj.net.api.*
-import encryptsl.cekuj.net.api.economy.vault.AdaptiveEconomyVaultAPI
+import encryptsl.cekuj.net.api.ConfigLoaderAPI
+import encryptsl.cekuj.net.api.HookManager
+import encryptsl.cekuj.net.api.UpdateNotifier
 import encryptsl.cekuj.net.api.economy.LiteEcoEconomyAPI
-import encryptsl.cekuj.net.api.economy.treasury.TreasureCurrency
-import encryptsl.cekuj.net.api.economy.treasury.TreasuryEconomyAPI
+import encryptsl.cekuj.net.api.enums.PurgeKey
 import encryptsl.cekuj.net.api.enums.TranslationKey
 import encryptsl.cekuj.net.commands.MoneyCMD
 import encryptsl.cekuj.net.config.TranslationConfig
 import encryptsl.cekuj.net.database.DatabaseConnector
 import encryptsl.cekuj.net.database.models.PreparedStatements
-import me.lokka30.treasury.api.economy.EconomyProvider
-import net.milkbowl.vault.economy.Economy
 import org.bstats.bukkit.Metrics
 import org.bstats.charts.SingleLineChart
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import org.bukkit.plugin.PluginManager
-import org.bukkit.plugin.ServicePriority
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.function.Function
 
@@ -122,6 +119,9 @@ class LiteEco : JavaPlugin() {
         commandManager.parserRegistry().registerSuggestionProvider("translationKeys") { _, _ ->
             TranslationKey.values().map { key -> key.name }.toList()
         }
+        commandManager.parserRegistry().registerSuggestionProvider("purgeKeys") { _, _ ->
+            PurgeKey.values().filter { key -> key != PurgeKey.NULL_ACCOUNTS }.map { key -> key.name }.toList()
+        }
         annotationParser.parse(MoneyCMD(this))
     }
 
@@ -130,30 +130,9 @@ class LiteEco : JavaPlugin() {
     }
 
     private fun hookRegistration() {
-        val vaultFound: Boolean =
-            hookManager.serviceRegister(
-                "Vault",
-                Economy::class.java,
-                AdaptiveEconomyVaultAPI(this),
-                this,
-                ServicePriority.Highest
-            )
-
-        val treasuryFound: Boolean =
-            hookManager.
-            serviceRegister(
-                "Treasury",
-                EconomyProvider::class.java,
-                TreasuryEconomyAPI(this, TreasureCurrency(this)),
-                this,
-                ServicePriority.Highest
-            )
-
         hookManager.hookPAPI()
-
-        if (!vaultFound || !treasuryFound) {
-            logger.warning("[%s] - Recommended is use Vault or Treasure for better experience!".format(description.name))
-        }
+        hookManager.hookVault()
+        hookManager.hookTreasury()
     }
 
 }

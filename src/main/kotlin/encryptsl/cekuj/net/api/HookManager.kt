@@ -1,7 +1,12 @@
 package encryptsl.cekuj.net.api
 
 import encryptsl.cekuj.net.LiteEco
-import org.bukkit.plugin.Plugin
+import encryptsl.cekuj.net.api.economy.treasury.TreasureCurrency
+import encryptsl.cekuj.net.api.economy.treasury.TreasuryEconomyAPI
+import encryptsl.cekuj.net.api.economy.vault.AdaptiveEconomyVaultAPI
+import me.lokka30.treasury.api.common.service.ServiceRegistry
+import me.lokka30.treasury.api.economy.EconomyProvider
+import net.milkbowl.vault.economy.Economy
 import org.bukkit.plugin.ServicePriority
 
 class HookManager(private val liteEco: LiteEco) {
@@ -22,7 +27,7 @@ class HookManager(private val liteEco: LiteEco) {
      * @param pluginName - String name of plugin is CaseSensitive
      * @return Boolean
      */
-    fun isPluginEnabled(pluginName: String): Boolean {
+    private fun isPluginEnabled(pluginName: String): Boolean {
         return liteEco.pluginManger.isPluginEnabled(pluginName)
     }
 
@@ -38,23 +43,22 @@ class HookManager(private val liteEco: LiteEco) {
         }
     }
 
-    /**
-     * ServiceRegister is method for registering services.
-     * @param pluginName - String name of plugin is CaseSensitive
-     * @param service - Is represented like a interface of provider.
-     * @param provider - Is class implemented service.
-     * @param plugin - Is instance of LiteEco plugin
-     * @param priority - Is priority of the registering.
-     * @return Boolean
-     */
-    fun <T : Any> serviceRegister(pluginName: String, service: Class<T>, provider: T, plugin: Plugin, priority: ServicePriority): Boolean {
-        return if (isPluginEnabled(pluginName)) {
-            liteEco.server.servicesManager.register(service, provider, plugin, priority)
-            liteEco.logger.info("Registered $pluginName like a service.")
-            true
+
+    fun hookVault() {
+        if (isPluginEnabled("Vault")) {
+            liteEco.server.servicesManager.register(Economy::class.java, AdaptiveEconomyVaultAPI(liteEco), liteEco, ServicePriority.Highest)
+            liteEco.logger.info("Registered Vault like a service.")
         } else {
-            liteEco.logger.info("$pluginName not found. Please download $pluginName to use LiteEco")
-            false
+            liteEco.logger.info("Vault not found, for better experience please download Vault or Treasury.")
+        }
+    }
+
+    fun hookTreasury() {
+        if (isPluginEnabled("Treasury")) {
+            ServiceRegistry.INSTANCE.registerService(EconomyProvider::class.java, TreasuryEconomyAPI(liteEco, TreasureCurrency(liteEco)), "LiteEco", me.lokka30.treasury.api.common.service.ServicePriority.HIGH)
+            liteEco.logger.info("Registered Treasury like a service.")
+        } else {
+            liteEco.logger.info("Treasury not found, for better experience please download Treasury or Vault.")
         }
     }
 }
