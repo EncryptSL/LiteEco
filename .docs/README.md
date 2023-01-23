@@ -73,6 +73,8 @@ All available permissions for commands:
   Permissions: lite.eco.gremove
 /money lang [CS_CZ, EN_US]: This command switch translations files.
   Permission: lite.eco.lang
+/money purge [argument]: This command purge data.
+  Permission: lite.eco.purge
 /money reload: This command reload configs.
   Permission: lite.eco.reload
 ```
