@@ -306,6 +306,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
             }
             PurgeKey.DEFAULT_ACCOUNTS -> {
                 liteEco.preparedStatements.purgeDefaultAccounts(liteEco.config.getDouble("plugin.economy.default_money"))
+                commandSender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.purge_default_accounts")))
             }
             else -> {
                 commandSender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.purge_argument_error")))

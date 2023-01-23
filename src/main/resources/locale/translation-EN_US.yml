@@ -29,6 +29,7 @@ messages:
   translation_switch: "<green>[<white>LITE_ECO<green>] <green>Translation was switched on <locale>"
   translation_missing: "<green>[<white>LITE_ECO<green>] <red>Translation <key> missing.... contact developer of this plugin."
   purge_accounts: "<green>[<white>LITE_ECO<green>] <green>Your purge all player accounts."
+  purge_default_accounts: "<green>[<white>LITE_ECO<green>] <green>You purge all player accounts with default value."
   purge_argument_error: "<green>[<white>LITE_ECO<green>] <red>This <argument> argument is not valid or not ready for production."
   help:
     - "<green>===========<white>[<green>LITE_ECO<white>]<green>==========="
