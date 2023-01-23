@@ -46,6 +46,7 @@ messages:
     - "<white>[+] <gray>/money set <yellow><username> <amount> <white>- <gray>Set money value to another player."
     - "<white>[+] <gray>/money remove <yellow><username> <amount> <white>- <gray>Remove money account to another player."
     - "<white>[+] <gray>/money lang [lang] <white>- <gray>Switch message translation."
+    - "<white>[+] <gray>/money purge [argument] <white> - <gray>Purge data."
     - "<white>[+] <gray>/money reload <white>- <gray>Reloading of configuration."
     - " "
     - "<green>===========<white>[<green>LITE_ECO<white>]<green>==========="

@@ -46,6 +46,7 @@ messages:
     - "<white>[+] <gray>/money set <yellow><username> <amount> <white>- <gray>Nastaví hráči určitou částku."
     - "<white>[+] <gray>/money remove <yellow><username> <amount> <white>- <gray>Odstraní hráči peníze."
     - "<white>[+] <gray>/money lang [lang] <white>- <gray>Přepne překlad zpráv."
+    - "<white>[+] <gray>/money purge [argument] <white> - <gray>Čištění dat."
     - "<white>[+] <gray>/money reload <white>- <gray>Znovu načte konfiguraci."
     - " "
     - "<green>===========<white>[<green>LITE_ECO<white>]<green>==========="
