@@ -65,4 +65,12 @@ class PreparedStatements : DatabaseSQLProvider {
             it[Money.money] = money
         } }
     }
+
+    override fun purgeAccounts() {
+        transaction { Money.deleteAll() }
+    }
+
+    override fun purgeDefaultAccounts(defaultMoney: Double) {
+        transaction { Money.deleteWhere { money eq defaultMoney } }
+    }
 }

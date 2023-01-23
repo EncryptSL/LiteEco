@@ -4,6 +4,7 @@ import cloud.commandframework.annotations.*
 import cloud.commandframework.annotations.specifier.Range
 import encryptsl.cekuj.net.LiteEco
 import encryptsl.cekuj.net.api.Paginator
+import encryptsl.cekuj.net.api.enums.PurgeKey
 import encryptsl.cekuj.net.api.enums.TranslationKey
 import encryptsl.cekuj.net.api.events.*
 import encryptsl.cekuj.net.api.objects.ModernText
@@ -296,9 +297,20 @@ class MoneyCMD(private val liteEco: LiteEco) {
 
     @CommandMethod("money|bal|balance purge [argument]")
     @CommandPermission("lite.eco.purge")
-    fun onPurge(commandSender: CommandSender, @Argument(value = "argument") argument: String? = "")
+    fun onPurge(commandSender: CommandSender, @Argument(value = "argument", suggestions = "purgeKeys") purgeKey: PurgeKey)
     {
-        TODO("Need implementation")
+        when (purgeKey) {
+            PurgeKey.ACCOUNTS -> {
+                liteEco.preparedStatements.purgeAccounts()
+                commandSender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("purge_accounts")))
+            }
+            PurgeKey.DEFAULT_ACCOUNTS -> {
+                liteEco.preparedStatements.purgeDefaultAccounts(liteEco.config.getDouble("plugin.economy.default_money"))
+            }
+            else -> {
+                commandSender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("purge_argument_error")))
+            }
+        }
     }
 
     @CommandMethod("money|bal|balance reload")

@@ -28,6 +28,8 @@ messages:
   config_reload: "<green>[<white>LITE_ECO<green>] <green>Config byl znovu načten !"
   translation_switch: "<green>[<white>LITE_ECO<green>] <green>Překlad byl přepnut na <locale>"
   translation_missing: "<green>[<white>LITE_ECO<green>] <red>Překlad <key> chybí.... kontaktuj vývojáře tohoto pluginu."
+  purge_accounts: "<green>[<white>LITE_ECO<green>] <green>Smazal jsi všechny účty."
+  purge_argument_error: "<green>[<white>LITE_ECO<green>] <red>Tento <argument> argument není validní nebo není připraven do produkce."
   help:
     - "<green>===========<white>[<green>LITE_ECO<white>]<green>==========="
     - " "
