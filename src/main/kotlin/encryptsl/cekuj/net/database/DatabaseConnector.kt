@@ -11,10 +11,10 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 class DatabaseConnector : DatabaseConnectorProvider {
 
-    override fun initConnect(jdbc_host: String, user: String, pass: String) {
+    override fun initConnect(jdbcHost: String, user: String, pass: String) {
         val config = HikariDataSource().apply {
             maximumPoolSize = 10
-            jdbcUrl = jdbc_host
+            jdbcUrl = jdbcHost
             username = user
             password = pass
         }
