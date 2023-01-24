@@ -292,6 +292,16 @@ class MoneyCMD(private val liteEco: LiteEco) {
                     )
                 )
             }
+
+            TranslationKey.ES_ES -> {
+                liteEco.translationConfig.setTranslationFile(TranslationKey.ES_ES)
+                commandSender.sendMessage(
+                    ModernText.miniModernText(
+                        liteEco.translationConfig.getMessage("messages.translation_switch"),
+                        TagResolver.resolver(Placeholder.parsed("locale", translationKey.name))
+                    )
+                )
+            }
         }
     }
 
