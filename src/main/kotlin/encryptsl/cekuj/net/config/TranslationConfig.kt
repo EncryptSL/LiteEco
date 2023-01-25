@@ -47,6 +47,7 @@ class TranslationConfig(private val liteEco: LiteEco) {
         when(TranslationKey.valueOf(currentTranslation)) {
             TranslationKey.CS_CZ -> setTranslationFile(TranslationKey.CS_CZ)
             TranslationKey.EN_US -> setTranslationFile(TranslationKey.EN_US)
+            TranslationKey.ES_ES -> setTranslationFile(TranslationKey.ES_ES)
         }
     }
 
