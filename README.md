@@ -12,4 +12,6 @@ Documentation: [Click to Read](https://github.com/EncryptSL/LiteEco/tree/main/.d
 ![issues](https://img.shields.io/github/issues/EncryptSL/LiteEco)
 ![download](https://img.shields.io/github/downloads/EncryptSL/LiteEco/total)
 
+[![supportme](https://storage.ko-fi.com/cdn/brandasset/kofi_s_tag_white.png)](https://ko-fi.com/encryptsl)
+
 ![BStats](https://bstats.org/signatures/bukkit/LiteEco.svg)
