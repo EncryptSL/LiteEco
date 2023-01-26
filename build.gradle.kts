@@ -21,6 +21,12 @@ repositories {
     }
 }
 
+kotlin {
+    jvmToolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
+
 dependencies {
     paperDevBundle(providers.gradleProperty("server_version").get())
     compileOnly(kotlin("stdlib", "1.8.0"))
