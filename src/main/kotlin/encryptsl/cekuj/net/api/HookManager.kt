@@ -32,10 +32,19 @@ class HookManager(private val liteEco: LiteEco) {
     }
 
     /**
+     * Method for check if plugin is installed
+     * @param pluginName - String name of plugin is CaseSensitive
+     * @return Boolean
+     */
+    private fun isPluginInstalled(pluginName: String): Boolean {
+        return liteEco.pluginManger.getPlugin(pluginName) != null
+    }
+
+    /**
      * Method of registering Placeholders if plugin PlaceholderAPI is enabled.
      */
     fun hookPAPI() {
-        if (isPluginEnabled("PlaceholderAPI")) {
+        if (isPluginInstalled("PlaceholderAPI")) {
             liteEco.logger.info("PlaceholderAPI hook initialized")
             PlaceHolderExtensionProvider(liteEco).register()
         } else {
