@@ -34,7 +34,7 @@ messages:
   help:
     - "<green>===========<white>[<green>LITE_ECO<white>]<green>==========="
     - " "
-    - "<white>[+] <gray>/money [username]<white>- <gray>Mostrar el saldo de tu cuenta o de otro jugador"
+    - "<white>[+] <gray>/money [username] <white>- <gray>Mostrar el saldo de tu cuenta o de otro jugador"
     - "<white>[+] <gray>/money help <white>- <gray>Mostrar lista de comandos"
     - "<white>[+] <gray>/money top [page] <white>- <gray>Mostrar jugadores mas ricos"
     - "<white>[+] <gray>/money pay <yellow><username> <amount> <white>- <gray>Transferir dinero a otro jugador."
@@ -50,7 +50,7 @@ messages:
     - "<white>[+] <gray>/money gset <yellow><amount> <white>- <gray>Establecer dinero de todas las cuentas."
     - "<white>[+] <gray>/money gremove <yellow><amount> <white>- <gray>Quitar dinero a todas las cuentas."
     - "<white>[+] <gray>/money lang [lang] <white>- <gray>Cambiar la traduccion de mensajes."
-    - "<white>[+] <gray>/money purge [argument] <white> - <gray>Purgar datos."
+    - "<white>[+] <gray>/money purge [argument] <white>- <gray>Purgar datos."
     - "<white>[+] <gray>/money reload <white>- <gray>Recargar la configuracion."
     - " "
     - "<green>===========<white>[<green>LITE_ECO<white>]<green>==========="

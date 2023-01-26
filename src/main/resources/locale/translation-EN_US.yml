@@ -34,7 +34,7 @@ messages:
   help:
     - "<green>===========<white>[<green>LITE_ECO<white>]<green>==========="
     - " "
-    - "<white>[+] <gray>/money [username]<white>- <gray>Show balance of your account or another player"
+    - "<white>[+] <gray>/money [username] <white>- <gray>Show balance of your account or another player"
     - "<white>[+] <gray>/money help <white>- <gray>Show commands list of plugin"
     - "<white>[+] <gray>/money top [page] <white>- <gray>Show richest players"
     - "<white>[+] <gray>/money pay <yellow><username> <amount> <white>- <gray>Sent money to another player."
@@ -50,7 +50,7 @@ messages:
     - "<white>[+] <gray>/money gset <yellow><amount> <white>- <gray>Set money value of all players."
     - "<white>[+] <gray>/money gremove <yellow><amount> <white>- <gray>Remove money account of all players."
     - "<white>[+] <gray>/money lang [lang] <white>- <gray>Switch message translation."
-    - "<white>[+] <gray>/money purge [argument] <white> - <gray>Purge data."
+    - "<white>[+] <gray>/money purge [argument] <white>- <gray>Purge data."
     - "<white>[+] <gray>/money reload <white>- <gray>Reloading of configuration."
     - " "
     - "<green>===========<white>[<green>LITE_ECO<white>]<green>==========="
