@@ -80,7 +80,7 @@ class PlaceHolderExtensionProvider(private val liteEco: LiteEco) : PlaceholderEx
     }
 
     private fun topBalance(): LinkedHashMap<String, Double>? {
-          return liteEco.preparedStatements.getTopBalance(10)
+          return liteEco.api.getTopBalance()
             .entries
             .stream()
             .sorted(compareByDescending{o1 -> o1.value})
