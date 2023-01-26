@@ -131,13 +131,19 @@ class MoneyCMD(private val liteEco: LiteEco) {
         }
     }
 
+    @ProxiedBy("pay")
     @CommandMethod("money|bal|balance pay <player> <amount>")
     @CommandPermission("lite.eco.pay")
     fun onPayMoney(
-        player: Player,
+        commandSender: CommandSender,
         @Argument(value = "player", suggestions = "offlinePlayers") offlinePlayer: OfflinePlayer,
         @Argument(value = "amount") @Range(min = "1.00", max = "") amount: Double
     ) {
+        if (commandSender !is Player) { // temp fix
+            commandSender.sendMessage(ModernText.miniModernText("<red>TerminalConsoleCommandSender is not allowed to execute that command. Must be of type Player"))
+            return
+        }
+        val player: Player = commandSender
 
         if (player.name == offlinePlayer.name) {
             player.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.self_pay_error")))
