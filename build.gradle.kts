@@ -28,7 +28,7 @@ dependencies {
         exclude("org.bukkit", "bukkit")
     }
     compileOnly("com.zaxxer:HikariCP:5.0.1")
-    compileOnly("me.clip:placeholderapi:2.11.1")
+    compileOnly("me.clip:placeholderapi:2.11.2")
     compileOnly("org.jetbrains.exposed:exposed-core:0.40.1")
     compileOnly("org.jetbrains.exposed:exposed-jdbc:0.40.1")
     compileOnly("com.squareup.okhttp3:okhttp:4.10.0")
