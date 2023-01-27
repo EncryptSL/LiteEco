@@ -123,7 +123,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
         }
     }
 
-    @CommandMethod("money|bal|balance adminhelp")
+    @CommandMethod("eco adminhelp")
     @CommandPermission("lite.eco.admin.help")
     fun adminHelp(commandSender: CommandSender) {
         liteEco.translationConfig.getList("messages.admin-help")?.forEach { s ->
@@ -131,13 +131,20 @@ class MoneyCMD(private val liteEco: LiteEco) {
         }
     }
 
+    @ProxiedBy("pay")
     @CommandMethod("money|bal|balance pay <player> <amount>")
     @CommandPermission("lite.eco.pay")
     fun onPayMoney(
-        player: Player,
+        commandSender: CommandSender,
         @Argument(value = "player", suggestions = "offlinePlayers") offlinePlayer: OfflinePlayer,
         @Argument(value = "amount") @Range(min = "1.00", max = "") amount: Double
     ) {
+        if (commandSender !is Player) { // temp fix
+            commandSender.sendMessage(ModernText.miniModernText("<red>TerminalConsoleCommandSender is not allowed to execute that command. Must be of type Player"))
+            return
+        }
+        val player: Player = commandSender
+
         if (player.name == offlinePlayer.name) {
             player.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.self_pay_error")))
             return
@@ -153,7 +160,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
         }
     }
 
-    @CommandMethod("money|bal|balance add <player> <amount>")
+    @CommandMethod("eco add <player> <amount>")
     @CommandPermission("lite.eco.add")
     fun onAddMoney(
         commandSender: CommandSender,
@@ -171,7 +178,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
         }
     }
 
-    @CommandMethod("money|bal|balance gadd <amount>")
+    @CommandMethod("eco gadd <amount>")
     @CommandPermission("lite.eco.gadd")
     fun onGlobalAddMoney(
         commandSender: CommandSender,
@@ -189,7 +196,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
         }
     }
 
-    @CommandMethod("money|bal|balance set <player> <amount>")
+    @CommandMethod("eco set <player> <amount>")
     @CommandPermission("lite.eco.set")
     fun onSetBalance(
         commandSender: CommandSender,
@@ -211,7 +218,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
         }
     }
 
-    @CommandMethod("money|bal|balance gset <amount>")
+    @CommandMethod("eco gset <amount>")
     @CommandPermission("lite.eco.gset")
     fun onGlobalSetMoney(
         commandSender: CommandSender,
@@ -229,7 +236,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
         }
     }
 
-    @CommandMethod("money|bal|balance remove <player> <amount>")
+    @CommandMethod("eco remove <player> <amount>")
     @CommandPermission("lite.eco.remove")
     fun onRemoveMoney(
         commandSender: CommandSender,
@@ -253,7 +260,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
         }
     }
 
-    @CommandMethod("money|bal|balance gremove <amount>")
+    @CommandMethod("eco gremove <amount>")
     @CommandPermission("lite.eco.gremove")
     fun onGlobalRemoveMoney(
         commandSender: CommandSender,
@@ -266,7 +273,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
         }
     }
 
-    @CommandMethod("money|bal|balance lang <isoKey>")
+    @CommandMethod("eco lang <isoKey>")
     @CommandPermission("lite.eco.lang")
     fun onLangSwitch(
         commandSender: CommandSender,
@@ -305,7 +312,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
         }
     }
 
-    @CommandMethod("money|bal|balance purge [argument]")
+    @CommandMethod("eco purge [argument]")
     @CommandPermission("lite.eco.purge")
     fun onPurge(commandSender: CommandSender, @Argument(value = "argument", suggestions = "purgeKeys") purgeKey: PurgeKey)
     {
@@ -324,7 +331,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
         }
     }
 
-    @CommandMethod("money|bal|balance reload")
+    @CommandMethod("eco reload")
     @CommandPermission("lite.eco.reload")
     fun onReload(commandSender: CommandSender) {
         liteEco.reloadConfig()
