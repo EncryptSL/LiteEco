@@ -22,6 +22,7 @@ permissions:
     children:
       lite.eco.help: true
       lite.eco.money: true
+      lite.eco.balance: true
       lite.eco.top: true
       lite.eco.pay: true
   lite.eco.admin:

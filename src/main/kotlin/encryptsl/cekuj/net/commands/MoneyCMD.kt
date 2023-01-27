@@ -26,9 +26,23 @@ import java.util.*
 @CommandDescription("Provided plugin by LiteEco")
 class MoneyCMD(private val liteEco: LiteEco) {
 
-    @CommandMethod("money|bal|balance [player]")
-    @CommandPermission("lite.eco.money")
-    fun onBalance(commandSender: CommandSender, @Argument(value = "player", suggestions = "players") offlinePlayer: OfflinePlayer?) {
+    @CommandMethod("money help")
+    @CommandPermission("lite.eco.help")
+    fun onHelp(commandSender: CommandSender) {
+        liteEco.translationConfig.getList("messages.help")?.forEach { s ->
+            commandSender.sendMessage(ModernText.miniModernText(s.toString()))
+        }
+    }
+
+    @CommandMethod("bal|balance [player]")
+    @CommandPermission("lite.eco.balance")
+    fun onBalanceProxy(commandSender: CommandSender, @Argument(value = "player", suggestions = "offlinePlayers") offlinePlayer: OfflinePlayer?) {
+        onBalance(commandSender, offlinePlayer)
+    }
+
+    @CommandMethod("money bal [player]")
+    @CommandPermission("lite.eco.balance")
+    fun onBalance(commandSender: CommandSender, @Argument(value = "player", suggestions = "offlinePlayers") offlinePlayer: OfflinePlayer?) {
         if (commandSender is Player) {
             if (offlinePlayer == null) {
                 commandSender.sendMessage(
@@ -115,16 +129,8 @@ class MoneyCMD(private val liteEco: LiteEco) {
         commandSender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.balance_top_line_second")))
     }
 
-    @CommandMethod("money|bal|balance help")
-    @CommandPermission("lite.eco.help")
-    fun onHelp(commandSender: CommandSender) {
-        liteEco.translationConfig.getList("messages.help")?.forEach { s ->
-            commandSender.sendMessage(ModernText.miniModernText(s.toString()))
-        }
-    }
-
     @ProxiedBy("pay")
-    @CommandMethod("money|bal|balance pay <player> <amount>")
+    @CommandMethod("money pay <player> <amount>")
     @CommandPermission("lite.eco.pay")
     fun onPayMoney(
         commandSender: CommandSender,
