@@ -27,14 +27,14 @@ permissions:
   lite.eco.admin:
     description: Gives access to all admin commands
     children:
-      lite.eco.admin.help: true
       lite.eco.suggestion.players: true
-      lite.eco.add: true
-      lite.eco.gadd: true
-      lite.eco.set: true
-      lite.eco.gset: true
-      lite.eco.remove: true
-      lite.eco.gremove: true
-      lite.eco.lang: true
-      lite.eco.purge: true
-      lite.eco.reload: true
+      lite.eco.admin.help: true
+      lite.eco.admin.add: true
+      lite.eco.admin.gadd: true
+      lite.eco.admin.set: true
+      lite.eco.admin.gset: true
+      lite.eco.admin.remove: true
+      lite.eco.admin.gremove: true
+      lite.eco.admin.lang: true
+      lite.eco.admin.purge: true
+      lite.eco.admin.reload: true
