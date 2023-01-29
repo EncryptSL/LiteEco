@@ -34,9 +34,9 @@ messages:
   help:
     - "<green>===========<white>[<green>LITE_ECO<white>]<green>==========="
     - " "
-    - "<white>[+] <gray>/money [username] <white>- <gray>Show balance of your account or another player"
     - "<white>[+] <gray>/money help <white>- <gray>Show commands list of plugin"
     - "<white>[+] <gray>/money top [page] <white>- <gray>Show richest players"
+    - "<white>[+] <gray>/money bal [username] <white>- <gray>Show balance of your account or another player"
     - "<white>[+] <gray>/money pay <yellow><username> <amount> <white>- <gray>Sent money to another player."
     - " "
     - "<green>===========<white>[<green>LITE_ECO<white>]<green>==========="

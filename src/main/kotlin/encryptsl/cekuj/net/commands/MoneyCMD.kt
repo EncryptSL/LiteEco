@@ -26,9 +26,23 @@ import java.util.*
 @CommandDescription("Provided plugin by LiteEco")
 class MoneyCMD(private val liteEco: LiteEco) {
 
-    @CommandMethod("money|bal|balance [player]")
-    @CommandPermission("lite.eco.money")
-    fun onBalance(commandSender: CommandSender, @Argument(value = "player", suggestions = "players") offlinePlayer: OfflinePlayer?) {
+    @CommandMethod("money help")
+    @CommandPermission("lite.eco.help")
+    fun onHelp(commandSender: CommandSender) {
+        liteEco.translationConfig.getList("messages.help")?.forEach { s ->
+            commandSender.sendMessage(ModernText.miniModernText(s.toString()))
+        }
+    }
+
+    @CommandMethod("bal|balance [player]")
+    @CommandPermission("lite.eco.balance")
+    fun onBalanceProxy(commandSender: CommandSender, @Argument(value = "player", suggestions = "offlinePlayers") offlinePlayer: OfflinePlayer?) {
+        onBalance(commandSender, offlinePlayer)
+    }
+
+    @CommandMethod("money bal [player]")
+    @CommandPermission("lite.eco.balance")
+    fun onBalance(commandSender: CommandSender, @Argument(value = "player", suggestions = "offlinePlayers") offlinePlayer: OfflinePlayer?) {
         if (commandSender is Player) {
             if (offlinePlayer == null) {
                 commandSender.sendMessage(
@@ -115,15 +129,34 @@ class MoneyCMD(private val liteEco: LiteEco) {
         commandSender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.balance_top_line_second")))
     }
 
-    @CommandMethod("money|bal|balance help")
-    @CommandPermission("lite.eco.help")
-    fun onHelp(commandSender: CommandSender) {
-        liteEco.translationConfig.getList("messages.help")?.forEach { s ->
-            commandSender.sendMessage(ModernText.miniModernText(s.toString()))
+    @ProxiedBy("pay")
+    @CommandMethod("money pay <player> <amount>")
+    @CommandPermission("lite.eco.pay")
+    fun onPayMoney(
+        commandSender: CommandSender,
+        @Argument(value = "player", suggestions = "offlinePlayers") offlinePlayer: OfflinePlayer,
+        @Argument(value = "amount") @Range(min = "1.00", max = "") amount: Double
+    ) {
+        if (commandSender is Player) {
+            if (commandSender.name == offlinePlayer.name) {
+                commandSender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.self_pay_error")))
+                return
+            }
+
+            if (amount.isNegative() || amount.isZero() || amount.moneyFormat() == "0.00") {
+                commandSender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.negative_amount_error")))
+                return
+            }
+
+            liteEco.server.scheduler.runTask(liteEco) { ->
+                liteEco.pluginManger.callEvent(PlayerEconomyPayEvent(commandSender, offlinePlayer, amount))
+            }
+        } else {
+            commandSender.sendMessage(ModernText.miniModernText("<red>Only a player can use this command."))
         }
     }
 
-    @CommandMethod("eco adminhelp")
+    @CommandMethod("eco help")
     @CommandPermission("lite.eco.admin.help")
     fun adminHelp(commandSender: CommandSender) {
         liteEco.translationConfig.getList("messages.admin-help")?.forEach { s ->
@@ -131,37 +164,8 @@ class MoneyCMD(private val liteEco: LiteEco) {
         }
     }
 
-    @ProxiedBy("pay")
-    @CommandMethod("money|bal|balance pay <player> <amount>")
-    @CommandPermission("lite.eco.pay")
-    fun onPayMoney(
-        commandSender: CommandSender,
-        @Argument(value = "player", suggestions = "offlinePlayers") offlinePlayer: OfflinePlayer,
-        @Argument(value = "amount") @Range(min = "1.00", max = "") amount: Double
-    ) {
-        if (commandSender !is Player) { // temp fix
-            commandSender.sendMessage(ModernText.miniModernText("<red>TerminalConsoleCommandSender is not allowed to execute that command. Must be of type Player"))
-            return
-        }
-        val player: Player = commandSender
-
-        if (player.name == offlinePlayer.name) {
-            player.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.self_pay_error")))
-            return
-        }
-
-        if (amount.isNegative() || amount.isZero() || amount.moneyFormat() == "0.00") {
-            player.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.negative_amount_error")))
-            return
-        }
-
-        liteEco.server.scheduler.runTask(liteEco) { ->
-            liteEco.pluginManger.callEvent(PlayerEconomyPayEvent(player, offlinePlayer, amount))
-        }
-    }
-
     @CommandMethod("eco add <player> <amount>")
-    @CommandPermission("lite.eco.add")
+    @CommandPermission("lite.eco.admin.add")
     fun onAddMoney(
         commandSender: CommandSender,
         @Argument(value = "player", suggestions = "offlinePlayers") offlinePlayer: OfflinePlayer,
@@ -179,7 +183,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
     }
 
     @CommandMethod("eco gadd <amount>")
-    @CommandPermission("lite.eco.gadd")
+    @CommandPermission("lite.eco.admin.gadd")
     fun onGlobalAddMoney(
         commandSender: CommandSender,
         @Argument("amount") @Range(min = "1.0", max = "") amount: Double
@@ -197,7 +201,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
     }
 
     @CommandMethod("eco set <player> <amount>")
-    @CommandPermission("lite.eco.set")
+    @CommandPermission("lite.eco.admin.set")
     fun onSetBalance(
         commandSender: CommandSender,
         @Argument(value = "player", suggestions = "offlinePlayers") offlinePlayer: OfflinePlayer,
@@ -219,7 +223,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
     }
 
     @CommandMethod("eco gset <amount>")
-    @CommandPermission("lite.eco.gset")
+    @CommandPermission("lite.eco.admin.gset")
     fun onGlobalSetMoney(
         commandSender: CommandSender,
         @Argument("amount") @Range(min = "1.0", max = "") amount: Double
@@ -237,7 +241,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
     }
 
     @CommandMethod("eco remove <player> <amount>")
-    @CommandPermission("lite.eco.remove")
+    @CommandPermission("lite.eco.admin.remove")
     fun onRemoveMoney(
         commandSender: CommandSender,
         @Argument(value = "player", suggestions = "offlinePlayers") offlinePlayer: OfflinePlayer,
@@ -261,7 +265,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
     }
 
     @CommandMethod("eco gremove <amount>")
-    @CommandPermission("lite.eco.gremove")
+    @CommandPermission("lite.eco.admin.gremove")
     fun onGlobalRemoveMoney(
         commandSender: CommandSender,
         @Argument("amount") @Range(min = "1.0", max = "") amount: Double
@@ -274,7 +278,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
     }
 
     @CommandMethod("eco lang <isoKey>")
-    @CommandPermission("lite.eco.lang")
+    @CommandPermission("lite.eco.admin.lang")
     fun onLangSwitch(
         commandSender: CommandSender,
         @Argument(value = "isoKey", suggestions = "translationKeys") translationKey: TranslationKey
@@ -313,7 +317,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
     }
 
     @CommandMethod("eco purge [argument]")
-    @CommandPermission("lite.eco.purge")
+    @CommandPermission("lite.eco.admin.purge")
     fun onPurge(commandSender: CommandSender, @Argument(value = "argument", suggestions = "purgeKeys") purgeKey: PurgeKey)
     {
         when (purgeKey) {
@@ -332,7 +336,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
     }
 
     @CommandMethod("eco reload")
-    @CommandPermission("lite.eco.reload")
+    @CommandPermission("lite.eco.admin.reload")
     fun onReload(commandSender: CommandSender) {
         liteEco.reloadConfig()
         commandSender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.config_reload")))

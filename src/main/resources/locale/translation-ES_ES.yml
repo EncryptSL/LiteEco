@@ -34,9 +34,9 @@ messages:
   help:
     - "<green>===========<white>[<green>LITE_ECO<white>]<green>==========="
     - " "
-    - "<white>[+] <gray>/money [username] <white>- <gray>Mostrar el saldo de tu cuenta o de otro jugador"
     - "<white>[+] <gray>/money help <white>- <gray>Mostrar lista de comandos"
     - "<white>[+] <gray>/money top [page] <white>- <gray>Mostrar jugadores mas ricos"
+    - "<white>[+] <gray>/money bal [username] <white>- <gray>Mostrar el saldo de tu cuenta o de otro jugador"
     - "<white>[+] <gray>/money pay <yellow><username> <amount> <white>- <gray>Transferir dinero a otro jugador."
     - " "
     - "<green>===========<white>[<green>LITE_ECO<white>]<green>==========="
