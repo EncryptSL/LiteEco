@@ -31,20 +31,23 @@ class PlaceHolderExtensionProvider(private val liteEco: LiteEco) : PlaceholderEx
 
         if (identifier.startsWith("top_formatted_")) {
             val split = this.splitator(identifier, 2)
-            return liteEco.api.formatting(balanceByRank(split.toInt()))
+            return if (split.isNotEmpty()) liteEco.api.formatting(balanceByRank(split.toInt())) else null
         }
 
         if (identifier.startsWith("top_balance_")) {
             val split = this.splitator(identifier, 2)
-            return balanceByRank(split.toInt()).toString()
+            return if (split.isNotEmpty()) balanceByRank(split.toInt()).toString() else null
         }
 
         if (identifier.startsWith("top_player_")) {
             val split = this.splitator(identifier, 2)
-
-            return if (nameByRank(split.toInt()) == "EMPTY") {
-                return nameByRank(split.toInt())
-            } else Bukkit.getOfflinePlayer(UUID.fromString(nameByRank(split.toInt()))).name.orEmpty()
+            return if (split.isEmpty()) {
+                null
+            } else if (nameByRank(split.toInt()) == "EMPTY") {
+                nameByRank(split.toInt())
+            } else {
+                Bukkit.getOfflinePlayer(UUID.fromString(nameByRank(split.toInt()))).name
+            }
         }
 
         return when(identifier) {
@@ -63,7 +66,7 @@ class PlaceHolderExtensionProvider(private val liteEco: LiteEco) : PlaceholderEx
     private fun nameByRank(rank: Int): String {
         topBalance()?.playerPosition { index, entry ->
             if (index == rank) {
-                return entry.key.ifEmpty { "EMPTY" }
+                return entry.key
             }
         }
         return "EMPTY"
