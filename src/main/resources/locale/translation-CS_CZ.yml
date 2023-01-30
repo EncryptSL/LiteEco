@@ -34,9 +34,9 @@ messages:
   help:
     - "<green>===========<white>[<green>LITE_ECO<white>]<green>==========="
     - " "
-    - "<white>[+] <gray>/money [username] <white>- <gray>Ukáže stav tvého účtu nebo jiného hráče."
     - "<white>[+] <gray>/money help <white>- <gray>Vypíše příkazy pluginu"
     - "<white>[+] <gray>/money top [page] <white>- <gray>Vypíše nejbohatší hráče"
+    - "<white>[+] <gray>/money bal [username] <white>- <gray>Ukáže stav tvého účtu nebo jiného hráče."
     - "<white>[+] <gray>/money pay <yellow><username> <amount> <white>- <gray>Pošle hráči peníze."
     - " "
     - "<green>===========<white>[<green>LITE_ECO<white>]<green>==========="
