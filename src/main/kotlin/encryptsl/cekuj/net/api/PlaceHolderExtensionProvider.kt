@@ -14,7 +14,7 @@ class PlaceHolderExtensionProvider(private val liteEco: LiteEco) : PlaceholderEx
 
     override fun getAuthor(): String = "EncryptSL"
 
-    override fun getVersion(): String = "1.0.0"
+    override fun getVersion(): String = "1.0.1"
 
     override fun persist(): Boolean = true
 
@@ -30,17 +30,17 @@ class PlaceHolderExtensionProvider(private val liteEco: LiteEco) : PlaceholderEx
         if (player == null) return null
 
         if (identifier.startsWith("top_formatted_")) {
-            val split = this.splitator(identifier, 2)
+            val split = this.spliterator(identifier, 2)
             return if (split.isNotEmpty()) liteEco.api.formatting(balanceByRank(split.toInt())) else null
         }
 
         if (identifier.startsWith("top_balance_")) {
-            val split = this.splitator(identifier, 2)
+            val split = this.spliterator(identifier, 2)
             return if (split.isNotEmpty()) balanceByRank(split.toInt()).toString() else null
         }
 
         if (identifier.startsWith("top_player_")) {
-            val split = this.splitator(identifier, 2)
+            val split = this.spliterator(identifier, 2)
             return if (split.isEmpty()) {
                 null
             } else if (nameByRank(split.toInt()) == "EMPTY") {
@@ -58,9 +58,13 @@ class PlaceHolderExtensionProvider(private val liteEco: LiteEco) : PlaceholderEx
         }
     }
 
-    private fun splitator(pattern: String, index: Int): String {
+    private fun spliterator(pattern: String, index: Int): String {
         val args: List<String> = pattern.split("_")
         return args[index]
+    }
+
+    private fun isNumeric(str: String): Boolean {
+        return str.matches("(\\d*)")
     }
 
     private fun nameByRank(rank: Int): String {
@@ -86,6 +90,7 @@ class PlaceHolderExtensionProvider(private val liteEco: LiteEco) : PlaceholderEx
           return liteEco.api.getTopBalance()
             .entries
             .stream()
+            .filter { data -> Bukkit.getOfflinePlayer(UUID.fromString(data.key)).hasPlayedBefore() }
             .sorted(compareByDescending{o1 -> o1.value})
             .collect(
                 Collectors.toMap({ e -> e.key }, { e -> e.value }, { _, e2 -> e2 }) { LinkedHashMap() })
