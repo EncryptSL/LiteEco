@@ -28,8 +28,8 @@ permissions:
   lite.eco.admin:
     description: Gives access to all admin commands
     children:
-      lite.eco.suggestion.players: true
       lite.eco.admin.help: true
+      lite.eco.admin.eco: true
       lite.eco.admin.add: true
       lite.eco.admin.gadd: true
       lite.eco.admin.set: true
@@ -39,3 +39,4 @@ permissions:
       lite.eco.admin.lang: true
       lite.eco.admin.purge: true
       lite.eco.admin.reload: true
+      lite.eco.suggestion.players: true
