@@ -81,8 +81,10 @@ All available permissions for commands:
   Permissions: lite.eco.admin.gremove
 /eco lang [CS_CZ, EN_US]: This command switches translations files.
   Permission: lite.eco.admin.lang
-/eco purge [argument]: This command purges data.
+/eco purge <argument>: This command purges data.
   Permission: lite.eco.admin.purge
+/eco migration <argument>: This command migration database to file.
+  Permision: lite.eco.admin.migration
 /eco reload: This command reloads the config.
   Permission: lite.eco.admin.reload
 ```
