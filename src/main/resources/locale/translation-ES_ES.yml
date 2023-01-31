@@ -31,6 +31,8 @@ messages:
   purge_accounts: "<green>[<white>LITE_ECO<green>] <green>Purgaste todas las cuentas."
   purge_default_accounts: "<green>[<white>LITE_ECO<green>] <green>Purgaste todas las cuentas con valor predeterminado."
   purge_argument_error: "<green>[<white>LITE_ECO<green>] <red>El argumento <argument> no es valido o no esta listo para produccion."
+  migration_success: "<green>[<white>LITE_ECO<green>] <green>"
+  migration_error: "<green>[<white>LITE_ECO<green>] <red>El argumento <argument> no es valido o no esta listo para produccion."
   help:
     - "<green>===========<white>[<green>LITE_ECO<white>]<green>==========="
     - " "
@@ -50,7 +52,8 @@ messages:
     - "<white>[+] <gray>/eco gset <yellow><amount> <white>- <gray>Establecer dinero de todas las cuentas."
     - "<white>[+] <gray>/eco gremove <yellow><amount> <white>- <gray>Quitar dinero a todas las cuentas."
     - "<white>[+] <gray>/eco lang [lang] <white>- <gray>Cambiar la traduccion de mensajes."
-    - "<white>[+] <gray>/eco purge [argument] <white>- <gray>Purgar datos."
+    - "<white>[+] <gray>/eco purge <argument> <white>- <gray>Purgar datos."
+    - "<white>[+] <gray>/eco migration <argument> <white>- <gray>Migración de base de datos a otros formatos."
     - "<white>[+] <gray>/eco reload <white>- <gray>Recargar la configuracion."
     - " "
     - "<green>===========<white>[<green>LITE_ECO<white>]<green>==========="
