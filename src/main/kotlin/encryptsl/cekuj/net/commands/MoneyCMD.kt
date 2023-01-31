@@ -4,6 +4,7 @@ import cloud.commandframework.annotations.*
 import cloud.commandframework.annotations.specifier.Range
 import encryptsl.cekuj.net.LiteEco
 import encryptsl.cekuj.net.api.Paginator
+import encryptsl.cekuj.net.api.enums.MigrationKey
 import encryptsl.cekuj.net.api.enums.PurgeKey
 import encryptsl.cekuj.net.api.enums.TranslationKey
 import encryptsl.cekuj.net.api.events.*
@@ -12,6 +13,8 @@ import encryptsl.cekuj.net.extensions.isNegative
 import encryptsl.cekuj.net.extensions.isZero
 import encryptsl.cekuj.net.extensions.moneyFormat
 import encryptsl.cekuj.net.extensions.positionIndexed
+import encryptsl.cekuj.net.utils.MigrationData
+import encryptsl.cekuj.net.utils.MigrationTool
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
@@ -316,7 +319,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
         }
     }
 
-    @CommandMethod("eco purge [argument]")
+    @CommandMethod("eco purge <argument>")
     @CommandPermission("lite.eco.admin.purge")
     fun onPurge(commandSender: CommandSender, @Argument(value = "argument", suggestions = "purgeKeys") purgeKey: PurgeKey)
     {
@@ -331,6 +334,32 @@ class MoneyCMD(private val liteEco: LiteEco) {
             }
             else -> {
                 commandSender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.purge_argument_error")))
+            }
+        }
+    }
+
+    @CommandMethod("eco migration <argument>")
+    @CommandPermission("lite.eco.admin.migration")
+    fun onMigration(commandSender: CommandSender, @Argument(value = "argument", suggestions = "migrationKeys") migrationKey: MigrationKey) {
+        val migrationTool = MigrationTool(liteEco)
+        val output = liteEco.api.getTopBalance().toList().positionIndexed { index, k -> MigrationData(index, k.first, k.second) }
+        when(migrationKey) {
+            MigrationKey.CSV -> {
+                migrationTool.migrateToCSV(output, "economy_migration")
+                commandSender.sendMessage(ModernText.miniModernText(
+                    liteEco.translationConfig.getMessage("messages.migration_success"),
+                    TagResolver.resolver(
+                        Placeholder.parsed("type", migrationKey.name)
+                    )
+                ))
+            }
+            else -> {
+                commandSender.sendMessage(ModernText.miniModernText(
+                    liteEco.translationConfig.getMessage("messages.migration_error"),
+                    TagResolver.resolver(
+                        Placeholder.parsed("argument", migrationKey.name)
+                    )
+                ))
             }
         }
     }
