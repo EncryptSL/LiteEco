@@ -31,6 +31,8 @@ messages:
   purge_accounts: "<green>[<white>LITE_ECO<green>] <green>Your purge all player accounts."
   purge_default_accounts: "<green>[<white>LITE_ECO<green>] <green>You purge all player accounts with default value."
   purge_argument_error: "<green>[<white>LITE_ECO<green>] <red>This <argument> argument is not valid or not ready for production."
+  migration_success: "<green>[<white>LITE_ECO<green>] <green>¡La migración <type> se ha creado correctamente!"
+  migration_error: "<green>[<white>LITE_ECO<green>] <red>This <argument> argument is not valid or not ready for production."
   help:
     - "<green>===========<white>[<green>LITE_ECO<white>]<green>==========="
     - " "
@@ -50,7 +52,8 @@ messages:
     - "<white>[+] <gray>/eco gset <yellow><amount> <white>- <gray>Set money amount of all players."
     - "<white>[+] <gray>/eco gremove <yellow><amount> <white>- <gray>Remove money from all players."
     - "<white>[+] <gray>/eco lang [lang] <white>- <gray>Switch message translation."
-    - "<white>[+] <gray>/eco purge [argument] <white>- <gray>Purge data."
+    - "<white>[+] <gray>/eco purge <argument> <white>- <gray>Purge data."
+    - "<white>[+] <gray>/eco migration <argument> <white>- <gray>Migration of database to another formats."
     - "<white>[+] <gray>/eco reload <white>- <gray>Reload configuration."
     - " "
     - "<green>===========<white>[<green>LITE_ECO<white>]<green>==========="

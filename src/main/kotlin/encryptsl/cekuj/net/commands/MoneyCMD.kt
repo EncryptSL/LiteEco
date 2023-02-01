@@ -4,14 +4,17 @@ import cloud.commandframework.annotations.*
 import cloud.commandframework.annotations.specifier.Range
 import encryptsl.cekuj.net.LiteEco
 import encryptsl.cekuj.net.api.Paginator
+import encryptsl.cekuj.net.api.enums.MigrationKey
 import encryptsl.cekuj.net.api.enums.PurgeKey
-import encryptsl.cekuj.net.api.enums.TranslationKey
+import encryptsl.cekuj.net.api.enums.LangKey
 import encryptsl.cekuj.net.api.events.*
 import encryptsl.cekuj.net.api.objects.ModernText
 import encryptsl.cekuj.net.extensions.isNegative
 import encryptsl.cekuj.net.extensions.isZero
 import encryptsl.cekuj.net.extensions.moneyFormat
 import encryptsl.cekuj.net.extensions.positionIndexed
+import encryptsl.cekuj.net.utils.MigrationData
+import encryptsl.cekuj.net.utils.MigrationTool
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
@@ -281,42 +284,42 @@ class MoneyCMD(private val liteEco: LiteEco) {
     @CommandPermission("lite.eco.admin.lang")
     fun onLangSwitch(
         commandSender: CommandSender,
-        @Argument(value = "isoKey", suggestions = "translationKeys") translationKey: TranslationKey
+        @Argument(value = "isoKey", suggestions = "langKeys") langKey: LangKey
     ) {
-        when (translationKey) {
-            TranslationKey.CS_CZ -> {
-                liteEco.translationConfig.setTranslationFile(TranslationKey.CS_CZ)
+        when (langKey) {
+            LangKey.CS_CZ -> {
+                liteEco.translationConfig.setTranslationFile(LangKey.CS_CZ)
                 commandSender.sendMessage(
                     ModernText.miniModernText(
                         liteEco.translationConfig.getMessage("messages.translation_switch"),
-                        TagResolver.resolver(Placeholder.parsed("locale", translationKey.name))
+                        TagResolver.resolver(Placeholder.parsed("locale", langKey.name))
                     )
                 )
             }
 
-            TranslationKey.EN_US -> {
-                liteEco.translationConfig.setTranslationFile(TranslationKey.EN_US)
+            LangKey.EN_US -> {
+                liteEco.translationConfig.setTranslationFile(LangKey.EN_US)
                 commandSender.sendMessage(
                     ModernText.miniModernText(
                         liteEco.translationConfig.getMessage("messages.translation_switch"),
-                        TagResolver.resolver(Placeholder.parsed("locale", translationKey.name))
+                        TagResolver.resolver(Placeholder.parsed("locale", langKey.name))
                     )
                 )
             }
 
-            TranslationKey.ES_ES -> {
-                liteEco.translationConfig.setTranslationFile(TranslationKey.ES_ES)
+            LangKey.ES_ES -> {
+                liteEco.translationConfig.setTranslationFile(LangKey.ES_ES)
                 commandSender.sendMessage(
                     ModernText.miniModernText(
                         liteEco.translationConfig.getMessage("messages.translation_switch"),
-                        TagResolver.resolver(Placeholder.parsed("locale", translationKey.name))
+                        TagResolver.resolver(Placeholder.parsed("locale", langKey.name))
                     )
                 )
             }
         }
     }
 
-    @CommandMethod("eco purge [argument]")
+    @CommandMethod("eco purge <argument>")
     @CommandPermission("lite.eco.admin.purge")
     fun onPurge(commandSender: CommandSender, @Argument(value = "argument", suggestions = "purgeKeys") purgeKey: PurgeKey)
     {
@@ -331,6 +334,33 @@ class MoneyCMD(private val liteEco: LiteEco) {
             }
             else -> {
                 commandSender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.purge_argument_error")))
+            }
+        }
+    }
+
+    @CommandMethod("eco migration <argument>")
+    @CommandPermission("lite.eco.admin.migration")
+    fun onMigration(commandSender: CommandSender, @Argument(value = "argument", suggestions = "migrationKeys") migrationKey: MigrationKey) {
+        val migrationTool = MigrationTool(liteEco)
+        val output = liteEco.api.getTopBalance().toList().positionIndexed { index, k -> MigrationData(index, k.first, k.second) }
+        when(migrationKey) {
+            MigrationKey.CSV -> {
+                migrationTool.migrateToCSV(output, "economy_migration")
+                commandSender.sendMessage(ModernText.miniModernText(
+                    liteEco.translationConfig.getMessage("messages.migration_success"),
+                    TagResolver.resolver(
+                        Placeholder.parsed("type", migrationKey.name)
+                    )
+                ))
+            }
+            MigrationKey.SQL -> {
+                migrationTool.migrateToSQL(output, "economy_migration")
+                commandSender.sendMessage(ModernText.miniModernText(
+                    liteEco.translationConfig.getMessage("messages.migration_success"),
+                    TagResolver.resolver(
+                        Placeholder.parsed("type", migrationKey.name)
+                    )
+                ))
             }
         }
     }

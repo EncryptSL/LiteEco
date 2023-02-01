@@ -31,6 +31,8 @@ messages:
   purge_accounts: "<green>[<white>LITE_ECO<green>] <green>Smazal jsi všechny účty."
   purge_default_accounts: "<green>[<white>LITE_ECO<green>] <green>Smazal jsi účty s defaultní hodnotou."
   purge_argument_error: "<green>[<white>LITE_ECO<green>] <red>Tento <argument> argument není validní nebo není připraven do produkce."
+  migration_success: "<green>[<white>LITE_ECO<green>] <green>Migrace <type> byla úspěšně vytvořena !"
+  migration_error: "<green>[<white>LITE_ECO<green>] <red>Tento <argument> argument není validní nebo není připraven do produkce."
   help:
     - "<green>===========<white>[<green>LITE_ECO<white>]<green>==========="
     - " "
@@ -50,7 +52,8 @@ messages:
     - "<white>[+] <gray>/eco gset <yellow><amount> <white>- <gray>Nastavím všem offline i online fixovanou částku peněz."
     - "<white>[+] <gray>/eco gremove <yellow><amount> <white>- <gray>Odebere všem offline i online hráčům peníze z účtu."
     - "<white>[+] <gray>/eco lang [lang] <white>- <gray>Přepne překlad zpráv."
-    - "<white>[+] <gray>/eco purge [argument] <white>- <gray>Čištění dat."
+    - "<white>[+] <gray>/eco purge <argument> <white>- <gray>Čištění dat."
+    - "<white>[+] <gray>/eco migration <argument> <white>- <gray>Migrace databáze do různých formátů."
     - "<white>[+] <gray>/eco reload <white>- <gray>Znovu načte konfiguraci."
     - " "
     - "<green>===========<white>[<green>LITE_ECO<white>]<green>==========="

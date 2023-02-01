@@ -11,8 +11,9 @@ import encryptsl.cekuj.net.api.ConfigLoaderAPI
 import encryptsl.cekuj.net.api.HookManager
 import encryptsl.cekuj.net.api.UpdateNotifier
 import encryptsl.cekuj.net.api.economy.LiteEcoEconomyAPI
+import encryptsl.cekuj.net.api.enums.MigrationKey
 import encryptsl.cekuj.net.api.enums.PurgeKey
-import encryptsl.cekuj.net.api.enums.TranslationKey
+import encryptsl.cekuj.net.api.enums.LangKey
 import encryptsl.cekuj.net.commands.MoneyCMD
 import encryptsl.cekuj.net.config.TranslationConfig
 import encryptsl.cekuj.net.database.DatabaseConnector
@@ -116,17 +117,21 @@ class LiteEco : JavaPlugin() {
                     p?.startsWith(input) ?: false
                 }.toList()
         }
-        commandManager.parserRegistry().registerSuggestionProvider("translationKeys") { _, _ ->
-            TranslationKey.values().map { key -> key.name }.toList()
+        commandManager.parserRegistry().registerSuggestionProvider("langKeys") { _, _ ->
+            LangKey.values().map { key -> key.name }.toList()
         }
         commandManager.parserRegistry().registerSuggestionProvider("purgeKeys") { _, _ ->
             PurgeKey.values().filter { key -> key != PurgeKey.NULL_ACCOUNTS }.map { key -> key.name }.toList()
+        }
+        commandManager.parserRegistry().registerSuggestionProvider("migrationKeys") { _, _ ->
+            MigrationKey.values().map { key -> key.name }.toList()
         }
         annotationParser.parse(MoneyCMD(this))
     }
 
     private fun blockPlugins() {
         hookManager.blockPlugin("Treasury")
+        hookManager.blockPlugin("Towny")
     }
 
     private fun hookRegistration() {

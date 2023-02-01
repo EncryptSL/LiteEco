@@ -1,6 +1,7 @@
 package encryptsl.cekuj.net.api
 
 import encryptsl.cekuj.net.LiteEco
+import encryptsl.cekuj.net.extensions.isNumeric
 import encryptsl.cekuj.net.extensions.playerPosition
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import org.bukkit.Bukkit
@@ -31,17 +32,17 @@ class PlaceHolderExtensionProvider(private val liteEco: LiteEco) : PlaceholderEx
 
         if (identifier.startsWith("top_formatted_")) {
             val split = this.spliterator(identifier, 2)
-            return if (isNumeric(split)) liteEco.api.formatting(balanceByRank(split.toInt())) else null
+            return if (split.isNumeric()) liteEco.api.formatting(balanceByRank(split.toInt())) else null
         }
 
         if (identifier.startsWith("top_balance_")) {
             val split = this.spliterator(identifier, 2)
-            return if (isNumeric(split)) balanceByRank(split.toInt()).toString() else null
+            return if (split.isNumeric()) balanceByRank(split.toInt()).toString() else null
         }
 
         if (identifier.startsWith("top_player_")) {
             val split = this.spliterator(identifier, 2)
-            return if (!isNumeric(split)) {
+            return if (!split.isNumeric()) {
                 null
             } else if (nameByRank(split.toInt()) == "EMPTY") {
                 nameByRank(split.toInt())
@@ -61,11 +62,6 @@ class PlaceHolderExtensionProvider(private val liteEco: LiteEco) : PlaceholderEx
     private fun spliterator(pattern: String, index: Int): String {
         val args: List<String> = pattern.split("_")
         return args[index]
-    }
-
-    private fun isNumeric(str: String): Boolean {
-        if (str.isEmpty()) return false
-        return str.toIntOrNull() != null
     }
 
     private fun nameByRank(rank: Int): String {
