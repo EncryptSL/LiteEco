@@ -38,5 +38,6 @@ permissions:
       lite.eco.admin.gremove: true
       lite.eco.admin.lang: true
       lite.eco.admin.purge: true
+      lite.eco.admin.migration: true
       lite.eco.admin.reload: true
       lite.eco.suggestion.players: true
