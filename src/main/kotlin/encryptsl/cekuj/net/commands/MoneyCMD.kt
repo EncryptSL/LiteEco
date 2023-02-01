@@ -353,11 +353,12 @@ class MoneyCMD(private val liteEco: LiteEco) {
                     )
                 ))
             }
-            else -> {
+            MigrationKey.SQL -> {
+                migrationTool.migrateToSQL(output, "economy_migration")
                 commandSender.sendMessage(ModernText.miniModernText(
-                    liteEco.translationConfig.getMessage("messages.migration_error"),
+                    liteEco.translationConfig.getMessage("messages.migration_success"),
                     TagResolver.resolver(
-                        Placeholder.parsed("argument", migrationKey.name)
+                        Placeholder.parsed("type", migrationKey.name)
                     )
                 ))
             }
