@@ -6,7 +6,7 @@ import encryptsl.cekuj.net.LiteEco
 import encryptsl.cekuj.net.api.Paginator
 import encryptsl.cekuj.net.api.enums.MigrationKey
 import encryptsl.cekuj.net.api.enums.PurgeKey
-import encryptsl.cekuj.net.api.enums.TranslationKey
+import encryptsl.cekuj.net.api.enums.LangKey
 import encryptsl.cekuj.net.api.events.*
 import encryptsl.cekuj.net.api.objects.ModernText
 import encryptsl.cekuj.net.extensions.isNegative
@@ -284,35 +284,35 @@ class MoneyCMD(private val liteEco: LiteEco) {
     @CommandPermission("lite.eco.admin.lang")
     fun onLangSwitch(
         commandSender: CommandSender,
-        @Argument(value = "isoKey", suggestions = "translationKeys") translationKey: TranslationKey
+        @Argument(value = "isoKey", suggestions = "langKeys") langKey: LangKey
     ) {
-        when (translationKey) {
-            TranslationKey.CS_CZ -> {
-                liteEco.translationConfig.setTranslationFile(TranslationKey.CS_CZ)
+        when (langKey) {
+            LangKey.CS_CZ -> {
+                liteEco.translationConfig.setTranslationFile(LangKey.CS_CZ)
                 commandSender.sendMessage(
                     ModernText.miniModernText(
                         liteEco.translationConfig.getMessage("messages.translation_switch"),
-                        TagResolver.resolver(Placeholder.parsed("locale", translationKey.name))
+                        TagResolver.resolver(Placeholder.parsed("locale", langKey.name))
                     )
                 )
             }
 
-            TranslationKey.EN_US -> {
-                liteEco.translationConfig.setTranslationFile(TranslationKey.EN_US)
+            LangKey.EN_US -> {
+                liteEco.translationConfig.setTranslationFile(LangKey.EN_US)
                 commandSender.sendMessage(
                     ModernText.miniModernText(
                         liteEco.translationConfig.getMessage("messages.translation_switch"),
-                        TagResolver.resolver(Placeholder.parsed("locale", translationKey.name))
+                        TagResolver.resolver(Placeholder.parsed("locale", langKey.name))
                     )
                 )
             }
 
-            TranslationKey.ES_ES -> {
-                liteEco.translationConfig.setTranslationFile(TranslationKey.ES_ES)
+            LangKey.ES_ES -> {
+                liteEco.translationConfig.setTranslationFile(LangKey.ES_ES)
                 commandSender.sendMessage(
                     ModernText.miniModernText(
                         liteEco.translationConfig.getMessage("messages.translation_switch"),
-                        TagResolver.resolver(Placeholder.parsed("locale", translationKey.name))
+                        TagResolver.resolver(Placeholder.parsed("locale", langKey.name))
                     )
                 )
             }

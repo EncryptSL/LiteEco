@@ -97,10 +97,10 @@ This permission was to suggest player names. (DISABLED)
 
 ## Translation
 This plugin supports translations but it must be included in the plugin.
-Plugin makes use of Enums for [available locales](https://github.com/LcyDev/LiteEco/blob/main/src/main/kotlin/encryptsl/cekuj/net/api/enums/TranslationKey.kt).
+Plugin makes use of Enums for [available locales](https://github.com/LcyDev/LiteEco/blob/main/src/main/kotlin/encryptsl/cekuj/net/api/enums/LangKey.kt).
 
 If you want to contribute with another translation you must follow this steps.
-- FileName must be in this format with the [locale code](https://www.ibm.com/docs/en/radfws/9.6.1?topic=overview-locales-code-pages-supported): `translation-RU_RU.yml`
+- FileName must be in this format with the [locale code](https://www.ibm.com/docs/en/radfws/9.6.1?topic=overview-locales-code-pages-supported): `lang-ru_ru.yml`
 - Translation files inside contains placeholders <example_something> please don't remove this.
 - You can change colors or something what you want.
 
