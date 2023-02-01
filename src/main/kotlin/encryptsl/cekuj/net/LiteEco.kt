@@ -131,6 +131,7 @@ class LiteEco : JavaPlugin() {
 
     private fun blockPlugins() {
         hookManager.blockPlugin("Treasury")
+        hookManager.blockPlugin("Towny")
     }
 
     private fun hookRegistration() {
