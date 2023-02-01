@@ -1,5 +1,7 @@
 ### LiteEco - Minecraft Economy Plugin
 
+![le_bg](https://user-images.githubusercontent.com/9441083/215228544-29c3bfa3-f67f-4f9d-8510-bde3f133018e.jpg)
+
 **LiteEco is inspirated by plugin IConomy**
 Included support for SQLite and MySQL connection to saving player data.
 Included command interface for console and ingame use.

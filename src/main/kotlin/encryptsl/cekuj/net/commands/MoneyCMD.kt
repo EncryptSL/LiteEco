@@ -4,14 +4,17 @@ import cloud.commandframework.annotations.*
 import cloud.commandframework.annotations.specifier.Range
 import encryptsl.cekuj.net.LiteEco
 import encryptsl.cekuj.net.api.Paginator
+import encryptsl.cekuj.net.api.enums.MigrationKey
 import encryptsl.cekuj.net.api.enums.PurgeKey
-import encryptsl.cekuj.net.api.enums.TranslationKey
+import encryptsl.cekuj.net.api.enums.LangKey
 import encryptsl.cekuj.net.api.events.*
 import encryptsl.cekuj.net.api.objects.ModernText
 import encryptsl.cekuj.net.extensions.isNegative
 import encryptsl.cekuj.net.extensions.isZero
 import encryptsl.cekuj.net.extensions.moneyFormat
 import encryptsl.cekuj.net.extensions.positionIndexed
+import encryptsl.cekuj.net.utils.MigrationData
+import encryptsl.cekuj.net.utils.MigrationTool
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
@@ -26,9 +29,23 @@ import java.util.*
 @CommandDescription("Provided plugin by LiteEco")
 class MoneyCMD(private val liteEco: LiteEco) {
 
-    @CommandMethod("money|bal|balance [player]")
-    @CommandPermission("lite.eco.money")
-    fun onBalance(commandSender: CommandSender, @Argument(value = "player", suggestions = "players") offlinePlayer: OfflinePlayer?) {
+    @CommandMethod("money help")
+    @CommandPermission("lite.eco.help")
+    fun onHelp(commandSender: CommandSender) {
+        liteEco.translationConfig.getList("messages.help")?.forEach { s ->
+            commandSender.sendMessage(ModernText.miniModernText(s.toString()))
+        }
+    }
+
+    @CommandMethod("bal|balance [player]")
+    @CommandPermission("lite.eco.balance")
+    fun onBalanceProxy(commandSender: CommandSender, @Argument(value = "player", suggestions = "offlinePlayers") offlinePlayer: OfflinePlayer?) {
+        onBalance(commandSender, offlinePlayer)
+    }
+
+    @CommandMethod("money bal [player]")
+    @CommandPermission("lite.eco.balance")
+    fun onBalance(commandSender: CommandSender, @Argument(value = "player", suggestions = "offlinePlayers") offlinePlayer: OfflinePlayer?) {
         if (commandSender is Player) {
             if (offlinePlayer == null) {
                 commandSender.sendMessage(
@@ -115,15 +132,34 @@ class MoneyCMD(private val liteEco: LiteEco) {
         commandSender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.balance_top_line_second")))
     }
 
-    @CommandMethod("money|bal|balance help")
-    @CommandPermission("lite.eco.help")
-    fun onHelp(commandSender: CommandSender) {
-        liteEco.translationConfig.getList("messages.help")?.forEach { s ->
-            commandSender.sendMessage(ModernText.miniModernText(s.toString()))
+    @ProxiedBy("pay")
+    @CommandMethod("money pay <player> <amount>")
+    @CommandPermission("lite.eco.pay")
+    fun onPayMoney(
+        commandSender: CommandSender,
+        @Argument(value = "player", suggestions = "offlinePlayers") offlinePlayer: OfflinePlayer,
+        @Argument(value = "amount") @Range(min = "1.00", max = "") amount: Double
+    ) {
+        if (commandSender is Player) {
+            if (commandSender.name == offlinePlayer.name) {
+                commandSender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.self_pay_error")))
+                return
+            }
+
+            if (amount.isNegative() || amount.isZero() || amount.moneyFormat() == "0.00") {
+                commandSender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.negative_amount_error")))
+                return
+            }
+
+            liteEco.server.scheduler.runTask(liteEco) { ->
+                liteEco.pluginManger.callEvent(PlayerEconomyPayEvent(commandSender, offlinePlayer, amount))
+            }
+        } else {
+            commandSender.sendMessage(ModernText.miniModernText("<red>Only a player can use this command."))
         }
     }
 
-    @CommandMethod("money|bal|balance adminhelp")
+    @CommandMethod("eco help")
     @CommandPermission("lite.eco.admin.help")
     fun adminHelp(commandSender: CommandSender) {
         liteEco.translationConfig.getList("messages.admin-help")?.forEach { s ->
@@ -131,30 +167,8 @@ class MoneyCMD(private val liteEco: LiteEco) {
         }
     }
 
-    @CommandMethod("money|bal|balance pay <player> <amount>")
-    @CommandPermission("lite.eco.pay")
-    fun onPayMoney(
-        player: Player,
-        @Argument(value = "player", suggestions = "offlinePlayers") offlinePlayer: OfflinePlayer,
-        @Argument(value = "amount") @Range(min = "1.00", max = "") amount: Double
-    ) {
-        if (player.name == offlinePlayer.name) {
-            player.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.self_pay_error")))
-            return
-        }
-
-        if (amount.isNegative() || amount.isZero() || amount.moneyFormat() == "0.00") {
-            player.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.negative_amount_error")))
-            return
-        }
-
-        liteEco.server.scheduler.runTask(liteEco) { ->
-            liteEco.pluginManger.callEvent(PlayerEconomyPayEvent(player, offlinePlayer, amount))
-        }
-    }
-
-    @CommandMethod("money|bal|balance add <player> <amount>")
-    @CommandPermission("lite.eco.add")
+    @CommandMethod("eco add <player> <amount>")
+    @CommandPermission("lite.eco.admin.add")
     fun onAddMoney(
         commandSender: CommandSender,
         @Argument(value = "player", suggestions = "offlinePlayers") offlinePlayer: OfflinePlayer,
@@ -171,8 +185,8 @@ class MoneyCMD(private val liteEco: LiteEco) {
         }
     }
 
-    @CommandMethod("money|bal|balance gadd <amount>")
-    @CommandPermission("lite.eco.gadd")
+    @CommandMethod("eco gadd <amount>")
+    @CommandPermission("lite.eco.admin.gadd")
     fun onGlobalAddMoney(
         commandSender: CommandSender,
         @Argument("amount") @Range(min = "1.0", max = "") amount: Double
@@ -189,8 +203,8 @@ class MoneyCMD(private val liteEco: LiteEco) {
         }
     }
 
-    @CommandMethod("money|bal|balance set <player> <amount>")
-    @CommandPermission("lite.eco.set")
+    @CommandMethod("eco set <player> <amount>")
+    @CommandPermission("lite.eco.admin.set")
     fun onSetBalance(
         commandSender: CommandSender,
         @Argument(value = "player", suggestions = "offlinePlayers") offlinePlayer: OfflinePlayer,
@@ -211,8 +225,8 @@ class MoneyCMD(private val liteEco: LiteEco) {
         }
     }
 
-    @CommandMethod("money|bal|balance gset <amount>")
-    @CommandPermission("lite.eco.gset")
+    @CommandMethod("eco gset <amount>")
+    @CommandPermission("lite.eco.admin.gset")
     fun onGlobalSetMoney(
         commandSender: CommandSender,
         @Argument("amount") @Range(min = "1.0", max = "") amount: Double
@@ -229,8 +243,8 @@ class MoneyCMD(private val liteEco: LiteEco) {
         }
     }
 
-    @CommandMethod("money|bal|balance remove <player> <amount>")
-    @CommandPermission("lite.eco.remove")
+    @CommandMethod("eco remove <player> <amount>")
+    @CommandPermission("lite.eco.admin.remove")
     fun onRemoveMoney(
         commandSender: CommandSender,
         @Argument(value = "player", suggestions = "offlinePlayers") offlinePlayer: OfflinePlayer,
@@ -253,8 +267,8 @@ class MoneyCMD(private val liteEco: LiteEco) {
         }
     }
 
-    @CommandMethod("money|bal|balance gremove <amount>")
-    @CommandPermission("lite.eco.gremove")
+    @CommandMethod("eco gremove <amount>")
+    @CommandPermission("lite.eco.admin.gremove")
     fun onGlobalRemoveMoney(
         commandSender: CommandSender,
         @Argument("amount") @Range(min = "1.0", max = "") amount: Double
@@ -266,47 +280,47 @@ class MoneyCMD(private val liteEco: LiteEco) {
         }
     }
 
-    @CommandMethod("money|bal|balance lang <isoKey>")
-    @CommandPermission("lite.eco.lang")
+    @CommandMethod("eco lang <isoKey>")
+    @CommandPermission("lite.eco.admin.lang")
     fun onLangSwitch(
         commandSender: CommandSender,
-        @Argument(value = "isoKey", suggestions = "translationKeys") translationKey: TranslationKey
+        @Argument(value = "isoKey", suggestions = "langKeys") langKey: LangKey
     ) {
-        when (translationKey) {
-            TranslationKey.CS_CZ -> {
-                liteEco.translationConfig.setTranslationFile(TranslationKey.CS_CZ)
+        when (langKey) {
+            LangKey.CS_CZ -> {
+                liteEco.translationConfig.setTranslationFile(LangKey.CS_CZ)
                 commandSender.sendMessage(
                     ModernText.miniModernText(
                         liteEco.translationConfig.getMessage("messages.translation_switch"),
-                        TagResolver.resolver(Placeholder.parsed("locale", translationKey.name))
+                        TagResolver.resolver(Placeholder.parsed("locale", langKey.name))
                     )
                 )
             }
 
-            TranslationKey.EN_US -> {
-                liteEco.translationConfig.setTranslationFile(TranslationKey.EN_US)
+            LangKey.EN_US -> {
+                liteEco.translationConfig.setTranslationFile(LangKey.EN_US)
                 commandSender.sendMessage(
                     ModernText.miniModernText(
                         liteEco.translationConfig.getMessage("messages.translation_switch"),
-                        TagResolver.resolver(Placeholder.parsed("locale", translationKey.name))
+                        TagResolver.resolver(Placeholder.parsed("locale", langKey.name))
                     )
                 )
             }
 
-            TranslationKey.ES_ES -> {
-                liteEco.translationConfig.setTranslationFile(TranslationKey.ES_ES)
+            LangKey.ES_ES -> {
+                liteEco.translationConfig.setTranslationFile(LangKey.ES_ES)
                 commandSender.sendMessage(
                     ModernText.miniModernText(
                         liteEco.translationConfig.getMessage("messages.translation_switch"),
-                        TagResolver.resolver(Placeholder.parsed("locale", translationKey.name))
+                        TagResolver.resolver(Placeholder.parsed("locale", langKey.name))
                     )
                 )
             }
         }
     }
 
-    @CommandMethod("money|bal|balance purge [argument]")
-    @CommandPermission("lite.eco.purge")
+    @CommandMethod("eco purge <argument>")
+    @CommandPermission("lite.eco.admin.purge")
     fun onPurge(commandSender: CommandSender, @Argument(value = "argument", suggestions = "purgeKeys") purgeKey: PurgeKey)
     {
         when (purgeKey) {
@@ -324,8 +338,35 @@ class MoneyCMD(private val liteEco: LiteEco) {
         }
     }
 
-    @CommandMethod("money|bal|balance reload")
-    @CommandPermission("lite.eco.reload")
+    @CommandMethod("eco migration <argument>")
+    @CommandPermission("lite.eco.admin.migration")
+    fun onMigration(commandSender: CommandSender, @Argument(value = "argument", suggestions = "migrationKeys") migrationKey: MigrationKey) {
+        val migrationTool = MigrationTool(liteEco)
+        val output = liteEco.api.getTopBalance().toList().positionIndexed { index, k -> MigrationData(index, k.first, k.second) }
+        when(migrationKey) {
+            MigrationKey.CSV -> {
+                migrationTool.migrateToCSV(output, "economy_migration")
+                commandSender.sendMessage(ModernText.miniModernText(
+                    liteEco.translationConfig.getMessage("messages.migration_success"),
+                    TagResolver.resolver(
+                        Placeholder.parsed("type", migrationKey.name)
+                    )
+                ))
+            }
+            MigrationKey.SQL -> {
+                migrationTool.migrateToSQL(output, "economy_migration")
+                commandSender.sendMessage(ModernText.miniModernText(
+                    liteEco.translationConfig.getMessage("messages.migration_success"),
+                    TagResolver.resolver(
+                        Placeholder.parsed("type", migrationKey.name)
+                    )
+                ))
+            }
+        }
+    }
+
+    @CommandMethod("eco reload")
+    @CommandPermission("lite.eco.admin.reload")
     fun onReload(commandSender: CommandSender) {
         liteEco.reloadConfig()
         commandSender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.config_reload")))

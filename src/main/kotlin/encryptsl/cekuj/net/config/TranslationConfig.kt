@@ -1,7 +1,7 @@
 package encryptsl.cekuj.net.config
 
 import encryptsl.cekuj.net.LiteEco
-import encryptsl.cekuj.net.api.enums.TranslationKey
+import encryptsl.cekuj.net.api.enums.LangKey
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
@@ -21,15 +21,15 @@ class TranslationConfig(private val liteEco: LiteEco) {
         return langConfiguration?.getList(value)
     }
 
-    fun setTranslationFile(translationKey: TranslationKey) {
-        val file = File("${liteEco.dataFolder}/locale/", "translation-${translationKey.name}.yml")
+    fun setTranslationFile(langKey: LangKey) {
+        val file = File("${liteEco.dataFolder}/locale/", "lang-${langKey.name.lowercase()}.yml")
         if (!file.exists()) {
             file.parentFile.mkdirs()
-            liteEco.saveResource("locale/translation-${translationKey.name}.yml", false)
+            liteEco.saveResource("locale/lang-${langKey.name.lowercase()}.yml", false)
         }
         try {
             file.createNewFile()
-            liteEco.config.set("plugin.translation", translationKey.name)
+            liteEco.config.set("plugin.translation", langKey.name.lowercase())
             liteEco.saveConfig()
             liteEco.reloadConfig()
         } catch (e: IOException) {
@@ -44,10 +44,10 @@ class TranslationConfig(private val liteEco: LiteEco) {
 
     fun loadTranslation() {
         val currentTranslation: String = liteEco.config.getString("plugin.translation")!!
-        when(TranslationKey.valueOf(currentTranslation)) {
-            TranslationKey.CS_CZ -> setTranslationFile(TranslationKey.CS_CZ)
-            TranslationKey.EN_US -> setTranslationFile(TranslationKey.EN_US)
-            TranslationKey.ES_ES -> setTranslationFile(TranslationKey.ES_ES)
+        when(LangKey.valueOf(currentTranslation)) {
+            LangKey.CS_CZ -> setTranslationFile(LangKey.CS_CZ)
+            LangKey.EN_US -> setTranslationFile(LangKey.EN_US)
+            LangKey.ES_ES -> setTranslationFile(LangKey.ES_ES)
         }
     }
 
