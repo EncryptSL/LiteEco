@@ -27,3 +27,5 @@ database:
       user: user_name
       # Pass = password of user to connection your database.
       pass: password
+# Please don't remove this version settings
+version: 1.0.0

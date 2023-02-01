@@ -11,7 +11,6 @@ import java.io.File
  * Called static in mainMethod.
  */
 class ConfigLoaderAPI(private val liteEco: LiteEco) : ConfigLoaderProvider {
-
     override fun create(configName: String) : ConfigLoaderAPI {
         val file = File(liteEco.dataFolder, configName)
         if (!file.exists()) {
@@ -19,6 +18,24 @@ class ConfigLoaderAPI(private val liteEco: LiteEco) : ConfigLoaderProvider {
         } else {
             liteEco.logger.info("Configuration $configName exist !")
         }
+        return this
+    }
+
+    override fun createConfig(configName: String, version: String): ConfigLoaderAPI {
+        val file = File(liteEco.dataFolder, configName)
+        if (!file.exists()) {
+            liteEco.saveResource(configName, false)
+        } else {
+            if (!liteEco.config.getString("version").equals(version)) {
+                file.copyTo(File(liteEco.dataFolder, "old_config.yml"), true)
+                liteEco.saveResource(configName, false)
+                liteEco.config.set("version", version)
+                liteEco.saveConfig()
+                liteEco.logger.info("Configuration $configName is updated !")
+            }
+            liteEco.logger.info("Configuration $configName exist !")
+        }
+
         return this
     }
 }
