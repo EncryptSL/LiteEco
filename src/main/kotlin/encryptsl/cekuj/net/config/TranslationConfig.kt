@@ -44,10 +44,8 @@ class TranslationConfig(private val liteEco: LiteEco) {
 
     fun loadTranslation() {
         val currentTranslation: String = liteEco.config.getString("plugin.translation")!!
-        when(LangKey.valueOf(currentTranslation)) {
-            LangKey.CS_CZ -> setTranslationFile(LangKey.CS_CZ)
-            LangKey.EN_US -> setTranslationFile(LangKey.EN_US)
-            LangKey.ES_ES -> setTranslationFile(LangKey.ES_ES)
+        LangKey.values().find { it.name.lowercase() == currentTranslation }.apply {
+            this?.let { setTranslationFile(it) }
         }
     }
 
