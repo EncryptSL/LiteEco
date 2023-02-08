@@ -22,10 +22,10 @@ class TranslationConfig(private val liteEco: LiteEco) {
     }
 
     fun setTranslationFile(langKey: LangKey) {
-        val file = File("${liteEco.dataFolder}/locale/", "lang-${langKey.name.lowercase()}.yml")
+        val file = File("${liteEco.dataFolder}/locale/", "${langKey.name.lowercase()}.yml")
         if (!file.exists()) {
             file.parentFile.mkdirs()
-            liteEco.saveResource("locale/lang-${langKey.name.lowercase()}.yml", false)
+            liteEco.saveResource("locale/${langKey.name.lowercase()}.yml", false)
         }
         try {
             file.createNewFile()
