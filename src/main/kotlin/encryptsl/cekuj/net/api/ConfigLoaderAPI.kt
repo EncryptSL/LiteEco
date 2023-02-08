@@ -25,15 +25,19 @@ class ConfigLoaderAPI(private val liteEco: LiteEco) : ConfigLoaderProvider {
         val file = File(liteEco.dataFolder, configName)
         if (!file.exists()) {
             liteEco.saveResource(configName, false)
+            liteEco.logger.info("Configuration $configName was successfully created !")
         } else {
-            if (!liteEco.config.getString("version").equals(version)) {
+            val copyIfRequired = liteEco.config.getString("version").equals(version)
+            val versionIsNull = liteEco.config.getString("version").isNullOrEmpty()
+            if (!copyIfRequired || versionIsNull) {
                 file.copyTo(File(liteEco.dataFolder, "old_config.yml"), true)
-                liteEco.saveResource(configName, false)
+                liteEco.saveResource(configName, true)
                 liteEco.config.set("version", version)
                 liteEco.saveConfig()
                 liteEco.logger.info("Configuration $configName is updated !")
+            } else {
+                liteEco.logger.info("Configuration $configName is latest !")
             }
-            liteEco.logger.info("Configuration $configName exist !")
         }
 
         return this
