@@ -171,7 +171,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
     @CommandPermission("lite.eco.admin.add")
     fun onAddMoney(
         commandSender: CommandSender,
-        @Argument(value = "player", suggestions = "offlinePlayers") offlinePlayer: OfflinePlayer,
+        @Argument(value = "player", suggestions = "players") offlinePlayer: OfflinePlayer,
         @Argument(value = "amount") @Range(min = "1.00", max = "") amount: Double
     ) {
 
@@ -207,7 +207,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
     @CommandPermission("lite.eco.admin.set")
     fun onSetBalance(
         commandSender: CommandSender,
-        @Argument(value = "player", suggestions = "offlinePlayers") offlinePlayer: OfflinePlayer,
+        @Argument(value = "player", suggestions = "players") offlinePlayer: OfflinePlayer,
         @Argument(value = "amount") amount: Double
     ) {
         if (amount.isNegative()) {
@@ -247,7 +247,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
     @CommandPermission("lite.eco.admin.remove")
     fun onRemoveMoney(
         commandSender: CommandSender,
-        @Argument(value = "player", suggestions = "offlinePlayers") offlinePlayer: OfflinePlayer,
+        @Argument(value = "player", suggestions = "players") offlinePlayer: OfflinePlayer,
         @Argument(value = "amount") @Range(min = "1.00", max = "") amount: Double
     ) {
 

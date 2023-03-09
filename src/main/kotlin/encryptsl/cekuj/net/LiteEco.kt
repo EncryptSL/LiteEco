@@ -111,12 +111,6 @@ class LiteEco : JavaPlugin() {
                         ) ?: false)
                     }.toList()
         }
-        commandManager.parserRegistry().registerSuggestionProvider("offlinePlayers") { _, input ->
-            Bukkit.getOfflinePlayers().toList().stream()
-                .map(OfflinePlayer::getName).filter { p ->
-                    p?.startsWith(input) ?: false
-                }.toList()
-        }
         commandManager.parserRegistry().registerSuggestionProvider("langKeys") { _, _ ->
             LangKey.values().map { key -> key.name }.toList()
         }
