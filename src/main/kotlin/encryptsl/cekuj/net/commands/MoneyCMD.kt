@@ -39,13 +39,13 @@ class MoneyCMD(private val liteEco: LiteEco) {
 
     @CommandMethod("bal|balance [player]")
     @CommandPermission("lite.eco.balance")
-    fun onBalanceProxy(commandSender: CommandSender, @Argument(value = "player", suggestions = "offlinePlayers") offlinePlayer: OfflinePlayer?) {
+    fun onBalanceProxy(commandSender: CommandSender, @Argument(value = "player", suggestions = "players") offlinePlayer: OfflinePlayer?) {
         onBalance(commandSender, offlinePlayer)
     }
 
     @CommandMethod("money bal [player]")
     @CommandPermission("lite.eco.balance")
-    fun onBalance(commandSender: CommandSender, @Argument(value = "player", suggestions = "offlinePlayers") offlinePlayer: OfflinePlayer?) {
+    fun onBalance(commandSender: CommandSender, @Argument(value = "player", suggestions = "players") offlinePlayer: OfflinePlayer?) {
         if (commandSender is Player) {
             if (offlinePlayer == null) {
                 commandSender.sendMessage(
@@ -137,7 +137,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
     @CommandPermission("lite.eco.pay")
     fun onPayMoney(
         commandSender: CommandSender,
-        @Argument(value = "player", suggestions = "offlinePlayers") offlinePlayer: OfflinePlayer,
+        @Argument(value = "player", suggestions = "players") offlinePlayer: OfflinePlayer,
         @Argument(value = "amount") @Range(min = "1.00", max = "") amount: Double
     ) {
         if (commandSender is Player) {
