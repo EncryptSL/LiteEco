@@ -1,7 +1,7 @@
 package encryptsl.cekuj.net.api
 
 import encryptsl.cekuj.net.LiteEco
-import encryptsl.cekuj.net.api.interfaces.ConfigLoaderProvider
+import encryptsl.cekuj.net.api.interfaces.ConfigAPIProvider
 import java.io.File
 
 /**
@@ -10,8 +10,8 @@ import java.io.File
  * This componentAPI is for Loading custom config.
  * Called static in mainMethod.
  */
-class ConfigLoaderAPI(private val liteEco: LiteEco) : ConfigLoaderProvider {
-    override fun create(configName: String) : ConfigLoaderAPI {
+class ConfigAPI(private val liteEco: LiteEco) : ConfigAPIProvider {
+    override fun create(configName: String) : ConfigAPI {
         val file = File(liteEco.dataFolder, configName)
         if (!file.exists()) {
             liteEco.saveResource(configName, false)
@@ -21,7 +21,7 @@ class ConfigLoaderAPI(private val liteEco: LiteEco) : ConfigLoaderProvider {
         return this
     }
 
-    override fun createConfig(configName: String, version: String): ConfigLoaderAPI {
+    override fun createConfig(configName: String, version: String): ConfigAPI {
         val file = File(liteEco.dataFolder, configName)
         if (!file.exists()) {
             liteEco.saveResource(configName, false)

@@ -1,9 +1,9 @@
 package encryptsl.cekuj.net.api.interfaces
 
-import encryptsl.cekuj.net.api.ConfigLoaderAPI
+import encryptsl.cekuj.net.api.ConfigAPI
 
-interface ConfigLoaderProvider {
-    fun create(configName: String): ConfigLoaderAPI
+interface ConfigAPIProvider {
+    fun create(configName: String): ConfigAPI
 
     /**
      * Create config.yml
@@ -11,5 +11,5 @@ interface ConfigLoaderProvider {
      * @param version - Version of revision of config need changed.
      * @return ConfigLoaderAPI
      */
-    fun createConfig(configName: String, version: String): ConfigLoaderAPI
+    fun createConfig(configName: String, version: String): ConfigAPI
 }

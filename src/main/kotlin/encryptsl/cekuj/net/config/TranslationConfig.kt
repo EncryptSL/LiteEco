@@ -33,7 +33,7 @@ class TranslationConfig(private val liteEco: LiteEco) {
             liteEco.saveConfig()
             liteEco.reloadConfig()
         } catch (e: IOException) {
-            liteEco.logger.info("Unsupported language, lang file not exist !")
+            liteEco.getLogger().info("Unsupported language, lang file not exist !")
         }
         langConfiguration = YamlConfiguration.loadConfiguration(file)
     }

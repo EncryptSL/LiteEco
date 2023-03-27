@@ -7,7 +7,7 @@ import cloud.commandframework.bukkit.CloudBukkitCapabilities
 import cloud.commandframework.execution.AsynchronousCommandExecutionCoordinator
 import cloud.commandframework.meta.CommandMeta
 import cloud.commandframework.paper.PaperCommandManager
-import encryptsl.cekuj.net.api.ConfigLoaderAPI
+import encryptsl.cekuj.net.api.ConfigAPI
 import encryptsl.cekuj.net.api.HookManager
 import encryptsl.cekuj.net.api.UpdateNotifier
 import encryptsl.cekuj.net.api.economy.LiteEcoEconomyAPI
@@ -37,10 +37,10 @@ class LiteEco : JavaPlugin() {
     val preparedStatements: PreparedStatements by lazy { PreparedStatements() }
     val translationConfig: TranslationConfig by lazy { TranslationConfig(this) }
     val api: LiteEcoEconomyAPI by lazy { LiteEcoEconomyAPI(this) }
-    private val configLoaderAPI: ConfigLoaderAPI by lazy { ConfigLoaderAPI(this) }
+    private val configAPI: ConfigAPI by lazy { ConfigAPI(this) }
     private val hookManager: HookManager by lazy { HookManager(this) }
     override fun onLoad() {
-        configLoaderAPI
+        configAPI
             .create("database.db")
             .createConfig("config.yml", "1.0.0")
         translationConfig
@@ -61,19 +61,19 @@ class LiteEco : JavaPlugin() {
             countTransactions["transactions"]
         })
         updateNotifier = UpdateNotifier("101934", description.version)
-        logger.info(updateNotifier.checkPluginVersion())
+        getLogger().info(updateNotifier.checkPluginVersion())
         registerCommands()
         val handlerListeners = HandlerListeners(this)
         handlerListeners.registerListener()
-        logger.info("Plugin enabled in time ${System.currentTimeMillis() - start} ms")
+        getLogger().info("Plugin enabled in time ${System.currentTimeMillis() - start} ms")
     }
 
     override fun onDisable() {
-        logger.info("Plugin is disabled")
+        getLogger().info("Plugin is disabled")
     }
 
     private fun registerCommands() {
-        logger.info("Registering commands with Cloud Command Framework !")
+        getLogger().info("Registering commands with Cloud Command Framework !")
         val executionCoordinatorFunction = AsynchronousCommandExecutionCoordinator.builder<CommandSender>().build()
         val mapperFunction = Function.identity<CommandSender>()
         val commandManager: PaperCommandManager<CommandSender> = PaperCommandManager(
