@@ -26,7 +26,7 @@ class MigrationTool(private val liteEco: LiteEco) {
                 file.mkdirs()
                 file.createNewFile()
             } catch (e : IOException) {
-                liteEco.logger.severe("Something wrong while migration to csv file !")
+                liteEco.getLogger().severe("Something wrong while migration to csv file !")
             } finally {
                 writer.close()
             }
@@ -44,7 +44,7 @@ class MigrationTool(private val liteEco: LiteEco) {
                 file.mkdirs()
                 file.createNewFile()
             } catch (e : IOException) {
-                liteEco.logger.severe("Something wrong while migration to sql file !")
+                liteEco.getLogger().severe("Something wrong while migration to sql file !")
             } finally {
                 writer.close()
             }

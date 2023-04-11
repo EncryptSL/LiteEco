@@ -16,7 +16,7 @@ class ConfigAPI(private val liteEco: LiteEco) : ConfigAPIProvider {
         if (!file.exists()) {
             liteEco.saveResource(configName, false)
         } else {
-            liteEco.logger.info("Configuration $configName exist !")
+            liteEco.getLogger().info("Configuration $configName exist !")
         }
         return this
     }
@@ -34,9 +34,9 @@ class ConfigAPI(private val liteEco: LiteEco) : ConfigAPIProvider {
                 liteEco.saveResource(configName, true)
                 liteEco.config.set("version", version)
                 liteEco.saveConfig()
-                liteEco.logger.info("Configuration $configName is updated !")
+                liteEco.getLogger().info("Configuration $configName is updated !")
             } else {
-                liteEco.logger.info("Configuration $configName is latest !")
+                liteEco.getLogger().info("Configuration $configName is latest !")
             }
         }
 
