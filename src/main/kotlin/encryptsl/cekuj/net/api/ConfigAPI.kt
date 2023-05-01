@@ -25,7 +25,7 @@ class ConfigAPI(private val liteEco: LiteEco) : ConfigAPIProvider {
         val file = File(liteEco.dataFolder, configName)
         if (!file.exists()) {
             liteEco.saveResource(configName, false)
-            liteEco.logger.info("Configuration $configName was successfully created !")
+            liteEco.getLogger().info("Configuration $configName was successfully created !")
         } else {
             val copyIfRequired = liteEco.config.getString("version").equals(version)
             val versionIsNull = liteEco.config.getString("version").isNullOrEmpty()
