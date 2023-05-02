@@ -1,7 +1,7 @@
 plugins {
     id("io.papermc.paperweight.userdev") version "1.3.8"
     id("com.github.johnrengelman.shadow") version "7.1.2"
-    kotlin("jvm") version "1.8.0" apply true
+    kotlin("jvm") version "1.8.20" apply true
 }
 
 group = "encryptsl.cekuj.net"
@@ -29,7 +29,7 @@ kotlin {
 
 dependencies {
     paperDevBundle(providers.gradleProperty("server_version").get())
-    compileOnly(kotlin("stdlib", "1.8.0"))
+    compileOnly(kotlin("stdlib", "1.8.20"))
     compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
         exclude("org.bukkit", "bukkit")
     }
@@ -39,8 +39,8 @@ dependencies {
     compileOnly("org.jetbrains.exposed:exposed-jdbc:0.40.1")
     compileOnly("com.squareup.okhttp3:okhttp:4.10.0")
     compileOnly("me.lokka30:treasury-api:1.2.1")
-    implementation("cloud.commandframework:cloud-annotations:1.8.0")
-    implementation("cloud.commandframework:cloud-paper:1.8.0")
+    implementation("cloud.commandframework:cloud-annotations:1.8.3")
+    implementation("cloud.commandframework:cloud-paper:1.8.3")
     implementation("org.bstats:bstats-bukkit:3.0.0")
     testImplementation(kotlin("test"))
     testImplementation("com.zaxxer:HikariCP:5.0.1")
