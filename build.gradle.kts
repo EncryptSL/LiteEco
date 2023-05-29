@@ -1,6 +1,6 @@
 plugins {
-    id("io.papermc.paperweight.userdev") version "1.3.8"
-    id("com.github.johnrengelman.shadow") version "7.1.2"
+    id("io.papermc.paperweight.userdev") version "1.5.5"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
     kotlin("jvm") version "1.8.20" apply true
 }
 
@@ -28,7 +28,7 @@ kotlin {
 }
 
 dependencies {
-    paperDevBundle(providers.gradleProperty("server_version").get())
+    paperweightDevelopmentBundle(providers.gradleProperty("server_version").get())
     compileOnly(kotlin("stdlib", "1.8.20"))
     compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
         exclude("org.bukkit", "bukkit")
