@@ -28,7 +28,7 @@ kotlin {
 }
 
 dependencies {
-    paperweightDevelopmentBundle(providers.gradleProperty("server_version").get())
+    paperweight.paperDevBundle(providers.gradleProperty("server_version").get())
     compileOnly(kotlin("stdlib", "1.8.20"))
     compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
         exclude("org.bukkit", "bukkit")
