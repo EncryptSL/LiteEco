@@ -1,6 +1,6 @@
 import encryptsl.cekuj.net.extensions.positionIndexed
 import org.junit.jupiter.api.Test
-import java.util.UUID
+import java.util.*
 import kotlin.random.Random
 
 class SqlTestParser {

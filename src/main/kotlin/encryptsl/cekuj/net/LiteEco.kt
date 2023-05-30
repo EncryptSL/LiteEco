@@ -11,9 +11,9 @@ import encryptsl.cekuj.net.api.ConfigAPI
 import encryptsl.cekuj.net.api.HookManager
 import encryptsl.cekuj.net.api.UpdateNotifier
 import encryptsl.cekuj.net.api.economy.LiteEcoEconomyAPI
+import encryptsl.cekuj.net.api.enums.LangKey
 import encryptsl.cekuj.net.api.enums.MigrationKey
 import encryptsl.cekuj.net.api.enums.PurgeKey
-import encryptsl.cekuj.net.api.enums.LangKey
 import encryptsl.cekuj.net.commands.MoneyCMD
 import encryptsl.cekuj.net.config.TranslationConfig
 import encryptsl.cekuj.net.database.DatabaseConnector
