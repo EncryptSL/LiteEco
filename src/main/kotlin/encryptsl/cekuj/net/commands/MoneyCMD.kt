@@ -4,9 +4,9 @@ import cloud.commandframework.annotations.*
 import cloud.commandframework.annotations.specifier.Range
 import encryptsl.cekuj.net.LiteEco
 import encryptsl.cekuj.net.api.Paginator
+import encryptsl.cekuj.net.api.enums.LangKey
 import encryptsl.cekuj.net.api.enums.MigrationKey
 import encryptsl.cekuj.net.api.enums.PurgeKey
-import encryptsl.cekuj.net.api.enums.LangKey
 import encryptsl.cekuj.net.api.events.*
 import encryptsl.cekuj.net.api.objects.ModernText
 import encryptsl.cekuj.net.extensions.isNegative
@@ -19,7 +19,6 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.Bukkit
-import org.bukkit.ChatColor
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -124,12 +123,15 @@ class MoneyCMD(private val liteEco: LiteEco) {
             return
         }
 
-        commandSender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.balance_top_line_first"),
-            TagResolver.resolver(Placeholder.parsed("page", pagination.page().toString()), Placeholder.parsed("maxpage", pagination.maxPages.toString()))))
-
-        commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', pagination.display()))
-
-        commandSender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.balance_top_line_second")))
+        commandSender.sendMessage(
+            ModernText.miniModernText(
+                liteEco.translationConfig.getMessage("messages.balance_top_line_first"),
+                TagResolver.resolver(
+                    Placeholder.parsed("page", pagination.page().toString()), Placeholder.parsed("maxpage", pagination.maxPages.toString())
+                ))
+                .appendNewline().append(LegacyComponentSerializer.legacyAmpersand().deserialize(pagination.display()))
+                .appendNewline().append(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.balance_top_line_second")))
+        )
     }
 
     @ProxiedBy("pay")
