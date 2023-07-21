@@ -8,12 +8,9 @@ fun Double.moneyFormat(prefix: String, currencyName: String, compact: Boolean = 
     val formatter = DecimalFormat("###,###,##0.00", DecimalFormatSymbols.getInstance(Locale.ENGLISH))
     formatter.maximumFractionDigits = 2
 
-    val compactData = toCompact(this)
-    val number = compactData?.first ?: this
-    var suffix = " $currencyName"
-    if (compact) {
-        suffix = compactData?.second?.toString() + suffix
-    }
+    val compactData = if (compact) compactNumber(this) else null
+    val (number, compactChar) = compactData ?: this to ""
+    val suffix = "$compactChar $currencyName"
 
     return "$prefix${formatter.format(number)}$suffix"
 }
@@ -24,7 +21,7 @@ fun Double.moneyFormat(): String {
     return formatter.format(this)
 }
 
-private fun toCompact(number: Double): Pair<Double, Char>? {
+private fun compactNumber(number: Double): Pair<Double, Char>? {
     val units = charArrayOf('K', 'M', 'B', 'T')
 
     if (number < 1000) {
@@ -45,15 +42,17 @@ private fun toCompact(number: Double): Pair<Double, Char>? {
     }
 }
 
-fun String.toValidNumber(): Double? {
+fun String.parseValidNumber(): Double? {
     val units = mapOf('K' to 1000.0, 'M' to 1_000_000.0, 'B' to 1_000_000_000.0, 'T' to 1_000_000_000_000.0, 'Q' to 1_000_000_000_000_000.0)
 
     val lastChar = this.lastOrNull()?.uppercaseChar()
-    if (lastChar == null || !units.containsKey(lastChar)) {
-        return toDoubleOrNull()
+    val multiplier = units.getOrDefault(lastChar, 1.0)
+    if (multiplier == 1.0) {
+        return if (this.isNumeric()) this.toDoubleOrNull() else null
     }
-    val multiplier = units[lastChar]
-    val value = dropLast(1).toDoubleOrNull()
 
-    return value?.times(multiplier!!)
+    val str = dropLast(1)
+    val value = if (str.isNumeric()) str.toDoubleOrNull() else null
+
+    return value?.times(multiplier)
 }
