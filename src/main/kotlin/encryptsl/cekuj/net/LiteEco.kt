@@ -21,7 +21,6 @@ import encryptsl.cekuj.net.database.models.PreparedStatements
 import org.bstats.bukkit.Metrics
 import org.bstats.charts.SingleLineChart
 import org.bukkit.Bukkit
-import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import org.bukkit.plugin.PluginManager
 import org.bukkit.plugin.java.JavaPlugin
@@ -101,12 +100,11 @@ class LiteEco : JavaPlugin() {
             commandMetaFunction
         )
         commandManager.parserRegistry().registerSuggestionProvider("players") { commandSender, input ->
-                Bukkit.getOfflinePlayers().toList().stream()
-                    .map(OfflinePlayer::getName).filter { p ->
-                        commandSender.hasPermission("lite.eco.suggestion.players") && (p?.startsWith(
-                            input
-                        ) ?: false)
-                    }.toList()
+            Bukkit.getOfflinePlayers().toList()
+                .filter { p ->
+                    commandSender.hasPermission("lite.eco.suggestion.players") && (p.name?.startsWith(input) ?: false)
+                }
+                .mapNotNull { it.name }
         }
         commandManager.parserRegistry().registerSuggestionProvider("langKeys") { _, _ ->
             LangKey.values().map { key -> key.name }.toList()
