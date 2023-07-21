@@ -52,8 +52,8 @@ fun String.toValidNumber(): Double? {
     if (lastChar == null || !units.containsKey(lastChar)) {
         return toDoubleOrNull()
     }
-    val multiplier = units[lastChar]!!
-    val value = dropLast(1).toDoubleOrNull()!!
+    val multiplier = units[lastChar]
+    val value = dropLast(1).toDoubleOrNull()
 
-    return value * multiplier
+    return value?.times(multiplier!!)
 }
