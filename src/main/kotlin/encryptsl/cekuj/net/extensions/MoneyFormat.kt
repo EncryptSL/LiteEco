@@ -35,11 +35,7 @@ private fun compactNumber(number: Double): Pair<Double, Char>? {
         unitIndex++
     }
 
-    return if (unitIndex > 0) {
-        Pair(value, units[unitIndex - 1])
-    } else {
-        null
-    }
+    return unitIndex.takeIf { it > 0 }?.let { Pair(value, units[it - 1]) }
 }
 
 fun String.parseValidNumber(): Double? {
@@ -48,11 +44,11 @@ fun String.parseValidNumber(): Double? {
     val lastChar = this.lastOrNull()?.uppercaseChar()
     val multiplier = units.getOrDefault(lastChar, 1.0)
     if (multiplier == 1.0) {
-        return if (this.isNumeric()) this.toDoubleOrNull() else null
+        return if (this.isDecimal()) this.toDoubleOrNull() else null
     }
 
     val str = dropLast(1)
-    val value = if (str.isNumeric()) str.toDoubleOrNull() else null
+    val value = if (str.isDecimal()) str.toDoubleOrNull() else null
 
     return value?.times(multiplier)
 }
