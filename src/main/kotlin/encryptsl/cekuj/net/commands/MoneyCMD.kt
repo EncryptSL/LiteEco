@@ -225,7 +225,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
         @Argument(value = "player", suggestions = "players") offlinePlayer: OfflinePlayer,
         @Argument(value = "amount") amountStr: String
     ) {
-        val amount = validateAmount(amountStr, commandSender) ?: return
+        val amount = validateAmount(amountStr, commandSender, ErrorLevel.ONLY_NEGATIVE) ?: return
 
         liteEco.server.scheduler.runTask(liteEco) { ->
             liteEco.pluginManger.callEvent(
@@ -244,7 +244,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
         commandSender: CommandSender,
         @Argument("amount") @Range(min = "1.0", max = "") amountStr: String
     ) {
-        val amount = validateAmount(amountStr, commandSender) ?: return
+        val amount = validateAmount(amountStr, commandSender, ErrorLevel.ONLY_NEGATIVE) ?: return
 
         liteEco.server.scheduler.runTask(liteEco) { ->
             liteEco.pluginManger.callEvent(
