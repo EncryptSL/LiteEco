@@ -3,13 +3,14 @@ package encryptsl.cekuj.net.extensions
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.*
+import java.util.logging.Logger
 
 fun Double.moneyFormat(prefix: String, currencyName: String, compact: Boolean = false): String {
     val formatter = DecimalFormat("###,###,##0.00", DecimalFormatSymbols.getInstance(Locale.ENGLISH))
     formatter.maximumFractionDigits = 2
 
     val compactData = if (compact) compactNumber(this) else null
-    val (number, compactChar) = compactData ?: this to ""
+    val (number, compactChar) = compactData ?: (this to "")
     val suffix = "$compactChar $currencyName"
 
     return "$prefix${formatter.format(number)}$suffix"
@@ -22,7 +23,7 @@ fun Double.moneyFormat(): String {
 }
 
 private fun compactNumber(number: Double): Pair<Double, Char>? {
-    val units = charArrayOf('K', 'M', 'B', 'T')
+    val units = charArrayOf('K', 'M', 'B', 'T', 'Q')
 
     if (number < 1000) {
         return null
@@ -41,14 +42,13 @@ private fun compactNumber(number: Double): Pair<Double, Char>? {
 fun String.parseValidNumber(): Double? {
     val units = mapOf('K' to 1000.0, 'M' to 1_000_000.0, 'B' to 1_000_000_000.0, 'T' to 1_000_000_000_000.0, 'Q' to 1_000_000_000_000_000.0)
 
-    val lastChar = this.lastOrNull()?.uppercaseChar()
+    val lastChar = lastOrNull()?.uppercaseChar()
     val multiplier = units.getOrDefault(lastChar, 1.0)
     if (multiplier == 1.0) {
-        return if (this.isDecimal()) this.toDoubleOrNull() else null
+        return takeIf { it.isDecimal() }?.toDoubleOrNull()
     }
 
-    val str = dropLast(1)
-    val value = if (str.isDecimal()) str.toDoubleOrNull() else null
+    val value = dropLast(1).takeIf { it.isDecimal() }?.toDoubleOrNull()
 
     return value?.times(multiplier)
 }
