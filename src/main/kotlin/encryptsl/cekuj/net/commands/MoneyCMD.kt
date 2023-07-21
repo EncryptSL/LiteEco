@@ -289,38 +289,8 @@ class MoneyCMD(private val liteEco: LiteEco) {
         @Argument(value = "isoKey", suggestions = "langKeys") langKey: LangKey
     ) {
         when (langKey) {
-            LangKey.CS_CZ -> {
-                liteEco.translationConfig.setTranslationFile(LangKey.CS_CZ)
-                commandSender.sendMessage(
-                    ModernText.miniModernText(
-                        liteEco.translationConfig.getMessage("messages.translation_switch"),
-                        TagResolver.resolver(Placeholder.parsed("locale", langKey.name))
-                    )
-                )
-            }
-
-            LangKey.EN_US -> {
-                liteEco.translationConfig.setTranslationFile(LangKey.EN_US)
-                commandSender.sendMessage(
-                    ModernText.miniModernText(
-                        liteEco.translationConfig.getMessage("messages.translation_switch"),
-                        TagResolver.resolver(Placeholder.parsed("locale", langKey.name))
-                    )
-                )
-            }
-
-            LangKey.ES_ES -> {
-                liteEco.translationConfig.setTranslationFile(LangKey.ES_ES)
-                commandSender.sendMessage(
-                    ModernText.miniModernText(
-                        liteEco.translationConfig.getMessage("messages.translation_switch"),
-                        TagResolver.resolver(Placeholder.parsed("locale", langKey.name))
-                    )
-                )
-            }
-
-            LangKey.JA_JP -> {
-                liteEco.translationConfig.setTranslationFile(LangKey.JA_JP)
+            LangKey.CS_CZ, LangKey.EN_US, LangKey.ES_ES, LangKey.JA_JP -> {
+                liteEco.translationConfig.setTranslationFile(langKey)
                 commandSender.sendMessage(
                     ModernText.miniModernText(
                         liteEco.translationConfig.getMessage("messages.translation_switch"),
