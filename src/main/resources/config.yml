@@ -10,6 +10,8 @@ plugin:
     name: LE
     # This amount is added to player from first connection.
     default_money: 30
+    # Convert big numbers into a more compact display.
+    compact_display: false
   # These settings disable messages.
   disableMessages:
     g_broadcast_pay: false
