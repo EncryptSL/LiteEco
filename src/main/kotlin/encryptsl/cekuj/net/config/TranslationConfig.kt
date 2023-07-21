@@ -12,9 +12,17 @@ class TranslationConfig(private val liteEco: LiteEco) {
 
     private var langConfiguration: FileConfiguration? = null
 
+    private fun convertVariables(value: String): String {
+        val regex = "%(\\w+)%".toRegex()
+        return regex.replace(value) { matchResult ->
+            "<${matchResult.groupValues[1]}>"
+        }
+    }
+
     fun getMessage(value: String): String {
-        return Optional.ofNullable(langConfiguration?.getString(value))
+        val message = Optional.ofNullable(langConfiguration?.getString(value))
             .orElse(langConfiguration?.getString("messages.translation_missing")?.replace("<key>", value))
+        return convertVariables(message)
     }
 
     fun getList(value: String): MutableList<*>? {
