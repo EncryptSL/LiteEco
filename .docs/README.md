@@ -25,7 +25,7 @@ plugin:
     name: LE
     # This amount is added to player from first connection.
     default_money: 30
-  # This settings disable messages.
+  # These settings disable messages.
   disableMessages:
     g_broadcast_pay: false
     g_broadcast_withdraw: false
@@ -51,13 +51,13 @@ All available permissions for commands:
 ```YAML
   /money:
     Permission: lite.eco.money
-  /money help: This shows commands for players
+  /money help: #This shows commands for players
     Permission: lite.eco.help
-  /money bal [username]: This shows your balance of account or another player
+  /money bal [username]: #This shows your balance of account or another player
     Permission: lite.eco.balance
-  /money top [page]: This shows richest players
+  /money top [page]: #This shows richest players
     Permission: lite.eco.top
-  /money pay <player> <amount>: Send your money to another player.
+  /money pay <player> <amount>: #Send your money to another player.
     Permission: lite.eco.pay
 ```
 
@@ -65,38 +65,38 @@ All available permissions for commands:
 ```YAML
 /eco:
   Permission: lite.eco.admin.eco
-/eco help: This shows commands for admins
+/eco help: #This shows commands for admins
   Permission: lite.eco.admin.help
-/eco add <player> <amount>: Add money to player.
+/eco add <player> <amount>: #Add money to player.
   Permission: lite.eco.admin.add
-/eco gadd <amount>: Add money to everyone.
+/eco gadd <amount>: #Add money to everyone.
   Permissions: lite.eco.admin.gadd
-/eco set <player> <amount>: Set fixed money amount to player.
+/eco set <player> <amount>: #Set fixed money amount to player.
   Permission: lite.eco.admin.set
-/eco gset <amount>: Set fixed money amount to everyone.
+/eco gset <amount>: #Set fixed money amount to everyone.
   Permissions: lite.eco.admin.gset
-/eco remove <player> <amount>: Withdraw money from player.
+/eco remove <player> <amount>: #Withdraw money from player.
   Permission: lite.eco.admin.remove
-/eco gremove <amount>: Withdraw money from everyone.
+/eco gremove <amount>: #Withdraw money from everyone.
   Permissions: lite.eco.admin.gremove
-/eco lang [CS_CZ, EN_US]: This command switches translations files.
+/eco lang [CS_CZ, EN_US]: #This command switches translations files.
   Permission: lite.eco.admin.lang
-/eco purge <argument>: This command purges data.
+/eco purge <argument>: #This command purges data.
   Permission: lite.eco.admin.purge
-/eco migration <argument>: This command migrate database to sql or csv.
-  Permision: lite.eco.admin.migration
-/eco reload: This command reloads the config.
+/eco migration <argument>: #This command migrate database to sql or csv.
+  Permission: lite.eco.admin.migration
+/eco reload: #This command reloads the config.
   Permission: lite.eco.admin.reload
 ```
 
 **Other perms**
 ```YAML
-This permission was to suggest player names. (DISABLED)
+#This permission was to suggest player names. (DISABLED)
   Permission: lite.eco.suggestion.players
 ```
 
 ## Translation
-This plugin supports translations but it must be included in the plugin.
+This plugin supports translations, but it must be included in the plugin.
 Plugin makes use of Enums for [available locales](https://github.com/LcyDev/LiteEco/blob/main/src/main/kotlin/encryptsl/cekuj/net/api/enums/LangKey.kt).
 
 If you want to contribute with another translation you must follow this steps.
