@@ -61,19 +61,19 @@ class LiteEco : JavaPlugin() {
             countTransactions["transactions"]
         })
         updateNotifier = UpdateNotifier("101934", description.version)
-        getLogger().info(updateNotifier.checkPluginVersion())
+        logger.info(updateNotifier.checkPluginVersion())
         registerCommands()
         val handlerListeners = HandlerListeners(this)
         handlerListeners.registerListener()
-        getLogger().info("Plugin enabled in time ${System.currentTimeMillis() - start} ms")
+        logger.info("Plugin enabled in time ${System.currentTimeMillis() - start} ms")
     }
 
     override fun onDisable() {
-        getLogger().info("Plugin is disabled")
+        logger.info("Plugin is disabled")
     }
 
     private fun registerCommands() {
-        getLogger().info("Registering commands with Cloud Command Framework !")
+        logger.info("Registering commands with Cloud Command Framework !")
         val executionCoordinatorFunction = AsynchronousCommandExecutionCoordinator.builder<CommandSender>().build()
         val mapperFunction = Function.identity<CommandSender>()
         val commandManager: PaperCommandManager<CommandSender> = PaperCommandManager(
@@ -92,10 +92,7 @@ class LiteEco : JavaPlugin() {
         val commandMetaFunction =
             Function<ParserParameters, CommandMeta> { p: ParserParameters ->
                 CommandMeta.simple() // This will allow you to decorate commands with descriptions
-                    .with(
-                        CommandMeta.DESCRIPTION,
-                        p.get(StandardParameters.DESCRIPTION, "No description")
-                    )
+                    .with(CommandMeta.DESCRIPTION, p[StandardParameters.DESCRIPTION, "No Description"])
                     .build()
             }
         val annotationParser = AnnotationParser( /* Manager */

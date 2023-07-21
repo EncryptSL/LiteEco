@@ -382,7 +382,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
     fun onReload(commandSender: CommandSender) {
         liteEco.reloadConfig()
         commandSender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.config_reload")))
-        liteEco.getLogger().info("Config.yml was reloaded !")
+        liteEco.logger.info("Config.yml was reloaded !")
         liteEco.saveConfig()
         liteEco.translationConfig.reloadTranslationConfig()
     }
