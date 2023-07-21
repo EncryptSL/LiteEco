@@ -16,9 +16,9 @@ class HookManager(private val liteEco: LiteEco) {
      * @param pluginName - String name of plugin is CaseSensitive.
      */
     fun blockPlugin(pluginName: String) {
-        if (liteEco.pluginManger.isPluginEnabled(pluginName)) {
+        if (liteEco.pluginManager.isPluginEnabled(pluginName)) {
             liteEco.logger.severe("Please don't use $pluginName, because there can be conflict.")
-            liteEco.pluginManger.disablePlugin(liteEco)
+            liteEco.pluginManager.disablePlugin(liteEco)
         }
     }
 
@@ -28,7 +28,7 @@ class HookManager(private val liteEco: LiteEco) {
      * @return Boolean
      */
     private fun isPluginInstalled(pluginName: String): Boolean {
-        return liteEco.pluginManger.getPlugin(pluginName) != null
+        return liteEco.pluginManager.getPlugin(pluginName) != null
     }
 
     /**
