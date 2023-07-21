@@ -7,7 +7,6 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import java.util.*
-import java.util.stream.Collectors
 
 class PlaceHolderExtensionProvider(private val liteEco: LiteEco) : PlaceholderExpansion() {
 
@@ -31,17 +30,17 @@ class PlaceHolderExtensionProvider(private val liteEco: LiteEco) : PlaceholderEx
         if (player == null) return null
 
         if (identifier.startsWith("top_formatted_")) {
-            val split = this.spliterator(identifier, 2)
+            val split = this.spliterator(identifier)
             return if (split.isNumeric()) liteEco.api.formatting(balanceByRank(split.toInt())) else null
         }
 
         if (identifier.startsWith("top_balance_")) {
-            val split = this.spliterator(identifier, 2)
+            val split = this.spliterator(identifier)
             return if (split.isNumeric()) balanceByRank(split.toInt()).toString() else null
         }
 
         if (identifier.startsWith("top_player_")) {
-            val split = this.spliterator(identifier, 2)
+            val split = this.spliterator(identifier)
             return if (!split.isNumeric()) {
                 null
             } else if (nameByRank(split.toInt()) == "EMPTY") {
@@ -59,13 +58,13 @@ class PlaceHolderExtensionProvider(private val liteEco: LiteEco) : PlaceholderEx
         }
     }
 
-    private fun spliterator(pattern: String, index: Int): String {
+    private fun spliterator(pattern: String, index: Int = 2): String {
         val args: List<String> = pattern.split("_")
         return args[index]
     }
 
     private fun nameByRank(rank: Int): String {
-        topBalance()?.playerPosition { index, entry ->
+        topBalance().playerPosition { index, entry ->
             if (index == rank) {
                 return entry.key
             }
@@ -74,7 +73,7 @@ class PlaceHolderExtensionProvider(private val liteEco: LiteEco) : PlaceholderEx
     }
 
     private fun balanceByRank(rank: Int): Double {
-        topBalance()?.playerPosition { index, entry ->
+        topBalance().playerPosition { index, entry ->
             if (index == rank) {
                 return entry.value
             }
@@ -83,13 +82,12 @@ class PlaceHolderExtensionProvider(private val liteEco: LiteEco) : PlaceholderEx
         return 0.0
     }
 
-    private fun topBalance(): LinkedHashMap<String, Double>? {
-          return liteEco.api.getTopBalance()
-            .entries
-            .stream()
-            .filter { data -> Bukkit.getOfflinePlayer(UUID.fromString(data.key)).hasPlayedBefore() }
-            .sorted(compareByDescending{o1 -> o1.value})
-            .collect(
-                Collectors.toMap({ e -> e.key }, { e -> e.value }, { _, e2 -> e2 }) { LinkedHashMap() })
+    private fun topBalance(): LinkedHashMap<String, Double> {
+        return liteEco.api.getTopBalance()
+                .filterKeys { uuid -> Bukkit.getOfflinePlayer(UUID.fromString(uuid)).hasPlayedBefore() }
+                .toList()
+                .sortedByDescending { (_, balance) -> balance }
+                .toMap()
+                .let { LinkedHashMap<String, Double>(it) }
     }
 }
