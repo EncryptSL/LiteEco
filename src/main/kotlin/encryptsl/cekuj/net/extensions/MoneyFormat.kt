@@ -3,31 +3,41 @@ package encryptsl.cekuj.net.extensions
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.*
-import java.util.logging.Logger
 
-fun Double.moneyFormat(prefix: String, currencyName: String, compact: Boolean = false): String {
+
+private fun formatter(): DecimalFormat {
     val formatter = DecimalFormat("###,###,##0.00", DecimalFormatSymbols.getInstance(Locale.ENGLISH))
     formatter.maximumFractionDigits = 2
-
-    val compactData = if (compact) compactNumber(this) else null
-    val (number, compactChar) = compactData ?: (this to "")
-    val suffix = "$compactChar $currencyName"
-
-    return "$prefix${formatter.format(number)}$suffix"
+    return formatter
 }
 
-fun Double.moneyFormat(): String {
-    val formatter = DecimalFormat("###,###,##0.00", DecimalFormatSymbols.getInstance(Locale.ENGLISH))
-    formatter.maximumFractionDigits = 2
-    return formatter.format(this)
+private fun formatNumber(number: Double, compact: Boolean): Pair<String, Char?> {
+    return if (compact) {
+        val (compactNumber, compactChar) = compactNumber(number) ?: (number to null)
+        formatter().format(compactNumber) to compactChar
+    } else {
+        formatter().format(number) to null
+    }
+}
+
+fun Double.moneyFormat(prefix: String, currencyName: String, compact: Boolean = false): String {
+    val (formattedNumber, compactChar) = formatNumber(this, compact)
+    val suffix = compactChar?.let { " $it $currencyName" } ?: " $currencyName"
+
+    return "$prefix$formattedNumber$suffix"
+}
+
+fun Double.moneyFormat(compact: Boolean = false): String {
+    val (formattedNumber, compactChar) = formatNumber(this, compact)
+    val suffix = compactChar?.let { " $it" } ?: ""
+
+    return "$formattedNumber$suffix"
 }
 
 private fun compactNumber(number: Double): Pair<Double, Char>? {
     val units = charArrayOf('K', 'M', 'B', 'T', 'Q')
 
-    if (number < 1000) {
-        return null
-    }
+    if (number < 1000) return null
 
     var unitIndex = 0
     var value = number

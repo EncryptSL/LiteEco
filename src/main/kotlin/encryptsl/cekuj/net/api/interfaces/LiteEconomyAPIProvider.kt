@@ -81,4 +81,5 @@ interface LiteEconomyAPIProvider {
      */
     fun formatting(amount: Double): String
 
+    fun compactFormat(amount: Double): String
 }
