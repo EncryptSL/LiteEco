@@ -154,7 +154,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
             }
 
             liteEco.server.scheduler.runTask(liteEco) { ->
-                liteEco.pluginManger.callEvent(PlayerEconomyPayEvent(commandSender, offlinePlayer, amount))
+                liteEco.pluginManager.callEvent(PlayerEconomyPayEvent(commandSender, offlinePlayer, amount))
             }
         } else {
             commandSender.sendMessage(ModernText.miniModernText("<red>Only a player can use this command."))
@@ -183,7 +183,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
         }
 
         liteEco.server.scheduler.runTask(liteEco) { ->
-            liteEco.pluginManger.callEvent(AdminEconomyMoneyDepositEvent(commandSender, offlinePlayer, amount))
+            liteEco.pluginManager.callEvent(AdminEconomyMoneyDepositEvent(commandSender, offlinePlayer, amount))
         }
     }
 
@@ -199,7 +199,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
         }
 
         liteEco.server.scheduler.runTask(liteEco) { ->
-            liteEco.pluginManger.callEvent(
+            liteEco.pluginManager.callEvent(
                 AdminEconomyGlobalDepositEvent(commandSender, amount)
             )
         }
@@ -217,7 +217,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
             return
         }
         liteEco.server.scheduler.runTask(liteEco) { ->
-            liteEco.pluginManger.callEvent(
+            liteEco.pluginManager.callEvent(
                 AdminEconomyMoneySetEvent(
                     commandSender,
                     offlinePlayer,
@@ -239,7 +239,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
         }
 
         liteEco.server.scheduler.runTask(liteEco) { ->
-            liteEco.pluginManger.callEvent(
+            liteEco.pluginManager.callEvent(
                 AdminEconomyGlobalSetEvent(commandSender, amount)
             )
         }
@@ -259,7 +259,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
         }
 
         liteEco.server.scheduler.runTask(liteEco) { ->
-            liteEco.pluginManger.callEvent(
+            liteEco.pluginManager.callEvent(
                 AdminEconomyMoneyWithdrawEvent(
                     commandSender,
                     offlinePlayer,
@@ -276,7 +276,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
         @Argument("amount") @Range(min = "1.0", max = "") amount: Double
     ) {
         liteEco.server.scheduler.runTask(liteEco) { ->
-            liteEco.pluginManger.callEvent(
+            liteEco.pluginManager.callEvent(
                 AdminEconomyGlobalWithdrawEvent(commandSender, amount)
             )
         }

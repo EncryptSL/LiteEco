@@ -41,11 +41,16 @@ class LiteEco : JavaPlugin() {
     private val hookManager: HookManager by lazy { HookManager(this) }
 
     private fun initDatabase() {
-        databaseConnector.initConnect(
-            config.getString("database.connection.jdbc_host") ?: "jdbc:mysql://localhost:3306/mydatabase",
-            config.getString("database.connection.user") ?: "root",
-            config.getString("database.connection.pass") ?: "password"
-        )
+        try {
+            databaseConnector.initConnect(
+                config.getString("database.connection.jdbc_host") ?: "jdbc:mysql://localhost:3306/mydatabase",
+                config.getString("database.connection.user") ?: "root",
+                config.getString("database.connection.pass") ?: "password"
+            )
+        } catch (e: Exception) {
+            logger.severe("Error initializing database: ${e.message}")
+            pluginManager.disablePlugin(this)
+        }
     }
 
     private fun setupMetrics() {
@@ -56,6 +61,7 @@ class LiteEco : JavaPlugin() {
     }
 
     private fun checkUpdates() {
+        @Suppress("DEPRECATION")
         updateNotifier = UpdateNotifier("101934", description.version)
         logger.info(updateNotifier.checkPluginVersion())
     }
@@ -88,7 +94,7 @@ class LiteEco : JavaPlugin() {
         logger.info("Registering commands with Cloud Command Framework !")
 
         val commandManager = createCommandManager()
-
+        
         registerSuggestionProviders(commandManager)
 
         val annotationParser = createAnnotationParser(commandManager)
