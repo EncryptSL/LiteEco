@@ -1,39 +1,76 @@
 ## Setup
 The configuration file (**config.yml**) is where you can customize the settings for the LiteEco plugin to suit your specific needs.
 
-Below is the default config, make sure to modify these settings as per your server requirements.
+Please ensure to modify these settings as per your server requirements to ensure smooth operation of the LiteEco plugin.
 
-````YAML
+Below is an explanation of the various sections in the config file:
+
+### Plugin Settings
+
+This section contains essential configurations for the LiteEco plugin.
+
+These settings you to define specific settings that govern the overall behavior and features.
+
+```YAML
 #Official settings for this plugin.
 plugin:
   # Translations list of supported locales below
   # https://github.com/EncryptSL/LiteEco/blob/main/src/main/kotlin/encryptsl/cekuj/net/api/enums/LangKey.kt
   translation: EN_US
-  economy:
-    # Prefix of Currency
-    prefix: €
-    # Name of Currency
-    name: LE
-    # This amount is added to player from first connection.
-    default_money: 30
-    # Convert big numbers into a more compact display.
-    compact_display: false
-  # These settings disable messages.
-  disableMessages:
-    g_broadcast_pay: false
-    g_broadcast_withdraw: false
-    g_broadcast_set: false
-    target_success_pay: false
-    target_success_withdraw: false
-    target_success_set: false
+```
+
+### Economy Settings
+
+This section allows you to customize various aspects of the in-game currency system used by LiteEco.
+
+These settings help you define the appearance and behavior of the virtual currency within your server.
+
+```YAML
+economy:
+  # Prefix of Currency
+  currency_prefix: €
+  # Name of Currency
+  currency_name: LE
+  # This amount is granted to players who don't have an existing account in the database.
+  starting_balance: 30
+  # Convert large currency values into a more compact format.
+  compact_display: false
+```
+
+### Message Settings
+
+These settings control whether certain messages will be displayed or broadcasted to players. 
+
+You can enable or disable each message type using these options:
+
+```YAML
+# These settings disable messages.
+disable_messages:
+  global_broadcast_pay: false
+  global_broadcast_withdraw: false
+  global_broadcast_set: false
+  target_success_pay: false
+  target_success_withdraw: false
+  target_success_set: false
+```
+
+### Database Settings
+
+These settings are used to configure the database or SQLite connection for storing LiteEco data.
+
+You can choose to use either MySQL or SQLite by providing the appropriate connection details.
+
+```YAML
 # Settings for Database or SQLite connection.
 database:
-  # MySQL example: jdbc:mysql://your_host:port/name_of_database
+  # For SQLite, the path to the SQLite database file: jdbc:sqlite:plugins/LiteEco/database.db
+  # For MySQL, the JDBC connection URL in the format: jdbc:mysql://your_host:port/name_of_database
   connection:
     # Settings for JDBC_HOST
-    jdbc_host: "jdbc:sqlite:plugins/LiteEco/database.db"
-    # User = username of user to connection your database.
-    user: user_name
-    # Pass = password of user to connection your database.
-    pass: password
-````
+    jdbc_url: "jdbc:sqlite:plugins/LiteEco/database.db"
+    # The username of the user to connect to your database (MySQL only).
+    username: user_name
+    # The password of the user to connect to your database (MySQL only).
+    password: password
+```
+
