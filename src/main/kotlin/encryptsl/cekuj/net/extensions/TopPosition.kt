@@ -6,7 +6,7 @@ inline fun <K, V, M : Map<out K, V>> M.playerPosition(action: (index: Int, Map.E
 }
 
 inline fun <T, R> Iterable<T>.positionIndexed(transform: (index: Int, T) -> R): List<R> {
-    return mapIndexedTo(ArrayList<R>(collectionSizeOrDefault(10)), transform)
+    return mapIndexedTo(ArrayList(collectionSizeOrDefault(10)), transform)
 }
 
 inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.mapIndexedTo(destination: C, transform: (index: Int, T) -> R): C {

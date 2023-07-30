@@ -29,11 +29,11 @@ class TranslationConfig(private val liteEco: LiteEco) {
         }
         try {
             file.createNewFile()
-            liteEco.config.set("plugin.translation", langKey.name.lowercase())
+            liteEco.config["plugin.translation"] = langKey.name.lowercase()
             liteEco.saveConfig()
             liteEco.reloadConfig()
         } catch (e: IOException) {
-            liteEco.getLogger().info("Unsupported language, lang file not exist !")
+            liteEco.logger.info("Unsupported language, lang file not exist !")
         }
         langConfiguration = YamlConfiguration.loadConfiguration(file)
     }

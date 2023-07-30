@@ -33,7 +33,7 @@ class LiteEco : JavaPlugin() {
     private lateinit var metrics: Metrics
     private lateinit var updateNotifier: UpdateNotifier
     var countTransactions: LinkedHashMap<String, Int> = LinkedHashMap()
-    val pluginManger: PluginManager = server.pluginManager
+    val pluginManager: PluginManager = server.pluginManager
     val preparedStatements: PreparedStatements by lazy { PreparedStatements() }
     val translationConfig: TranslationConfig by lazy { TranslationConfig(this) }
     val api: LiteEcoEconomyAPI by lazy { LiteEcoEconomyAPI(this) }
@@ -61,19 +61,19 @@ class LiteEco : JavaPlugin() {
             countTransactions["transactions"]
         })
         updateNotifier = UpdateNotifier("101934", description.version)
-        getLogger().info(updateNotifier.checkPluginVersion())
+        logger.info(updateNotifier.checkPluginVersion())
         registerCommands()
         val handlerListeners = HandlerListeners(this)
         handlerListeners.registerListener()
-        getLogger().info("Plugin enabled in time ${System.currentTimeMillis() - start} ms")
+        logger.info("Plugin enabled in time ${System.currentTimeMillis() - start} ms")
     }
 
     override fun onDisable() {
-        getLogger().info("Plugin is disabled")
+        logger.info("Plugin is disabled")
     }
 
     private fun registerCommands() {
-        getLogger().info("Registering commands with Cloud Command Framework !")
+        logger.info("Registering commands with Cloud Command Framework !")
         val executionCoordinatorFunction = AsynchronousCommandExecutionCoordinator.builder<CommandSender>().build()
         val mapperFunction = Function.identity<CommandSender>()
         val commandManager: PaperCommandManager<CommandSender> = PaperCommandManager(

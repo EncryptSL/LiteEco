@@ -1,13 +1,12 @@
 package encryptsl.cekuj.net
 
 import encryptsl.cekuj.net.listeners.*
-import org.bukkit.event.Listener
+import kotlin.system.measureTimeMillis
 
 class HandlerListeners(private val liteEco: LiteEco) {
 
     fun registerListener() {
-        val start = System.currentTimeMillis()
-        val list: List<Listener> = arrayListOf(
+        val listeners = arrayListOf(
             AccountEconomyManageListener(liteEco),
             PlayerEconomyPayListener(liteEco),
             AdminEconomyGlobalDepositListener(liteEco),
@@ -18,9 +17,11 @@ class HandlerListeners(private val liteEco: LiteEco) {
             AdminEconomyMoneySetListener(liteEco),
             PlayerJoinListener(liteEco)
         )
-        list.forEach { listener -> liteEco.pluginManger.registerEvents(listener, liteEco)
-           liteEco.getLogger().info("Bukkit Listener ${listener.javaClass.simpleName} registered () -> ok")
+        val timeTaken = measureTimeMillis {
+            listeners.forEach { listener -> liteEco.pluginManager.registerEvents(listener, liteEco)
+                liteEco.logger.info("Bukkit Listener ${listener.javaClass.simpleName} registered () -> ok")
+            }
         }
-        liteEco.getLogger().info("Listeners registered(${list.size}) in time ${System.currentTimeMillis() - start} ms -> ok")
+        liteEco.logger.info("Listeners registered(${listeners.size}) in time $timeTaken ms -> ok")
     }
 }

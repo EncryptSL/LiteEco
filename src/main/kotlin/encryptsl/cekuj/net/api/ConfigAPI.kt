@@ -16,7 +16,7 @@ class ConfigAPI(private val liteEco: LiteEco) : ConfigAPIProvider {
         if (!file.exists()) {
             liteEco.saveResource(configName, false)
         } else {
-            liteEco.getLogger().info("Configuration $configName exist !")
+            liteEco.logger.info("Configuration $configName exist !")
         }
         return this
     }
@@ -25,18 +25,18 @@ class ConfigAPI(private val liteEco: LiteEco) : ConfigAPIProvider {
         val file = File(liteEco.dataFolder, configName)
         if (!file.exists()) {
             liteEco.saveResource(configName, false)
-            liteEco.getLogger().info("Configuration $configName was successfully created !")
+            liteEco.logger.info("Configuration $configName was successfully created !")
         } else {
             val copyIfRequired = liteEco.config.getString("version").equals(version)
             val versionIsNull = liteEco.config.getString("version").isNullOrEmpty()
             if (!copyIfRequired || versionIsNull) {
                 file.copyTo(File(liteEco.dataFolder, "old_config.yml"), true)
                 liteEco.saveResource(configName, true)
-                liteEco.config.set("version", version)
+                liteEco.config["version"] = version
                 liteEco.saveConfig()
-                liteEco.getLogger().info("Configuration $configName is updated !")
+                liteEco.logger.info("Configuration $configName is updated !")
             } else {
-                liteEco.getLogger().info("Configuration $configName is latest !")
+                liteEco.logger.info("Configuration $configName is latest !")
             }
         }
 
