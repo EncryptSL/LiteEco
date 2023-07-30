@@ -10,11 +10,7 @@ import encryptsl.cekuj.net.api.enums.MigrationKey
 import encryptsl.cekuj.net.api.enums.PurgeKey
 import encryptsl.cekuj.net.api.events.*
 import encryptsl.cekuj.net.api.objects.ModernText
-import encryptsl.cekuj.net.extensions.isNegative
-import encryptsl.cekuj.net.extensions.isZero
-import encryptsl.cekuj.net.extensions.moneyFormat
-import encryptsl.cekuj.net.extensions.positionIndexed
-import encryptsl.cekuj.net.extensions.toValidDecimal
+import encryptsl.cekuj.net.extensions.*
 import encryptsl.cekuj.net.utils.MigrationData
 import encryptsl.cekuj.net.utils.MigrationTool
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
@@ -37,7 +33,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
             return null
         }
         if (checkLevel == CheckLevel.ONLY_NEGATIVE && amount.isNegative() ||
-            checkLevel == CheckLevel.FULL && (amount.isNegative() || amount.isZero() || amount.moneyFormat() == "0.00")
+            checkLevel == CheckLevel.FULL && (amount.isApproachingZero())
         ) {
             commandSender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.negative_amount_error")))
             return null

@@ -1,6 +1,7 @@
 package encryptsl.cekuj.net.api.economy.vault
 
 import encryptsl.cekuj.net.LiteEco
+import encryptsl.cekuj.net.extensions.isApproachingZero
 import encryptsl.cekuj.net.extensions.isNegative
 import encryptsl.cekuj.net.extensions.isZero
 import encryptsl.cekuj.net.extensions.moneyFormat
@@ -98,7 +99,7 @@ class AdaptiveEconomyVaultAPI(private val liteEco: LiteEco) : AbstractEconomy() 
         if (player == null) {
             return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.FAILURE, null)
         }
-        if (amount.isNegative() || amount.isZero() || amount.moneyFormat() == "0.00") {
+        if (amount.isApproachingZero()) {
             return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.FAILURE, null)
         }
 
@@ -129,7 +130,7 @@ class AdaptiveEconomyVaultAPI(private val liteEco: LiteEco) : AbstractEconomy() 
             return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.FAILURE, null)
         }
 
-        if (amount.isNegative() || amount.isZero() || amount.moneyFormat() == "0.00") {
+        if (amount.isApproachingZero()) {
             return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.FAILURE, null)
         }
 
