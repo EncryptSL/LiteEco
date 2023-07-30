@@ -7,6 +7,7 @@ messages:
   balance_format_target: "<green>[<white>LITE_ECO<green>] <white>El saldo de <gold><target></gold> es de <green><money></green> !"
   player_is_null_error: "<green>[<white>LITE_ECO<green>] <red>Debes especificar un jugador !"
   negative_amount_error: "<green>[<white>LITE_ECO<green>] <red>Introduce un valor positivo !"
+  format_amount_error: "<green>[<white>LITE_ECO<green>] <red>Cantidad invalida. Utiliza numeros decimales o representaciones compactas (ej. 1K) !"
   sender_error_enough_pay: "<green>[<white>LITE_ECO<green>] <red>No tienes suficiente dinero !"
   sender_success_pay: "<green>[<white>LITE_ECO<green>] <white>Enviaste <green><money></green> a <gold><target>."
   target_success_pay: "<green>[<white>LITE_ECO<green>] <white>Recibiste <green><money></green> de <gold><sender>."

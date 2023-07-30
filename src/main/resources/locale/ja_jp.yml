@@ -7,6 +7,7 @@ messages:
   balance_format_target: "<green>[<white>LITE_ECO<green>] <white><target>の所持金は<green><money><white>"
   player_is_null_error: "<green>[<white>LITE_ECO<green>] <red>プレイヤー名を入力してください。"
   negative_amount_error: "<green>[<white>LITE_ECO<green>] <red>マイナスの金額は入力できません。"
+  format_amount_error: "<green>[<white>LITE_ECO<green>] <red>無効な金額です。小数点を使用するか、コンパクトな表記（例：1K）を利用してください。" # TEMP #
   sender_error_enough_pay: "<green>[<white>LITE_ECO<green>] <red>お金が足りていません。"
   sender_success_pay: "<green>[<white>LITE_ECO<green>] <white><green><target><white>へ<green><money> <white>送金しました。"
   target_success_pay: "<green>[<white>LITE_ECO<green>] <green><sender> <white>から<green><money> <white>送金されました。"
