@@ -27,9 +27,8 @@ class ConfigAPI(private val liteEco: LiteEco) : ConfigAPIProvider {
             liteEco.saveResource(configName, false)
             liteEco.logger.info("Configuration $configName was successfully created !")
         } else {
-            val copyIfRequired = liteEco.config.getString("version").equals(version)
-            val versionIsNull = liteEco.config.getString("version").isNullOrEmpty()
-            if (!copyIfRequired || versionIsNull) {
+            val currentVersion = liteEco.config.getString("version")
+            if (currentVersion.isNullOrEmpty() || currentVersion != version) {
                 file.copyTo(File(liteEco.dataFolder, "old_config.yml"), true)
                 liteEco.saveResource(configName, true)
                 liteEco.config["version"] = version

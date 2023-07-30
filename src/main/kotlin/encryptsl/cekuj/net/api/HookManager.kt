@@ -43,7 +43,6 @@ class HookManager(private val liteEco: LiteEco) {
         }
     }
 
-
     fun hookVault() {
         if (isPluginInstalled("Vault")) {
             liteEco.server.servicesManager.register(Economy::class.java, AdaptiveEconomyVaultAPI(liteEco), liteEco, ServicePriority.Highest)

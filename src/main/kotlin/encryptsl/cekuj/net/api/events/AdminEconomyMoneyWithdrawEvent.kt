@@ -5,6 +5,7 @@ import org.bukkit.event.Cancellable
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 
+@Suppress("UNUSED")
 class AdminEconomyMoneyWithdrawEvent(val commandSender: CommandSender, val offlinePlayer: OfflinePlayer, val money: Double): Event(), Cancellable {
 
     private var isCancelled: Boolean = false

@@ -129,6 +129,4 @@ class TreasureCurrency(private val liteEco: LiteEco) : Currency {
     override fun format(amount: BigDecimal, locale: Locale?, precision: Int): String {
         return format(amount, null)
     }
-
-
 }

@@ -235,5 +235,4 @@ class AdaptiveEconomyVaultAPI(private val liteEco: LiteEco) : AbstractEconomy() 
     override fun getBanks(): MutableList<String> {
         return Collections.emptyList()
     }
-
 }

@@ -7,18 +7,14 @@ import org.bukkit.OfflinePlayer
 
 class LiteEcoEconomyAPI(private val liteEco: LiteEco) : LiteEconomyAPIProvider {
     override fun createAccount(player: OfflinePlayer, startAmount: Double): Boolean {
-        if (hasAccount(player)) {
-            return false
-        }
+        if (hasAccount(player)) return false
 
         liteEco.preparedStatements.createPlayerAccount(player.uniqueId, startAmount)
         return true
     }
 
     override fun deleteAccount(player: OfflinePlayer): Boolean {
-        if (!hasAccount(player)) {
-            return false
-        }
+        if (!hasAccount(player)) return false
 
         liteEco.preparedStatements.deletePlayerAccount(player.uniqueId)
         return true
@@ -37,11 +33,11 @@ class LiteEcoEconomyAPI(private val liteEco: LiteEco) : LiteEconomyAPIProvider {
     }
 
     override fun depositMoney(player: OfflinePlayer, amount: Double) {
-        liteEco.preparedStatements.depositMoney(player.uniqueId, getBalance(player).plus(amount))
+        liteEco.preparedStatements.depositMoney(player.uniqueId, amount)
     }
 
     override fun withDrawMoney(player: OfflinePlayer, amount: Double) {
-        liteEco.preparedStatements.withdrawMoney(player.uniqueId, getBalance(player).minus(amount))
+        liteEco.preparedStatements.withdrawMoney(player.uniqueId, amount)
     }
 
     override fun setMoney(player: OfflinePlayer, amount: Double) {

@@ -52,14 +52,15 @@ class TreasuryEconomyAPI(private val liteEco: LiteEco, private val currency: Cur
     }
 
     override fun retrievePlayerAccountIds(subscription: EconomySubscriber<MutableCollection<UUID>>) {
-       liteEco.server.scheduler.runTaskAsynchronously(liteEco, Runnable {
-           val uuid: List<UUID> = Arrays.stream(Bukkit.getOfflinePlayers()).parallel().map(OfflinePlayer::getUniqueId).collect(Collectors.toList())
+        liteEco.server.scheduler.runTaskAsynchronously(liteEco, Runnable {
+            val uuid: List<UUID> = Arrays.stream(Bukkit.getOfflinePlayers()).parallel().map(OfflinePlayer::getUniqueId).collect(Collectors.toList())
 
-           val identifiers: MutableList<UUID> = uuid.parallelStream()
-               .filter{ puuid -> liteEco.api.hasAccount(Bukkit.getOfflinePlayer(puuid))}
-               .collect(Collectors.toList())
-           subscription.succeed(identifiers)
-       })
+            val identifiers: MutableList<UUID> = uuid.parallelStream()
+                .filter{ puuid -> liteEco.api.hasAccount(Bukkit.getOfflinePlayer(puuid))}
+                .collect(Collectors.toList())
+
+            subscription.succeed(identifiers)
+        })
     }
 
     override fun hasAccount(identifier: String, subscription: EconomySubscriber<Boolean>) {
