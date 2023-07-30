@@ -4,6 +4,7 @@ import encryptsl.cekuj.net.api.interfaces.DatabaseSQLProvider
 import encryptsl.cekuj.net.database.tables.Account
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.notInList
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 
@@ -72,5 +73,18 @@ class PreparedStatements : DatabaseSQLProvider {
 
     override fun purgeDefaultAccounts(defaultMoney: Double) {
         transaction { Account.deleteWhere { money eq defaultMoney } }
+    }
+
+    override fun purgeInvalidAccounts() {
+        val validUUIDs = transaction {
+            Account.slice(Account.uuid).selectAll()
+                .mapNotNull { row -> runCatching { UUID.fromString(row[Account.uuid]) }.getOrNull() }
+                .map  { it.toString() }
+        }
+        transaction {
+            Account.deleteWhere {
+                uuid notInList validUUIDs
+            }
+        }
     }
 }

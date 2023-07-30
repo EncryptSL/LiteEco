@@ -14,4 +14,5 @@ interface DatabaseSQLProvider {
     fun setMoney(uuid: UUID, money: Double)
     fun purgeAccounts()
     fun purgeDefaultAccounts(defaultMoney: Double)
+    fun purgeInvalidAccounts()
 }
