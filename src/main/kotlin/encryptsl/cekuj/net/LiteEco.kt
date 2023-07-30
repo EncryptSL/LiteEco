@@ -15,7 +15,7 @@ import encryptsl.cekuj.net.api.enums.LangKey
 import encryptsl.cekuj.net.api.enums.MigrationKey
 import encryptsl.cekuj.net.api.enums.PurgeKey
 import encryptsl.cekuj.net.commands.MoneyCMD
-import encryptsl.cekuj.net.config.TranslationConfig
+import encryptsl.cekuj.net.config.Locales
 import encryptsl.cekuj.net.database.DatabaseConnector
 import encryptsl.cekuj.net.database.models.PreparedStatements
 import encryptsl.cekuj.net.listeners.*
@@ -36,7 +36,7 @@ class LiteEco : JavaPlugin() {
     var countTransactions: LinkedHashMap<String, Int> = LinkedHashMap()
     val pluginManager: PluginManager = server.pluginManager
     val preparedStatements: PreparedStatements by lazy { PreparedStatements() }
-    val translationConfig: TranslationConfig by lazy { TranslationConfig(this) }
+    val locale: Locales by lazy { Locales(this) }
     val api: LiteEcoEconomyAPI by lazy { LiteEcoEconomyAPI(this) }
     private val configAPI: ConfigAPI by lazy { ConfigAPI(this) }
     private val hookManager: HookManager by lazy { HookManager(this) }
@@ -65,8 +65,8 @@ class LiteEco : JavaPlugin() {
         configAPI
             .create("database.db")
             .createConfig("config.yml", "1.0.0")
-        translationConfig
-            .loadTranslation()
+        locale
+            .reloadTranslation()
         initDatabase()
     }
 
