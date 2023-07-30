@@ -8,42 +8,33 @@ import java.time.format.DateTimeFormatter
 class MigrationTool(private val liteEco: LiteEco) {
 
     fun migrateToCSV(data: List<MigrationData>, fileName: String) {
-        val file =  File("${liteEco.dataFolder}/migration/", "${fileName}_${dateTime()}.csv")
+        val file = File("${liteEco.dataFolder}/migration/", "${fileName}_${dateTime()}.csv")
 
-        BufferedWriter(FileWriter(file.path)).use {writer ->
-            try {
-                writer.write(""""id", "uuid", "money"""")
-                writer.newLine()
+        try {
+            PrintWriter(FileWriter(file)).use { writer ->
+                writer.println(""""id", "uuid", "money"""")
                 data.forEach {
-                    writer.write("${it.id}, ${it.uuid}, \"${it.money}\"")
-                    writer.newLine()
+                    writer.println("${it.id}, ${it.uuid}, ${it.money}")
                 }
-            } catch (e: FileNotFoundException) {
-                file.mkdirs()
-                file.createNewFile()
-            } catch (e : IOException) {
-                liteEco.logger.severe("Something wrong while migration to csv file !")
-            } finally {
-                writer.close()
             }
+        } catch (e: IOException) {
+            liteEco.logger.severe("Error while migrating to CSV file: ${e.message}")
         }
     }
 
     fun migrateToSQL(data: List<MigrationData>, fileName: String) {
-        val file =  File("${liteEco.dataFolder}/migration/", "${fileName}_${dateTime()}.sql")
-        BufferedWriter(FileWriter(file.path)).use {writer ->
-            try {
-                writer.write("DROP TABLE IF EXIST lite_eco;")
-                writer.newLine()
-                writer.write("INSERT INTO lite_eco (id, uuid, money) VALUES " + data.joinToString {"\n(${it.id} ${it.uuid} ${it.money})" } + ";")
-            } catch (e: FileNotFoundException) {
-                file.mkdirs()
-                file.createNewFile()
-            } catch (e : IOException) {
-                liteEco.logger.severe("Something wrong while migration to sql file !")
-            } finally {
-                writer.close()
+        val file = File("${liteEco.dataFolder}/migration/", "${fileName}_${dateTime()}.sql")
+        try {
+            PrintWriter(FileWriter(file)).use { writer ->
+                writer.println("DROP TABLE IF EXISTS lite_eco;")
+                writer.println("CREATE TABLE lite_eco (id INT, uuid VARCHAR(36), money DOUBLE);")
+                val insertStatements = data.joinToString("\n") {
+                    "(${it.id}, '${it.uuid}', ${it.money})"
+                }
+                writer.println("INSERT INTO lite_eco (id, uuid, money) VALUES $insertStatements;")
             }
+        } catch (e: IOException) {
+            liteEco.logger.severe("Error while migrating to SQL file: ${e.message}")
         }
     }
 
