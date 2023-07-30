@@ -1,132 +1,71 @@
-# LiteEco
+# LiteEco - Plugin Docs
 
-## Contents
-- [Setup](#setup)
-- [Permissions](#permission)
+## Table of Contents
+- [Setup](CONFIG.md)
+- [Permissions](PERMISSION.md)
+- [Placeholders](PLACEHOLDER.md)
 - [Translations](#translation)
-- [Placeholders](#placeholder)
 - [Contribution](#contribution-guide)
 
-## Setup
+## [Setup](CONFIG.md)
+The configuration file (**config.yml**) is where you can customize the settings for the LiteEco plugin to suit your specific needs **. . .**
 
-- This is a default config.yml
-  - There you can change whatever you need.
-  - Example default_money is added value when account for new player was created.
-````YAML
-#Official settings for this plugin.
-plugin:
-  # Translations list of supported locales below
-  # https://github.com/EncryptSL/LiteEco/blob/main/src/main/kotlin/encryptsl/cekuj/net/api/enums/TranslationKey.kt
-  translation: EN_US
-  economy:
-    # Prefix of Currency
-    prefix: €
-    # Name of Currency
-    name: LE
-    # This amount is added to player from first connection.
-    default_money: 30
-  # This settings disable messages.
-  disableMessages:
-    g_broadcast_pay: false
-    g_broadcast_withdraw: false
-    g_broadcast_set: false
-    target_success_pay: false
-    target_success_withdraw: false
-    target_success_set: false
-# Settings for Database or SQLite connection.
-database:
-    connection:
-      # Settings for JDBC_HOST example for connection to mysql: jdbc:mysql://your_host:port/name_of_database
-      jdbc_host: "jdbc:sqlite:plugins/LiteEco/database.db"
-      # User = username of user to connection your database.
-      user: user_name
-      # Pass = password of user to connection your database.
-      pass: password
-````
+## [Permission](PERMISSION.md)
+LiteEco provides various permissions for player and admin commands to control access to specific features **. . .**
 
-## Permission
-All available permissions for commands:
-
-**Player commands** - `lite.eco.player`
-```YAML
-  /money:
-    Permission: lite.eco.money
-  /money help: This shows commands for players
-    Permission: lite.eco.help
-  /money bal [username]: This shows your balance of account or another player
-    Permission: lite.eco.balance
-  /money top [page]: This shows richest players
-    Permission: lite.eco.top
-  /money pay <player> <amount>: Send your money to another player.
-    Permission: lite.eco.pay
-```
-
-**Admin commands** - `lite.eco.admin`
-```YAML
-/eco:
-  Permission: lite.eco.admin.eco
-/eco help: This shows commands for admins
-  Permission: lite.eco.admin.help
-/eco add <player> <amount>: Add money to player.
-  Permission: lite.eco.admin.add
-/eco gadd <amount>: Add money to everyone.
-  Permissions: lite.eco.admin.gadd
-/eco set <player> <amount>: Set fixed money amount to player.
-  Permission: lite.eco.admin.set
-/eco gset <amount>: Set fixed money amount to everyone.
-  Permissions: lite.eco.admin.gset
-/eco remove <player> <amount>: Withdraw money from player.
-  Permission: lite.eco.admin.remove
-/eco gremove <amount>: Withdraw money from everyone.
-  Permissions: lite.eco.admin.gremove
-/eco lang [CS_CZ, EN_US]: This command switches translations files.
-  Permission: lite.eco.admin.lang
-/eco purge <argument>: This command purges data.
-  Permission: lite.eco.admin.purge
-/eco migration <argument>: This command migrate database to sql or csv.
-  Permision: lite.eco.admin.migration
-/eco reload: This command reloads the config.
-  Permission: lite.eco.admin.reload
-```
-
-**Other perms**
-```YAML
-This permission was to suggest player names. (DISABLED)
-  Permission: lite.eco.suggestion.players
-```
+## [Placeholder](PLACEHOLDER.md)
+LiteEco uses placeholders in its output to dynamically display various information **. . .**
 
 ## Translation
-This plugin supports translations but it must be included in the plugin.
-Plugin makes use of Enums for [available locales](https://github.com/LcyDev/LiteEco/blob/main/src/main/kotlin/encryptsl/cekuj/net/api/enums/LangKey.kt).
+LiteEco supports translations, allowing the plugin to be used in different languages. 
+The translations are based on Enums, and you can find the list of available locales [here](https://github.com/EncryptSL/LiteEco/blob/main/src/main/kotlin/encryptsl/cekuj/net/api/enums/LangKey.kt).
 
-If you want to contribute with another translation you must follow this steps.
-- FileName must be in this format with the [locale code](https://www.ibm.com/docs/en/radfws/9.6.1?topic=overview-locales-code-pages-supported): `ru_ru.yml`
-- Translation files inside contains placeholders <example_something> please don't remove this.
-- You can change colors or something what you want.
+### How to Contribute Translations
 
-Link to files: https://github.com/EncryptSL/LiteEco/tree/main/src/main/resources/locale
+If you want to contribute with another translation, follow these steps:
 
-## Placeholder
-- `%liteeco_balance%`
-  - This show normal balance output.
-- `%liteeco_balance_formatted%`
-   - This show fancy balance output.
-- `%liteeco_top_player_<number>%`
-   - This show player name on position of your set number.
-- `%liteeco_top_balance_<number>%`
-   - Max number is 10, this show balance of player on position of your set number.
-- `%liteeco_top_formatted_<number>%`
-   - Max number is 10, this show balance of player on position of your set number but fancy.
-  
-![hologram](https://user-images.githubusercontent.com/9441083/170329930-9e457436-fd89-4fde-ab19-0dbc843d12bd.png)
+1. Fork this repository to your GitHub account.
+
+2. Create a new branch with a descriptive name for your translation work. (e.g. `french-translation`)
+
+3. Create a translation file with the format `locale_key.yml`, using the correct [locale code](https://www.ibm.com/docs/en/radfws/9.6.1?topic=overview-locales-code-pages-supported) for the language you are translating to.
+
+4. Inside the translation file, make use of the placeholders provided in the original files, such as `<example_something>`. 
+
+5. Ensure not to remove or modify the placeholders, as they are used for variable substitution during runtime.
+
+6. Feel free to customize the colors or any other elements in the translation to match the language's conventions and style.
+
+7. Once your translation is ready, add it to the [locale folder](https://github.com/EncryptSL/LiteEco/tree/main/src/main/resources/locale) in the plugin's repository.
+
 
 ## Contribution Guide
 
-If you want to contribute to my project you must have Intellij Idea and git.
+If you would like to contribute to the LiteEco project, follow the guide below
 
-Write this command into cmd or console and wait until project download success.
+### Getting Started for Coding
 
-`git clone https://github.com/EncryptSL/LiteEco.git`
+Ensure you have the necessary prerequisites, including **IntelliJ IDEA** and **Git** or **GitHub Desktop**.
 
-Please before sending PR use formatting and check if imports are optimized.
+To get started with git, clone the LiteEco repository to your local machine using the following command:
 
+```bash
+git clone https://github.com/EncryptSL/LiteEco.git
+```
+
+Wait until the project download is successful.
+
+### Making Changes
+Once you have cloned the repository, you can make your changes or additions to the code.
+
+### Code Formatting
+Before submitting a pull request, please ensure that your code is properly formatted and follows the project's coding style guidelines.
+
+### Optimized Imports
+Make sure to check and optimize the imports in your code to keep the project organized.
+
+### Submitting a Pull Request
+After you have made your changes and ensured that your code is properly formatted, you can submit a pull request.
+
+We appreciate contributions, and thank you for your interest in improving the project!
+If you have any questions or need assistance, feel free to reach out to us.
