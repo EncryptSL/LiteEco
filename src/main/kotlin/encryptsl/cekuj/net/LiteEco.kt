@@ -18,14 +18,15 @@ import encryptsl.cekuj.net.commands.MoneyCMD
 import encryptsl.cekuj.net.config.TranslationConfig
 import encryptsl.cekuj.net.database.DatabaseConnector
 import encryptsl.cekuj.net.database.models.PreparedStatements
+import encryptsl.cekuj.net.listeners.*
 import org.bstats.bukkit.Metrics
 import org.bstats.charts.SingleLineChart
 import org.bukkit.Bukkit
-import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import org.bukkit.plugin.PluginManager
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.function.Function
+import kotlin.system.measureTimeMillis
 
 class LiteEco : JavaPlugin() {
 
@@ -39,32 +40,44 @@ class LiteEco : JavaPlugin() {
     val api: LiteEcoEconomyAPI by lazy { LiteEcoEconomyAPI(this) }
     private val configAPI: ConfigAPI by lazy { ConfigAPI(this) }
     private val hookManager: HookManager by lazy { HookManager(this) }
+
+    private fun initDatabase() {
+        databaseConnector.initConnect(
+            config.getString("database.connection.jdbc_host") ?: "jdbc:mysql://localhost:3306/mydatabase",
+            config.getString("database.connection.user") ?: "root",
+            config.getString("database.connection.pass") ?: "password"
+        )
+    }
+
+    private fun setupMetrics() {
+        metrics = Metrics(this, 15144)
+        metrics.addCustomChart(SingleLineChart("transactions") {
+            countTransactions["transactions"]
+        })
+    }
+
+    private fun checkUpdates() {
+        updateNotifier = UpdateNotifier("101934", description.version)
+        logger.info(updateNotifier.checkPluginVersion())
+    }
+
     override fun onLoad() {
         configAPI
             .create("database.db")
             .createConfig("config.yml", "1.0.0")
         translationConfig
             .loadTranslation()
-        databaseConnector.initConnect(
-            config.getString("database.connection.jdbc_host")!!,
-            config.getString("database.connection.user")!!,
-            config.getString("database.connection.pass")!!
-        )
+        initDatabase()
     }
 
     override fun onEnable() {
         val start = System.currentTimeMillis()
         blockPlugins()
         hookRegistration()
-        metrics = Metrics(this, 15144)
-        metrics.addCustomChart(SingleLineChart("transactions") {
-            countTransactions["transactions"]
-        })
-        updateNotifier = UpdateNotifier("101934", description.version)
-        logger.info(updateNotifier.checkPluginVersion())
+        setupMetrics()
+        checkUpdates()
         registerCommands()
-        val handlerListeners = HandlerListeners(this)
-        handlerListeners.registerListener()
+        registerListener()
         logger.info("Plugin enabled in time ${System.currentTimeMillis() - start} ms")
     }
 
@@ -74,35 +87,38 @@ class LiteEco : JavaPlugin() {
 
     private fun registerCommands() {
         logger.info("Registering commands with Cloud Command Framework !")
+
+        val commandManager = createCommandManager()
+
+        registerSuggestionProviders(commandManager)
+
+        val annotationParser = createAnnotationParser(commandManager)
+        annotationParser.parse(MoneyCMD(this))
+    }
+
+    private fun createCommandManager(): PaperCommandManager<CommandSender> {
         val executionCoordinatorFunction = AsynchronousCommandExecutionCoordinator.builder<CommandSender>().build()
         val mapperFunction = Function.identity<CommandSender>()
-        val commandManager: PaperCommandManager<CommandSender> = PaperCommandManager(
+        val commandManager = PaperCommandManager(
             this,
             executionCoordinatorFunction,
             mapperFunction,
             mapperFunction
         )
+
         if (commandManager.hasCapability(CloudBukkitCapabilities.BRIGADIER)) {
             commandManager.registerBrigadier()
             commandManager.brigadierManager()?.setNativeNumberSuggestions(false)
         }
+
         if (commandManager.hasCapability(CloudBukkitCapabilities.ASYNCHRONOUS_COMPLETION)) {
             (commandManager as PaperCommandManager<*>).registerAsynchronousCompletions()
         }
-        val commandMetaFunction =
-            Function<ParserParameters, CommandMeta> { p: ParserParameters ->
-                CommandMeta.simple() // This will allow you to decorate commands with descriptions
-                    .with(
-                        CommandMeta.DESCRIPTION,
-                        p.get(StandardParameters.DESCRIPTION, "No description")
-                    )
-                    .build()
-            }
-        val annotationParser = AnnotationParser( /* Manager */
-            commandManager,  /* Command sender type */
-            CommandSender::class.java,  /* Mapper for command meta instances */
-            commandMetaFunction
-        )
+
+        return commandManager
+    }
+
+    private fun registerSuggestionProviders(commandManager: PaperCommandManager<CommandSender>) {
         commandManager.parserRegistry().registerSuggestionProvider("players") { commandSender, input ->
             Bukkit.getOfflinePlayers().toList()
                 .filter { p ->
@@ -119,7 +135,40 @@ class LiteEco : JavaPlugin() {
         commandManager.parserRegistry().registerSuggestionProvider("migrationKeys") { _, _ ->
             MigrationKey.values().map { key -> key.name }.toList()
         }
-        annotationParser.parse(MoneyCMD(this))
+    }
+
+    private fun createAnnotationParser(commandManager: PaperCommandManager<CommandSender>): AnnotationParser<CommandSender> {
+        val commandMetaFunction = Function<ParserParameters, CommandMeta> { p: ParserParameters ->
+            CommandMeta.simple() // Decorate commands with descriptions
+                .with(CommandMeta.DESCRIPTION, p[StandardParameters.DESCRIPTION, "No Description"])
+                .build()
+        }
+
+        return AnnotationParser( /* Manager */
+            commandManager,  /* Command sender type */
+            CommandSender::class.java,  /* Mapper for command meta instances */
+            commandMetaFunction
+        )
+    }
+
+    private fun registerListener() {
+        val listeners = arrayListOf(
+            AccountEconomyManageListener(this),
+            PlayerEconomyPayListener(this),
+            AdminEconomyGlobalDepositListener(this),
+            AdminEconomyGlobalSetListener(this),
+            AdminEconomyGlobalWithdrawListener(this),
+            AdminEconomyMoneyDepositListener(this),
+            AdminEconomyMoneyWithdrawListener(this),
+            AdminEconomyMoneySetListener(this),
+            PlayerJoinListener(this)
+        )
+        val timeTaken = measureTimeMillis {
+            listeners.forEach { listener -> pluginManager.registerEvents(listener, this)
+                logger.info("Bukkit Listener ${listener.javaClass.simpleName} registered () -> ok")
+            }
+        }
+        logger.info("Listeners registered(${listeners.size}) in time $timeTaken ms -> ok")
     }
 
     private fun blockPlugins() {
