@@ -2,7 +2,7 @@
 plugin:
   # Translations list of supported locales below
   # https://github.com/EncryptSL/LiteEco/blob/main/src/main/kotlin/encryptsl/cekuj/net/api/enums/LangKey.kt
-  translation: en_us
+  translation: EN_US
   economy:
     # Prefix of Currency
     prefix: €
@@ -10,6 +10,7 @@ plugin:
     name: LE
     # This amount is added to player from first connection.
     default_money: 30
+    
   # These settings disable messages.
   disableMessages:
     g_broadcast_pay: false
@@ -20,12 +21,13 @@ plugin:
     target_success_set: false
 # Settings for Database or SQLite connection.
 database:
-    connection:
-      # Settings for JDBC_HOST example for connection to mysql: jdbc:mysql://your_host:port/name_of_database
-      jdbc_host: "jdbc:sqlite:plugins/LiteEco/database.db"
-      # User = username of user to connection your database.
-      user: user_name
-      # Pass = password of user to connection your database.
-      pass: password
+  # MySQL example: jdbc:mysql://your_host:port/name_of_database
+  connection:
+    # Settings for JDBC_HOST
+    jdbc_host: "jdbc:sqlite:plugins/LiteEco/database.db"
+    # User = username of user to connection your database.
+    user: user_name
+    # Pass = password of user to connection your database.
+    pass: password
 # Please don't remove this version settings
 version: 1.0.0
