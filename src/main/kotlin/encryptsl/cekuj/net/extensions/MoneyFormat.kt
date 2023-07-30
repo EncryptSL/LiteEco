@@ -3,10 +3,9 @@ import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.*
+import kotlin.math.pow
 
 private val units = charArrayOf('K', 'M', 'B', 'T', 'Q')
-private val unitsMap = mapOf('K' to 1000.0, 'M' to 1_000_000.0, 'B' to 1_000_000_000.0, 'T' to 1_000_000_000_000.0, 'Q' to 1_000_000_000_000_000.0)
-
 
 fun Double.moneyFormat(prefix: String, currencyName: String, compact: Boolean = false): String {
     val (formattedNumber, compactChar) = formatNumber(this, compact)
@@ -20,7 +19,7 @@ fun Double.moneyFormat(compact: Boolean = false): String {
     return "$formattedNumber$suffix"
 }
 
-fun String.parseValidNumber(): Double? {
+fun String.toValidDecimal(): Double? {
     if (isNullOrBlank()) return null
     val lastChar = last().uppercaseChar()
     return if (units.contains(lastChar)) {
@@ -63,7 +62,7 @@ private fun removeTrailingZeros(numberStr: String): String {
 }
 
 private fun decompressNumber(str: String, metric: Char): Double? {
-    val multiplier = unitsMap[metric] ?: 1.0
+    val multiplier = 10.0.pow((units.indexOf(metric) + 1) * 3)
     val value = str.dropLast(1).toDecimal()
     return value?.times(multiplier)
 }

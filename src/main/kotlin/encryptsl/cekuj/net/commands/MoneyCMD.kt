@@ -14,7 +14,7 @@ import encryptsl.cekuj.net.extensions.isNegative
 import encryptsl.cekuj.net.extensions.isZero
 import encryptsl.cekuj.net.extensions.moneyFormat
 import encryptsl.cekuj.net.extensions.positionIndexed
-import encryptsl.cekuj.net.extensions.parseValidNumber
+import encryptsl.cekuj.net.extensions.toValidDecimal
 import encryptsl.cekuj.net.utils.MigrationData
 import encryptsl.cekuj.net.utils.MigrationTool
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
@@ -31,7 +31,7 @@ import java.util.*
 class MoneyCMD(private val liteEco: LiteEco) {
 
     private fun validateAmount(amountStr: String, commandSender: CommandSender, checkLevel: CheckLevel = CheckLevel.FULL): Double? {
-        val amount = amountStr.parseValidNumber()
+        val amount = amountStr.toValidDecimal()
         if (amount == null) {
             commandSender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.format_amount_error")))
             return null
