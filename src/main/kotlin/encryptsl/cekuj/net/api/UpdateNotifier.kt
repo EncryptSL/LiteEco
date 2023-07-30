@@ -30,10 +30,10 @@ class UpdateNotifier(private val id: String, private val pluginVersion: String) 
     }
 
     fun checkPluginVersion(): String {
-        return when(getVersion()) {
-            pluginVersion -> "You are using current version !"
+        return when(val latestVersion = getVersion()) {
+            latestVersion -> "You are using current version !"
             else -> {
-                "Please download update of plugin LiteEco your version: $pluginVersion > updated version: ${getVersion()}"
+                "Please download update of plugin LiteEco your version: $pluginVersion > Updated version: ${latestVersion}"
             }
         }
     }
