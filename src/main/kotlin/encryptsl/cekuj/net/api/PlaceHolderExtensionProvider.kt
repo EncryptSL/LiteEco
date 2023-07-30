@@ -2,7 +2,6 @@ package encryptsl.cekuj.net.api
 
 import encryptsl.cekuj.net.LiteEco
 import encryptsl.cekuj.net.extensions.isDecimal
-import encryptsl.cekuj.net.extensions.isNumeric
 import encryptsl.cekuj.net.extensions.playerPosition
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import org.bukkit.Bukkit
