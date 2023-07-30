@@ -1,13 +1,10 @@
 package encryptsl.cekuj.net.api
 
 import encryptsl.cekuj.net.LiteEco
-import encryptsl.cekuj.net.extensions.isNumeric
-import encryptsl.cekuj.net.extensions.playerPosition
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import java.util.*
-import java.util.stream.Collectors
 
 class PlaceHolderExtensionProvider(private val liteEco: LiteEco) : PlaceholderExpansion() {
 
@@ -29,58 +26,45 @@ class PlaceHolderExtensionProvider(private val liteEco: LiteEco) : PlaceholderEx
 
     override fun onRequest(player: OfflinePlayer?, identifier: String): String? {
         if (player == null) return null
+        val args = identifier.split("_")
 
-        if (identifier.startsWith("top_formatted_")) {
-            val split = this.spliterator(identifier)
-            return if (split.isNumeric()) liteEco.api.formatting(balanceByRank(split.toInt())) else null
-        }
-
-        if (identifier.startsWith("top_balance_")) {
-            val split = this.spliterator(identifier)
-            return if (split.isNumeric()) balanceByRank(split.toInt()).toString() else null
-        }
-
-        if (identifier.startsWith("top_player_")) {
-            val split = this.spliterator(identifier)
-            return if (!split.isNumeric()) {
-                null
-            } else if (nameByRank(split.toInt()) == "EMPTY") {
-                nameByRank(split.toInt())
-            } else {
-                Bukkit.getOfflinePlayer(UUID.fromString(nameByRank(split.toInt()))).name
+        return when {
+            identifier.startsWith("top_formatted_") -> {
+                val rank = args[2].toIntOrNull()
+                rank?.let { liteEco.api.formatting(balanceByRank(it)) }
             }
-        }
-
-        return when(identifier) {
-            "balance" -> liteEco.api.getBalance(player).toString()
-            "balance_formatted" -> liteEco.api.formatting(liteEco.api.getBalance(player))
-            "top_rank_player" -> nameByRank(1)
+            identifier.startsWith("top_balance_") -> {
+                val rank = args[2].toIntOrNull()
+                rank?.let { balanceByRank(it).toString() }
+            }
+            identifier.startsWith("top_player_") -> {
+                val rank = args[2].toIntOrNull()
+                rank?.let { nameByRank(it) }
+            }
+            identifier == "balance" -> liteEco.api.getBalance(player).toString()
+            identifier == "balance_formatted" -> liteEco.api.formatting(liteEco.api.getBalance(player))
+            identifier == "top_rank_player" -> nameByRank(1)
             else -> null
         }
     }
 
-    private fun spliterator(pattern: String, index: Int = 2): String {
-        val args: List<String> = pattern.split("_")
-        return args[index]
-    }
-
     private fun nameByRank(rank: Int): String {
-        topBalance().playerPosition { index, entry ->
-            if (index == rank) {
-                return entry.key
-            }
+        val topBalance = topBalance()
+        return if (rank in 1..topBalance.size) {
+            val playerUuid = topBalance.keys.elementAt(rank - 1)
+            Bukkit.getOfflinePlayer(UUID.fromString(playerUuid)).name ?: "UNKNOWN"
+        } else {
+            "EMPTY"
         }
-        return "EMPTY"
     }
 
     private fun balanceByRank(rank: Int): Double {
-        topBalance().playerPosition { index, entry ->
-            if (index == rank) {
-                return entry.value
-            }
+        val topBalance = topBalance()
+        return if (rank in 1..topBalance.size) {
+            topBalance.values.elementAt(rank - 1)
+        } else {
+            0.0
         }
-
-        return 0.0
     }
 
     private fun topBalance(): LinkedHashMap<String, Double> {
@@ -91,4 +75,5 @@ class PlaceHolderExtensionProvider(private val liteEco: LiteEco) : PlaceholderEx
             .toMap()
             .let { LinkedHashMap<String, Double>(it) }
     }
+
 }
