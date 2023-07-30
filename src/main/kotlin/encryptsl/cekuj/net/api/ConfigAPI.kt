@@ -11,12 +11,12 @@ import java.io.File
  * Called static in mainMethod.
  */
 class ConfigAPI(private val liteEco: LiteEco) : ConfigAPIProvider {
-    override fun create(configName: String) : ConfigAPI {
-        val file = File(liteEco.dataFolder, configName)
+    override fun create(fileName: String) : ConfigAPI {
+        val file = File(liteEco.dataFolder, fileName)
         if (!file.exists()) {
-            liteEco.saveResource(configName, false)
+            liteEco.saveResource(fileName, false)
         } else {
-            liteEco.logger.info("Configuration $configName exist !")
+            liteEco.logger.info("Configuration $fileName exist !")
         }
         return this
     }
@@ -27,15 +27,16 @@ class ConfigAPI(private val liteEco: LiteEco) : ConfigAPIProvider {
             liteEco.saveResource(configName, false)
             liteEco.logger.info("Configuration $configName was successfully created !")
         } else {
-            val currentVersion = liteEco.config.getString("version")
-            if (currentVersion.isNullOrEmpty() || currentVersion != version) {
+            val fileVersion = liteEco.config.getString("version")
+
+            if (fileVersion.isNullOrEmpty() || fileVersion != version) {
                 file.copyTo(File(liteEco.dataFolder, "old_config.yml"), true)
                 liteEco.saveResource(configName, true)
                 liteEco.config["version"] = version
                 liteEco.saveConfig()
-                liteEco.logger.info("Configuration $configName is updated !")
+                liteEco.logger.info("Configuration config.yml was outdated [!]")
             } else {
-                liteEco.logger.info("Configuration $configName is latest !")
+                liteEco.logger.info("Configuration config.yml is the latest [!]")
             }
         }
 
