@@ -54,6 +54,7 @@ class PlaceHolderExtensionProvider(private val liteEco: LiteEco) : PlaceholderEx
 
         return when(identifier) {
             "balance" -> liteEco.api.getBalance(player).toString()
+            "balance_compacted" -> liteEco.api.compacted(liteEco.api.getBalance(player))
             "balance_formatted" -> liteEco.api.formatting(liteEco.api.getBalance(player))
             "top_rank_player" -> nameByRank(1)
             else -> null

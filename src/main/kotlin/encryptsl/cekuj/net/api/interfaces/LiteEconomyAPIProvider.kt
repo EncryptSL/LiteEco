@@ -75,6 +75,13 @@ interface LiteEconomyAPIProvider {
     fun getTopBalance(): MutableMap<String, Double>
 
     /**
+     * Compact money value
+     * @param amount is only formatted to a compacted value
+     * @return String
+     */
+    fun compacted(amount: Double): String
+
+    /**
      * Formatting money value
      * @param amount is formatted to readable value
      * @return String
