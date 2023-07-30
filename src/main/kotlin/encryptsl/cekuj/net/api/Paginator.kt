@@ -5,6 +5,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 class Paginator(private val items: List<String>, options: PaginationOptions.() -> Unit = {}) {
+
     private val paginationOptions = PaginationOptions().apply(options)
     val maxPages = ceil(items.size.toDouble() / paginationOptions.itemsPerPage).toInt()
 
@@ -23,7 +24,7 @@ class Paginator(private val items: List<String>, options: PaginationOptions.() -
         val indexEnd = min(indexStart + itemsPerPage, items.size) - 1
         // IntRange is end inclusive.
 
-        return (indexStart..indexEnd).joinToString("\n", transform = items::elementAt)
+        return (indexStart until indexEnd).joinToString("\n", transform = items::elementAt)
     }
 
     inner class PaginationOptions(

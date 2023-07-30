@@ -23,7 +23,7 @@ class UpdateNotifier(private val id: String, private val pluginVersion: String) 
         }
     }
 
-     private fun getVersion(): String {
+    private fun getVersion(): String {
         val data = makeCheckRequest()
         val gson = Gson()
         return gson.fromJson(data, Version::class.java).name
