@@ -1,6 +1,7 @@
 package encryptsl.cekuj.net.api
 
 import encryptsl.cekuj.net.LiteEco
+import encryptsl.cekuj.net.extensions.isDecimal
 import encryptsl.cekuj.net.extensions.isNumeric
 import encryptsl.cekuj.net.extensions.playerPosition
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
@@ -32,17 +33,17 @@ class PlaceHolderExtensionProvider(private val liteEco: LiteEco) : PlaceholderEx
 
         if (identifier.startsWith("top_formatted_")) {
             val split = this.spliterator(identifier, 2)
-            return if (split.isNumeric()) liteEco.api.formatting(balanceByRank(split.toInt())) else null
+            return if (split.isDecimal()) liteEco.api.formatting(balanceByRank(split.toInt())) else null
         }
 
         if (identifier.startsWith("top_balance_")) {
             val split = this.spliterator(identifier, 2)
-            return if (split.isNumeric()) balanceByRank(split.toInt()).toString() else null
+            return if (split.isDecimal()) balanceByRank(split.toInt()).toString() else null
         }
 
         if (identifier.startsWith("top_player_")) {
             val split = this.spliterator(identifier, 2)
-            return if (!split.isNumeric()) {
+            return if (!split.isDecimal()) {
                 null
             } else if (nameByRank(split.toInt()) == "EMPTY") {
                 nameByRank(split.toInt())
@@ -84,7 +85,7 @@ class PlaceHolderExtensionProvider(private val liteEco: LiteEco) : PlaceholderEx
     }
 
     private fun topBalance(): LinkedHashMap<String, Double>? {
-          return liteEco.api.getTopBalance()
+        return liteEco.api.getTopBalance()
             .entries
             .stream()
             .filter { data -> Bukkit.getOfflinePlayer(UUID.fromString(data.key)).hasPlayedBefore() }

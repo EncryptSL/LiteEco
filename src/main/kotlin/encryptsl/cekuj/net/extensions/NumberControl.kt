@@ -7,7 +7,11 @@ fun Double.isNegative(): Boolean {
 fun Double.isZero(): Boolean {
     return this == 0.0
 }
-fun String.isNumeric(): Boolean {
-    if (this.isEmpty()) return false
-    return this.toIntOrNull() != null
+
+fun String.isDecimal(): Boolean {
+    return toDoubleOrNull()?.takeIf { it.isFinite() } != null
+}
+
+fun String.toDecimal(): Double? {
+    return toDoubleOrNull()?.takeIf { it.isFinite() }
 }
