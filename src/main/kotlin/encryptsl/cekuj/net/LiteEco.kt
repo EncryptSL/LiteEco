@@ -26,6 +26,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.plugin.PluginManager
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.function.Function
+import kotlin.streams.toList
 
 class LiteEco : JavaPlugin() {
 
@@ -46,9 +47,9 @@ class LiteEco : JavaPlugin() {
         translationConfig
             .loadTranslation()
         databaseConnector.initConnect(
-            config.getString("database.connection.jdbc_host")!!,
-            config.getString("database.connection.user")!!,
-            config.getString("database.connection.pass")!!
+            config.getString("database.connection.jdbc_url")!!,
+            config.getString("database.connection.username")!!,
+            config.getString("database.connection.password")!!
         )
     }
 
@@ -103,13 +104,13 @@ class LiteEco : JavaPlugin() {
             CommandSender::class.java,  /* Mapper for command meta instances */
             commandMetaFunction
         )
-        commandManager.parserRegistry().registerSuggestionProvider("players") { commandSender, input ->
-                Bukkit.getOfflinePlayers().toList().stream()
-                    .map(OfflinePlayer::getName).filter { p ->
-                        commandSender.hasPermission("lite.eco.suggestion.players") && (p?.startsWith(
-                            input
-                        ) ?: false)
-                    }.toList()
+        commandManager.parserRegistry().registerSuggestionProvider("players") { _, input ->
+            Bukkit.getOfflinePlayers().toList().stream()
+                .map(OfflinePlayer::getName).filter { p ->
+                    (p?.startsWith(
+                        input
+                    ) ?: false)
+                }.toList()
         }
         commandManager.parserRegistry().registerSuggestionProvider("langKeys") { _, _ ->
             LangKey.values().map { key -> key.name }.toList()
