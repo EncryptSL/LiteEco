@@ -43,7 +43,7 @@ class LiteEco : JavaPlugin() {
     override fun onLoad() {
         configAPI
             .create("database.db")
-            .createConfig("config.yml", "1.0.0")
+            .createConfig("config.yml", "1.1.0")
         translationConfig
             .loadTranslation()
         databaseConnector.initConnect(
