@@ -1,7 +1,7 @@
 package encryptsl.cekuj.net.database.models
 
 import encryptsl.cekuj.net.api.interfaces.DatabaseSQLProvider
-import encryptsl.cekuj.net.database.tables.Money
+import encryptsl.cekuj.net.database.tables.Account
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -10,24 +10,24 @@ import java.util.*
 class PreparedStatements : DatabaseSQLProvider {
 
     override fun createPlayerAccount(uuid: UUID, money: Double) {
-            transaction { Money.insert {
-                it[Money.uuid] = uuid.toString()
-                it[Money.money] = money
+            transaction { Account.insert {
+                it[Account.uuid] = uuid.toString()
+                it[Account.money] = money
             } }
     }
 
     override fun deletePlayerAccount(uuid: UUID) {
-        transaction { Money.deleteWhere { Money.uuid eq uuid.toString() } }
+        transaction { Account.deleteWhere { Account.uuid eq uuid.toString() } }
     }
 
     override fun getExistPlayerAccount(uuid: UUID): Boolean
-        = transaction { !Money.select(Money.uuid eq uuid.toString() ).empty() }
+        = transaction { !Account.select(Account.uuid eq uuid.toString() ).empty() }
 
     override fun getTopBalance(top: Int): MutableMap<String, Double> {
         val hashMap: HashMap<String, Double> = HashMap()
         transaction {
-            Money.selectAll().limit(top).forEach { a ->
-                hashMap[a[Money.uuid]] = a[Money.money]
+            Account.selectAll().limit(top).forEach { a ->
+                hashMap[a[Account.uuid]] = a[Account.money]
             }
         }
 
@@ -37,8 +37,8 @@ class PreparedStatements : DatabaseSQLProvider {
     override fun getTopBalance(): MutableMap<String, Double> {
         val hashMap: HashMap<String, Double> = HashMap()
         transaction {
-            Money.selectAll().forEach { a ->
-                hashMap[a[Money.uuid]] = a[Money.money]
+            Account.selectAll().forEach { a ->
+                hashMap[a[Account.uuid]] = a[Account.money]
             }
         }
 
@@ -46,31 +46,31 @@ class PreparedStatements : DatabaseSQLProvider {
     }
 
     override fun getBalance(uuid: UUID): Double
-        = transaction { Money.select(Money.uuid eq uuid.toString()).first()[Money.money] }
+        = transaction { Account.select(Account.uuid eq uuid.toString()).first()[Account.money] }
 
     override fun depositMoney(uuid: UUID, money: Double) {
-        transaction { Money.update ({ Money.uuid eq uuid.toString() }) {
-            it[Money.money] = money
+        transaction { Account.update ({ Account.uuid eq uuid.toString() }) {
+            it[Account.money] = money
         } }
     }
 
     override fun withdrawMoney(uuid: UUID, money: Double) {
-        transaction { Money.update ({ Money.uuid eq uuid.toString() }) {
-            it[Money.money] = money
+        transaction { Account.update ({ Account.uuid eq uuid.toString() }) {
+            it[Account.money] = money
         } }
     }
 
     override fun setMoney(uuid: UUID, money: Double) {
-        transaction { Money.update ({ Money.uuid eq uuid.toString() }) {
-            it[Money.money] = money
+        transaction { Account.update ({ Account.uuid eq uuid.toString() }) {
+            it[Account.money] = money
         } }
     }
 
     override fun purgeAccounts() {
-        transaction { Money.deleteAll() }
+        transaction { Account.deleteAll() }
     }
 
     override fun purgeDefaultAccounts(defaultMoney: Double) {
-        transaction { Money.deleteWhere { money eq defaultMoney } }
+        transaction { Account.deleteWhere { money eq defaultMoney } }
     }
 }
