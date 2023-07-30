@@ -32,13 +32,13 @@ fun String.toValidDecimal(): Double? {
 private fun formatNumber(number: Double, compact: Boolean): Pair<String, Char?> {
     return if (compact) {
         val (compactNumber, compactChar) = compactNumber(number) ?: (number to null)
-        removeTrailingZeros(formatter(roundingMode = RoundingMode.DOWN).format(compactNumber)) to compactChar
+        removeTrailingZeros(formatter(3, RoundingMode.DOWN).format(compactNumber)) to compactChar
     } else {
-        formatter(roundingMode = RoundingMode.HALF_UP).format(number) to null
+        formatter(2, RoundingMode.HALF_UP).format(number) to null
     }
 }
 
-private fun formatter(fractionDigits: Int = 2, roundingMode: RoundingMode): DecimalFormat {
+private fun formatter(fractionDigits: Int, roundingMode: RoundingMode): DecimalFormat {
     val formatter = DecimalFormat("###,###,##0.000", DecimalFormatSymbols.getInstance(Locale.ENGLISH))
     formatter.maximumFractionDigits = fractionDigits
     formatter.roundingMode = roundingMode
