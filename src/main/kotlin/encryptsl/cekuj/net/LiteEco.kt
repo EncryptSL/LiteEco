@@ -43,9 +43,9 @@ class LiteEco : JavaPlugin() {
 
     private fun initDatabase() {
         databaseConnector.initConnect(
-            config.getString("database.connection.jdbc_host") ?: "jdbc:mysql://localhost:3306/mydatabase",
+            config.getString("database.connection.jdbc_host") ?: "jdbc:sqlite:plugins/LiteEco/database.db",
             config.getString("database.connection.user") ?: "root",
-            config.getString("database.connection.pass") ?: "password"
+            config.getString("database.connection.pass") ?: "admin"
         )
     }
 
