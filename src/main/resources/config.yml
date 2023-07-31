@@ -2,32 +2,40 @@
 plugin:
   # Translations list of supported locales below
   # https://github.com/EncryptSL/LiteEco/blob/main/src/main/kotlin/encryptsl/cekuj/net/api/enums/LangKey.kt
-  translation: en_us
-  economy:
-    # Prefix of Currency
-    prefix: €
-    # Name of Currency
-    name: LE
-    # This amount is added to player from first connection.
-    default_money: 30
-    # Convert big numbers into a more compact display.
-    compact_display: false
-  # These settings disable messages.
-  disableMessages:
-    g_broadcast_pay: false
-    g_broadcast_withdraw: false
-    g_broadcast_set: false
-    target_success_pay: false
-    target_success_withdraw: false
-    target_success_set: false
+  translation: EN_US
+  # Plugin prefix
+  prefix: "<#64646F>[<#F9AD47>LiteEco<#64646F>]</#64646F>"
+
+economy:
+  # Prefix of Currency
+  currency_prefix: €
+  # Name of Currency
+  currency_name: LE
+  # This amount is granted to players who don't have an existing account in the database.
+  starting_balance: 30
+  # Convert large currency values into a more compact format.
+  compact_display: false
+
+# These settings disable messages.
+disable_messages:
+  global_broadcast_pay: false
+  global_broadcast_withdraw: false
+  global_broadcast_set: false
+  target_success_pay: false
+  target_success_withdraw: false
+  target_success_set: false
+
 # Settings for Database or SQLite connection.
 database:
-    connection:
-      # Settings for JDBC_HOST example for connection to mysql: jdbc:mysql://your_host:port/name_of_database
-      jdbc_host: "jdbc:sqlite:plugins/LiteEco/database.db"
-      # User = username of user to connection your database.
-      user: user_name
-      # Pass = password of user to connection your database.
-      pass: password
+  # For SQLite, the path to the SQLite database file: jdbc:sqlite:plugins/LiteEco/database.db
+  # For MySQL, the JDBC connection URL in the format: jdbc:mysql://your_host:port/name_of_database
+  connection:
+    # Settings for JDBC_HOST
+    jdbc_url: "jdbc:sqlite:plugins/LiteEco/database.db"
+    # The username of the user to connect to your database (MySQL only).
+    username: user_name
+    # The password of the user to connect to your database (MySQL only).
+    password: password
+
 # Please don't remove this version settings
-version: 1.0.0
+version: 1.1.0

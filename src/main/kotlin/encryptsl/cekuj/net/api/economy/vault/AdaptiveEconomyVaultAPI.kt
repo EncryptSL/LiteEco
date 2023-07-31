@@ -34,11 +34,11 @@ class AdaptiveEconomyVaultAPI(private val liteEco: LiteEco) : AbstractEconomy() 
     }
 
     override fun currencyNamePlural(): String? {
-        return liteEco.config.getString("plugin.economy.name")
+        return liteEco.config.getString("economy.currency_name")
     }
 
     override fun currencyNameSingular(): String? {
-        return liteEco.config.getString("plugin.economy.prefix")
+        return liteEco.config.getString("economy.currency_prefix")
     }
 
     override fun hasAccount(player: OfflinePlayer?): Boolean {
@@ -154,7 +154,7 @@ class AdaptiveEconomyVaultAPI(private val liteEco: LiteEco) : AbstractEconomy() 
     }
 
     override fun createPlayerAccount(player: OfflinePlayer?): Boolean {
-        return liteEco.api.createAccount(player!!, liteEco.config.getDouble("plugin.economy.default_money"))
+        return liteEco.api.createAccount(player!!, liteEco.config.getDouble("economy.starting_balance"))
     }
 
     @Deprecated("Deprecated in Java", ReplaceWith("createPlayerAccount(player)"))

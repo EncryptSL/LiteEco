@@ -32,7 +32,7 @@ messages:
   purge_accounts: "<green>[<white>LITE_ECO<green>] <green>Your purge all player accounts."
   purge_default_accounts: "<green>[<white>LITE_ECO<green>] <green>You purge all player accounts with default value."
   purge_argument_error: "<green>[<white>LITE_ECO<green>] <red>This <argument> argument is not valid or not ready for production."
-  migration_success: "<green>[<white>LITE_ECO<green>] <green>¡La migración <type> se ha creado correctamente!"
+  migration_success: "<green>[<white>LITE_ECO<green>] <green>Migration <type> successfully created!"
   migration_error: "<green>[<white>LITE_ECO<green>] <red>This <argument> argument is not valid or not ready for production."
   help:
     - "<green>===========<white>[<green>LITE_ECO<white>]<green>==========="
