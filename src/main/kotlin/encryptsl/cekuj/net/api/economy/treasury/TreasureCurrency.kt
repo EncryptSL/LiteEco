@@ -14,7 +14,7 @@ class TreasureCurrency(private val liteEco: LiteEco) : Currency {
     }
 
     override fun getSymbol(): String {
-        return liteEco.config.getString("plugin.economy.prefix").toString()
+        return liteEco.config.getString("economy.currency_prefix").toString()
     }
 
     override fun getDecimal(): Char {
@@ -23,7 +23,7 @@ class TreasureCurrency(private val liteEco: LiteEco) : Currency {
     }
 
     override fun getDisplayNameSingular(): String {
-        return liteEco.config.getString("plugin.economy.name").toString()
+        return liteEco.config.getString("economy.currency_name").toString()
     }
 
     override fun getDisplayNamePlural(): String {
@@ -119,7 +119,7 @@ class TreasureCurrency(private val liteEco: LiteEco) : Currency {
     }
 
     override fun getStartingBalance(playerID: UUID?): BigDecimal {
-        return BigDecimal.valueOf(liteEco.config.getDouble("plugin.economy.default_money"))
+        return BigDecimal.valueOf(liteEco.config.getDouble("economy.starting_balance"))
     }
 
     override fun format(amount: BigDecimal, locale: Locale?): String {

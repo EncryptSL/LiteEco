@@ -30,7 +30,7 @@ class AdminEconomyGlobalWithdrawListener(private val liteEco: LiteEco) : Listene
             )
         ))
 
-        if (!liteEco.config.getBoolean("plugin.disableMessages.g_broadcast_withdraw")) {
+        if (!liteEco.config.getBoolean("disable_messages.global_broadcast_withdraw")) {
             Bukkit.broadcast(
                 ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.g_broadcast_withdraw"),
                 TagResolver.resolver(
