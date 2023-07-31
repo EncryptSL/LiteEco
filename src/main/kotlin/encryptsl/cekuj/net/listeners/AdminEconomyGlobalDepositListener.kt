@@ -25,7 +25,7 @@ class AdminEconomyGlobalDepositListener(private val liteEco: LiteEco) : Listener
         liteEco.countTransactions["transactions"] = liteEco.countTransactions.getOrDefault("transactions", 0) + offlinePlayers.size
 
         sender.sendMessage(
-            ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.sender_global_add"),
+            ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.global.add_money"),
             TagResolver.resolver(
                 Placeholder.parsed("money", liteEco.api.formatting(money))
             )
