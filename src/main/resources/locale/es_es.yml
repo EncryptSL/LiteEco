@@ -40,6 +40,7 @@ messages:
   # Error messages
   error:
     account_not_exist: "<prefix> <red>No existe la cuenta <account> [!]"
+    format_amount: "<prefix> <red>Cantidad invalida. Usa numeros decimales o representaciones compactas (ej. 1K) [!]"
     insufficient_funds: "<prefix> <red>No tienes suficiente dinero [!]"
     maximum_page: "<red>El limite de paginas es <max_page>"
     negative_amount: "<prefix> <red>Introduce un valor positivo [!]"

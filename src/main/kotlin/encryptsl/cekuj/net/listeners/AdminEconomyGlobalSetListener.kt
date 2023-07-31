@@ -30,7 +30,7 @@ class AdminEconomyGlobalSetListener(private val liteEco: LiteEco) : Listener {
             )
         ))
 
-        if (!liteEco.config.getBoolean("plugin.disableMessages.g_broadcast_set")) {
+        if (!liteEco.config.getBoolean("disable_messages.global_broadcast_set")) {
             Bukkit.broadcast(
                 ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.broadcast.set_money"),
                 TagResolver.resolver(

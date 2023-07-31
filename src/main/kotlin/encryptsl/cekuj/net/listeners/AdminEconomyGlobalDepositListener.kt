@@ -30,7 +30,7 @@ class AdminEconomyGlobalDepositListener(private val liteEco: LiteEco) : Listener
                 Placeholder.parsed("money", liteEco.api.formatting(money))
             )
         ))
-        if (!liteEco.config.getBoolean("plugin.disableMessages.g_broadcast_pay")) {
+        if (!liteEco.config.getBoolean("disable_messages.global_broadcast_pay")) {
             Bukkit.broadcast(
                 ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.g_broadcast_add"),
                 TagResolver.resolver(

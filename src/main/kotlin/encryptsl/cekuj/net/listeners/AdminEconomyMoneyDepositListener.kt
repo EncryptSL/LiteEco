@@ -36,7 +36,7 @@ class AdminEconomyMoneyDepositListener(private val liteEco: LiteEco) : Listener 
             liteEco.translationConfig.getMessage("messages.sender.add_money"),
             TagResolver.resolver(Placeholder.parsed("target", target.name.toString()), Placeholder.parsed("money", liteEco.api.formatting(money)))))
         if (target.isOnline) {
-            if (liteEco.config.getBoolean("plugin.disableMessages.target_success_pay")) return
+            if (liteEco.config.getBoolean("disable_messages.target_success_pay")) return
             target.player?.sendMessage(ModernText.miniModernText(
                 liteEco.translationConfig.getMessage("messages.target.add_money"),
                 TagResolver.resolver(Placeholder.parsed("sender", sender.name), Placeholder.parsed("money", liteEco.api.formatting(money)))))

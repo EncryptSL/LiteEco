@@ -52,7 +52,11 @@ class LiteEcoEconomyAPI(private val liteEco: LiteEco) : LiteEconomyAPIProvider {
         return liteEco.preparedStatements.getTopBalance()
     }
 
+    override fun compacted(amount: Double): String {
+        return amount.moneyFormat(true)
+    }
+
     override fun formatting(amount: Double): String {
-        return amount.moneyFormat(liteEco.config.getString("plugin.economy.prefix").toString(), liteEco.config.getString("plugin.economy.name").toString())
+        return amount.moneyFormat(liteEco.config.getString("economy.currency_prefix").toString(), liteEco.config.getString("economy.currency_name").toString(), liteEco.config.getBoolean("plugin.economy.compact_display"))
     }
 }

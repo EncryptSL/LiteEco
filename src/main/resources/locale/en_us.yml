@@ -49,6 +49,7 @@ messages:
   # Error messages
   error:
     account_not_exist: "<prefix> <red>Account <account> does not exist [!]"
+    format_amount: "<prefix> <red>Invalid amount. Use float numbers or compact representations (e.g 1K) [!]"
     insufficient_funds: "<prefix> <red>Insufficient funds! [!]"
     maximum_page: "<red>Limit of pagination is <max_page>"
     negative_amount: "<prefix> <red>Negative amounts are not allowed. [!]"

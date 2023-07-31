@@ -1,6 +1,7 @@
 package encryptsl.cekuj.net.api.economy.treasury
 
 import encryptsl.cekuj.net.LiteEco
+import encryptsl.cekuj.net.extensions.isApproachingZero
 import encryptsl.cekuj.net.extensions.isNegative
 import encryptsl.cekuj.net.extensions.isZero
 import encryptsl.cekuj.net.extensions.moneyFormat
@@ -48,7 +49,7 @@ class TreasuryAccount(private val liteEco: LiteEco, private val uuid: UUID) : Pl
                 return@Runnable
             }
 
-            if (amountDouble.isNegative() || amountDouble.isZero() || amountDouble.moneyFormat() == "0.00") {
+            if (amountDouble.isApproachingZero()) {
                 subscription.fail(EconomyException(EconomyFailureReason.NEGATIVE_AMOUNT_SPECIFIED))
                 return@Runnable
             }
@@ -68,7 +69,7 @@ class TreasuryAccount(private val liteEco: LiteEco, private val uuid: UUID) : Pl
             val amount = economyTransaction.transactionAmount
             val amountDouble = amount.toDouble()
 
-            if (amountDouble.isNegative() || amountDouble.isZero() || amountDouble.moneyFormat() == "0.00") {
+            if (amountDouble.isApproachingZero()) {
                 subscription.fail(EconomyException(EconomyFailureReason.NEGATIVE_AMOUNT_SPECIFIED))
                 return@Runnable
             }

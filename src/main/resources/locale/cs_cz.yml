@@ -40,6 +40,7 @@ messages:
   # Error messages
   error:
     account_not_exist: "<prefix> <red>Účet <account> neexistuje [!]"
+    format_amount: "<prefix> <red>Neplatná částka. Použijte desetinná čísla nebo kompaktní zobrazení (např. 1K) [!]" # TEMP #
     insufficient_funds: "<prefix> <red>Nemáš dostatek peněz [!]"
     maximum_page: "<red>Limit stránkování je <max_page>"
     negative_amount: "<prefix> <red>Detekovano negativní číslo [!]"
