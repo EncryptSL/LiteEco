@@ -1,21 +1,27 @@
 messages:
   # Balance messages
   balance:
-    top_line_first: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>BAL TOP</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray> <red><page> from <max_page>"
-    top_format: "<yellow><position># <gold><player> <gray>- <green><money></green>"
-    top_line_second: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>BAL TOP</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray>"
     format: "<prefix> <white>Status of balance is <green><money></green> [!]"
     format_target: "<prefix> <white>Status of <gold><target></gold> balance is <green><money></green> [!]"
+    top_format: "<yellow><position># <gold><player></gold> <gray>- <green><money></green>"
+    top_line_first: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>BAL TOP</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray> <red><page>/<max_page>"
+    top_line_second: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>BAL TOP</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray>"
+
+  # Self-transaction messages
+  self:
+    add_money: "<prefix> <white>You added <green><money></green> to your money account."
+    withdraw_money: "<prefix> <white>You removed <green><money></green> from your money account."
+    set_money: "<prefix> <white>You set <green><money></green> money for your account."
 
   # Transaction messages for target
   target:
-    pay_money: "<prefix> <gold><sender></gold> <white>sent you <green><money></green> money."
+    add_money: "<prefix> <gold><sender></gold> <white>sent you <green><money></green> money."
     withdraw_money: "<prefix> <gold><sender></gold> <white>removed <green><money></green> money from your account."
     set_money: "<prefix> <gold><sender></gold> <white>set the balance of your account to <green><money></green> money."
 
   # Transaction messages for sender
   sender:
-    pay_money: "<prefix> <white>You sent <green><money></green> money to <gold><target></gold>."
+    add_money: "<prefix> <white>You sent <green><money></green> money to <gold><target></gold>."
     withdraw_money: "<prefix> <white>You removed <green><money></green> money from <gold><target></gold>."
     set_money: "<prefix> <white>You set <green><money></green> money for <gold><target></gold>."
 
@@ -31,23 +37,6 @@ messages:
     withdraw_money: "<prefix> <gold><sender></gold> <white>withdrew <green><money></green> money from all players."
     set_money: "<prefix> <gold><sender></gold> <white>set <green><money></green> money for all players."
 
-  # Self-actions messages
-  self:
-    add_money: "<prefix> <white>You added <green><money></green> to your money account."
-    withdraw_money: "<prefix> <white>You removed <green><money></green> from your money account."
-    set_money: "<prefix> <white>You set <green><money></green> money for your account."
-
-  # Error messages
-  error:
-    balance_top_page: "<red>Limit of pagination is <max_page>"
-    player_is_null: "<prefix> <red>Please provide a player name [!]"
-    self_pay: "<prefix> <red>You cannot send money to yourself [!]"
-    insufficient_funds: "<prefix> <red>Insufficient funds! [!]"
-    negative_amount: "<prefix> <red>Negative amounts are not allowed. [!]"
-    account_not_exist: "<prefix> <red>Account <account> does not exist [!]"
-    migration_argument: "<prefix> <red>This <argument> argument is not valid or not ready for production."
-    purge_argument: "<prefix> <red>This <argument> argument is not valid or not ready for production."
-
   # Admin commands
   admin:
     config_reload: "<prefix> <green>Config reloaded successfully [!]"
@@ -56,6 +45,17 @@ messages:
     purge_accounts: "<prefix> <green>All player accounts purged."
     purge_default_accounts: "<prefix> <green>All player accounts with default values purged."
     migration_success: "<prefix> <green>Migration of <type> was successful [!]"
+
+  # Error messages
+  error:
+    account_not_exist: "<prefix> <red>Account <account> does not exist [!]"
+    insufficient_funds: "<prefix> <red>Insufficient funds! [!]"
+    maximum_page: "<red>Limit of pagination is <max_page>"
+    negative_amount: "<prefix> <red>Negative amounts are not allowed. [!]"
+    migration_argument: "<prefix> <red>This <argument> argument is not valid or not ready for production."
+    purge_argument: "<prefix> <red>This <argument> argument is not valid or not ready for production."
+    player_is_null: "<prefix> <red>Please provide a player name [!]"
+    self_pay: "<prefix> <red>You cannot send money to yourself [!]"
 
   help:
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
