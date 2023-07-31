@@ -18,12 +18,12 @@ class PlayerEconomyPayListener(private val liteEco: LiteEco) : Listener {
         val money: Double = event.money
 
         if (!liteEco.api.hasAccount(target)) {
-            sender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.account_not_exist"),
+            sender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.error.account_not_exist"),
                 TagResolver.resolver(Placeholder.parsed("account", target.name.toString()))))
             return
         }
         if (!liteEco.api.has(sender, money)) {
-            sender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.sender_error_enough_pay")))
+            sender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.error.insufficient_funds")))
             return
         }
         liteEco.api.withDrawMoney(sender, money)
@@ -31,12 +31,12 @@ class PlayerEconomyPayListener(private val liteEco: LiteEco) : Listener {
         liteEco.countTransactions["transactions"] = liteEco.countTransactions.getOrDefault("transactions", 0) + 1
         sender.sendMessage(
             ModernText.miniModernText(
-                liteEco.translationConfig.getMessage("messages.sender_success_pay"),
+                liteEco.translationConfig.getMessage("messages.sender.add_money"),
                 TagResolver.resolver(Placeholder.parsed("target", target.name.toString()), Placeholder.parsed("money", liteEco.api.formatting(money)))))
         if (target.isOnline) {
             target.player?.sendMessage(
                 ModernText.miniModernText(
-                    liteEco.translationConfig.getMessage("messages.target_success_pay"),
+                    liteEco.translationConfig.getMessage("messages.target.add_money"),
                     TagResolver.resolver(Placeholder.parsed("sender", sender.name), Placeholder.parsed("money", liteEco.api.formatting(money)))))
         }
     }
