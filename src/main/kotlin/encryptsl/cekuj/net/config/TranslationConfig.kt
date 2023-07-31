@@ -13,12 +13,19 @@ class TranslationConfig(private val liteEco: LiteEco) {
     private var langConfiguration: FileConfiguration? = null
 
     fun getMessage(value: String): String {
-        return Optional.ofNullable(langConfiguration?.getString(value))
-            .orElse(langConfiguration?.getString("messages.admin.translation_missing")?.replace("<key>", value))
+        val key = langConfiguration?.getString(value) ?:
+            langConfiguration?.getString("messages.translation_missing")?.replace("<key>", value)
+        val prefix = liteEco.config.getString("plugin.prefix")
+
+        return key?.replace("<prefix>", prefix ?: "") ?: "Translation missing error: $value"
     }
 
     fun getList(value: String): MutableList<*>? {
-        return langConfiguration?.getList(value)
+        val list = langConfiguration?.getList(value)?.toMutableList()
+        val prefix = liteEco.config.getString("plugin.prefix")
+        list?.replaceAll { it?.toString()?.replace("<prefix>", prefix ?: "") }
+
+        return list
     }
 
     fun setTranslationFile(langKey: LangKey) {
