@@ -57,6 +57,6 @@ class LiteEcoEconomyAPI(private val liteEco: LiteEco) : LiteEconomyAPIProvider {
     }
 
     override fun formatting(amount: Double): String {
-        return amount.moneyFormat(liteEco.config.getString("plugin.economy.prefix").toString(), liteEco.config.getString("plugin.economy.name").toString(), liteEco.config.getString("plugin.economy.compact_display").toBoolean())
+        return amount.moneyFormat(liteEco.config.getString("plugin.economy.prefix").toString(), liteEco.config.getString("plugin.economy.name").toString(), liteEco.config.getBoolean("plugin.economy.compact_display"))
     }
 }
