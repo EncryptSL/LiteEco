@@ -39,7 +39,7 @@ messages:
 
   # Error messages
   error:
-    balance_top_page: "<red>Limit of pagination is <maxpage>"
+    balance_top_page: "<red>Limit of pagination is <max_page>"
     player_is_null: "<prefix> <red>Please provide a player name [!]"
     self_pay: "<prefix> <red>You cannot send money to yourself [!]"
     insufficient_funds: "<prefix> <red>Insufficient funds! [!]"
