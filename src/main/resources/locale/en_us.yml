@@ -1,59 +1,84 @@
 messages:
-  balance_top_line_first: "<gray>>>>>>>>> [<gold>RICHEST PLAYER <page> from <maxpage><gray>] <<<<<<<<"
-  balance_top_format: "<yellow><position># <gold><player> <gray>- <green><money>"
-  balance_top_line_second: "<gray>>>>>>>>> [<gold>RICHEST PLAYER<gray>] <<<<<<<<"
-  balance_top_page_error: "<red>Limit of pagination is <maxpage>"
-  balance_format: "<green>[<white>LITE_ECO<green>] <white>Status of balance is <green><money><white> !"
-  balance_format_target: "<green>[<white>LITE_ECO<green>] <white>Status of <target> balance is <green><money><white> !"
-  player_is_null_error: "<green>[<white>LITE_ECO<green>] <red>Player name must be filled !"
-  negative_amount_error: "<green>[<white>LITE_ECO<green>] <red>Detected negative number !"
-  sender_error_enough_pay: "<green>[<white>LITE_ECO<green>] <red>You don't have enough money !"
-  sender_success_pay: "<green>[<white>LITE_ECO<green>] <white>You sent to <green><target> <money> <white>money."
-  target_success_pay: "<green>[<white>LITE_ECO<green>] <green><sender> <white>sent you <green><money> <white>money."
-  sender_success_withdraw: "<green>[<white>LITE_ECO<green>] <white>You remove from <green><target> <money> <white>money."
-  target_success_withdraw: "<green>[<white>LITE_ECO<green>] <green><sender> <white>remove you <green><money> <white>money."
-  sender_success_set: "<green>[<white>LITE_ECO<green>] <white>You set to <green><target> <money> <white>money."
-  target_success_set: "<green>[<white>LITE_ECO<green>] <green><sender> <white>set balance of your account on <green><money> <white>money."
-  sender_global_add: "<green>[<white>LITE_ECO<green>] <white>You add <green><money> <white>money for all players."
-  sender_global_withdraw: "<green>[<white>LITE_ECO<green>] <white>You withdraw <green><money> <white>money from all players."
-  sender_global_set: "<green>[<white>LITE_ECO<green>] <white>You set <green><money> <white>money for all players."
-  g_broadcast_add: "<green>[<white>LITE_ECO<green>] <green><sender> <white>add <green><money> <white>money for all players."
-  g_broadcast_withdraw: "<green>[<white>LITE_ECO<green>] <green><sender> <white>withdraw <green><money><white> money from all players."
-  g_broadcast_set: "<green>[<white>LITE_ECO<green>] <green><sender> <white>set <green><money> <white> money for all players."
-  self_add_money: "<green>[<white>LITE_ECO<green>] <white>You added <green><money><white> to the money account."
-  self_withdraw_money: "<green>[<white>LITE_ECO<green>] <white>You remove <green><money> <white>from your money account."
-  self_set_money: "<green>[<white>LITE_ECO<green>] <white>You set <green><money> <white>money for your account."
-  self_pay_error: "<green>[<white>LITE_ECO<green>] <red>You can't sent money yourself !"
-  account_not_exist: "<green>[<white>LITE_ECO<green>] <red>Account not <account> exist !"
-  config_reload: "<green>[<white>LITE_ECO<green>] <green>Config was successfully reloaded !"
-  translation_switch: "<green>[<white>LITE_ECO<green>] <green>Translation was switched on <locale>"
-  translation_missing: "<green>[<white>LITE_ECO<green>] <red>Translation <key> missing.... contact developer of this plugin."
-  purge_accounts: "<green>[<white>LITE_ECO<green>] <green>Your purge all player accounts."
-  purge_default_accounts: "<green>[<white>LITE_ECO<green>] <green>You purge all player accounts with default value."
-  purge_argument_error: "<green>[<white>LITE_ECO<green>] <red>This <argument> argument is not valid or not ready for production."
-  migration_success: "<green>[<white>LITE_ECO<green>] <green>¡La migración <type> se ha creado correctamente!"
-  migration_error: "<green>[<white>LITE_ECO<green>] <red>This <argument> argument is not valid or not ready for production."
+  # Balance messages
+  balance:
+    format: "<prefix> <white>Status of balance is <green><money></green> [!]"
+    format_target: "<prefix> <white>Status of <gold><target></gold> balance is <green><money></green> [!]"
+    top_format: "<yellow><position># <gold><player></gold> <gray>- <green><money></green>"
+    top_line_first: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>BAL TOP</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray> <red><page>/<max_page>"
+    top_line_second: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>BAL TOP</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray>"
+
+  # Self-transaction messages
+  self:
+    add_money: "<prefix> <white>You added <green><money></green> to your money account."
+    withdraw_money: "<prefix> <white>You removed <green><money></green> from your money account."
+    set_money: "<prefix> <white>You set <green><money></green> money for your account."
+
+  # Transaction messages for target
+  target:
+    add_money: "<prefix> <gold><sender></gold> <white>sent you <green><money></green> money."
+    withdraw_money: "<prefix> <gold><sender></gold> <white>removed <green><money></green> money from your account."
+    set_money: "<prefix> <gold><sender></gold> <white>set the balance of your account to <green><money></green> money."
+
+  # Transaction messages for sender
+  sender:
+    add_money: "<prefix> <white>You sent <green><money></green> money to <gold><target></gold>."
+    withdraw_money: "<prefix> <white>You removed <green><money></green> money from <gold><target></gold>."
+    set_money: "<prefix> <white>You set <green><money></green> money for <gold><target></gold>."
+
+  # Global actions messages (sent to the sender who made the global action)
+  global:
+    add_money: "<prefix> <white>You added <green><money></green> money for all players."
+    withdraw_money: "<prefix> <white>You withdrew <green><money></green> money from all players."
+    set_money: "<prefix> <white>You set <green><money></green> money for all players."
+
+  # Broadcast messages (sent to all players after a global action)
+  broadcast:
+    add_money: "<prefix> <gold><sender></gold> <white>added <green><money></green> money for all players."
+    withdraw_money: "<prefix> <gold><sender></gold> <white>withdrew <green><money></green> money from all players."
+    set_money: "<prefix> <gold><sender></gold> <white>set <green><money></green> money for all players."
+
+  # Admin commands
+  admin:
+    config_reload: "<prefix> <green>Config reloaded successfully [!]"
+    translation_switch: "<prefix> <green>Translation switched to <locale>."
+    translation_missing: "<prefix> <red>Translation missing for <key>. Contact the developer of this plugin."
+    purge_accounts: "<prefix> <green>All player accounts purged."
+    purge_default_accounts: "<prefix> <green>All player accounts with default values purged."
+    migration_success: "<prefix> <green>Migration of <type> was successful [!]"
+
+  # Error messages
+  error:
+    account_not_exist: "<prefix> <red>Account <account> does not exist [!]"
+    insufficient_funds: "<prefix> <red>Insufficient funds! [!]"
+    maximum_page: "<red>Limit of pagination is <max_page>"
+    negative_amount: "<prefix> <red>Negative amounts are not allowed. [!]"
+    migration_argument: "<prefix> <red>This <argument> argument is not valid or not ready for production."
+    purge_argument: "<prefix> <red>This <argument> argument is not valid or not ready for production."
+    player_is_null: "<prefix> <red>Please provide a player name [!]"
+    self_pay: "<prefix> <red>You cannot send money to yourself [!]"
+
   help:
-    - "<green>===========<white>[<green>LITE_ECO<white>]<green>==========="
+    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
     - " "
-    - "<white>[+] <gray>/money help <white>- <gray>Show commands list of plugin"
-    - "<white>[+] <gray>/money top [page] <white>- <gray>Show richest players"
-    - "<white>[+] <gray>/money bal [username] <white>- <gray>Show balance of your account or another player"
-    - "<white>[+] <gray>/money pay <yellow><username> <amount> <white>- <gray>Send money to another player."
+    - "<white>[+] <gray>/money help <white>-<#CFE7F0> Show commands list of plugin"
+    - "<white>[+] <gray>/money top <pink>[page] <white>-<#CFE7F0> Show richest players"
+    - "<white>[+] <gray>/money bal <yellow>[username] <white>-<#CFE7F0> Show balance of your account or another player"
+    - "<white>[+] <gray>/money pay <yellow>[username] <#3EE84D><amount> <white>-<#CFE7F0> Send money to another player."
     - " "
-    - "<green>===========<white>[<green>LITE_ECO<white>]<green>==========="
+    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
+
   admin-help:
-    - "<green>===========<white>[<green>LITE_ECO<white>]<green>==========="
+    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix>  <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
     - " "
-    - "<white>[+] <gray>/eco add <yellow><username> <amount> <white>- <gray>Add money to another player."
-    - "<white>[+] <gray>/eco set <yellow><username> <amount> <white>- <gray>Set money amount of another player."
-    - "<white>[+] <gray>/eco remove <yellow><username> <amount> <white>- <gray>Remove money from another player."
-    - "<white>[+] <gray>/eco gadd <yellow><amount> <white>- <gray>Add money to all players."
-    - "<white>[+] <gray>/eco gset <yellow><amount> <white>- <gray>Set money amount of all players."
-    - "<white>[+] <gray>/eco gremove <yellow><amount> <white>- <gray>Remove money from all players."
-    - "<white>[+] <gray>/eco lang [lang] <white>- <gray>Switch message translation."
-    - "<white>[+] <gray>/eco purge <argument> <white>- <gray>Purge data."
-    - "<white>[+] <gray>/eco migration <argument> <white>- <gray>Migration of database to another formats."
-    - "<white>[+] <gray>/eco reload <white>- <gray>Reload configuration."
+    - "<red>[★] <gray>/eco add <yellow>[username] <#3EE84D><amount> <white>-<#F39E9E> Add money to another player."
+    - "<red>[★] <gray>/eco set <yellow>[username] <#3EE84D><amount> <white>-<#F39E9E> Set money amount of another player."
+    - "<red>[★] <gray>/eco remove <yellow>[username] <#3EE84D><amount> <white>-<#F39E9E> Remove money from another player."
+    - "<red>[★] <gray>/eco gadd <#3EE84D><amount> <white>-<#F39E9E> Add money to all players."
+    - "<red>[★] <gray>/eco gset <#3EE84D><amount> <white>-<#F39E9E> Set money amount of all players."
+    - "<red>[★] <gray>/eco gremove <#3EE84D><amount> <white>-<#F39E9E> Remove money from all players."
+    - "<red>[★] <gray>/eco lang <pink>[lang] <white>-<#F39E9E> Switch message translation."
+    - "<red>[★] <gray>/eco purge <pink><argument> <white>-<#F39E9E> Purge data."
+    - "<red>[★] <gray>/eco migration <pink><argument> <white>-<#F39E9E> Migration of database to another format."
+    - "<red>[★] <gray>/eco reload <white>-<#F39E9E> Reload configuration."
     - " "
-    - "<green>===========<white>[<green>LITE_ECO<white>]<green>==========="
+    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
