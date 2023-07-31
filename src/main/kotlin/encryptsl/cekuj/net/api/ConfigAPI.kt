@@ -16,7 +16,7 @@ class ConfigAPI(private val liteEco: LiteEco) : ConfigAPIProvider {
         if (!file.exists()) {
             liteEco.saveResource(fileName, false)
         } else {
-            liteEco.logger.info("Configuration $fileName exist !")
+            liteEco.logger.info("Resource $fileName exists [!]")
         }
         return this
     }
