@@ -118,7 +118,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
         if (p > pagination.maxPages) {
             commandSender.sendMessage(
                 ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.balance_top_page_error"),
-                    TagResolver.resolver(Placeholder.parsed("maxpage", pagination.maxPages.toString())))
+                    TagResolver.resolver(Placeholder.parsed("max_page", pagination.maxPages.toString())))
             )
             return
         }
@@ -127,7 +127,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
             ModernText.miniModernText(
                 liteEco.translationConfig.getMessage("messages.balance_top_line_first"),
                 TagResolver.resolver(
-                    Placeholder.parsed("page", pagination.page().toString()), Placeholder.parsed("maxpage", pagination.maxPages.toString())
+                    Placeholder.parsed("page", pagination.page().toString()), Placeholder.parsed("max_page", pagination.maxPages.toString())
                 ))
                 .appendNewline().append(LegacyComponentSerializer.legacyAmpersand().deserialize(pagination.display()))
                 .appendNewline().append(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.balance_top_line_second")))
