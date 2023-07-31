@@ -4,8 +4,8 @@ messages:
     format: "<prefix> <white>Status of balance is <green><money></green> [!]"
     format_target: "<prefix> <white>Status of <gold><target></gold> balance is <green><money></green> [!]"
     top_format: "<yellow><position># <gold><player></gold> <gray>- <green><money></green>"
-    top_header: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>BAL TOP</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray> <red><page>/<max_page>"
-    top_bottom: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>BAL TOP</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray>"
+    top_header: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>BALTOP</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray> <red><page>/<max_page>"
+    top_bottom: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>BALTOP</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray>"
 
   # Self-transaction messages
   self:
@@ -60,8 +60,8 @@ messages:
   help:
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
     - " "
-    - "<white>[+] <gray>/money help <white>-<#CFE7F0> Show commands list of plugin"
-    - "<white>[+] <gray>/money top <pink>[page] <white>-<#CFE7F0> Show richest players"
+    - "<white>[+] <gray>/money help <white>-<#CFE7F0> Shows commands list of plugin"
+    - "<white>[+] <gray>/money top <#b37dc7>[page] <white>-<#CFE7F0> Show richest players"
     - "<white>[+] <gray>/money bal <yellow>[username] <white>-<#CFE7F0> Show balance of your account or another player"
     - "<white>[+] <gray>/money pay <yellow>[username] <#3EE84D><amount> <white>-<#CFE7F0> Send money to another player."
     - " "
@@ -76,9 +76,9 @@ messages:
     - "<red>[★] <gray>/eco gadd <#3EE84D><amount> <white>-<#F39E9E> Add money to all players."
     - "<red>[★] <gray>/eco gset <#3EE84D><amount> <white>-<#F39E9E> Set money amount of all players."
     - "<red>[★] <gray>/eco gremove <#3EE84D><amount> <white>-<#F39E9E> Remove money from all players."
-    - "<red>[★] <gray>/eco lang <pink>[lang] <white>-<#F39E9E> Switch message translation."
-    - "<red>[★] <gray>/eco purge <pink><argument> <white>-<#F39E9E> Purge data."
-    - "<red>[★] <gray>/eco migration <pink><argument> <white>-<#F39E9E> Migration of database to another format."
+    - "<red>[★] <gray>/eco lang <#b37dc7>[lang] <white>-<#F39E9E> Switch message translation."
+    - "<red>[★] <gray>/eco purge <#b37dc7><argument> <white>-<#F39E9E> Purge data."
+    - "<red>[★] <gray>/eco migration <#b37dc7><argument> <white>-<#F39E9E> Migration of database to another format."
     - "<red>[★] <gray>/eco reload <white>-<#F39E9E> Reload configuration."
     - " "
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
