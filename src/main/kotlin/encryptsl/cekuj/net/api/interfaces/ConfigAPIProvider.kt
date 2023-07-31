@@ -3,7 +3,7 @@ package encryptsl.cekuj.net.api.interfaces
 import encryptsl.cekuj.net.api.ConfigAPI
 
 interface ConfigAPIProvider {
-    fun create(configName: String): ConfigAPI
+    fun create(fileName: String): ConfigAPI
 
     /**
      * Create config.yml
