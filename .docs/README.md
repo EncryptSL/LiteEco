@@ -1,5 +1,5 @@
 
-<div style="text-align: center;">
+<div align=center>
 
 # LiteEco - Plugin Docs
 
@@ -16,5 +16,5 @@
 - ### [Setup](CONFIG.md)
 - ### [Permissions](PERMISSIONS.md)
 - ### [Placeholders](PLACEHOLDERS.md)
-- ### [Translations](TRANSLATORS.md)
-- ### [Contribution](CONTRIBUTORS.md)
+- ### [Translations](TRANSLATIONS.md)
+- ### [Contribution](CONTRIBUTING.md)

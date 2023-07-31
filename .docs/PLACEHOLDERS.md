@@ -1,16 +1,23 @@
-<div style="text-align: center;">
+<div align=center>
 
 ## LiteEco - Placeholders
 
-![banner](https://user-images.githubusercontent.com/9441083/215228544-29c3bfa3-f67f-4f9d-8510-bde3f133018e.jpg)
+[![Banner]](https://github.com/EncryptSL/LiteEco)
 
+#### Custom Placeholders for Dynamic Economy Information
 </div>
 
 ---
 
-LiteEco makes use of placeholders in its output to dynamically display various information.
+With LiteEco's custom placeholders, you can effortlessly access various economy-related metrics and tailor the presentation to suit your server's unique style.
 
-Below are the available placeholders:
+By leveraging custom placeholders provided by LiteEco, you can dynamically showcase crucial economic data to your players, enhancing their in-game experience.
+
+## Requirements
+
+To make use of the LiteEco custom placeholders, you need to download: [PlaceholderAPI][PAPI]
+
+## Available Placeholders
 
 - `%liteeco_balance%`
     - Displays the raw balance output for the player.
@@ -32,14 +39,18 @@ Below are the available placeholders:
     - Displays the raw balance of the player at the specified position in the richest player list.
     - (The maximum value is 10)
 
+
 - `%liteeco_top_formatted_%`
     - Displays the balance in a fancy format, from the player at the specified position in the richest player list.
     - (The maximum value is 10)
 
 ---
 
-<div style="text-align: center;">
+<div align=center>
 
 ![hologram](https://user-images.githubusercontent.com/9441083/170329930-9e457436-fd89-4fde-ab19-0dbc843d12bd.png)
 
 </div>
+
+[Banner]: https://i.ibb.co/gvpv3CX/LiteEco.jpg
+[PAPI]: https://github.com/PlaceholderAPI/PlaceholderAPI

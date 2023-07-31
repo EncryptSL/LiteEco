@@ -1,18 +1,17 @@
-<div style="text-align: center;">
+<div align=center>
 
 ## LiteEco - Setup
 
-![banner](https://user-images.githubusercontent.com/9441083/215228544-29c3bfa3-f67f-4f9d-8510-bde3f133018e.jpg)
+[![Banner]](https://github.com/EncryptSL/LiteEco)
 
+####  Customize Your Economy Plugin with Ease
 </div>
 
 ---
 
-The configuration file (**config.yml**) is where you can customize the settings for the LiteEco plugin to suit your specific needs.
+Welcome to the LiteEco setup! The configuration file (`config.yml`) is your gateway to customizing the LiteEco plugin according to your server's unique requirements. 
 
 Please ensure to modify these settings as per your server requirements to ensure smooth operation of the LiteEco plugin.
-
-Below is an explanation of the various sections in the config file:
 
 ## Plugin Settings
 
@@ -82,3 +81,5 @@ database:
     # The password of the user to connect to your database (MySQL only).
     password: password
 ```
+
+[Banner]: https://i.ibb.co/gvpv3CX/LiteEco.jpg

@@ -1,18 +1,19 @@
-<div style="text-align: center;">
+<div align=center>
 
 ## LiteEco - Permissions
 
-![banner](https://user-images.githubusercontent.com/9441083/215228544-29c3bfa3-f67f-4f9d-8510-bde3f133018e.jpg)
+[![Banner]](https://github.com/EncryptSL/LiteEco)
 
+#### LiteEco provides various permissions for player and admin commands to control access to specific features.
 </div>
 
 ---
 
-LiteEco provides various permissions for player and admin commands to control access to specific features.
+LiteEco offers a comprehensive set of permissions that grant precise control over player and admin commands, allowing you to regulate access to specific features within your Minecraft server's economy system.
 
-You can use permission groups to give access to all children permissions.
+[//]: # (With these fine-grained permissions, you can customize the gameplay experience, ensuring a fair and balanced economic environment for all players.)
 
-Below are the available permissions.
+You can use the permission groups to give access to all children permissions.
 
 ### Player commands - `lite.eco.player`
 
@@ -89,3 +90,5 @@ Below are the available permissions.
 /eco reload:
   Permission: lite.eco.admin.reload
 ```
+
+[Banner]: https://i.ibb.co/gvpv3CX/LiteEco.jpg
