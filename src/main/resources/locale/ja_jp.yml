@@ -5,7 +5,7 @@ messages:
     format_target: "<prefix> <gold><player></gold> <white>の所持金は <green><money></green>"
     top_format: "<yellow><position># <gold><player></gold> <gray>- <green><money></green>"
     top_header: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>所持金ランキング</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray> <red><page>/<max_page>"
-    top_bottom: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>所持金ランキング</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray>"
+    top_footer: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>所持金ランキング</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray>"
 
   # Self-transaction messages
   self:

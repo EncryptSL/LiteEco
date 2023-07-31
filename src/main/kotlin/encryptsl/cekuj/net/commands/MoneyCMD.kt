@@ -130,7 +130,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
                     Placeholder.parsed("page", pagination.page().toString()), Placeholder.parsed("max_page", pagination.maxPages.toString())
                 ))
                 .appendNewline().append(LegacyComponentSerializer.legacyAmpersand().deserialize(pagination.display()))
-                .appendNewline().append(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.balance.top_bottom")))
+                .appendNewline().append(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.balance.top_footer")))
         )
     }
 

@@ -5,7 +5,7 @@ messages:
     format_target: "<prefix> <white>El saldo de <gold><target></gold> es de <green><money></green> [!]"
     top_format: "<yellow><position># <gold><player></gold> <gray>- <green><money></green>"
     top_header: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>TOP ECONOMIA<gray>]</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray> <red><page>/<max_page>"
-    top_bottom: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>TOP ECONOMIA</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray>"
+    top_footer: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>TOP ECONOMIA</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray>"
 
   # Self-transaction messages
   self:
