@@ -125,12 +125,12 @@ class MoneyCMD(private val liteEco: LiteEco) {
 
         commandSender.sendMessage(
             ModernText.miniModernText(
-                liteEco.translationConfig.getMessage("messages.balance.top_line_first"),
+                liteEco.translationConfig.getMessage("messages.balance.top_header"),
                 TagResolver.resolver(
                     Placeholder.parsed("page", pagination.page().toString()), Placeholder.parsed("max_page", pagination.maxPages.toString())
                 ))
                 .appendNewline().append(LegacyComponentSerializer.legacyAmpersand().deserialize(pagination.display()))
-                .appendNewline().append(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.balance.top_line_second")))
+                .appendNewline().append(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.balance.top_bottom")))
         )
     }
 

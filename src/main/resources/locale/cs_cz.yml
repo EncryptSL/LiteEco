@@ -4,8 +4,8 @@ messages:
     format: "<prefix> <white>Stav tvého účtu je <green><money></green> [!]"
     format_target: "<prefix> <white>Stav účtu <gold><target></gold> je <green><money></green> [!]"
     top_format: "<yellow><position># <gold><player></gold> <gray>- <green><money></green>"
-    top_line_first: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>BOHATÍ HRÁČI</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray> <red><page>/<max_page><gray>"
-    top_line_second: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>BOHATÍ HRÁČI</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray>"
+    top_header: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>BOHATÍ HRÁČI</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray> <red><page>/<max_page><gray>"
+    top_bottom: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>BOHATÍ HRÁČI</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray>"
 
   # Self-transaction messages
   self:

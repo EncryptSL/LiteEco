@@ -4,8 +4,8 @@ messages:
     format: "<prefix> <white>Status of balance is <green><money></green> [!]"
     format_target: "<prefix> <white>Status of <gold><target></gold> balance is <green><money></green> [!]"
     top_format: "<yellow><position># <gold><player></gold> <gray>- <green><money></green>"
-    top_line_first: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>BAL TOP</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray> <red><page>/<max_page>"
-    top_line_second: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>BAL TOP</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray>"
+    top_header: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>BAL TOP</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray> <red><page>/<max_page>"
+    top_bottom: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>BAL TOP</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray>"
 
   # Self-transaction messages
   self:
