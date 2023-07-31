@@ -3,7 +3,7 @@ name: ${name}
 prefix: LiteEco
 version: ${version}
 author: EncryptSL
-website: http://www.encryptsl.cekuj.net
+website: https://encryptsl.cekuj.net
 load: STARTUP
 softdepend: [PlaceholderAPI, Vault, Treasury]
 api-version: 1.13
