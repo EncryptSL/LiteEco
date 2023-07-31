@@ -4,7 +4,7 @@
 
 [![Banner]](https://github.com/EncryptSL/LiteEco)
 
-#### Enhance your Minecraft server's economy with LiteEco, a lightweight plugin inspired on IConomy!
+### Enhance your Minecraft server's economy with LiteEco, a lightweight plugin inspired on IConomy!
 
 by [EncryptSL][EncryptSL] and [LcyDev][LcyDev].
 
@@ -35,7 +35,9 @@ With an intuitive command interface designed for both console and in-game usage,
 
 ## Documentation:
 
-Want to learn more about LiteEco and its capabilities? Check out our comprehensive documentation [**here**](https://github.com/EncryptSL/LiteEco/tree/main/.docs).
+Want to learn more about LiteEco and its capabilities? 
+
+Check out our comprehensive documentation [**here**](https://github.com/EncryptSL/LiteEco/tree/main/.docs).
 
 ## Easy to Use:
 

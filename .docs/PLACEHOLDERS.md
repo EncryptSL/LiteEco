@@ -4,7 +4,7 @@
 
 [![Banner]](https://github.com/EncryptSL/LiteEco)
 
-#### Custom Placeholders for Dynamic Economy Information
+### Custom Placeholders for Dynamic Economy Information
 </div>
 
 ---

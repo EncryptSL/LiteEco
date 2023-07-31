@@ -4,7 +4,7 @@
 
 [![Banner]](https://github.com/EncryptSL/LiteEco)
 
-#### Multilingual support
+### Multilingual support
 </div>
 
 ---

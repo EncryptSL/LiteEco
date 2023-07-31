@@ -4,7 +4,7 @@
 
 [![Banner]](https://github.com/EncryptSL/LiteEco)
 
-#### LiteEco provides various permissions for player and admin commands to control access to specific features.
+### LiteEco provides various permissions for player and admin commands to control access to specific features.
 </div>
 
 ---

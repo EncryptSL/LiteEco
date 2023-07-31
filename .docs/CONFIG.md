@@ -4,7 +4,7 @@
 
 [![Banner]](https://github.com/EncryptSL/LiteEco)
 
-####  Customize Your Economy Plugin with Ease
+###  Customize Your Economy Plugin with Ease
 </div>
 
 ---

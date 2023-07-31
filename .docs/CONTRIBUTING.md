@@ -4,7 +4,7 @@
 
 [![Banner]](https://github.com/EncryptSL/LiteEco)
 
-#### If you would like to contribute to the LiteEco project, follow the guide below
+### If you would like to contribute to the LiteEco project, follow the guide below
 </div>
 
 ---
