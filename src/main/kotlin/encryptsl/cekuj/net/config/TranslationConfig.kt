@@ -14,7 +14,7 @@ class TranslationConfig(private val liteEco: LiteEco) {
 
     fun getMessage(value: String): String {
         return Optional.ofNullable(langConfiguration?.getString(value))
-            .orElse(langConfiguration?.getString("messages.translation_missing")?.replace("<key>", value))
+            .orElse(langConfiguration?.getString("messages.admin.translation_missing")?.replace("<key>", value))
     }
 
     fun getList(value: String): MutableList<*>? {

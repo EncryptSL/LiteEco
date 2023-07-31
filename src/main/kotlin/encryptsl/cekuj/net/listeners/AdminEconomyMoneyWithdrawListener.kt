@@ -20,13 +20,13 @@ class AdminEconomyMoneyWithdrawListener(private val liteEco: LiteEco) : Listener
 
         if (!liteEco.api.hasAccount(target)) {
             sender.sendMessage(
-                ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.account_not_exist"),
+                ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.error.account_not_exist"),
                 TagResolver.resolver(Placeholder.parsed("account", target.name.toString()))))
             return
         }
 
         if (!liteEco.api.has(target, money)) {
-            sender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.sender_error_enough_pay")))
+            sender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.error.insufficient_funds")))
             return
         }
 
@@ -35,7 +35,7 @@ class AdminEconomyMoneyWithdrawListener(private val liteEco: LiteEco) : Listener
         if (sender.name == target.name) {
             sender.sendMessage(
                 ModernText.miniModernText(
-                    liteEco.translationConfig.getMessage("messages.self_withdraw_money"),
+                    liteEco.translationConfig.getMessage("messages.self.withdraw_money"),
                     TagResolver.resolver(Placeholder.parsed("money", liteEco.api.formatting(money)))
                 )
             )
@@ -44,13 +44,13 @@ class AdminEconomyMoneyWithdrawListener(private val liteEco: LiteEco) : Listener
 
         sender.sendMessage(
             ModernText.miniModernText(
-                liteEco.translationConfig.getMessage("messages.sender_success_withdraw"),
+                liteEco.translationConfig.getMessage("messages.sender.withdraw_money"),
                 TagResolver.resolver(Placeholder.parsed("target", target.name.toString()), Placeholder.parsed("money", liteEco.api.formatting(money)))))
         if (target.isOnline) {
             if (liteEco.config.getBoolean("plugin.disableMessages.target_success_withdraw")) return
             target.player?.sendMessage(
                 ModernText.miniModernText(
-                    liteEco.translationConfig.getMessage("messages.target_success_withdraw"),
+                    liteEco.translationConfig.getMessage("messages.target.withdraw_money"),
                     TagResolver.resolver(Placeholder.parsed("sender", sender.name), Placeholder.parsed("money", liteEco.api.formatting(money)))))
         }
     }
