@@ -1,11 +1,21 @@
-## Permission
+<div style="text-align: center;">
+
+## LiteEco - Permissions
+
+![banner](https://user-images.githubusercontent.com/9441083/215228544-29c3bfa3-f67f-4f9d-8510-bde3f133018e.jpg)
+
+</div>
+
+---
+
 LiteEco provides various permissions for player and admin commands to control access to specific features.
 
 You can use permission groups to give access to all children permissions.
 
 Below are the available permissions.
 
-**Player commands** - `lite.eco.player`
+### Player commands - `lite.eco.player`
+
 ```YAML
 # Main player command for LiteEco.
 /money:
@@ -28,7 +38,8 @@ Below are the available permissions.
   Permission: lite.eco.pay
 ```
 
-**Admin commands** - `lite.eco.admin`
+### Admin commands : `lite.eco.admin`
+
 ```YAML
 # Main admin command for LiteEco.
 /eco:
@@ -44,7 +55,7 @@ Below are the available permissions.
 
 # Add money to everyone.
 /eco gadd <amount>:
-  Permissions: lite.eco.admin.gadd
+  Permission: lite.eco.admin.gadd
 
 # Set a fixed money amount for a player.
 /eco set <player> <amount>:
@@ -52,7 +63,7 @@ Below are the available permissions.
 
 # Set a fixed money amount for everyone.
 /eco gset <amount>:
-  Permissions: lite.eco.admin.gset
+  Permission: lite.eco.admin.gset
 
 # Withdraw money from a player.
 /eco remove <player> <amount>:
@@ -60,7 +71,7 @@ Below are the available permissions.
 
 # Withdraw money from everyone.
 /eco gremove <amount>:
-  Permissions: lite.eco.admin.gremove
+  Permission: lite.eco.admin.gremove
 
 # Switch the translation language.
 /eco lang [LANG_KEY]:

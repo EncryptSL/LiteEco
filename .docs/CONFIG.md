@@ -1,11 +1,20 @@
-## Setup
+<div style="text-align: center;">
+
+## LiteEco - Setup
+
+![banner](https://user-images.githubusercontent.com/9441083/215228544-29c3bfa3-f67f-4f9d-8510-bde3f133018e.jpg)
+
+</div>
+
+---
+
 The configuration file (**config.yml**) is where you can customize the settings for the LiteEco plugin to suit your specific needs.
 
 Please ensure to modify these settings as per your server requirements to ensure smooth operation of the LiteEco plugin.
 
 Below is an explanation of the various sections in the config file:
 
-### Plugin Settings
+## Plugin Settings
 
 This section contains essential configurations for the LiteEco plugin.
 
@@ -19,7 +28,7 @@ plugin:
   translation: EN_US
 ```
 
-### Economy Settings
+## Economy Settings
 
 This section allows you to customize various aspects of the in-game currency system used by LiteEco.
 
@@ -37,9 +46,9 @@ economy:
   compact_display: false
 ```
 
-### Message Settings
+## Message Settings
 
-These settings control whether certain messages will be displayed or broadcasted to players. 
+These settings control whether certain messages will be displayed or broadcasted to players.
 
 You can enable or disable each message type using these options:
 
@@ -54,7 +63,7 @@ disable_messages:
   target_success_set: false
 ```
 
-### Database Settings
+## Database Settings
 
 These settings are used to configure the database or SQLite connection for storing LiteEco data.
 
@@ -73,4 +82,3 @@ database:
     # The password of the user to connect to your database (MySQL only).
     password: password
 ```
-
