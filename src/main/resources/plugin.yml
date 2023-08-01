@@ -18,6 +18,7 @@ description: ${description}
 
 permissions:
   lite.eco.player:
+    default: true
     description: Gives access to all player commands
     children:
       lite.eco.help: true
@@ -25,7 +26,9 @@ permissions:
       lite.eco.balance: true
       lite.eco.top: true
       lite.eco.pay: true
+
   lite.eco.admin:
+    default: op
     description: Gives access to all admin commands
     children:
       lite.eco.admin.help: true

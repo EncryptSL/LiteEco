@@ -14,7 +14,7 @@ class TranslationConfig(private val liteEco: LiteEco) {
 
     fun getMessage(value: String): String {
         val key = langConfiguration?.getString(value) ?:
-            langConfiguration?.getString("messages.translation_missing")?.replace("<key>", value)
+            langConfiguration?.getString("messages.admin.translation_missing")?.replace("<key>", value)
         val prefix = liteEco.config.getString("plugin.prefix")
 
         return key?.replace("<prefix>", prefix ?: "") ?: "Translation missing error: $value"
