@@ -15,7 +15,7 @@ class PlaceHolderExtensionProvider(private val liteEco: LiteEco) : PlaceholderEx
 
     override fun getAuthor(): String = "EncryptSL"
 
-    override fun getVersion(): String = "1.0.2"
+    override fun getVersion(): String = "1.0.3"
 
     override fun persist(): Boolean = true
 
