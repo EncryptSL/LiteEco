@@ -127,6 +127,8 @@ class MoneyCMD(private val liteEco: LiteEco) {
                 )
             )) }
 
+        if (balances.isEmpty()) return
+
         val pagination = Paginator(balances).apply { page(p) }
 
         if (p > pagination.maxPages) {

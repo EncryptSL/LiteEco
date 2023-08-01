@@ -2,9 +2,6 @@ package encryptsl.cekuj.net.api.economy.vault
 
 import encryptsl.cekuj.net.LiteEco
 import encryptsl.cekuj.net.extensions.isApproachingZero
-import encryptsl.cekuj.net.extensions.isNegative
-import encryptsl.cekuj.net.extensions.isZero
-import encryptsl.cekuj.net.extensions.moneyFormat
 import net.milkbowl.vault.economy.AbstractEconomy
 import net.milkbowl.vault.economy.EconomyResponse
 import org.bukkit.Bukkit
