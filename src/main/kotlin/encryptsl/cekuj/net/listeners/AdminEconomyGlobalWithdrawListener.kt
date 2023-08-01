@@ -24,15 +24,15 @@ class AdminEconomyGlobalWithdrawListener(private val liteEco: LiteEco) : Listene
         liteEco.countTransactions["transactions"] = liteEco.countTransactions.getOrDefault("transactions", 0) + 1
 
         sender.sendMessage(
-            ModernText.miniModernText(liteEco.locale.getMessage("messages.sender_global_withdraw"),
+            ModernText.miniModernText(liteEco.locale.getMessage("messages.global.withdraw_money"),
             TagResolver.resolver(
                 Placeholder.parsed("money", liteEco.api.formatting(money))
             )
         ))
 
-        if (!liteEco.config.getBoolean("plugin.disableMessages.g_broadcast_withdraw")) {
+        if (!liteEco.config.getBoolean("messages.global.notify_withdraw")) {
             Bukkit.broadcast(
-                ModernText.miniModernText(liteEco.locale.getMessage("messages.g_broadcast_withdraw"),
+                ModernText.miniModernText(liteEco.locale.getMessage("messages.broadcast.withdraw_money"),
                 TagResolver.resolver(
                     Placeholder.parsed("sender", sender.name),
                     Placeholder.parsed("money", liteEco.api.formatting(money))

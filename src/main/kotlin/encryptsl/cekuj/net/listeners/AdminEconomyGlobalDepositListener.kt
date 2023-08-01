@@ -25,14 +25,14 @@ class AdminEconomyGlobalDepositListener(private val liteEco: LiteEco) : Listener
         liteEco.countTransactions["transactions"] = liteEco.countTransactions.getOrDefault("transactions", 0) + offlinePlayers.size
 
         sender.sendMessage(
-            ModernText.miniModernText(liteEco.locale.getMessage("messages.sender_global_add"),
+            ModernText.miniModernText(liteEco.locale.getMessage("messages.global.add_money"),
             TagResolver.resolver(
                 Placeholder.parsed("money", liteEco.api.formatting(money))
             )
         ))
-        if (!liteEco.config.getBoolean("plugin.disableMessages.g_broadcast_pay")) {
+        if (!liteEco.config.getBoolean("messages.global.notify_add")) {
             Bukkit.broadcast(
-                ModernText.miniModernText(liteEco.locale.getMessage("messages.g_broadcast_add"),
+                ModernText.miniModernText(liteEco.locale.getMessage("messages.broadcast.add_money"),
                 TagResolver.resolver(
                     Placeholder.parsed("sender", sender.name),
                     Placeholder.parsed("money", liteEco.api.formatting(money))

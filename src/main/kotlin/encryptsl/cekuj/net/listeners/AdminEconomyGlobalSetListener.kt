@@ -24,15 +24,15 @@ class AdminEconomyGlobalSetListener(private val liteEco: LiteEco) : Listener {
         liteEco.countTransactions["transactions"] = liteEco.countTransactions.getOrDefault("transactions", 0) + offlinePlayers.size
 
         sender.sendMessage(
-            ModernText.miniModernText(liteEco.locale.getMessage("messages.sender_global_set"),
+            ModernText.miniModernText(liteEco.locale.getMessage("messages.global.set_money"),
             TagResolver.resolver(
                 Placeholder.parsed("money", liteEco.api.formatting(money))
             )
         ))
 
-        if (!liteEco.config.getBoolean("plugin.disableMessages.g_broadcast_set")) {
+        if (!liteEco.config.getBoolean("messages.global.notify_set")) {
             Bukkit.broadcast(
-                ModernText.miniModernText(liteEco.locale.getMessage("messages.g_broadcast_set"),
+                ModernText.miniModernText(liteEco.locale.getMessage("messages.broadcast.set_money"),
                 TagResolver.resolver(
                     Placeholder.parsed("sender", sender.name),
                     Placeholder.parsed("money", liteEco.api.formatting(money))

@@ -43,9 +43,9 @@ class LiteEco : JavaPlugin() {
 
     private fun initDatabase() {
         databaseConnector.initConnect(
-            config.getString("database.connection.jdbc_host") ?: "jdbc:sqlite:plugins/LiteEco/database.db",
-            config.getString("database.connection.user") ?: "root",
-            config.getString("database.connection.pass") ?: "admin"
+            config.getString("database.connection.jdbc_url") ?: "jdbc:sqlite:plugins/LiteEco/database.db",
+            config.getString("database.connection.username") ?: "root",
+            config.getString("database.connection.password") ?: "admin"
         )
     }
 
@@ -64,7 +64,7 @@ class LiteEco : JavaPlugin() {
     override fun onLoad() {
         configAPI
             .create("database.db")
-            .createConfig("config.yml", "1.0.0")
+            .createConfig("config.yml", "1.1.0")
         locale
             .reloadTranslation()
         initDatabase()

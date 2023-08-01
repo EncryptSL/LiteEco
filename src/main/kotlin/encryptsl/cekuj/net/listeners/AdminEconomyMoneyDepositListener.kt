@@ -19,7 +19,7 @@ class AdminEconomyMoneyDepositListener(private val liteEco: LiteEco) : Listener 
         val money: Double = event.money
 
         if (!liteEco.api.hasAccount(target)) {
-            sender.sendMessage(ModernText.miniModernText(liteEco.locale.getMessage("messages.account_not_exist"),
+            sender.sendMessage(ModernText.miniModernText(liteEco.locale.getMessage("messages.error.account_not_exist"),
                 TagResolver.resolver(Placeholder.parsed("account", target.name.toString()))))
             return
         }
@@ -27,18 +27,17 @@ class AdminEconomyMoneyDepositListener(private val liteEco: LiteEco) : Listener 
         liteEco.api.depositMoney(target, money)
         if (sender.name == target.name) {
             sender.sendMessage(
-                ModernText.miniModernText(
-                    liteEco.locale.getMessage("messages.self_add_money"), TagResolver.resolver(Placeholder.parsed("money", liteEco.api.formatting(money)))))
+                ModernText.miniModernText(liteEco.locale.getMessage("messages.error.self_pay"), TagResolver.resolver(Placeholder.parsed("money", liteEco.api.formatting(money)))))
             return
         }
 
         sender.sendMessage(ModernText.miniModernText(
-            liteEco.locale.getMessage("messages.sender_success_pay"),
+            liteEco.locale.getMessage("messages.sender.add_money"),
             TagResolver.resolver(Placeholder.parsed("target", target.name.toString()), Placeholder.parsed("money", liteEco.api.formatting(money)))))
         if (target.isOnline) {
-            if (liteEco.config.getBoolean("plugin.disableMessages.target_success_pay")) return
+            if (liteEco.config.getBoolean("messages.target.notify_add")) return
             target.player?.sendMessage(ModernText.miniModernText(
-                liteEco.locale.getMessage("messages.target_success_pay"),
+                liteEco.locale.getMessage("messages.target.add_money"),
                 TagResolver.resolver(Placeholder.parsed("sender", sender.name), Placeholder.parsed("money", liteEco.api.formatting(money)))))
         }
     }

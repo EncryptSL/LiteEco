@@ -1,9 +1,7 @@
 package encryptsl.cekuj.net.api.economy.vault
 
 import encryptsl.cekuj.net.LiteEco
-import encryptsl.cekuj.net.extensions.isNegative
-import encryptsl.cekuj.net.extensions.isZero
-import encryptsl.cekuj.net.extensions.moneyFormat
+import encryptsl.cekuj.net.extensions.isApproachingZero
 import net.milkbowl.vault.economy.AbstractEconomy
 import net.milkbowl.vault.economy.EconomyResponse
 import org.bukkit.Bukkit
@@ -33,11 +31,11 @@ class AdaptiveEconomyVaultAPI(private val liteEco: LiteEco) : AbstractEconomy() 
     }
 
     override fun currencyNamePlural(): String? {
-        return liteEco.config.getString("plugin.economy.name")
+        return liteEco.config.getString("economy.currency_name")
     }
 
     override fun currencyNameSingular(): String? {
-        return liteEco.config.getString("plugin.economy.prefix")
+        return liteEco.config.getString("economy.currency_prefix")
     }
 
     override fun hasAccount(player: OfflinePlayer?): Boolean {
@@ -98,7 +96,7 @@ class AdaptiveEconomyVaultAPI(private val liteEco: LiteEco) : AbstractEconomy() 
         if (player == null) {
             return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.FAILURE, null)
         }
-        if (amount.isNegative() || amount.isZero() || amount.moneyFormat() == "0.00") {
+        if (amount.isApproachingZero()) {
             return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.FAILURE, null)
         }
 
@@ -129,7 +127,7 @@ class AdaptiveEconomyVaultAPI(private val liteEco: LiteEco) : AbstractEconomy() 
             return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.FAILURE, null)
         }
 
-        if (amount.isNegative() || amount.isZero() || amount.moneyFormat() == "0.00") {
+        if (amount.isApproachingZero()) {
             return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.FAILURE, null)
         }
 
@@ -153,7 +151,7 @@ class AdaptiveEconomyVaultAPI(private val liteEco: LiteEco) : AbstractEconomy() 
     }
 
     override fun createPlayerAccount(player: OfflinePlayer?): Boolean {
-        return liteEco.api.createAccount(player!!, liteEco.config.getDouble("plugin.economy.default_money"))
+        return liteEco.api.createAccount(player!!, liteEco.config.getDouble("economy.starting_balance"))
     }
 
     @Deprecated("Deprecated in Java", ReplaceWith("createPlayerAccount(player)"))
