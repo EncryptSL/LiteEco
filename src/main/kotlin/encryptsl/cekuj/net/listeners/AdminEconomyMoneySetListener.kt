@@ -38,7 +38,7 @@ class AdminEconomyMoneySetListener(private val liteEco: LiteEco) : Listener {
             liteEco.translationConfig.getMessage("messages.sender.set_money"),
             TagResolver.resolver(Placeholder.parsed("target", target.name.toString()), Placeholder.parsed("money", liteEco.api.formatting(money)))))
         if (target.isOnline) {
-            if (liteEco.config.getBoolean("disable_messages.target_success_set")) return
+            if (liteEco.config.getBoolean("messages.target.notify_set")) return
             target.player?.sendMessage(
                 ModernText.miniModernText(
                 liteEco.translationConfig.getMessage("messages.target.set_money"),

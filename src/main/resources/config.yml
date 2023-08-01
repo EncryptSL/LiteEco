@@ -16,14 +16,16 @@ economy:
   # Convert large currency values into a more compact format.
   compact_display: false
 
-# These settings disable messages.
-disable_messages:
-  global_broadcast_pay: false
-  global_broadcast_withdraw: false
-  global_broadcast_set: false
-  target_success_pay: false
-  target_success_withdraw: false
-  target_success_set: false
+# These settings toggle messages.
+messages:
+  global:
+    notify_add: true
+    notify_withdraw: true
+    notify_set: true
+  target:
+    notify_add: true
+    notify_withdraw: true
+    notify_set: true
 
 # Settings for Database or SQLite connection.
 database:
