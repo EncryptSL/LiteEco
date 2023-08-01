@@ -13,12 +13,19 @@ class Locales(private val liteEco: LiteEco) {
     private var langYML: FileConfiguration? = null
 
     fun getMessage(value: String): String {
-        return Optional.ofNullable(langYML?.getString(value))
-            .orElse(langYML?.getString("messages.translation_missing")?.replace("<key>", value))
+        val key = langYML?.getString(value) ?:
+        langYML?.getString("messages.admin.translation_missing")?.replace("<key>", value)
+        val prefix = liteEco.config.getString("plugin.prefix")
+
+        return key?.replace("<prefix>", prefix ?: "") ?: "Translation missing error: $value"
     }
 
     fun getList(value: String): MutableList<*>? {
-        return langYML?.getList(value)
+        val list = langYML?.getList(value)?.toMutableList()
+        val prefix = liteEco.config.getString("plugin.prefix")
+        list?.replaceAll { it?.toString()?.replace("<prefix>", prefix ?: "") }
+
+        return list
     }
 
     fun setTranslationFile(langKey: LangKey) {
