@@ -80,5 +80,4 @@ class PlaceHolderExtensionProvider(private val liteEco: LiteEco) : PlaceholderEx
             .toMap()
             .let { LinkedHashMap<String, Double>(it) }
     }
-
 }
