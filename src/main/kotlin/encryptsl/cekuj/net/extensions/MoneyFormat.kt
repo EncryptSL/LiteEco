@@ -5,7 +5,7 @@ import java.text.DecimalFormatSymbols
 import java.util.*
 import kotlin.math.pow
 
-private val units = charArrayOf('K', 'M', 'B', 'T', 'Q')
+private val units = charArrayOf('\u0000', 'K', 'M', 'B', 'T', 'Q')
 
 fun Double.moneyFormat(prefix: String, currencyName: String, compact: Boolean = false): String {
     val formattedNumber = formatNumber(this, compact)
@@ -24,7 +24,7 @@ fun String.toValidDecimal(): Double? {
 private fun formatNumber(number: Double, compact: Boolean): String {
     return if (compact) {
         val (compactNumber, compactChar) = compactNumber(number)
-        removeTrailingZeros(formatter(3, RoundingMode.DOWN).format(compactNumber)) + (compactChar ?: 0.toChar())
+        removeTrailingZeros(formatter(3, RoundingMode.DOWN).format(compactNumber)) + compactChar
     } else {
         formatter(2, RoundingMode.HALF_UP).format(number)
     }
@@ -38,19 +38,19 @@ private fun formatter(fractionDigits: Int, roundingMode: RoundingMode): DecimalF
 }
 
 private fun removeTrailingZeros(numberStr: String): String {
-    return if (numberStr.contains('.') && numberStr.endsWith("0")) {
-        var i = numberStr.length - 1
-        while (i >= 0 && numberStr[i] == '0') {
-            i--
-        }
-        if (numberStr[i] == '.') {
-            numberStr.substring(0, i)
-        } else {
-            numberStr.substring(0, i + 1)
-        }
-    } else {
-        numberStr
+    if (!numberStr.contains('.') || !numberStr.endsWith('0')) return numberStr
+
+    val builder = StringBuilder(numberStr)
+    var i = builder.length - 1
+
+    while (i >= 0 && builder[i] == '0') {
+        builder.deleteCharAt(i)
+        i--
     }
+    if (builder[i] == '.') {
+        builder.deleteCharAt(i)
+    }
+    return builder.toString()
 }
 
 private fun decompressNumber(str: String): Double? {
@@ -60,19 +60,18 @@ private fun decompressNumber(str: String): Double? {
 
     val value = str.dropLast(1).toDecimal()
 
-    val multiplier = 10.0.pow((units.indexOf(lastChar) + 1) * 3)
+    val multiplier = 10.0.pow(units.indexOf(lastChar) * 3)
     return value?.times(multiplier)
 }
 
-private fun compactNumber(number: Double): Pair<Double, Char?> {
-    if (number < 1000) return Pair(number, null)
-    var unitIndex = 0
+private fun compactNumber(number: Double): Pair<Double, Char> {
     var value = number
-    while (value >= 1000 && unitIndex < units.size) {
-        value /= 1000
-        unitIndex++
+    for (unit in units) {
+        if (value >= 1000) {
+            value /= 1000
+        } else {
+            return Pair(value, unit)
+        }
     }
-    return unitIndex.takeIf { it > 0 }
-        ?.let { Pair(value, units[it - 1]) }
-        ?: Pair(value, null)
+    throw IllegalStateException("This shouldn't happen")}
 }
