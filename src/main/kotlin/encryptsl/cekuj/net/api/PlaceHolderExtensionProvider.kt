@@ -14,11 +14,9 @@ class PlaceHolderExtensionProvider(private val liteEco: LiteEco) : PlaceholderEx
 
     override fun getVersion(): String = "1.0.5"
 
-    override fun persist(): Boolean = true
+    override fun getRequiredPlugin(): String = liteEco.name
 
-    override fun getRequiredPlugin(): String {
-        return liteEco.description.name
-    }
+    override fun persist(): Boolean = true
 
     override fun canRegister(): Boolean {
         return liteEco.server.pluginManager.getPlugin(requiredPlugin)!!.isEnabled

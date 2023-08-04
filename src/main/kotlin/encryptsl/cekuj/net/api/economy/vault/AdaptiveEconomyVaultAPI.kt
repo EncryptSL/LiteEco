@@ -10,25 +10,19 @@ import java.util.*
 
 class AdaptiveEconomyVaultAPI(private val liteEco: LiteEco) : AbstractEconomy() {
 
-    override fun isEnabled(): Boolean {
-        return liteEco.isEnabled
+    companion object {
+        private const val BANK_NOT_SUPPORTED_MESSAGE = "LiteEco does not support bank accounts!"
     }
 
-    override fun getName(): String {
-        return "LiteEco"
-    }
+    override fun isEnabled(): Boolean = liteEco.isEnabled
 
-    override fun hasBankSupport(): Boolean {
-        return false
-    }
+    override fun getName(): String = liteEco.name
 
-    override fun fractionalDigits(): Int {
-        return -1
-    }
+    override fun hasBankSupport(): Boolean = false
 
-    override fun format(amount: Double): String {
-        return liteEco.api.formatting(amount)
-    }
+    override fun fractionalDigits(): Int = -1
+
+    override fun format(amount: Double): String = liteEco.api.formatting(amount)
 
     override fun currencyNamePlural(): String? {
         return liteEco.config.getString("economy.currency_name")
@@ -93,10 +87,7 @@ class AdaptiveEconomyVaultAPI(private val liteEco: LiteEco) : AbstractEconomy() 
     }
 
     override fun withdrawPlayer(player: OfflinePlayer?, amount: Double): EconomyResponse {
-        if (player == null) {
-            return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.FAILURE, null)
-        }
-        if (amount.isApproachingZero()) {
+        if (player == null || amount.isApproachingZero()) {
             return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.FAILURE, null)
         }
 
@@ -123,11 +114,7 @@ class AdaptiveEconomyVaultAPI(private val liteEco: LiteEco) : AbstractEconomy() 
     }
 
     override fun depositPlayer(player: OfflinePlayer?, amount: Double): EconomyResponse {
-        if (player == null || !hasAccount(player)) {
-            return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.FAILURE, null)
-        }
-
-        if (amount.isApproachingZero()) {
+        if (player == null || !hasAccount(player) || amount.isApproachingZero()) {
             return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.FAILURE, null)
         }
 
@@ -159,7 +146,7 @@ class AdaptiveEconomyVaultAPI(private val liteEco: LiteEco) : AbstractEconomy() 
         return createPlayerAccount(Bukkit.getOfflinePlayer(playerName.toString()))
     }
 
-    @Deprecated("Deprecated in Java", ReplaceWith("createPlayerAccount(playerName)"))
+    @Deprecated("Deprecated in Java", ReplaceWith("createPlayerAccount(player)"))
     override fun createPlayerAccount(playerName: String?, worldName: String?): Boolean {
         return createPlayerAccount(Bukkit.getOfflinePlayer(playerName.toString()))
     }
@@ -168,66 +155,51 @@ class AdaptiveEconomyVaultAPI(private val liteEco: LiteEco) : AbstractEconomy() 
         return createPlayerAccount(player)
     }
 
-    @Deprecated("Deprecated in Java", ReplaceWith(
-        "EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, \"LiteEco does not support bank accounts!\")",
-        "net.milkbowl.vault.economy.EconomyResponse",
-        "net.milkbowl.vault.economy.EconomyResponse"
-    )
-    )
-    override fun createBank(name: String?, player: String?): EconomyResponse {
-        return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "LiteEco does not support bank accounts!")
+    @Deprecated("Deprecated in Java", ReplaceWith("createBank(name, player)"))
+    override fun createBank(name: String?, playerName: String?): EconomyResponse {
+        return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, BANK_NOT_SUPPORTED_MESSAGE)
     }
 
     override fun createBank(name: String?, player: OfflinePlayer?): EconomyResponse {
-        return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "LiteEco does not support bank accounts!")
+        return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, BANK_NOT_SUPPORTED_MESSAGE)
     }
 
     override fun deleteBank(name: String?): EconomyResponse {
-        return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "LiteEco does not support bank accounts!")
+        return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, BANK_NOT_SUPPORTED_MESSAGE)
     }
 
     override fun bankBalance(name: String?): EconomyResponse {
-        return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "LiteEco does not support bank accounts!")
+        return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, BANK_NOT_SUPPORTED_MESSAGE)
     }
 
     override fun bankHas(name: String?, amount: Double): EconomyResponse {
-        return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "LiteEco does not support bank accounts!")
+        return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, BANK_NOT_SUPPORTED_MESSAGE)
     }
 
     override fun bankWithdraw(name: String?, amount: Double): EconomyResponse {
-        return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "LiteEco does not support bank accounts!")
+        return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, BANK_NOT_SUPPORTED_MESSAGE)
     }
 
     override fun bankDeposit(name: String?, amount: Double): EconomyResponse {
-        return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "LiteEco does not support bank accounts!")
+        return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, BANK_NOT_SUPPORTED_MESSAGE)
     }
 
-    @Deprecated("Deprecated in Java", ReplaceWith(
-        "EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, \"LiteEco does not support bank accounts!\")",
-        "net.milkbowl.vault.economy.EconomyResponse",
-        "net.milkbowl.vault.economy.EconomyResponse"
-    )
-    )
+    @Deprecated("Deprecated in Java", ReplaceWith("isBankOwner(name, player)"))
     override fun isBankOwner(name: String?, playerName: String?): EconomyResponse {
-        return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "LiteEco does not support bank accounts!")
+        return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, BANK_NOT_SUPPORTED_MESSAGE)
     }
 
     override fun isBankOwner(name: String?, player: OfflinePlayer?): EconomyResponse {
-        return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "LiteEco does not support bank accounts!")
+        return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, BANK_NOT_SUPPORTED_MESSAGE)
     }
 
-    @Deprecated("Deprecated in Java", ReplaceWith(
-        "EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, \"LiteEco does not support bank accounts!\")",
-        "net.milkbowl.vault.economy.EconomyResponse",
-        "net.milkbowl.vault.economy.EconomyResponse"
-    )
-    )
+    @Deprecated("Deprecated in Java", ReplaceWith("isBankMember(name, player)"))
     override fun isBankMember(name: String?, playerName: String?): EconomyResponse {
-        return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "LiteEco does not support bank accounts!")
+        return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, BANK_NOT_SUPPORTED_MESSAGE)
     }
 
     override fun isBankMember(name: String?, player: OfflinePlayer?): EconomyResponse {
-        return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "LiteEco does not support bank accounts!")
+        return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, BANK_NOT_SUPPORTED_MESSAGE)
     }
 
     override fun getBanks(): MutableList<String> {

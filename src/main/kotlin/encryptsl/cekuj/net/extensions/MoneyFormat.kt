@@ -8,10 +8,7 @@ import kotlin.math.pow
 private val units = charArrayOf('\u0000', 'K', 'M', 'B', 'T', 'Q')
 
 fun String.toValidDecimal(): Double? {
-    return if (isNullOrBlank()) null
-    else {
-        decompressNumber(this)
-    }
+    return decompressNumber(this)
 }
 
 fun Double.moneyFormat(compact: Boolean = false): String {
@@ -45,6 +42,8 @@ private fun formatNumber(number: Double, compacted: Boolean = false): String {
 }
 
 private fun decompressNumber(str: String): Double? {
+    if (str.isBlank()) return null
+
     val lastChar = str.last().uppercaseChar()
 
     return if (lastChar in units) {
