@@ -11,12 +11,12 @@ object ModernText {
 
     @JvmStatic
     fun miniModernText(message: String): Component {
-        return miniMessage.deserialize(message)
+        return miniMessage.deserialize(convertVariables(message))
     }
 
     @JvmStatic
     fun miniModernText(message: String, resolver: TagResolver): Component {
-        return miniMessage.deserialize(message, resolver)
+        return miniMessage.deserialize(convertVariables(message), resolver)
     }
 
     private fun initMiniMessage(): MiniMessage {
@@ -37,5 +37,12 @@ object ModernText {
                 .build()
             )
             .build()
+    }
+
+    private fun convertVariables(value: String): String {
+        val regex = """[{](\w+)[}]""".toRegex()
+        return regex.replace(value) { matchResult ->
+            "<${matchResult.groupValues[1]}>"
+        }
     }
 }
