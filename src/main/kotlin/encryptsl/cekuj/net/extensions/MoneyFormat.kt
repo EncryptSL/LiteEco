@@ -31,15 +31,15 @@ fun Double.moneyFormat(prefix: String, currencyName: String, compact: Boolean = 
 }
 
 private fun formatNumber(number: Double, compacted: Boolean = false): String {
-    val formatter = DecimalFormat()
-    formatter.decimalFormatSymbols = DecimalFormatSymbols.getInstance(Locale.ENGLISH)
-
-    if (compacted) {
-        formatter.applyPattern("#,##0.###")
-        formatter.roundingMode = RoundingMode.UNNECESSARY
-    } else {
-        formatter.applyPattern("#,##0.00")
-        formatter.roundingMode = RoundingMode.HALF_UP
+    val formatter = DecimalFormat().apply {
+        decimalFormatSymbols = DecimalFormatSymbols.getInstance(Locale.ENGLISH)
+        roundingMode = if (compacted) {
+            applyPattern("#,##0.###")
+            RoundingMode.UNNECESSARY
+        } else {
+            applyPattern("#,##0.00")
+            RoundingMode.HALF_UP
+        }
     }
     return formatter.format(number)
 }
@@ -57,14 +57,13 @@ private fun decompressNumber(str: String): Double? {
 private fun compactNumber(number: Double): String {
     var value = number
     for (unit in units) {
-        if (value >= 1000) {
-            value /= 1000
-        } else {
-            if (unit != units[0]) {
+        if (value < 1000) {
+            return if (unit == units[0]) formatNumber(number)
+            else {
                 return formatNumber(value, true) + unit
             }
-            return formatNumber(number)
         }
+        value /= 1000
     }
     throw IllegalStateException("This shouldn't happen")
 }
