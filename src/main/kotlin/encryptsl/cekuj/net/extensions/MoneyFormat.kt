@@ -47,11 +47,11 @@ private fun formatNumber(number: Double, compacted: Boolean = false): String {
 private fun decompressNumber(str: String): Double? {
     val lastChar = str.last().uppercaseChar()
 
-    if (lastChar !in units) return str.toDecimal()
-
-    val multiplier = 10.0.pow(units.indexOf(lastChar) * 3)
-
-    return str.dropLast(1).toDecimal()?.times(multiplier)
+    return if (lastChar in units) {
+        val multiplier = 10.0.pow(units.indexOf(lastChar) * 3)
+        str.dropLast(1).toDecimal()?.times(multiplier)
+    }
+    else str.toDecimal()
 }
 
 private fun compactNumber(number: Double): String {
