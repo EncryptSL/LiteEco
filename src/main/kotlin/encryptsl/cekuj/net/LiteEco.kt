@@ -71,14 +71,15 @@ class LiteEco : JavaPlugin() {
     }
 
     override fun onEnable() {
-        val start = System.currentTimeMillis()
-        blockPlugins()
-        hookRegistration()
-        setupMetrics()
-        checkUpdates()
-        registerCommands()
-        registerListener()
-        logger.info("Plugin enabled in time ${System.currentTimeMillis() - start} ms")
+        val timeTaken = measureTimeMillis {
+            blockPlugins()
+            hookRegistration()
+            setupMetrics()
+            checkUpdates()
+            registerCommands()
+            registerListener()
+        }
+        logger.info("Plugin enabled in time $timeTaken ms")
     }
 
     override fun onDisable() {

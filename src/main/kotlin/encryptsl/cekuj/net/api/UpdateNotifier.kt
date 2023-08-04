@@ -33,7 +33,7 @@ class UpdateNotifier(private val id: String, private val pluginVersion: String) 
         return when(val latestVersion = getVersion()) {
             latestVersion -> "You are using current version !"
             else -> {
-                "Please download update of plugin LiteEco your version: $pluginVersion > Updated version: ${latestVersion}"
+                "Please download update of plugin LiteEco your version: $pluginVersion > Updated version: $latestVersion"
             }
         }
     }

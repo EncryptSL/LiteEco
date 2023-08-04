@@ -29,7 +29,6 @@ class AdminEconomyGlobalSetListener(private val liteEco: LiteEco) : Listener {
                 Placeholder.parsed("money", liteEco.api.formatting(money))
             )
         ))
-
         if (!liteEco.config.getBoolean("messages.global.notify_set")) {
             Bukkit.broadcast(
                 ModernText.miniModernText(liteEco.locale.getMessage("messages.broadcast.set_money"),

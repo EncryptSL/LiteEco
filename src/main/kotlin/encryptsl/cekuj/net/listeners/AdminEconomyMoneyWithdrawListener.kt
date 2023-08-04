@@ -49,9 +49,12 @@ class AdminEconomyMoneyWithdrawListener(private val liteEco: LiteEco) : Listener
         if (target.isOnline) {
             if (liteEco.config.getBoolean("messages.target.notify_withdraw")) return
             target.player?.sendMessage(
-                ModernText.miniModernText(
-                    liteEco.locale.getMessage("messages.target.withdraw_money"),
-                    TagResolver.resolver(Placeholder.parsed("sender", sender.name), Placeholder.parsed("money", liteEco.api.formatting(money)))))
+                ModernText.miniModernText(liteEco.locale.getMessage("messages.target.withdraw_money"),
+                TagResolver.resolver(
+                    Placeholder.parsed("sender", sender.name),
+                    Placeholder.parsed("money", liteEco.api.formatting(money))
+                )
+            ))
         }
     }
 

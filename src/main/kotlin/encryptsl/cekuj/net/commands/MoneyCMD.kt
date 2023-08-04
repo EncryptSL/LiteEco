@@ -20,7 +20,6 @@ import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import java.lang.IllegalArgumentException
 import java.util.*
 
 @Suppress("UNUSED")
@@ -29,17 +28,17 @@ class MoneyCMD(private val liteEco: LiteEco) {
 
     private fun validateAmount(amountStr: String, commandSender: CommandSender, checkLevel: CheckLevel = CheckLevel.FULL): Double? {
         val amount = amountStr.toValidDecimal()
-        if (amount == null) {
-            commandSender.sendMessage(ModernText.miniModernText(liteEco.locale.getMessage("messages.error.format_amount")))
-            return null
+        return when {
+            amount == null -> {
+                commandSender.sendMessage(ModernText.miniModernText(liteEco.locale.getMessage("messages.error.format_amount")))
+                null
+            }
+            checkLevel == CheckLevel.ONLY_NEGATIVE && amount.isNegative() || checkLevel == CheckLevel.FULL && (amount.isApproachingZero()) -> {
+                commandSender.sendMessage(ModernText.miniModernText(liteEco.locale.getMessage("messages.error.negative_amount")))
+                null
+            }
+            else -> amount
         }
-        if (checkLevel == CheckLevel.ONLY_NEGATIVE && amount.isNegative() ||
-            checkLevel == CheckLevel.FULL && (amount.isApproachingZero())
-        ) {
-            commandSender.sendMessage(ModernText.miniModernText(liteEco.locale.getMessage("messages.error.negative_amount")))
-            return null
-        }
-        return amount
     }
 
     @CommandMethod("money help")
@@ -309,6 +308,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
     @CommandPermission("lite.eco.admin.purge")
     fun onPurge(commandSender: CommandSender, @Argument(value = "argument", suggestions = "purgeKeys") purgeKey: PurgeKey)
     {
+        @Suppress("REDUNDANT_ELSE_IN_WHEN")
         when (purgeKey) {
             PurgeKey.ACCOUNTS -> {
                 liteEco.preparedStatements.purgeAccounts()

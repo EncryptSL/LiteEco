@@ -8,33 +8,25 @@ import kotlin.math.pow
 private val units = charArrayOf('K', 'M', 'B', 'T', 'Q')
 
 fun Double.moneyFormat(prefix: String, currencyName: String, compact: Boolean = false): String {
-    val (formattedNumber, compactChar) = formatNumber(this, compact)
-    val suffix = compactChar?.let { "$it $currencyName" } ?: " $currencyName"
-    return "$prefix$formattedNumber$suffix"
+    val formattedNumber = formatNumber(this, compact)
+    return "$prefix$formattedNumber $currencyName"
 }
 
 fun Double.moneyFormat(compact: Boolean = false): String {
-    val (formattedNumber, compactChar) = formatNumber(this, compact)
-    val suffix = compactChar?.let { "$it" } ?: ""
-    return "$formattedNumber$suffix"
+    return formatNumber(this, compact)
 }
 
 fun String.toValidDecimal(): Double? {
     if (isNullOrBlank()) return null
-    val lastChar = last().uppercaseChar()
-    return if (units.contains(lastChar)) {
-        decompressNumber(this, lastChar)
-    } else {
-        toDecimal()
-    }
+    return decompressNumber(this)
 }
 
-private fun formatNumber(number: Double, compact: Boolean): Pair<String, Char?> {
+private fun formatNumber(number: Double, compact: Boolean): String {
     return if (compact) {
-        val (compactNumber, compactChar) = compactNumber(number) ?: (number to null)
-        removeTrailingZeros(formatter(3, RoundingMode.DOWN).format(compactNumber)) to compactChar
+        val (compactNumber, compactChar) = compactNumber(number) ?: (number to "")
+        removeTrailingZeros(formatter(3, RoundingMode.DOWN).format(compactNumber)) + compactChar
     } else {
-        formatter(2, RoundingMode.HALF_UP).format(number) to null
+        formatter(2, RoundingMode.HALF_UP).format(number)
     }
 }
 
@@ -61,9 +53,14 @@ private fun removeTrailingZeros(numberStr: String): String {
     }
 }
 
-private fun decompressNumber(str: String, metric: Char): Double? {
-    val multiplier = 10.0.pow((units.indexOf(metric) + 1) * 3)
+private fun decompressNumber(str: String): Double? {
+    val lastChar = str.last().uppercaseChar()
+
+    if (lastChar !in units) return str.toDecimal()
+
     val value = str.dropLast(1).toDecimal()
+
+    val multiplier = 10.0.pow((units.indexOf(lastChar) + 1) * 3)
     return value?.times(multiplier)
 }
 

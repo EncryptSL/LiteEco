@@ -26,6 +26,7 @@ class AdminEconomyMoneySetListener(private val liteEco: LiteEco) : Listener {
         }
 
         liteEco.countTransactions["transactions"] = liteEco.countTransactions.getOrDefault("transactions", 0) + 1
+
         liteEco.api.setMoney(target, money)
         if (sender.name == target.name) {
             sender.sendMessage(
@@ -33,16 +34,21 @@ class AdminEconomyMoneySetListener(private val liteEco: LiteEco) : Listener {
                     liteEco.locale.getMessage("messages.self.set_money"), TagResolver.resolver(Placeholder.parsed("money", liteEco.api.formatting(money)))))
             return
         }
+
         sender.sendMessage(
             ModernText.miniModernText(
             liteEco.locale.getMessage("messages.sender.set_money"),
             TagResolver.resolver(Placeholder.parsed("target", target.name.toString()), Placeholder.parsed("money", liteEco.api.formatting(money)))))
+
         if (target.isOnline) {
             if (liteEco.config.getBoolean("messages.target.notify_set")) return
             target.player?.sendMessage(
-                ModernText.miniModernText(
-                liteEco.locale.getMessage("messages.target.set_money"),
-                TagResolver.resolver(Placeholder.parsed("sender", sender.name), Placeholder.parsed("money", liteEco.api.formatting(money)))))
+                ModernText.miniModernText(liteEco.locale.getMessage("messages.target.set_money"),
+                TagResolver.resolver(
+                    Placeholder.parsed("sender", sender.name),
+                    Placeholder.parsed("money", liteEco.api.formatting(money))
+                )
+            ))
         }
     }
 
