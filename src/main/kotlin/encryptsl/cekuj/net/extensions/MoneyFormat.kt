@@ -23,8 +23,8 @@ fun String.toValidDecimal(): Double? {
 
 private fun formatNumber(number: Double, compact: Boolean): String {
     return if (compact) {
-        val (compactNumber, compactChar) = compactNumber(number) ?: (number to "")
-        removeTrailingZeros(formatter(3, RoundingMode.DOWN).format(compactNumber)) + compactChar
+        val (compactNumber, compactChar) = compactNumber(number)
+        removeTrailingZeros(formatter(3, RoundingMode.DOWN).format(compactNumber)) + (compactChar ?: 0.toChar())
     } else {
         formatter(2, RoundingMode.HALF_UP).format(number)
     }
@@ -64,13 +64,15 @@ private fun decompressNumber(str: String): Double? {
     return value?.times(multiplier)
 }
 
-private fun compactNumber(number: Double): Pair<Double, Char>? {
-    if (number < 1000) return null
+private fun compactNumber(number: Double): Pair<Double, Char?> {
+    if (number < 1000) return Pair(number, null)
     var unitIndex = 0
     var value = number
     while (value >= 1000 && unitIndex < units.size) {
         value /= 1000
         unitIndex++
     }
-    return unitIndex.takeIf { it > 0 }?.let { Pair(value, units[it - 1]) }
+    return unitIndex.takeIf { it > 0 }
+        ?.let { Pair(value, units[it - 1]) }
+        ?: Pair(value, null)
 }
