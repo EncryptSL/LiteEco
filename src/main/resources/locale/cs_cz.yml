@@ -55,6 +55,7 @@ messages:
     translation_switch: "<prefix> <green>Překlad byl přepnut na <locale>"
     translation_missing: "<prefix> <red>Překlad <key> chybí.... kontaktuj vývojáře tohoto pluginu."
     purge_accounts: "<prefix> <green>Smazal jsi všechny účty."
+    purge_null_accounts: "<prefix> <green> Všechny hráčské účty s nulovými hodnotami byly smazány." # TEMP #
     purge_default_accounts: "<prefix> <green>Smazal jsi účty s defaultní hodnotou."
     migration_success: "<prefix> <green>Migrace <type> byla úspěšně vytvořena [!]"
 

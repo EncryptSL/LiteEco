@@ -37,15 +37,6 @@ messages:
     withdraw_money: "<prefix> <gold><sender></gold> <white>withdrew <green><money></green> money from all players."
     set_money: "<prefix> <gold><sender></gold> <white>set <green><money></green> money for all players."
 
-  # Admin commands
-  admin:
-    config_reload: "<prefix> <green>Config reloaded successfully [!]"
-    translation_switch: "<prefix> <green>Translation switched to <locale>."
-    translation_missing: "<prefix> <red>Translation missing for <key>. Contact the developer of this plugin."
-    purge_accounts: "<prefix> <green>All player accounts purged."
-    purge_default_accounts: "<prefix> <green>All player accounts with default values purged."
-    migration_success: "<prefix> <green>Migration of <type> was successful [!]"
-
   # Error messages
   error:
     account_not_exist: "<prefix> <red>Account <account> does not exist [!]"
@@ -57,6 +48,17 @@ messages:
     purge_argument: "<prefix> <red>This <argument> argument is not valid or not ready for production."
     player_is_null: "<prefix> <red>Please provide a player name [!]"
     self_pay: "<prefix> <red>You cannot send money to yourself [!]"
+
+
+  # Admin commands
+  admin:
+    config_reload: "<prefix> <green>Config reloaded successfully [!]"
+    translation_switch: "<prefix> <green>Translation switched to <locale>."
+    translation_missing: "<prefix> <red>Translation missing for <key>. Contact the developer of this plugin."
+    purge_accounts: "<prefix> <green>All player accounts were purged."
+    purge_null_accounts: "<prefix> <green>All player accounts with null values were purged."
+    purge_default_accounts: "<prefix> <green>All player accounts with default values were purged."
+    migration_success: "<prefix> <green>Migration of <type> was successful [!]"
 
   help:
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"

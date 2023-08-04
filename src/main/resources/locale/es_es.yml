@@ -54,9 +54,10 @@ messages:
     config_reload: "<prefix> <green>Configuracion recargada exitosamente [!]"
     translation_switch: "<prefix> <green>Traduccion cambiada a <locale>"
     translation_missing: "<prefix> <red>Traduccion <key> inexistente.... contacta al desarrollador de este plugin."
-    purge_accounts: "<prefix> <green>Purgaste todas las cuentas."
-    purge_default_accounts: "<prefix> <green>Purgaste todas las cuentas con valor predeterminado."
-    migration_success: "<prefix> <green>"!!!
+    purge_accounts: "<prefix> <green>Se purgaron todas las cuentas."
+    purge_null_accounts: "<prefix> <green>Se purgaron todas las cuentas con valores nulos."
+    purge_default_accounts: "<prefix> <green>Se purgaron todas las cuentas con valores predeterminados."
+    migration_success: "<prefix> <green>La migracion de <type> fue exitosa [!]"
 
   help:
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
