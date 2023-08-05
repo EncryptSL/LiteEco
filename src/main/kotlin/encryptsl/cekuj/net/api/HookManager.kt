@@ -34,10 +34,10 @@ class HookManager(private val liteEco: LiteEco) {
     /**
      * Method of registering Placeholders if plugin PlaceholderAPI is enabled.
      */
-    fun hookPAPI() {
+    fun hookPAPI(version: String) {
         if (isPluginInstalled("PlaceholderAPI")) {
             liteEco.logger.info("PlaceholderAPI hook initialized")
-            PlaceHolderExtensionProvider(liteEco).register()
+            PlaceHolderExtensionProvider(liteEco, version).register()
         } else {
             liteEco.logger.info("PlaceholderAPI hook not found")
         }

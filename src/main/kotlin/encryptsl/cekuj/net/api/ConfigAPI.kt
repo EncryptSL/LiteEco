@@ -30,7 +30,7 @@ class ConfigAPI(private val liteEco: LiteEco) : ConfigAPIProvider {
             val fileVersion = liteEco.config.getString("version")
 
             if (fileVersion.isNullOrEmpty() || fileVersion != version) {
-                file.copyTo(File(liteEco.dataFolder, "old_config.yml"), true)
+                file.copyTo(File(liteEco.dataFolder, "old_$configName"), true)
                 liteEco.saveResource(configName, true)
                 liteEco.config["version"] = version
                 liteEco.saveConfig()
@@ -39,7 +39,6 @@ class ConfigAPI(private val liteEco: LiteEco) : ConfigAPIProvider {
                 liteEco.logger.info("Configuration config.yml is the latest [!]")
             }
         }
-
         return this
     }
 }

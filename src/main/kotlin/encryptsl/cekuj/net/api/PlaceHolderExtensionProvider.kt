@@ -6,13 +6,13 @@ import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import java.util.*
 
-class PlaceHolderExtensionProvider(private val liteEco: LiteEco) : PlaceholderExpansion() {
+class PlaceHolderExtensionProvider(private val liteEco: LiteEco, private val extVersion: String) : PlaceholderExpansion() {
 
     override fun getIdentifier(): String = "liteeco"
 
     override fun getAuthor(): String = "EncryptSL"
 
-    override fun getVersion(): String = "1.0.5"
+    override fun getVersion(): String = extVersion
 
     override fun getRequiredPlugin(): String = liteEco.name
 

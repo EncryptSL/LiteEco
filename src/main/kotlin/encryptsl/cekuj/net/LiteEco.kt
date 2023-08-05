@@ -30,44 +30,35 @@ import kotlin.system.measureTimeMillis
 
 class LiteEco : JavaPlugin() {
 
-    private val databaseConnector: DatabaseConnector by lazy { DatabaseConnector() }
-    private lateinit var metrics: Metrics
-    private lateinit var updateNotifier: UpdateNotifier
-    var countTransactions: LinkedHashMap<String, Int> = LinkedHashMap()
+    companion object {
+        const val CONFIG_VERSION = "1.2.0"
+        const val PAPI_VERSION = "1.0.5"
+        const val LANG_VERSION = "2.0.0"
+    }
+
     val pluginManager: PluginManager = server.pluginManager
-    val preparedStatements: PreparedStatements by lazy { PreparedStatements() }
-    val locale: Locales by lazy { Locales(this) }
+
+    var countTransactions: LinkedHashMap<String, Int> = LinkedHashMap()
+
     val api: LiteEcoEconomyAPI by lazy { LiteEcoEconomyAPI(this) }
+    val locale: Locales by lazy { Locales(this) }
+    val preparedStatements: PreparedStatements by lazy { PreparedStatements() }
+
     private val configAPI: ConfigAPI by lazy { ConfigAPI(this) }
     private val hookManager: HookManager by lazy { HookManager(this) }
-
-    private fun initDatabase() {
-        databaseConnector.initConnect(
-            config.getString("database.connection.jdbc_url") ?: "jdbc:sqlite:plugins/LiteEco/database.db",
-            config.getString("database.connection.username") ?: "root",
-            config.getString("database.connection.password") ?: "admin"
-        )
-    }
-
-    private fun setupMetrics() {
-        metrics = Metrics(this, 15144)
-        metrics.addCustomChart(SingleLineChart("transactions") {
-            countTransactions["transactions"]
-        })
-    }
-
-    private fun checkUpdates() {
-        updateNotifier = UpdateNotifier("101934", description.version)
-        logger.info(updateNotifier.checkPluginVersion())
-    }
 
     override fun onLoad() {
         configAPI
             .create("database.db")
-            .createConfig("config.yml", "1.1.0")
+            .createConfig("config.yml", CONFIG_VERSION)
         locale
             .reloadTranslation()
-        initDatabase()
+        DatabaseConnector()
+            .initConnect(
+                config.getString("database.connection.jdbc_url") ?: "jdbc:sqlite:plugins/LiteEco/database.db",
+                config.getString("database.connection.username") ?: "root",
+                config.getString("database.connection.password") ?: "admin"
+            )
     }
 
     override fun onEnable() {
@@ -77,13 +68,58 @@ class LiteEco : JavaPlugin() {
             setupMetrics()
             checkUpdates()
             registerCommands()
-            registerListener()
+            registerListeners()
         }
         logger.info("Plugin enabled in time $timeTaken ms")
     }
 
     override fun onDisable() {
         logger.info("Plugin is disabled")
+    }
+
+    private fun blockPlugins() {
+        hookManager.blockPlugin("Treasury")
+        hookManager.blockPlugin("Towny")
+    }
+
+    private fun hookRegistration() {
+        hookManager.hookPAPI(PAPI_VERSION)
+        hookManager.hookVault()
+        hookManager.hookTreasury()
+    }
+
+    private fun setupMetrics() {
+        val metrics = Metrics(this, 15144)
+        metrics.addCustomChart(SingleLineChart("transactions") {
+            countTransactions["transactions"]
+        })
+    }
+
+    private fun checkUpdates() {
+        val updateNotifier = Upd    ateNotifier("101934", description.version)
+        logger.info(updateNotifier.checkPluginVersion())
+    }
+
+    private fun registerListeners() {
+        var amount: Int
+        val timeTahuskhomesken = measureTimeMillis {
+            val listeners = arrayListOf(
+                AccountEconomyManageListener(this),
+                PlayerEconomyPayListener(this),
+                AdminEconomyGlobalDepositListener(this),
+                AdminEconomyGlobalSetListener(this),
+                AdminEconomyGlobalWithdrawListener(this),
+                AdminEconomyMoneyDepositListener(this),
+                AdminEconomyMoneyWithdrawListener(this),
+                AdminEconomyMoneySetListener(this),
+                PlayerJoinListener(this)
+            )
+            listeners.forEach { listener -> pluginManager.registerEvents(listener, this)
+                logger.info("Bukkit Listener ${listener.javaClass.simpleName} registered () -> ok")
+            }
+            amount = listeners.size
+        }
+        logger.info("Listeners registered ($amount) in time $timeTaken ms -> ok")
     }
 
     private fun registerCommands() {
@@ -106,24 +142,21 @@ class LiteEco : JavaPlugin() {
             mapperFunction,
             mapperFunction
         )
-
         if (commandManager.hasCapability(CloudBukkitCapabilities.BRIGADIER)) {
             commandManager.registerBrigadier()
             commandManager.brigadierManager()?.setNativeNumberSuggestions(false)
         }
-
         if (commandManager.hasCapability(CloudBukkitCapabilities.ASYNCHRONOUS_COMPLETION)) {
             (commandManager as PaperCommandManager<*>).registerAsynchronousCompletions()
         }
-
         return commandManager
     }
 
     private fun registerSuggestionProviders(commandManager: PaperCommandManager<CommandSender>) {
-        commandManager.parserRegistry().registerSuggestionProvider("players") { commandSender, input ->
+        commandManager.parserRegistry().registerSuggestionProvider("players") { _, input ->
             Bukkit.getOfflinePlayers().toList()
                 .filter { p ->
-                    commandSender.hasPermission("lite.eco.suggestion.players") && (p.name?.startsWith(input) ?: false)
+                    p.name?.startsWith(input) ?: false
                 }
                 .mapNotNull { it.name }
         }
@@ -144,43 +177,10 @@ class LiteEco : JavaPlugin() {
                 .with(CommandMeta.DESCRIPTION, p[StandardParameters.DESCRIPTION, "No Description"])
                 .build()
         }
-
-        return AnnotationParser( /* Manager */
-            commandManager,  /* Command sender type */
-            CommandSender::class.java,  /* Mapper for command meta instances */
-            commandMetaFunction
+        return AnnotationParser(
+            commandManager,
+            CommandSender::class.java,
+            commandMetaFunction /* Mapper for command meta instances */
         )
     }
-
-    private fun registerListener() {
-        val listeners = arrayListOf(
-            AccountEconomyManageListener(this),
-            PlayerEconomyPayListener(this),
-            AdminEconomyGlobalDepositListener(this),
-            AdminEconomyGlobalSetListener(this),
-            AdminEconomyGlobalWithdrawListener(this),
-            AdminEconomyMoneyDepositListener(this),
-            AdminEconomyMoneyWithdrawListener(this),
-            AdminEconomyMoneySetListener(this),
-            PlayerJoinListener(this)
-        )
-        val timeTaken = measureTimeMillis {
-            listeners.forEach { listener -> pluginManager.registerEvents(listener, this)
-                logger.info("Bukkit Listener ${listener.javaClass.simpleName} registered () -> ok")
-            }
-        }
-        logger.info("Listeners registered(${listeners.size}) in time $timeTaken ms -> ok")
-    }
-
-    private fun blockPlugins() {
-        hookManager.blockPlugin("Treasury")
-        hookManager.blockPlugin("Towny")
-    }
-
-    private fun hookRegistration() {
-        hookManager.hookPAPI()
-        hookManager.hookVault()
-        hookManager.hookTreasury()
-    }
-
 }
