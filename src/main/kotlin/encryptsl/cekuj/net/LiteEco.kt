@@ -96,13 +96,13 @@ class LiteEco : JavaPlugin() {
     }
 
     private fun checkUpdates() {
-        val updateNotifier = Upd    ateNotifier("101934", description.version)
+        val updateNotifier = UpdateNotifier("101934", description.version)
         logger.info(updateNotifier.checkPluginVersion())
     }
 
     private fun registerListeners() {
         var amount: Int
-        val timeTahuskhomesken = measureTimeMillis {
+        val timeTaken = measureTimeMillis {
             val listeners = arrayListOf(
                 AccountEconomyManageListener(this),
                 PlayerEconomyPayListener(this),
