@@ -1,4 +1,4 @@
-package encryptsl.cekuj.net.api.economy.treasury
+package encryptsl.cekuj.net.hook.treasury
 
 import me.lokka30.treasury.api.common.response.FailureReason
 

@@ -1,9 +1,10 @@
-package encryptsl.cekuj.net.api
+package encryptsl.cekuj.net.hook
 
 import encryptsl.cekuj.net.LiteEco
-import encryptsl.cekuj.net.api.economy.treasury.TreasureCurrency
-import encryptsl.cekuj.net.api.economy.treasury.TreasuryEconomyAPI
-import encryptsl.cekuj.net.api.economy.vault.AdaptiveEconomyVaultAPI
+import encryptsl.cekuj.net.hook.placeholderapi.EconomyPlaceholderAPI
+import encryptsl.cekuj.net.hook.treasury.TreasureCurrency
+import encryptsl.cekuj.net.hook.treasury.TreasuryEconomyAPI
+import encryptsl.cekuj.net.hook.vault.AdaptiveEconomyVaultAPI
 import me.lokka30.treasury.api.common.service.ServiceRegistry
 import me.lokka30.treasury.api.economy.EconomyProvider
 import net.milkbowl.vault.economy.Economy
@@ -37,7 +38,7 @@ class HookManager(private val liteEco: LiteEco) {
     fun hookPAPI(version: String) {
         if (isPluginInstalled("PlaceholderAPI")) {
             liteEco.logger.info("PlaceholderAPI hook initialized")
-            PlaceHolderExtensionProvider(liteEco, version).register()
+            EconomyPlaceholderAPI(liteEco, version).register()
         } else {
             liteEco.logger.info("PlaceholderAPI hook not found")
         }

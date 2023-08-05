@@ -16,6 +16,14 @@ economy:
   # Convert large currency values into a more compact format.
   compact_display: false
 
+formatting:
+  # Currency format
+  currency: "#,##0.00"
+  # Compact format
+  currency_compacted: "#,##0.0##"
+  # Locale symbol format
+  currency_locale: en-US
+
 # These settings toggle messages.
 messages:
   global:

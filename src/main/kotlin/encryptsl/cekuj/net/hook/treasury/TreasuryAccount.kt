@@ -1,4 +1,4 @@
-package encryptsl.cekuj.net.api.economy.treasury
+package encryptsl.cekuj.net.hook.treasury
 
 import encryptsl.cekuj.net.LiteEco
 import encryptsl.cekuj.net.extensions.isApproachingZero

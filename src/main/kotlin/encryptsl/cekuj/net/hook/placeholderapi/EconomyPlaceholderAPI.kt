@@ -1,4 +1,4 @@
-package encryptsl.cekuj.net.api
+package encryptsl.cekuj.net.hook.placeholderapi
 
 import encryptsl.cekuj.net.LiteEco
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
@@ -6,7 +6,7 @@ import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import java.util.*
 
-class PlaceHolderExtensionProvider(private val liteEco: LiteEco, private val extVersion: String) : PlaceholderExpansion() {
+class EconomyPlaceholderAPI(private val liteEco: LiteEco, private val extVersion: String) : PlaceholderExpansion() {
 
     override fun getIdentifier(): String = "liteeco"
 
@@ -25,29 +25,22 @@ class PlaceHolderExtensionProvider(private val liteEco: LiteEco, private val ext
     override fun onRequest(player: OfflinePlayer?, identifier: String): String? {
         if (player == null) return null
         val args = identifier.split("_")
+        val rank = args.getOrNull(2)?.toIntOrNull()
 
-        return when {
-            identifier.startsWith("top_formatted_") -> {
-                val rank = args[2].toIntOrNull()
-                rank?.let { liteEco.api.formatting(balanceByRank(it)) }
+        return when (identifier) {
+            "balance" -> liteEco.api.getBalance(player).toString()
+            "balance_formatted" -> liteEco.api.formatting(liteEco.api.getBalance(player))
+            "balance_compacted" -> liteEco.api.compacted(liteEco.api.getBalance(player))
+            "top_rank_player" -> nameByRank(1)
+            else -> rank?.let {
+                when {
+                    identifier.startsWith("top_formatted_") -> liteEco.api.formatting(balanceByRank(rank))
+                    identifier.startsWith("top_compacted_") -> liteEco.api.compacted(balanceByRank(rank))
+                    identifier.startsWith("top_balance_") -> balanceByRank(rank).toString()
+                    identifier.startsWith("top_player_") -> nameByRank(rank)
+                    else -> null
+                }
             }
-            identifier.startsWith("top_compacted_") -> {
-                val rank = args[2].toIntOrNull()
-                rank?.let { liteEco.api.compacted(balanceByRank(it)) }
-            }
-            identifier.startsWith("top_balance_") -> {
-                val rank = args[2].toIntOrNull()
-                rank?.let { balanceByRank(it).toString() }
-            }
-            identifier.startsWith("top_player_") -> {
-                val rank = args[2].toIntOrNull()
-                rank?.let { nameByRank(it) }
-            }
-            identifier == "balance_formatted" -> liteEco.api.formatting(liteEco.api.getBalance(player))
-            identifier == "balance_compacted" -> liteEco.api.compacted(liteEco.api.getBalance(player))
-            identifier == "balance" -> liteEco.api.getBalance(player).toString()
-            identifier == "top_rank_player" -> nameByRank(1)
-            else -> null
         }
     }
 

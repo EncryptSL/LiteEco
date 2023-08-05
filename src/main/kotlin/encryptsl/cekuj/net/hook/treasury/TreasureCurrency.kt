@@ -1,4 +1,4 @@
-package encryptsl.cekuj.net.api.economy.treasury
+package encryptsl.cekuj.net.hook.treasury
 
 import encryptsl.cekuj.net.LiteEco
 import me.lokka30.treasury.api.economy.currency.Currency
@@ -18,8 +18,7 @@ class TreasureCurrency(private val liteEco: LiteEco) : Currency {
     }
 
     override fun getDecimal(): Char {
-        val point: String = ".".trim()
-        return if (point.isEmpty()) '.' else point[0]
+        return '.'
     }
 
     override fun getDisplayNameSingular(): String {
@@ -43,61 +42,51 @@ class TreasureCurrency(private val liteEco: LiteEco) : Currency {
     }
 
     override fun parse(formatted: String, subscription: EconomySubscriber<BigDecimal>) {
-        var valueBuilder = StringBuilder()
-        val currencyBuilder = StringBuilder()
+        try {
+            subscription.succeed(parseCurrencyValue(formatted))
+        } catch (e: Exception) {
+            val failureReason = when (e) {
+                is NumberFormatException -> TreasuryFailureReasons.INVALID_VALUE
+                is IllegalArgumentException -> EconomyFailureReason.NEGATIVE_BALANCES_NOT_SUPPORTED
+                else -> TreasuryFailureReasons.INVALID_CURRENCY
+            }
+            subscription.fail(EconomyException(failureReason))
+        }
+    }
 
+    private fun parseCurrencyValue(formatted: String): BigDecimal {
+        val valueBuilder = StringBuilder()
         var hadDot = false
+
         for (c in formatted.toCharArray()) {
+            when {
+                Character.isWhitespace(c) -> continue
+                Character.isDigit(c) -> valueBuilder.append(c)
+                isSeparator(c) -> {
+                    if (c == decimal) {
+                        if (!hadDot) hadDot = true
+                        else throw NumberFormatException()
+                    }
+                    valueBuilder.append('.')
+                }
+            }
             if (Character.isWhitespace(c)) {
                 continue
             }
-            if (!Character.isDigit(c) && !isSeparator(c)) {
-                currencyBuilder.append(c)
-            } else if (Character.isDigit(c)) {
-                valueBuilder.append(c)
-            } else if (isSeparator(c)) {
-                if (c == decimal) {
-                    var nowChanged = false
-                    if (!hadDot) {
-                        hadDot = true
-                        nowChanged = true
-                    }
-                    if (!nowChanged) {
-                        valueBuilder = StringBuilder()
-                        break
-                    }
-                }
-                valueBuilder.append('.')
-            }
-        }
-
-        if (currencyBuilder.isEmpty()) {
-            subscription.fail(EconomyException(TreasuryFailureReasons.INVALID_CURRENCY))
-            return
-        }
-
-        val currency = currencyBuilder.toString()
-        if (!matches(currency)) {
-            subscription.fail(EconomyException(TreasuryFailureReasons.INVALID_CURRENCY))
-            return
         }
 
         if (valueBuilder.isEmpty()) {
-            subscription.fail(EconomyException(TreasuryFailureReasons.INVALID_VALUE))
-            return
+            throw NumberFormatException()
         }
 
-        try {
-            val value = valueBuilder.toString().toDouble()
-            if (value < 0) {
-                subscription.fail(EconomyException(EconomyFailureReason.NEGATIVE_BALANCES_NOT_SUPPORTED))
-                return
-            }
-            subscription.succeed(BigDecimal.valueOf(value))
-        } catch (e: NumberFormatException) {
-            subscription.fail(EconomyException(TreasuryFailureReasons.INVALID_VALUE, e))
+        val value = valueBuilder.toString().toDouble()
+        if (value < 0) {
+            throw IllegalArgumentException("Negative balances not supported.")
         }
+
+        return BigDecimal.valueOf(value)
     }
+
 
     private fun matches(currency: String): Boolean {
         return if (currency.length == 1) {
@@ -114,8 +103,7 @@ class TreasureCurrency(private val liteEco: LiteEco) : Currency {
     }
 
     private fun separator(): Char {
-        val separator: String = ",".trim()
-        return if (separator.isEmpty()) ',' else separator[0]
+        return ','
     }
 
     override fun getStartingBalance(playerID: UUID?): BigDecimal {

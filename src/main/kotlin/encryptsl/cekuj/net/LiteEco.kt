@@ -8,7 +8,6 @@ import cloud.commandframework.execution.AsynchronousCommandExecutionCoordinator
 import cloud.commandframework.meta.CommandMeta
 import cloud.commandframework.paper.PaperCommandManager
 import encryptsl.cekuj.net.api.ConfigAPI
-import encryptsl.cekuj.net.api.HookManager
 import encryptsl.cekuj.net.api.UpdateNotifier
 import encryptsl.cekuj.net.api.economy.LiteEcoEconomyAPI
 import encryptsl.cekuj.net.api.enums.LangKey
@@ -18,6 +17,7 @@ import encryptsl.cekuj.net.commands.MoneyCMD
 import encryptsl.cekuj.net.config.Locales
 import encryptsl.cekuj.net.database.DatabaseConnector
 import encryptsl.cekuj.net.database.models.PreparedStatements
+import encryptsl.cekuj.net.hook.HookManager
 import encryptsl.cekuj.net.listeners.*
 import org.bstats.bukkit.Metrics
 import org.bstats.charts.SingleLineChart
@@ -32,8 +32,8 @@ class LiteEco : JavaPlugin() {
 
     companion object {
         const val CONFIG_VERSION = "1.2.0"
-        const val PAPI_VERSION = "1.0.5"
         const val LANG_VERSION = "2.0.0"
+        const val PAPI_VERSION = "1.0.5"
     }
 
     val pluginManager: PluginManager = server.pluginManager
@@ -95,8 +95,9 @@ class LiteEco : JavaPlugin() {
         })
     }
 
+    @Suppress("UnstableApiUsage")
     private fun checkUpdates() {
-        val updateNotifier = UpdateNotifier("101934", description.version)
+        val updateNotifier = UpdateNotifier("101934", pluginMeta.version)
         logger.info(updateNotifier.checkPluginVersion())
     }
 
