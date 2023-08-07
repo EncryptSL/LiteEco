@@ -23,7 +23,7 @@ class TreasuryAccount(private val liteEco: LiteEco, private val uuid: UUID) : Pl
 
     override fun retrieveBalance(currency: Currency, subscription: EconomySubscriber<BigDecimal>) {
         liteEco.server.scheduler.runTaskAsynchronously(liteEco, Runnable {
-            if (!currency.equals(TreasuryEconomyAPI.currencyIdentifier)) {
+            if (currency.identifier != TreasuryEconomyAPI.currencyIdentifier) {
                 subscription.fail(EconomyException(EconomyFailureReason.CURRENCY_NOT_FOUND))
                 return@Runnable
             }
@@ -41,7 +41,7 @@ class TreasuryAccount(private val liteEco: LiteEco, private val uuid: UUID) : Pl
     ) {
         liteEco.server.scheduler.runTaskAsynchronously(liteEco, Runnable {
             val amountDouble: Double = amount.toDouble()
-            if (!currency.equals(TreasuryEconomyAPI.currencyIdentifier)) {
+            if (currency.identifier != TreasuryEconomyAPI.currencyIdentifier) {
                 subscription.fail(EconomyException(EconomyFailureReason.CURRENCY_NOT_FOUND))
                 return@Runnable
             }
@@ -58,7 +58,7 @@ class TreasuryAccount(private val liteEco: LiteEco, private val uuid: UUID) : Pl
 
     override fun doTransaction(economyTransaction: EconomyTransaction, subscription: EconomySubscriber<BigDecimal>) {
         liteEco.server.scheduler.runTaskAsynchronously(liteEco, Runnable {
-            if (!economyTransaction.equals(TreasuryEconomyAPI.currencyIdentifier)) {
+            if (economyTransaction.currencyID != TreasuryEconomyAPI.currencyIdentifier) {
                 subscription.fail(EconomyException(EconomyFailureReason.CURRENCY_NOT_FOUND))
                 return@Runnable
             }
@@ -71,10 +71,9 @@ class TreasuryAccount(private val liteEco: LiteEco, private val uuid: UUID) : Pl
                 return@Runnable
             }
 
-            if (type == EconomyTransactionType.DEPOSIT) {
-                liteEco.api.depositMoney(Bukkit.getOfflinePlayer(uuid), amountDouble)
-            } else if (type == EconomyTransactionType.WITHDRAWAL) {
-                liteEco.api.withDrawMoney(Bukkit.getOfflinePlayer(uuid), amountDouble)
+            when (type) {
+                EconomyTransactionType.DEPOSIT -> liteEco.api.depositMoney(Bukkit.getOfflinePlayer(uuid), amountDouble)
+                EconomyTransactionType.WITHDRAWAL -> liteEco.api.withDrawMoney(Bukkit.getOfflinePlayer(uuid), amountDouble)
             }
 
             val balance: Double = liteEco.api.getBalance(Bukkit.getOfflinePlayer(uuid))
