@@ -76,14 +76,12 @@ class TreasureCurrency(private val liteEco: LiteEco) : Currency {
     }
 
     private fun matchCurrency(currency: String?): Boolean {
-        return when {
-            currency == null -> false
-            currency.length == 1 -> currency[0] == decimal
-            currency.equals(symbol, ignoreCase = true) -> true
-            currency.equals(displayNameSingular, ignoreCase = true) -> true
-            currency.equals(displayNamePlural, ignoreCase = true) -> true
-            else -> false
-        }
+        return currency?.let {
+            it.length == 1 && it[0] == decimal ||
+            it.equals(symbol, ignoreCase = true) ||
+            it.equals(displayNameSingular, ignoreCase = true) ||
+            it.equals(displayNamePlural, ignoreCase = true)
+        } ?: false
     }
 
     override fun getStartingBalance(playerID: UUID?): BigDecimal {
