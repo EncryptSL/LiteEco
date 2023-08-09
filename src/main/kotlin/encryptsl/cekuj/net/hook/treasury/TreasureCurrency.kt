@@ -7,8 +7,9 @@ import me.lokka30.treasury.api.economy.response.EconomyFailureReason
 import me.lokka30.treasury.api.economy.response.EconomySubscriber
 import java.math.BigDecimal
 import java.util.*
+import java.util.regex.Pattern
 
-class InvalidCurrencyException : Exception("Invalid currency")
+class InvalidCurrencyException : Exception("Invalid currency inputted")
 
 class TreasureCurrency(private val liteEco: LiteEco) : Currency {
     override fun getIdentifier(): String {
@@ -58,39 +59,22 @@ class TreasureCurrency(private val liteEco: LiteEco) : Currency {
     }
 
     private fun parseCurrencyValue(formatted: String): BigDecimal {
-        val valueBuilder = StringBuilder()
-        val currencyBuilder = StringBuilder()
-        var hadDot = false
+        val pattern = Pattern.compile("^([^\\d.,]+)?([\\d,.]+)([^\\d.,]+)?$")
+        val matcher = pattern.matcher(formatted)
 
-        for (c in formatted.toCharArray()) {
-            when {
-                Character.isWhitespace(c) -> continue
-                Character.isDigit(c) -> valueBuilder.append(c)
-                isSeparator(c) -> {
-                    if (c == decimal) {
-                        if (!hadDot) hadDot = true
-                        else throw NumberFormatException()
-                    }
-                    valueBuilder.append('.')
-                }
-                else -> {
-                    currencyBuilder.append(c)
-                }
-            }
-        }
+        if (!matcher.matches()) throw NumberFormatException()
 
-        if (valueBuilder.isEmpty()) {
-            throw NumberFormatException()
-        }
+        val currencySuffix = matcher.group(1)?.trim()
+        val currencyValue = matcher.group(2).replace(",", "").toDoubleOrNull() ?: throw NumberFormatException()
+        val currencyPrefix = matcher.group(3)?.trim()
 
-        if (currencyBuilder.isEmpty() || !matchCurrency(currencyBuilder.toString())) {
+        require(currencyValue >= 0) { "Negative balances not supported." }
+
+        if ((currencyPrefix == null || !matchCurrency(currencyPrefix) || (currencySuffix == null || !matchCurrency(currencySuffix)))) {
             throw InvalidCurrencyException()
         }
 
-        val value = valueBuilder.toString().toDouble()
-        require(value >= 0) { "Negative balances not supported." }
-
-        return BigDecimal.valueOf(value)
+        return BigDecimal.valueOf(currencyValue)
     }
 
     private fun matchCurrency(currency: String): Boolean {
@@ -101,14 +85,6 @@ class TreasureCurrency(private val liteEco: LiteEco) : Currency {
                     || currency.equals(displayNameSingular, ignoreCase = true)
                     || currency.equals(displayNamePlural, ignoreCase = true))
         }
-    }
-
-    private fun isSeparator(c: Char): Boolean {
-        return c == decimal || c == separator()
-    }
-
-    private fun separator(): Char {
-        return ','
     }
 
     override fun getStartingBalance(playerID: UUID?): BigDecimal {
