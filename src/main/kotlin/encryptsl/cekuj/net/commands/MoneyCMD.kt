@@ -333,12 +333,19 @@ class MoneyCMD(private val liteEco: LiteEco) {
     fun onMigration(commandSender: CommandSender, @Argument(value = "argument", suggestions = "migrationKeys") migrationKey: MigrationKey) {
         val migrationTool = MigrationTool(liteEco)
         val output = liteEco.api.getTopBalance().toList().positionIndexed { index, k -> MigrationData(index, k.first, k.second) }
-        when(migrationKey) {
+        val result = when(migrationKey) {
             MigrationKey.CSV -> migrationTool.migrateToCSV(output, "economy_migration")
             MigrationKey.SQL -> migrationTool.migrateToSQL(output, "economy_migration")
         }
+
+        val messageKey = if (result) {
+            "messages.admin.migration_success"
+        } else {
+            "messages.error.migration_failed"
+        }
+
         commandSender.sendMessage(ModernText.miniModernText(
-            liteEco.locale.getMessage("messages.admin.migration_success"),
+            liteEco.locale.getMessage(messageKey),
             TagResolver.resolver(
                 Placeholder.parsed("type", migrationKey.name)
             )
