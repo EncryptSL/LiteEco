@@ -13,6 +13,7 @@ import encryptsl.cekuj.net.api.economy.LiteEcoEconomyAPI
 import encryptsl.cekuj.net.api.enums.LangKey
 import encryptsl.cekuj.net.api.enums.MigrationKey
 import encryptsl.cekuj.net.api.enums.PurgeKey
+import encryptsl.cekuj.net.commands.EcoCMD
 import encryptsl.cekuj.net.commands.MoneyCMD
 import encryptsl.cekuj.net.config.Locales
 import encryptsl.cekuj.net.database.DatabaseConnector
@@ -132,6 +133,7 @@ class LiteEco : JavaPlugin() {
 
         val annotationParser = createAnnotationParser(commandManager)
         annotationParser.parse(MoneyCMD(this))
+        annotationParser.parse(EcoCMD(this))
     }
 
     private fun createCommandManager(): PaperCommandManager<CommandSender> {
