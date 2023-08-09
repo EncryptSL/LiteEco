@@ -8,6 +8,8 @@ import me.lokka30.treasury.api.economy.response.EconomySubscriber
 import java.math.BigDecimal
 import java.util.*
 
+class InvalidCurrencyException : Exception("Invalid currency")
+
 class TreasureCurrency(private val liteEco: LiteEco) : Currency {
     override fun getIdentifier(): String {
         return TreasuryEconomyAPI.currencyIdentifier
@@ -48,7 +50,8 @@ class TreasureCurrency(private val liteEco: LiteEco) : Currency {
             val failureReason = when (e) {
                 is NumberFormatException -> TreasuryFailureReasons.INVALID_VALUE
                 is IllegalArgumentException -> EconomyFailureReason.NEGATIVE_BALANCES_NOT_SUPPORTED
-                else -> TreasuryFailureReasons.INVALID_CURRENCY
+                is InvalidCurrencyException -> TreasuryFailureReasons.INVALID_CURRENCY
+                else -> throw e
             }
             subscription.fail(EconomyException(failureReason))
         }
@@ -56,6 +59,7 @@ class TreasureCurrency(private val liteEco: LiteEco) : Currency {
 
     private fun parseCurrencyValue(formatted: String): BigDecimal {
         val valueBuilder = StringBuilder()
+        val currencyBuilder = StringBuilder()
         var hadDot = false
 
         for (c in formatted.toCharArray()) {
@@ -69,9 +73,9 @@ class TreasureCurrency(private val liteEco: LiteEco) : Currency {
                     }
                     valueBuilder.append('.')
                 }
-            }
-            if (Character.isWhitespace(c)) {
-                continue
+                else -> {
+                    currencyBuilder.append(c)
+                }
             }
         }
 
@@ -79,16 +83,17 @@ class TreasureCurrency(private val liteEco: LiteEco) : Currency {
             throw NumberFormatException()
         }
 
-        val value = valueBuilder.toString().toDouble()
-        if (value < 0) {
-            throw IllegalArgumentException("Negative balances not supported.")
+        if (currencyBuilder.isEmpty() || !matchCurrency(currencyBuilder.toString())) {
+            throw InvalidCurrencyException()
         }
+
+        val value = valueBuilder.toString().toDouble()
+        require(value >= 0) { "Negative balances not supported." }
 
         return BigDecimal.valueOf(value)
     }
 
-
-    private fun matches(currency: String): Boolean {
+    private fun matchCurrency(currency: String): Boolean {
         return if (currency.length == 1) {
             currency[0] == decimal
         } else {
