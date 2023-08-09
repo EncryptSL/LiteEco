@@ -5,75 +5,67 @@ import java.text.DecimalFormatSymbols
 import java.util.*
 import kotlin.math.pow
 
-private val units = charArrayOf('K', 'M', 'B', 'T', 'Q')
-
-fun Double.moneyFormat(prefix: String, currencyName: String, compact: Boolean = false): String {
-    val (formattedNumber, compactChar) = formatNumber(this, compact)
-    val suffix = compactChar?.let { "$it $currencyName" } ?: " $currencyName"
-    return "$prefix$formattedNumber$suffix"
-}
-
-fun Double.moneyFormat(compact: Boolean = false): String {
-    val (formattedNumber, compactChar) = formatNumber(this, compact)
-    val suffix = compactChar?.let { "$it" } ?: ""
-    return "$formattedNumber$suffix"
-}
+private val units = charArrayOf('\u0000', 'K', 'M', 'B', 'T', 'Q')
 
 fun String.toValidDecimal(): Double? {
-    if (isNullOrBlank()) return null
-    val lastChar = last().uppercaseChar()
-    return if (units.contains(lastChar)) {
-        decompressNumber(this, lastChar)
-    } else {
-        toDecimal()
-    }
+    return decompressNumber(this)
 }
 
-private fun formatNumber(number: Double, compact: Boolean): Pair<String, Char?> {
-    return if (compact) {
-        val (compactNumber, compactChar) = compactNumber(number) ?: (number to null)
-        removeTrailingZeros(formatter(3, RoundingMode.DOWN).format(compactNumber)) to compactChar
-    } else {
-        formatter(2, RoundingMode.HALF_UP).format(number) to null
-    }
+fun Double.compactFormat(pattern: String, compactPattern: String, locale: String): String {
+    val (value, unit) = compactNumber(this) ?: (null to null)
+
+    return value?.let { formatNumber(value, compactPattern, locale) + unit }
+        ?: formatNumber(this, pattern, locale)
 }
 
-private fun formatter(fractionDigits: Int, roundingMode: RoundingMode): DecimalFormat {
-    val formatter = DecimalFormat("###,###,##0.000", DecimalFormatSymbols.getInstance(Locale.ENGLISH))
-    formatter.maximumFractionDigits = fractionDigits
-    formatter.roundingMode = roundingMode
-    return formatter
+fun Double.moneyFormat(pattern: String, locale: String): String {
+    return formatNumber(this, pattern, locale)
 }
 
-private fun removeTrailingZeros(numberStr: String): String {
-    return if (numberStr.contains('.') && numberStr.endsWith("0")) {
-        var i = numberStr.length - 1
-        while (i >= 0 && numberStr[i] == '0') {
-            i--
-        }
-        if (numberStr[i] == '.') {
-            numberStr.substring(0, i)
+private fun formatNumber(number: Double, pattern: String, locale: String, compacted: Boolean = false): String {
+    val formatter = DecimalFormat().apply {
+        decimalFormatSymbols = DecimalFormatSymbols.getInstance(getLocale(locale))
+        roundingMode = if (compacted) {
+            RoundingMode.UNNECESSARY
         } else {
-            numberStr.substring(0, i + 1)
+            RoundingMode.HALF_UP
         }
-    } else {
-        numberStr
+        applyPattern(pattern)
     }
+    return formatter.format(number)
 }
 
-private fun decompressNumber(str: String, metric: Char): Double? {
-    val multiplier = 10.0.pow((units.indexOf(metric) + 1) * 3)
-    val value = str.dropLast(1).toDecimal()
-    return value?.times(multiplier)
+private fun decompressNumber(str: String): Double? {
+    if (str.isBlank()) return null
+
+    val lastChar = str.last().uppercaseChar()
+
+    return if (lastChar in units) {
+        val multiplier = 10.0.pow(units.indexOf(lastChar) * 3)
+        str.dropLast(1).toDecimal()?.times(multiplier)
+    }
+    else str.toDecimal()
 }
 
 private fun compactNumber(number: Double): Pair<Double, Char>? {
-    if (number < 1000) return null
-    var unitIndex = 0
     var value = number
-    while (value >= 1000 && unitIndex < units.size) {
+    for (unit in units) {
+        if (value < 1000) {
+            return if (unit == units[0]) null
+            else {
+                return Pair(value, unit)
+            }
+        }
         value /= 1000
-        unitIndex++
     }
-    return unitIndex.takeIf { it > 0 }?.let { Pair(value, units[it - 1]) }
+    throw IllegalStateException("This shouldn't happen")
+}
+
+private fun getLocale(localeStr: String): Locale {
+    val parts = localeStr.split("-", "_")
+    return when (parts.size) {
+        1 -> Locale(parts[0])
+        2 -> Locale(parts[0], parts[1])
+        else -> Locale(parts[0], parts[1], parts[2])
+    }
 }

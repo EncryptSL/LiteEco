@@ -7,4 +7,3 @@ pluginManagement {
     }
 }
 rootProject.name = "LiteEco"
-

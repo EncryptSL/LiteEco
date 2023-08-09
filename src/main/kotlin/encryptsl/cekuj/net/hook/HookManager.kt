@@ -1,9 +1,10 @@
-package encryptsl.cekuj.net.api
+package encryptsl.cekuj.net.hook
 
 import encryptsl.cekuj.net.LiteEco
-import encryptsl.cekuj.net.api.economy.treasury.TreasureCurrency
-import encryptsl.cekuj.net.api.economy.treasury.TreasuryEconomyAPI
-import encryptsl.cekuj.net.api.economy.vault.AdaptiveEconomyVaultAPI
+import encryptsl.cekuj.net.hook.placeholderapi.EconomyPlaceholderAPI
+import encryptsl.cekuj.net.hook.treasury.TreasureCurrency
+import encryptsl.cekuj.net.hook.treasury.TreasuryEconomyAPI
+import encryptsl.cekuj.net.hook.vault.AdaptiveEconomyVaultAPI
 import me.lokka30.treasury.api.common.service.ServiceRegistry
 import me.lokka30.treasury.api.economy.EconomyProvider
 import net.milkbowl.vault.economy.Economy
@@ -16,9 +17,9 @@ class HookManager(private val liteEco: LiteEco) {
      * @param pluginName - String name of plugin is CaseSensitive.
      */
     fun blockPlugin(pluginName: String) {
-        if (liteEco.pluginManger.isPluginEnabled(pluginName)) {
-            liteEco.getLogger().severe("Please don't use $pluginName, because there can be conflict.")
-            liteEco.pluginManger.disablePlugin(liteEco)
+        if (liteEco.pluginManager.isPluginEnabled(pluginName)) {
+            liteEco.logger.severe("Please don't use $pluginName, because there can be conflict.")
+            liteEco.pluginManager.disablePlugin(liteEco)
         }
     }
 
@@ -28,37 +29,36 @@ class HookManager(private val liteEco: LiteEco) {
      * @return Boolean
      */
     private fun isPluginInstalled(pluginName: String): Boolean {
-        return liteEco.pluginManger.getPlugin(pluginName) != null
+        return liteEco.pluginManager.getPlugin(pluginName) != null
     }
 
     /**
      * Method of registering Placeholders if plugin PlaceholderAPI is enabled.
      */
-    fun hookPAPI() {
+    fun hookPAPI(version: String) {
         if (isPluginInstalled("PlaceholderAPI")) {
-            liteEco.getLogger().info("PlaceholderAPI hook initialized")
-            PlaceHolderExtensionProvider(liteEco).register()
+            liteEco.logger.info("PlaceholderAPI hook initialized")
+            EconomyPlaceholderAPI(liteEco, version).register()
         } else {
-            liteEco.getLogger().info("PlaceholderAPI hook not found")
+            liteEco.logger.info("PlaceholderAPI hook not found")
         }
     }
-
 
     fun hookVault() {
         if (isPluginInstalled("Vault")) {
             liteEco.server.servicesManager.register(Economy::class.java, AdaptiveEconomyVaultAPI(liteEco), liteEco, ServicePriority.Highest)
-            liteEco.getLogger().info("Registered Vault like a service.")
+            liteEco.logger.info("Registered Vault like a service.")
         } else {
-            liteEco.getLogger().info("Vault not found, for better experience please download Vault or Treasury.")
+            liteEco.logger.info("Vault not found, for better experience please download Vault or Treasury.")
         }
     }
 
     fun hookTreasury() {
         if (isPluginInstalled("Treasury")) {
             ServiceRegistry.INSTANCE.registerService(EconomyProvider::class.java, TreasuryEconomyAPI(liteEco, TreasureCurrency(liteEco)), "LiteEco", me.lokka30.treasury.api.common.service.ServicePriority.HIGH)
-            liteEco.getLogger().info("Registered Treasury like a service.")
+            liteEco.logger.info("Registered Treasury like a service.")
         } else {
-            liteEco.getLogger().info("Treasury not found, for better experience please download Treasury or Vault.")
+            liteEco.logger.info("Treasury not found, for better experience please download Treasury or Vault.")
         }
     }
 }

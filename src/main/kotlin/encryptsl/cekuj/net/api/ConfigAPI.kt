@@ -11,12 +11,12 @@ import java.io.File
  * Called static in mainMethod.
  */
 class ConfigAPI(private val liteEco: LiteEco) : ConfigAPIProvider {
-    override fun create(configName: String) : ConfigAPI {
-        val file = File(liteEco.dataFolder, configName)
+    override fun create(fileName: String) : ConfigAPI {
+        val file = File(liteEco.dataFolder, fileName)
         if (!file.exists()) {
-            liteEco.saveResource(configName, false)
+            liteEco.saveResource(fileName, false)
         } else {
-            liteEco.getLogger().info("Configuration $configName exist !")
+            liteEco.logger.info("Resource $fileName exists [!]")
         }
         return this
     }
@@ -25,21 +25,20 @@ class ConfigAPI(private val liteEco: LiteEco) : ConfigAPIProvider {
         val file = File(liteEco.dataFolder, configName)
         if (!file.exists()) {
             liteEco.saveResource(configName, false)
-            liteEco.getLogger().info("Configuration $configName was successfully created !")
+            liteEco.logger.info("Configuration $configName was successfully created !")
         } else {
-            val copyIfRequired = liteEco.config.getString("version").equals(version)
-            val versionIsNull = liteEco.config.getString("version").isNullOrEmpty()
-            if (!copyIfRequired || versionIsNull) {
-                file.copyTo(File(liteEco.dataFolder, "old_config.yml"), true)
+            val fileVersion = liteEco.config.getString("version")
+
+            if (fileVersion.isNullOrEmpty() || fileVersion != version) {
+                file.copyTo(File(liteEco.dataFolder, "old_$configName"), true)
                 liteEco.saveResource(configName, true)
-                liteEco.config.set("version", version)
+                liteEco.config["version"] = version
                 liteEco.saveConfig()
-                liteEco.getLogger().info("Configuration $configName is updated !")
+                liteEco.logger.info("Configuration config.yml was outdated [!]")
             } else {
-                liteEco.getLogger().info("Configuration $configName is latest !")
+                liteEco.logger.info("Configuration config.yml is the latest [!]")
             }
         }
-
         return this
     }
 }
