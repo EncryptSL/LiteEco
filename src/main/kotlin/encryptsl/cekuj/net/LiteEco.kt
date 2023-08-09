@@ -30,7 +30,6 @@ import java.util.function.Function
 import kotlin.system.measureTimeMillis
 
 class LiteEco : JavaPlugin() {
-
     companion object {
         const val CONFIG_VERSION = "1.2.0"
         const val LANG_VERSION = "2.0.0"
@@ -42,7 +41,7 @@ class LiteEco : JavaPlugin() {
     var countTransactions: LinkedHashMap<String, Int> = LinkedHashMap()
 
     val api: LiteEcoEconomyAPI by lazy { LiteEcoEconomyAPI(this) }
-    val locale: Locales by lazy { Locales(this) }
+    val locale: Locales by lazy { Locales(this, LANG_VERSION) }
     val preparedStatements: PreparedStatements by lazy { PreparedStatements() }
 
     private val configAPI: ConfigAPI by lazy { ConfigAPI(this) }

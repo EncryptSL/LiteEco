@@ -85,3 +85,5 @@ messages:
     - "<red>[★] <gray>/eco reload <white>-<#F39E9E> Recargar la configuracion."
     - " "
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
+
+version: 2.0.0

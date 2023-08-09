@@ -7,7 +7,7 @@ import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
 import java.io.IOException
 
-class Locales(private val liteEco: LiteEco) {
+class Locales(private val liteEco: LiteEco, private val langVersion: String) {
 
     private var langYML: FileConfiguration? = null
 
@@ -31,12 +31,19 @@ class Locales(private val liteEco: LiteEco) {
         val fileName = "${langKey.name.lowercase()}.yml"
         val file = File("${liteEco.dataFolder}/locale/", fileName)
 
-        if (!file.exists() && file.parentFile.mkdirs()) {
-            liteEco.saveResource("locale/$fileName", false)
-        }
-
         try {
-            file.createNewFile()
+            if (!file.exists()) {
+                file.parentFile.mkdirs()
+                liteEco.saveResource("locale/$fileName", false)
+            } else {
+                val existingVersion = YamlConfiguration.loadConfiguration(file).getString("version")
+
+                if (existingVersion.isNullOrEmpty() || existingVersion != langVersion) {
+                    val backupFile = File(liteEco.dataFolder, "locale/old_$fileName")
+                    file.copyTo(backupFile, true)
+                    liteEco.saveResource("locale/$fileName", true)
+                }
+            }
             liteEco.config["plugin.translation"] = langKey.name
             liteEco.saveConfig()
             liteEco.reloadConfig()
