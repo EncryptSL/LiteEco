@@ -29,12 +29,12 @@ class EconomyPlaceholderAPI(private val liteEco: LiteEco, private val extVersion
 
         return when (identifier) {
             "balance" -> liteEco.api.getBalance(player).toString()
-            "balance_formatted" -> liteEco.api.formatting(liteEco.api.getBalance(player))
+            "balance_formatted" -> liteEco.api.fullFormatting(liteEco.api.getBalance(player))
             "balance_compacted" -> liteEco.api.compacted(liteEco.api.getBalance(player))
             "top_rank_player" -> nameByRank(1)
             else -> rank?.let {
                 when {
-                    identifier.startsWith("top_formatted_") -> liteEco.api.formatting(balanceByRank(rank))
+                    identifier.startsWith("top_formatted_") -> liteEco.api.fullFormatting(balanceByRank(rank))
                     identifier.startsWith("top_compacted_") -> liteEco.api.compacted(balanceByRank(rank))
                     identifier.startsWith("top_balance_") -> balanceByRank(rank).toString()
                     identifier.startsWith("top_player_") -> nameByRank(rank)

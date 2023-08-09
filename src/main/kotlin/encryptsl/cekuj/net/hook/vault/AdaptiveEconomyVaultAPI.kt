@@ -20,7 +20,7 @@ class AdaptiveEconomyVaultAPI(private val liteEco: LiteEco) : DeprecatedEconomy(
 
     override fun fractionalDigits(): Int = -1
 
-    override fun format(amount: Double): String = liteEco.api.formatting(amount)
+    override fun format(amount: Double): String = liteEco.api.fullFormatting(amount)
 
     override fun currencyNamePlural(): String? {
         return liteEco.config.getString("economy.currency_name")

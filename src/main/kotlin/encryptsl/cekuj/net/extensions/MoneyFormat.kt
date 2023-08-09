@@ -11,32 +11,26 @@ fun String.toValidDecimal(): Double? {
     return decompressNumber(this)
 }
 
-fun Double.moneyFormat(compact: Boolean = false): String {
-    return if (compact) {
-        compactNumber(this)
-    }
-    else formatNumber(this)
+fun Double.compactFormat(pattern: String, compactPattern: String, locale: String): String {
+    val (value, unit) = compactNumber(this) ?: (null to null)
+
+    return value?.let { formatNumber(value, compactPattern, locale) + unit }
+        ?: formatNumber(this, pattern, locale)
 }
 
-fun Double.moneyFormat(prefix: String, currencyName: String, compact: Boolean = false): String {
-    val formattedNumber = if (compact) {
-        compactNumber(this)
-    }
-    else formatNumber(this)
-
-    return "$prefix$formattedNumber $currencyName"
+fun Double.moneyFormat(pattern: String, locale: String): String {
+    return formatNumber(this, pattern, locale)
 }
 
-private fun formatNumber(number: Double, compacted: Boolean = false): String {
+private fun formatNumber(number: Double, pattern: String, locale: String, compacted: Boolean = false): String {
     val formatter = DecimalFormat().apply {
-        decimalFormatSymbols = DecimalFormatSymbols.getInstance(Locale.ENGLISH)
+        decimalFormatSymbols = DecimalFormatSymbols.getInstance(getLocale(locale))
         roundingMode = if (compacted) {
-            applyPattern("#,##0.###")
             RoundingMode.UNNECESSARY
         } else {
-            applyPattern("#,##0.00")
             RoundingMode.HALF_UP
         }
+        applyPattern(pattern)
     }
     return formatter.format(number)
 }
@@ -53,16 +47,25 @@ private fun decompressNumber(str: String): Double? {
     else str.toDecimal()
 }
 
-private fun compactNumber(number: Double): String {
+private fun compactNumber(number: Double): Pair<Double, Char>? {
     var value = number
     for (unit in units) {
         if (value < 1000) {
-            return if (unit == units[0]) formatNumber(number)
+            return if (unit == units[0]) null
             else {
-                return formatNumber(value, true) + unit
+                return Pair(value, unit)
             }
         }
         value /= 1000
     }
     throw IllegalStateException("This shouldn't happen")
+}
+
+private fun getLocale(localeStr: String): Locale {
+    val parts = localeStr.split("-", "_")
+    return when (parts.size) {
+        1 -> Locale(parts[0])
+        2 -> Locale(parts[0], parts[1])
+        else -> Locale(parts[0], parts[1], parts[2])
+    }
 }

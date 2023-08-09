@@ -29,13 +29,13 @@ class AdminEconomyMoneyDepositListener(private val liteEco: LiteEco) : Listener 
         liteEco.api.depositMoney(target, money)
         if (sender.name == target.name) {
             sender.sendMessage(
-                ModernText.miniModernText(liteEco.locale.getMessage("messages.error.self_pay"), TagResolver.resolver(Placeholder.parsed("money", liteEco.api.formatting(money)))))
+                ModernText.miniModernText(liteEco.locale.getMessage("messages.error.self_pay"), TagResolver.resolver(Placeholder.parsed("money", liteEco.api.fullFormatting(money)))))
             return
         }
 
         sender.sendMessage(ModernText.miniModernText(
             liteEco.locale.getMessage("messages.sender.add_money"),
-            TagResolver.resolver(Placeholder.parsed("target", target.name.toString()), Placeholder.parsed("money", liteEco.api.formatting(money)))
+            TagResolver.resolver(Placeholder.parsed("target", target.name.toString()), Placeholder.parsed("money", liteEco.api.fullFormatting(money)))
         ))
         if (target.isOnline) {
             if (liteEco.config.getBoolean("messages.target.notify_add")) return
@@ -43,7 +43,7 @@ class AdminEconomyMoneyDepositListener(private val liteEco: LiteEco) : Listener 
                 ModernText.miniModernText(liteEco.locale.getMessage("messages.target.add_money"),
                 TagResolver.resolver(
                     Placeholder.parsed("sender", sender.name),
-                    Placeholder.parsed("money", liteEco.api.formatting(money))
+                    Placeholder.parsed("money", liteEco.api.fullFormatting(money))
                 )
             ))
         }

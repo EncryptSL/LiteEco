@@ -47,7 +47,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
                         TagResolver.resolver(
                             Placeholder.parsed(
                                 "money",
-                                liteEco.api.formatting(liteEco.api.getBalance(commandSender))
+                                liteEco.api.fullFormatting(liteEco.api.getBalance(commandSender))
                             )
                         )
                     )
@@ -61,7 +61,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
                         Placeholder.parsed("target", offlinePlayer.name.toString()),
                         Placeholder.parsed(
                             "money",
-                            liteEco.api.formatting(liteEco.api.getBalance(offlinePlayer))
+                            liteEco.api.fullFormatting(liteEco.api.getBalance(offlinePlayer))
                         )
                     )
                 )
@@ -75,7 +75,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
                             Placeholder.parsed("target", offlinePlayer.name.toString()),
                             Placeholder.parsed(
                                 "money",
-                                liteEco.api.formatting(liteEco.api.getBalance(offlinePlayer))
+                                liteEco.api.fullFormatting(liteEco.api.getBalance(offlinePlayer))
                             )
                         )
                     )
@@ -103,7 +103,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
                         "player",
                         Bukkit.getOfflinePlayer(UUID.fromString(mutableEntry.key)).name.toString()
                     ),
-                    Placeholder.parsed("money", liteEco.api.formatting(mutableEntry.value))
+                    Placeholder.parsed("money", liteEco.api.fullFormatting(mutableEntry.value))
                 )
             )) }
 

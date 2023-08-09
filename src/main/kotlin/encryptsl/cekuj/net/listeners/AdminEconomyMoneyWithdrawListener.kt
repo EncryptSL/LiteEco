@@ -36,7 +36,7 @@ class AdminEconomyMoneyWithdrawListener(private val liteEco: LiteEco) : Listener
             sender.sendMessage(
                 ModernText.miniModernText(
                     liteEco.locale.getMessage("messages.self.withdraw_money"),
-                    TagResolver.resolver(Placeholder.parsed("money", liteEco.api.formatting(money)))
+                    TagResolver.resolver(Placeholder.parsed("money", liteEco.api.fullFormatting(money)))
                 )
             )
             return
@@ -45,14 +45,14 @@ class AdminEconomyMoneyWithdrawListener(private val liteEco: LiteEco) : Listener
         sender.sendMessage(
             ModernText.miniModernText(
                 liteEco.locale.getMessage("messages.sender.withdraw_money"),
-                TagResolver.resolver(Placeholder.parsed("target", target.name.toString()), Placeholder.parsed("money", liteEco.api.formatting(money)))))
+                TagResolver.resolver(Placeholder.parsed("target", target.name.toString()), Placeholder.parsed("money", liteEco.api.fullFormatting(money)))))
         if (target.isOnline) {
             if (liteEco.config.getBoolean("messages.target.notify_withdraw")) return
             target.player?.sendMessage(
                 ModernText.miniModernText(liteEco.locale.getMessage("messages.target.withdraw_money"),
                 TagResolver.resolver(
                     Placeholder.parsed("sender", sender.name),
-                    Placeholder.parsed("money", liteEco.api.formatting(money))
+                    Placeholder.parsed("money", liteEco.api.fullFormatting(money))
                 )
             ))
         }

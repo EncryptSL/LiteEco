@@ -26,7 +26,7 @@ class AdminEconomyGlobalSetListener(private val liteEco: LiteEco) : Listener {
         sender.sendMessage(
             ModernText.miniModernText(liteEco.locale.getMessage("messages.global.set_money"),
             TagResolver.resolver(
-                Placeholder.parsed("money", liteEco.api.formatting(money))
+                Placeholder.parsed("money", liteEco.api.fullFormatting(money))
             )
         ))
         if (!liteEco.config.getBoolean("messages.global.notify_set")) {
@@ -34,7 +34,7 @@ class AdminEconomyGlobalSetListener(private val liteEco: LiteEco) : Listener {
                 ModernText.miniModernText(liteEco.locale.getMessage("messages.broadcast.set_money"),
                 TagResolver.resolver(
                     Placeholder.parsed("sender", sender.name),
-                    Placeholder.parsed("money", liteEco.api.formatting(money))
+                    Placeholder.parsed("money", liteEco.api.fullFormatting(money))
                 )
             ))
         }

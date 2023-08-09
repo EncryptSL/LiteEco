@@ -2,6 +2,7 @@ package encryptsl.cekuj.net.api.economy
 
 import encryptsl.cekuj.net.LiteEco
 import encryptsl.cekuj.net.api.interfaces.LiteEconomyAPIProvider
+import encryptsl.cekuj.net.extensions.compactFormat
 import encryptsl.cekuj.net.extensions.moneyFormat
 import org.bukkit.OfflinePlayer
 
@@ -49,10 +50,20 @@ class LiteEcoEconomyAPI(private val liteEco: LiteEco) : LiteEconomyAPIProvider {
     }
 
     override fun compacted(amount: Double): String {
-        return amount.moneyFormat(true)
+        return amount.compactFormat(liteEco.config.getString("formatting.currency_pattern").toString(), liteEco.config.getString("formatting.compact_pattern").toString(), liteEco.config.getString("formatting.currency_locale").toString())
     }
 
-    override fun formatting(amount: Double): String {
-        return amount.moneyFormat(liteEco.config.getString("economy.currency_prefix").toString(), liteEco.config.getString("economy.currency_name").toString(), liteEco.config.getBoolean("plugin.economy.compact_display"))
+    override fun formatted(amount: Double): String {
+        return amount.moneyFormat(liteEco.config.getString("formatting.currency_pattern").toString(), liteEco.config.getString("formatting.currency_locale").toString())
+    }
+
+    override fun fullFormatting(amount: Double): String {
+        val value = if (liteEco.config.getBoolean("plugin.economy.compact_display")) {
+            compacted(amount)
+        }
+        else {
+            formatted(amount)
+        }
+        return "${liteEco.config.getString("economy.currency_prefix").toString()}${value} ${liteEco.config.getString("economy.currency_name").toString()}"
     }
 }

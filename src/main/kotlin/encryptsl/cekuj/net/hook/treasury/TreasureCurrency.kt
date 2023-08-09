@@ -89,7 +89,7 @@ class TreasureCurrency(private val liteEco: LiteEco) : Currency {
     }
 
     override fun format(amount: BigDecimal, locale: Locale?): String {
-        return liteEco.api.formatting(amount.toDouble())
+        return liteEco.api.fullFormatting(amount.toDouble())
     }
 
     override fun format(amount: BigDecimal, locale: Locale?, precision: Int): String {

@@ -26,7 +26,7 @@ class AdminEconomyGlobalWithdrawListener(private val liteEco: LiteEco) : Listene
         sender.sendMessage(
             ModernText.miniModernText(liteEco.locale.getMessage("messages.global.withdraw_money"),
             TagResolver.resolver(
-                Placeholder.parsed("money", liteEco.api.formatting(money))
+                Placeholder.parsed("money", liteEco.api.fullFormatting(money))
             )
         ))
         if (!liteEco.config.getBoolean("messages.global.notify_withdraw")) {
@@ -34,7 +34,7 @@ class AdminEconomyGlobalWithdrawListener(private val liteEco: LiteEco) : Listene
                 ModernText.miniModernText(liteEco.locale.getMessage("messages.broadcast.withdraw_money"),
                 TagResolver.resolver(
                     Placeholder.parsed("sender", sender.name),
-                    Placeholder.parsed("money", liteEco.api.formatting(money))
+                    Placeholder.parsed("money", liteEco.api.fullFormatting(money))
                 )
             ))
         }
