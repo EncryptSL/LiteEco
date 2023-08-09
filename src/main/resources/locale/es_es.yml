@@ -45,6 +45,7 @@ messages:
     maximum_page: "<red>El limite de paginas es <max_page>"
     negative_amount: "<prefix> <red>Introduce un valor positivo [!]"
     migration_argument: "<prefix> <red>El argumento <argument> no es valido o no esta listo para produccion."
+    migration_failed: "<prefix> <red>Ocurrio un problema durante la migración. Por favor, revise la consola para más detalles."
     purge_argument: "<prefix> <red>El argumento <argument> no es valido o no esta listo para produccion."
     player_is_null: "<prefix> <red>Debes especificar un jugador [!]"
     self_pay: "<prefix> <red>No puedes enviarte dinero a ti mismo [!]"

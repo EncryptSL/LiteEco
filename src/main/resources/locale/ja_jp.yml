@@ -45,6 +45,7 @@ messages:
     maximum_page: "<red>ページ数の上限は <max_page>"
     negative_amount: "<prefix> <red>マイナスの金額は入力できません。"
     migration_argument: "<prefix> <red>この<argument>は適切ではないか、サーバーの移行の準備が完了していない可能性があります。"
+    migration_failed: "<prefix> <red>マイグレーション中に問題が発生しました。詳細についてはコンソールをご確認ください。" # TEMP #
     purge_argument: "<prefix> <red>この<argument>は適切ではないか、サーバーの削除の準備が完了していない可能性があります。"
     player_is_null: "<prefix> <red>プレイヤー名を入力してください。"
     self_pay: "<prefix> <red>自分自身にお金を送金することはできません。"

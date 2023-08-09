@@ -45,6 +45,7 @@ messages:
     maximum_page: "<red>Limit of pagination is <max_page>"
     negative_amount: "<prefix> <red>Negative amounts are not allowed. [!]"
     migration_argument: "<prefix> <red>This <argument> argument is not valid or not ready for production."
+    migration_failed: "<prefix> <red>There was an issue during the migration. Please check the console for more details."
     purge_argument: "<prefix> <red>This <argument> argument is not valid or not ready for production."
     player_is_null: "<prefix> <red>Please provide a player name [!]"
     self_pay: "<prefix> <red>You cannot send money to yourself [!]"

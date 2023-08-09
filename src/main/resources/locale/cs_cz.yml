@@ -40,11 +40,12 @@ messages:
   # Error messages
   error:
     account_not_exist: "<prefix> <red>Účet <account> neexistuje [!]"
-    format_amount: "<prefix> <red>Neplatná částka. Použijte desetinná čísla nebo kompaktní zobrazení (např. 1K) [!]" # TEMP #
+    format_amount: "<prefix> <red>Neplatná částka. Použijte desetinná čísla nebo kompaktní reprezentace (např. 1K) [!]" # TEMP #
     insufficient_funds: "<prefix> <red>Nemáš dostatek peněz [!]"
     maximum_page: "<red>Limit stránkování je <max_page>"
     negative_amount: "<prefix> <red>Detekovano negativní číslo [!]"
     migration_argument: "<prefix> <red>Tento <argument> argument není validní nebo není připraven do produkce."
+    migration_failed: "<prefix> <red>Při migraci došlo k chybě. Podrobnosti naleznete v konzoli." # TEMP #
     purge_argument: "<prefix> <red>Tento <argument> argument není validní nebo není připraven do produkce."
     player_is_null: "<prefix> <red>Jméno hráče musí být vyplněno [!]"
     self_pay: "<prefix> <red>Nemůžeš sám sobě poslat peníze [!]"
