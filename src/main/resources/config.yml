@@ -17,10 +17,10 @@ economy:
   compact_display: false
 
 formatting:
-  # Currency format
-  currency: "#,##0.00"
-  # Compact format
-  currency_compacted: "#,##0.0##"
+  # Currency value format
+  currency_pattern: "#,##0.00"
+  # Compact value format
+  compacted_pattern: "#,##0.0##"
   # Locale symbol format
   currency_locale: en-US
 
@@ -48,4 +48,4 @@ database:
     password: password
 
 # Please don't remove this version settings
-version: 1.1.0
+version: 1.2.0
