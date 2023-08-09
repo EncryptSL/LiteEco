@@ -9,8 +9,6 @@ import java.math.BigDecimal
 import java.util.*
 import java.util.regex.Pattern
 
-class InvalidCurrencyException : Exception("Invalid currency inputted")
-
 class TreasureCurrency(private val liteEco: LiteEco) : Currency {
     override fun getIdentifier(): String {
         return TreasuryEconomyAPI.currencyIdentifier
@@ -47,14 +45,8 @@ class TreasureCurrency(private val liteEco: LiteEco) : Currency {
     override fun parse(formatted: String, subscription: EconomySubscriber<BigDecimal>) {
         try {
             subscription.succeed(parseCurrencyValue(formatted))
-        } catch (e: Exception) {
-            val failureReason = when (e) {
-                is NumberFormatException -> TreasuryFailureReasons.INVALID_VALUE
-                is IllegalArgumentException -> EconomyFailureReason.NEGATIVE_BALANCES_NOT_SUPPORTED
-                is InvalidCurrencyException -> TreasuryFailureReasons.INVALID_CURRENCY
-                else -> throw e
-            }
-            subscription.fail(EconomyException(failureReason))
+        } catch (e: EconomyException) {
+            subscription.fail(e)
         }
     }
 
@@ -62,28 +54,35 @@ class TreasureCurrency(private val liteEco: LiteEco) : Currency {
         val pattern = Pattern.compile("^([^\\d.,]+)?([\\d,.]+)([^\\d.,]+)?$")
         val matcher = pattern.matcher(formatted)
 
-        if (!matcher.matches()) throw NumberFormatException()
+        if (!matcher.matches()) throw EconomyException(TreasuryFailureReasons.INVALID_VALUE)
 
         val currencySuffix = matcher.group(1)?.trim()
-        val currencyValue = matcher.group(2).replace(",", "").toDoubleOrNull() ?: throw NumberFormatException()
+        val currencyValue = matcher.group(2).replace(",", "").toDoubleOrNull()
         val currencyPrefix = matcher.group(3)?.trim()
 
-        require(currencyValue >= 0) { "Negative balances not supported." }
+        if (currencyValue == null) {
+            throw EconomyException(TreasuryFailureReasons.INVALID_VALUE)
+        }
 
-        if ((currencyPrefix == null || !matchCurrency(currencyPrefix) || (currencySuffix == null || !matchCurrency(currencySuffix)))) {
-            throw InvalidCurrencyException()
+        if (currencyValue >= 0) {
+            throw EconomyException(EconomyFailureReason.NEGATIVE_BALANCES_NOT_SUPPORTED)
+        }
+
+        if (!matchCurrency(currencyPrefix) || !matchCurrency(currencySuffix)) {
+            throw EconomyException(TreasuryFailureReasons.INVALID_CURRENCY)
         }
 
         return BigDecimal.valueOf(currencyValue)
     }
 
-    private fun matchCurrency(currency: String): Boolean {
-        return if (currency.length == 1) {
-            currency[0] == decimal
-        } else {
-            (currency.equals(symbol, ignoreCase = true)
-                    || currency.equals(displayNameSingular, ignoreCase = true)
-                    || currency.equals(displayNamePlural, ignoreCase = true))
+    private fun matchCurrency(currency: String?): Boolean {
+        return when {
+            currency == null -> false
+            currency.length == 1 -> currency[0] == decimal
+            currency.equals(symbol, ignoreCase = true) -> true
+            currency.equals(displayNameSingular, ignoreCase = true) -> true
+            currency.equals(displayNamePlural, ignoreCase = true) -> true
+            else -> false
         }
     }
 
