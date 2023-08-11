@@ -45,6 +45,7 @@ messages:
     maximum_page: "<red>El limite de paginas es <max_page>"
     negative_amount: "<prefix> <red>Introduce un valor positivo [!]"
     migration_argument: "<prefix> <red>El argumento <argument> no es valido o no esta listo para produccion."
+    migration_failed: "<prefix> <red>Ocurrio un problema durante la migración. Por favor, revise la consola para más detalles."
     purge_argument: "<prefix> <red>El argumento <argument> no es valido o no esta listo para produccion."
     player_is_null: "<prefix> <red>Debes especificar un jugador [!]"
     self_pay: "<prefix> <red>No puedes enviarte dinero a ti mismo [!]"
@@ -54,9 +55,10 @@ messages:
     config_reload: "<prefix> <green>Configuracion recargada exitosamente [!]"
     translation_switch: "<prefix> <green>Traduccion cambiada a <locale>"
     translation_missing: "<prefix> <red>Traduccion <key> inexistente.... contacta al desarrollador de este plugin."
-    purge_accounts: "<prefix> <green>Purgaste todas las cuentas."
-    purge_default_accounts: "<prefix> <green>Purgaste todas las cuentas con valor predeterminado."
-    migration_success: "<prefix> <green>"!!!
+    purge_accounts: "<prefix> <green>Se purgaron todas las cuentas."
+    purge_null_accounts: "<prefix> <green>Se purgaron todas las cuentas con valores nulos."
+    purge_default_accounts: "<prefix> <green>Se purgaron todas las cuentas con valores predeterminados."
+    migration_success: "<prefix> <green>La migracion de <type> fue exitosa [!]"
 
   help:
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
@@ -83,3 +85,5 @@ messages:
     - "<red>[★] <gray>/eco reload <white>-<#F39E9E> Recargar la configuracion."
     - " "
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
+
+version: 2.0.0

@@ -1,12 +1,17 @@
-main: encryptsl.cekuj.net.LiteEco
+# noinspection YAMLSchemaValidation
 name: ${name}
-prefix: LiteEco
+main: encryptsl.cekuj.net.LiteEco
 version: ${version}
+api-version: 1.13
+
+
+prefix: LiteEco
 author: EncryptSL
+contributors: [LcyDev]
 website: https://encryptsl.cekuj.net
+
 load: STARTUP
 softdepend: [PlaceholderAPI, Vault, Treasury]
-api-version: 1.13
 libraries:
   - com.zaxxer:HikariCP:5.0.1
   - org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.0

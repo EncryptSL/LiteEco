@@ -7,15 +7,19 @@ import net.kyori.adventure.text.minimessage.tag.standard.StandardTags
 
 object ModernText {
 
+    private val miniMessage: MiniMessage by lazy { initMiniMessage() }
+
+    @JvmStatic
     fun miniModernText(message: String): Component {
-        return miniModernText().deserialize(message)
+        return miniMessage.deserialize(convertVariables(message))
     }
 
+    @JvmStatic
     fun miniModernText(message: String, resolver: TagResolver): Component {
-        return miniModernText().deserialize(message, resolver)
+        return miniMessage.deserialize(convertVariables(message), resolver)
     }
 
-    private fun miniModernText(): MiniMessage {
+    private fun initMiniMessage(): MiniMessage {
         return MiniMessage.builder()
             .strict(false)
             .tags(
@@ -35,4 +39,10 @@ object ModernText {
             .build()
     }
 
+    private fun convertVariables(value: String): String {
+        val regex = """[{](\w+)[}]""".toRegex()
+        return regex.replace(value) { matchResult ->
+            "<${matchResult.groupValues[1]}>"
+        }
+    }
 }

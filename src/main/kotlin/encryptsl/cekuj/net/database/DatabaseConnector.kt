@@ -2,7 +2,7 @@ package encryptsl.cekuj.net.database
 
 import com.zaxxer.hikari.HikariDataSource
 import encryptsl.cekuj.net.api.interfaces.DatabaseConnectorProvider
-import encryptsl.cekuj.net.database.tables.Money
+import encryptsl.cekuj.net.database.tables.Account
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
@@ -23,7 +23,7 @@ class DatabaseConnector : DatabaseConnectorProvider {
 
         transaction {
             addLogger(StdOutSqlLogger)
-            SchemaUtils.create(Money)
+            SchemaUtils.create(Account)
         }
     }
 }

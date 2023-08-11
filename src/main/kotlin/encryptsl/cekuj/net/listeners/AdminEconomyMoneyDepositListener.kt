@@ -19,27 +19,33 @@ class AdminEconomyMoneyDepositListener(private val liteEco: LiteEco) : Listener 
         val money: Double = event.money
 
         if (!liteEco.api.hasAccount(target)) {
-            sender.sendMessage(ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.error.account_not_exist"),
+            sender.sendMessage(ModernText.miniModernText(liteEco.locale.getMessage("messages.error.account_not_exist"),
                 TagResolver.resolver(Placeholder.parsed("account", target.name.toString()))))
             return
         }
+
         liteEco.countTransactions["transactions"] = liteEco.countTransactions.getOrDefault("transactions", 0) + 1
+
         liteEco.api.depositMoney(target, money)
         if (sender.name == target.name) {
             sender.sendMessage(
-                ModernText.miniModernText(
-                    liteEco.translationConfig.getMessage("messages.error.self_pay"), TagResolver.resolver(Placeholder.parsed("money", liteEco.api.formatting(money)))))
+                ModernText.miniModernText(liteEco.locale.getMessage("messages.error.self_pay"), TagResolver.resolver(Placeholder.parsed("money", liteEco.api.fullFormatting(money)))))
             return
         }
 
         sender.sendMessage(ModernText.miniModernText(
-            liteEco.translationConfig.getMessage("messages.sender.add_money"),
-            TagResolver.resolver(Placeholder.parsed("target", target.name.toString()), Placeholder.parsed("money", liteEco.api.formatting(money)))))
+            liteEco.locale.getMessage("messages.sender.add_money"),
+            TagResolver.resolver(Placeholder.parsed("target", target.name.toString()), Placeholder.parsed("money", liteEco.api.fullFormatting(money)))
+        ))
         if (target.isOnline) {
             if (liteEco.config.getBoolean("messages.target.notify_add")) return
-            target.player?.sendMessage(ModernText.miniModernText(
-                liteEco.translationConfig.getMessage("messages.target.add_money"),
-                TagResolver.resolver(Placeholder.parsed("sender", sender.name), Placeholder.parsed("money", liteEco.api.formatting(money)))))
+            target.player?.sendMessage(
+                ModernText.miniModernText(liteEco.locale.getMessage("messages.target.add_money"),
+                TagResolver.resolver(
+                    Placeholder.parsed("sender", sender.name),
+                    Placeholder.parsed("money", liteEco.api.fullFormatting(money))
+                )
+            ))
         }
     }
 

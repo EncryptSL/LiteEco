@@ -20,29 +20,35 @@ class AdminEconomyMoneySetListener(private val liteEco: LiteEco) : Listener {
 
         if (!liteEco.api.hasAccount(target)) {
             sender.sendMessage(
-                ModernText.miniModernText(liteEco.translationConfig.getMessage("messages.error.account_not_exist"),
+                ModernText.miniModernText(liteEco.locale.getMessage("messages.error.account_not_exist"),
                 TagResolver.resolver(Placeholder.parsed("account", target.name.toString()))))
             return
         }
 
         liteEco.countTransactions["transactions"] = liteEco.countTransactions.getOrDefault("transactions", 0) + 1
+
         liteEco.api.setMoney(target, money)
         if (sender.name == target.name) {
             sender.sendMessage(
                 ModernText.miniModernText(
-                    liteEco.translationConfig.getMessage("messages.self.set_money"), TagResolver.resolver(Placeholder.parsed("money", liteEco.api.formatting(money)))))
+                    liteEco.locale.getMessage("messages.self.set_money"), TagResolver.resolver(Placeholder.parsed("money", liteEco.api.fullFormatting(money)))))
             return
         }
+
         sender.sendMessage(
             ModernText.miniModernText(
-            liteEco.translationConfig.getMessage("messages.sender.set_money"),
-            TagResolver.resolver(Placeholder.parsed("target", target.name.toString()), Placeholder.parsed("money", liteEco.api.formatting(money)))))
+            liteEco.locale.getMessage("messages.sender.set_money"),
+            TagResolver.resolver(Placeholder.parsed("target", target.name.toString()), Placeholder.parsed("money", liteEco.api.fullFormatting(money)))))
+
         if (target.isOnline) {
             if (liteEco.config.getBoolean("messages.target.notify_set")) return
             target.player?.sendMessage(
-                ModernText.miniModernText(
-                liteEco.translationConfig.getMessage("messages.target.set_money"),
-                TagResolver.resolver(Placeholder.parsed("sender", sender.name), Placeholder.parsed("money", liteEco.api.formatting(money)))))
+                ModernText.miniModernText(liteEco.locale.getMessage("messages.target.set_money"),
+                TagResolver.resolver(
+                    Placeholder.parsed("sender", sender.name),
+                    Placeholder.parsed("money", liteEco.api.fullFormatting(money))
+                )
+            ))
         }
     }
 

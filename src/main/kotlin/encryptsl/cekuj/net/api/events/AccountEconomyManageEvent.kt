@@ -30,5 +30,4 @@ class AccountEconomyManageEvent(val player: Player, val operationType: Operation
             return HANDLERS
         }
     }
-
 }
