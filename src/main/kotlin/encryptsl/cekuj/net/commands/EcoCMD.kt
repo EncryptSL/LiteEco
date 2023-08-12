@@ -20,6 +20,9 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
+import java.util.*
+import java.util.concurrent.ThreadLocalRandom
+import kotlin.system.measureTimeMillis
 
 @Suppress("UNUSED")
 @CommandDescription("Provided plugin by LiteEco")
@@ -204,6 +207,21 @@ class EcoCMD(private val liteEco: LiteEco) {
                 Placeholder.parsed("type", migrationKey.name)
             )
         ))
+    }
+
+    @CommandMethod("eco debug create accounts <amount>")
+    @CommandPermission("lite.eco.admin.debug.create.accounts")
+    fun onDebugCreateAccounts(commandSender: CommandSender, @Argument("amount") @Range(min = "1", max = "100") amountStr: Int) {
+
+        val random = ThreadLocalRandom.current()
+
+        val time = measureTimeMillis {
+            for (i in 1 .. amountStr) {
+                liteEco.preparedStatements.createPlayerAccount(UUID.randomUUID(), random.nextDouble(1000.0, 500000.0))
+            }
+        }
+
+        commandSender.sendMessage("Into database was insterted $amountStr fake accounts in time $time ms")
     }
 
     @CommandMethod("eco reload")
