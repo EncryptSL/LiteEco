@@ -21,7 +21,7 @@ class Paginator(private val items: List<String>, options: PaginationOptions.() -
         val itemsPerPage = paginationOptions.itemsPerPage
 
         val indexStart = (selectedPage - 1) * itemsPerPage
-        val indexEnd = min(indexStart + itemsPerPage, items.size) - 1
+        val indexEnd = min(indexStart + itemsPerPage, items.size)
         // IntRange is end inclusive.
 
         return (indexStart until indexEnd).joinToString("\n", transform = items::elementAt)
