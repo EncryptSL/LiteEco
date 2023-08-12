@@ -10,7 +10,6 @@ import encryptsl.cekuj.net.extensions.positionIndexed
 import encryptsl.cekuj.net.utils.Helper
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
@@ -93,23 +92,20 @@ class MoneyCMD(private val liteEco: LiteEco) {
     @CommandPermission("lite.eco.top")
     fun onTopBalance(commandSender: CommandSender, @Argument(value = "page") @Range(min = "1", max="") page: Int?) {
         val p = page ?: 1
-        val balances = liteEco.api.getTopBalance().entries.sortedByDescending { e -> e.value }
-            .filter { data -> Bukkit.getOfflinePlayer(UUID.fromString(data.key)).hasPlayedBefore() }
-            .positionIndexed { index, mutableEntry -> LegacyComponentSerializer.legacyAmpersand().serialize(ModernText.miniModernText(
-                liteEco.locale.getMessage("messages.balance.top_format"),
-                TagResolver.resolver(
-                    Placeholder.parsed("position", index.toString()),
-                    Placeholder.parsed(
-                        "player",
-                        Bukkit.getOfflinePlayer(UUID.fromString(mutableEntry.key)).name.toString()
-                    ),
-                    Placeholder.parsed("money", liteEco.api.fullFormatting(mutableEntry.value))
-                )
-            )) }
 
-        if (balances.isEmpty()) return
 
-        val pagination = Paginator(balances).apply { page(p) }
+        val topPlayers = liteEco.api.getTopBalance().toList()
+            .sortedByDescending { e -> e.second }.positionIndexed { index, pair ->
+                liteEco.locale.getMessage("messages.balance.top_format")
+                    .replace("<position>", index.toString())
+                    .replace("<player>", Bukkit.getOfflinePlayer(UUID.fromString(pair.first)).name.toString())
+                    .replace("<money>", liteEco.api.fullFormatting(pair.second))
+            }
+        if (topPlayers.isEmpty()) return
+
+        val pagination = Paginator(topPlayers).apply {
+            page(p)
+        }
 
         if (p > pagination.maxPages) {
             commandSender.sendMessage(
@@ -125,7 +121,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
                 TagResolver.resolver(
                     Placeholder.parsed("page", pagination.page().toString()), Placeholder.parsed("max_page", pagination.maxPages.toString())
                 ))
-                .appendNewline().append(LegacyComponentSerializer.legacyAmpersand().deserialize(pagination.display()))
+                .appendNewline().append(ModernText.miniModernText(pagination.display()))
                 .appendNewline().append(ModernText.miniModernText(liteEco.locale.getMessage("messages.balance.top_footer")))
         )
     }
@@ -140,7 +136,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
     ) {
         if (commandSender is Player) {
             if (commandSender.name == offlinePlayer.name) {
-                commandSender.sendMessage(ModernText.miniModernText(liteEco.locale.getMessage("messages.self_pay_error")))
+                commandSender.sendMessage(ModernText.miniModernText(liteEco.locale.getMessage("messages.error.self_pay")))
                 return
             }
 
