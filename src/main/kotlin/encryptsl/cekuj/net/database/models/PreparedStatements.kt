@@ -2,6 +2,7 @@ package encryptsl.cekuj.net.database.models
 
 import encryptsl.cekuj.net.api.interfaces.DatabaseSQLProvider
 import encryptsl.cekuj.net.database.tables.Account
+import org.bukkit.Bukkit
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.minus
@@ -78,14 +79,10 @@ class PreparedStatements : DatabaseSQLProvider {
     }
 
     override fun purgeInvalidAccounts() {
-        val validUUIDs = transaction {
-            Account.slice(Account.uuid).selectAll()
-                .mapNotNull { row -> runCatching { UUID.fromString(row[Account.uuid]) }.getOrNull() }
-                .map  { it.toString() }
-        }
+        val validPlayerUUIDs = Bukkit.getOfflinePlayers().mapNotNull { runCatching { it.uniqueId }.getOrNull() }.map { it.toString() }
         transaction {
             Account.deleteWhere {
-                uuid notInList validUUIDs
+                uuid notInList validPlayerUUIDs
             }
         }
     }
