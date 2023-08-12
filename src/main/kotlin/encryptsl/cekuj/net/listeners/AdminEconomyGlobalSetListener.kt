@@ -18,7 +18,7 @@ class AdminEconomyGlobalSetListener(private val liteEco: LiteEco) : Listener {
         val offlinePlayers = Bukkit.getOfflinePlayers()
 
         offlinePlayers.filter { a -> liteEco.api.hasAccount(a) }.forEach { offlinePlayer ->
-            liteEco.preparedStatements.setMoney(offlinePlayer.uniqueId, money)
+            liteEco.api.setMoney(offlinePlayer, money)
         }
 
         liteEco.countTransactions["transactions"] = liteEco.countTransactions.getOrDefault("transactions", 0) + offlinePlayers.size

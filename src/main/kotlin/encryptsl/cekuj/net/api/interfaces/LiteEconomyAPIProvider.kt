@@ -1,9 +1,10 @@
 package encryptsl.cekuj.net.api.interfaces
 
 import org.bukkit.OfflinePlayer
+
 interface LiteEconomyAPIProvider {
     /**
-     * Create player account from database
+     * Create player account to database
      * @param player is OfflinePlayer
      * @param startAmount an amount added to player when accounts is created.
      * @return Boolean
@@ -11,6 +12,17 @@ interface LiteEconomyAPIProvider {
      * @see OfflinePlayer
      */
     fun createAccount(player: OfflinePlayer, startAmount: Double): Boolean
+
+    /**
+     * Cache player account during login
+     * @param player is OfflinePlayer
+     * @param amount is value of player account from database.
+     * @return Boolean
+     * @see Boolean
+     * @see OfflinePlayer
+     * @see PreparedStatements.getBalance(uuid: UUID)
+     */
+    fun cacheAccount(player: OfflinePlayer, amount: Double): Boolean
 
     /**
      * Delete player account from database
@@ -67,6 +79,18 @@ interface LiteEconomyAPIProvider {
      * @see OfflinePlayer
      */
     fun setMoney(player: OfflinePlayer, amount: Double)
+
+    /**
+     * Synchronize cache with database
+     * @param offlinePlayer is OfflinePlayer
+     * @see OfflinePlayer
+     */
+    fun syncAccount(offlinePlayer: OfflinePlayer)
+
+    /**
+     * Synchronize all saved data in cache with database
+     */
+    fun syncAccounts()
 
     /**
      * Get top player accounts

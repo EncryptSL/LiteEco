@@ -74,6 +74,7 @@ class LiteEco : JavaPlugin() {
     }
 
     override fun onDisable() {
+        api.syncAccounts()
         logger.info("Plugin is disabled")
     }
 
@@ -113,7 +114,8 @@ class LiteEco : JavaPlugin() {
                 AdminEconomyMoneyDepositListener(this),
                 AdminEconomyMoneyWithdrawListener(this),
                 AdminEconomyMoneySetListener(this),
-                PlayerJoinListener(this)
+                PlayerJoinListener(this),
+                PlayerQuitListener(this)
             )
             listeners.forEach { listener -> pluginManager.registerEvents(listener, this)
                 logger.info("Bukkit Listener ${listener.javaClass.simpleName} registered () -> ok")
@@ -163,13 +165,13 @@ class LiteEco : JavaPlugin() {
                 .mapNotNull { it.name }
         }
         commandManager.parserRegistry().registerSuggestionProvider("langKeys") { _, _ ->
-            LangKey.values().map { key -> key.name }.toList()
+            LangKey.entries.map { key -> key.name }.toList()
         }
         commandManager.parserRegistry().registerSuggestionProvider("purgeKeys") { _, _ ->
-            PurgeKey.values().filter { key -> key != PurgeKey.NULL_ACCOUNTS }.map { key -> key.name }.toList()
+            PurgeKey.entries.map { key -> key.name }.toList()
         }
         commandManager.parserRegistry().registerSuggestionProvider("migrationKeys") { _, _ ->
-            MigrationKey.values().map { key -> key.name }.toList()
+            MigrationKey.entries.map { key -> key.name }.toList()
         }
     }
 

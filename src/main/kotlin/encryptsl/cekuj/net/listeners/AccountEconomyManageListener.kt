@@ -14,7 +14,9 @@ class AccountEconomyManageListener(private val liteEco: LiteEco) : Listener {
         val player: Player = event.player
 
         when (event.operationType) {
-            OperationType.CREATE_ACCOUNT -> liteEco.api.createAccount(player, liteEco.config.getDouble("economy.starting_balance"))
+            OperationType.CREATE_ACCOUNT -> { liteEco.api.createAccount(player, liteEco.config.getDouble("economy.starting_balance")) }
+            OperationType.CACHING_ACCOUNT -> { liteEco.api.cacheAccount(player, liteEco.api.getBalance(player) )}
+            OperationType.SYNC_ACCOUNT -> liteEco.api.syncAccount(player)
             OperationType.REMOVE_ACCOUNT -> liteEco.api.deleteAccount(player)
         }
     }

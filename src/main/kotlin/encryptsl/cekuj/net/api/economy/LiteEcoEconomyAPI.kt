@@ -1,12 +1,17 @@
 package encryptsl.cekuj.net.api.economy
 
 import encryptsl.cekuj.net.LiteEco
+import encryptsl.cekuj.net.api.PlayerAccount
 import encryptsl.cekuj.net.api.interfaces.LiteEconomyAPIProvider
 import encryptsl.cekuj.net.extensions.compactFormat
 import encryptsl.cekuj.net.extensions.moneyFormat
 import org.bukkit.OfflinePlayer
+import java.util.*
 
 class LiteEcoEconomyAPI(private val liteEco: LiteEco) : LiteEconomyAPIProvider {
+
+    private val playerAccount: PlayerAccount by lazy { PlayerAccount(liteEco) }
+
     override fun createAccount(player: OfflinePlayer, startAmount: Double): Boolean {
         if (hasAccount(player)) return false
 
@@ -14,11 +19,23 @@ class LiteEcoEconomyAPI(private val liteEco: LiteEco) : LiteEconomyAPIProvider {
         return true
     }
 
+    override fun cacheAccount(player: OfflinePlayer, amount: Double): Boolean {
+        if (!hasAccount(player)) return false
+
+        playerAccount.cacheAccount(player.uniqueId, amount)
+        return true
+    }
+
     override fun deleteAccount(player: OfflinePlayer): Boolean {
         if (!hasAccount(player)) return false
 
-        liteEco.preparedStatements.deletePlayerAccount(player.uniqueId)
-        return true
+        return if (playerAccount.isPlayerOnline(player.uniqueId)) {
+            playerAccount.removeAccount(player.uniqueId)
+            true
+        } else {
+            liteEco.preparedStatements.deletePlayerAccount(player.uniqueId)
+            true
+        }
     }
 
     override fun hasAccount(player: OfflinePlayer): Boolean {
@@ -30,23 +47,46 @@ class LiteEcoEconomyAPI(private val liteEco: LiteEco) : LiteEconomyAPIProvider {
     }
 
     override fun getBalance(player: OfflinePlayer): Double {
-        return if(hasAccount(player)) liteEco.preparedStatements.getBalance(player.uniqueId) else 0.0
+        return if (playerAccount.isPlayerOnline(player.uniqueId) && playerAccount.isAccountCached(player.uniqueId))
+            playerAccount.getAccount().getOrDefault(player.uniqueId, 0.0)
+        else
+            liteEco.preparedStatements.getBalance(player.uniqueId)
     }
 
     override fun depositMoney(player: OfflinePlayer, amount: Double) {
-        liteEco.preparedStatements.depositMoney(player.uniqueId, amount)
+        if (playerAccount.isPlayerOnline(player.uniqueId)) {
+            cacheAccount(player, getBalance(player).plus(amount))
+        } else {
+            liteEco.preparedStatements.depositMoney(player.uniqueId, amount)
+        }
     }
 
     override fun withDrawMoney(player: OfflinePlayer, amount: Double) {
-        liteEco.preparedStatements.withdrawMoney(player.uniqueId, amount)
+        if (playerAccount.isPlayerOnline(player.uniqueId)) {
+            cacheAccount(player, getBalance(player).minus(amount))
+        } else {
+            liteEco.preparedStatements.withdrawMoney(player.uniqueId, amount)
+        }
     }
 
     override fun setMoney(player: OfflinePlayer, amount: Double) {
-        liteEco.preparedStatements.setMoney(player.uniqueId, amount)
+        if (playerAccount.isPlayerOnline(player.uniqueId)) {
+            cacheAccount(player, amount)
+        } else {
+            liteEco.preparedStatements.setMoney(player.uniqueId, amount)
+        }
+    }
+
+    override fun syncAccount(offlinePlayer: OfflinePlayer) {
+        playerAccount.syncAccount(offlinePlayer.uniqueId)
+    }
+
+    override fun syncAccounts() {
+        playerAccount.syncAccounts()
     }
 
     override fun getTopBalance(): MutableMap<String, Double> {
-        return liteEco.preparedStatements.getTopBalance()
+        return liteEco.preparedStatements.getTopBalance() // This must be same, because cache can be removed or cleared if player leave.
     }
 
     override fun compacted(amount: Double): String {
