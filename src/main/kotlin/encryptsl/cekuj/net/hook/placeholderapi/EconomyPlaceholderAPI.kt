@@ -5,7 +5,7 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import java.util.*
-
+@Deprecated("This class probably in future will be included into expansion.")
 class EconomyPlaceholderAPI(private val liteEco: LiteEco, private val extVersion: String) : PlaceholderExpansion() {
 
     override fun getIdentifier(): String = "liteeco"
