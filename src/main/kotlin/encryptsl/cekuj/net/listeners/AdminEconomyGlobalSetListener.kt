@@ -29,14 +29,13 @@ class AdminEconomyGlobalSetListener(private val liteEco: LiteEco) : Listener {
                 Placeholder.parsed("money", liteEco.api.fullFormatting(money))
             )
         ))
-        if (!liteEco.config.getBoolean("messages.global.notify_set")) {
+        if (liteEco.config.getBoolean("messages.global.notify_set"))
             Bukkit.broadcast(
                 ModernText.miniModernText(liteEco.locale.getMessage("messages.broadcast.set_money"),
-                TagResolver.resolver(
-                    Placeholder.parsed("sender", sender.name),
-                    Placeholder.parsed("money", liteEco.api.fullFormatting(money))
-                )
-            ))
-        }
+                    TagResolver.resolver(
+                        Placeholder.parsed("sender", sender.name),
+                        Placeholder.parsed("money", liteEco.api.fullFormatting(money))
+                    )))
+            return
     }
 }

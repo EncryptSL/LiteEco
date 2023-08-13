@@ -29,7 +29,7 @@ class AdminEconomyGlobalWithdrawListener(private val liteEco: LiteEco) : Listene
                 Placeholder.parsed("money", liteEco.api.fullFormatting(money))
             )
         ))
-        if (!liteEco.config.getBoolean("messages.global.notify_withdraw")) {
+        if (liteEco.config.getBoolean("messages.global.notify_withdraw"))
             Bukkit.broadcast(
                 ModernText.miniModernText(liteEco.locale.getMessage("messages.broadcast.withdraw_money"),
                 TagResolver.resolver(
@@ -37,6 +37,6 @@ class AdminEconomyGlobalWithdrawListener(private val liteEco: LiteEco) : Listene
                     Placeholder.parsed("money", liteEco.api.fullFormatting(money))
                 )
             ))
-        }
+        return
     }
 }
