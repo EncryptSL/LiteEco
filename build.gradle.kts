@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm") version "1.9.0" apply true
     id("io.papermc.paperweight.userdev") version "1.5.5"
     id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("maven-publish")
 }
 
 group = "encryptsl.cekuj.net"
@@ -82,4 +83,11 @@ tasks {
             relocate("cloud.commandframework", "encryptsl.cekuj.net.cloud")
         }
     }
+}
+
+publishing {
+    repositories {
+        mavenLocal()
+    }
+    publications.create<MavenPublication>("libs").from(components["kotlin"])
 }

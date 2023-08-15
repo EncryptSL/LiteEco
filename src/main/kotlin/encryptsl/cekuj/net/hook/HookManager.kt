@@ -37,28 +37,43 @@ class HookManager(private val liteEco: LiteEco) {
      */
     fun hookPAPI(version: String) {
         if (isPluginInstalled("PlaceholderAPI")) {
-            liteEco.logger.info("PlaceholderAPI hook initialized")
-            EconomyPlaceholderAPI(liteEco, version).register()
+            liteEco.logger.info("###################################")
+            liteEco.logger.info("#       PlaceholderAPI Found      #")
+            liteEco.logger.info("###################################")
         } else {
-            liteEco.logger.info("PlaceholderAPI hook not found")
+            liteEco.logger.info("###################################")
+            liteEco.logger.info("#     PlaceholderAPI not Found    #")
+            liteEco.logger.info("###################################")
         }
     }
 
     fun hookVault() {
         if (isPluginInstalled("Vault")) {
             liteEco.server.servicesManager.register(Economy::class.java, AdaptiveEconomyVaultAPI(liteEco), liteEco, ServicePriority.Highest)
-            liteEco.logger.info("Registered Vault like a service.")
+            liteEco.logger.info("###################################")
+            liteEco.logger.info("# Vault registered like a service #")
+            liteEco.logger.info("###################################")
         } else {
-            liteEco.logger.info("Vault not found, for better experience please download Vault or Treasury.")
+            liteEco.logger.info("###################################")
+            liteEco.logger.info("#         Vault not Found         #")
+            liteEco.logger.info("#   For better experience please  #")
+            liteEco.logger.info("#    download vault or treasury   #")
+            liteEco.logger.info("###################################")
         }
     }
 
     fun hookTreasury() {
         if (isPluginInstalled("Treasury")) {
             ServiceRegistry.INSTANCE.registerService(EconomyProvider::class.java, TreasuryEconomyAPI(liteEco, TreasureCurrency(liteEco)), "LiteEco", me.lokka30.treasury.api.common.service.ServicePriority.HIGH)
-            liteEco.logger.info("Registered Treasury like a service.")
+            liteEco.logger.info("######################################")
+            liteEco.logger.info("# Treasury registered like a service #")
+            liteEco.logger.info("######################################")
         } else {
-            liteEco.logger.info("Treasury not found, for better experience please download Treasury or Vault.")
+            liteEco.logger.info("###################################")
+            liteEco.logger.info("#       Treasury not Found        #")
+            liteEco.logger.info("#   For better experience please  #")
+            liteEco.logger.info("#    download treasury or vault   #")
+            liteEco.logger.info("###################################")
         }
     }
 }

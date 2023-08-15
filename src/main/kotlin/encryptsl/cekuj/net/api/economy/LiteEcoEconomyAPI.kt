@@ -1,20 +1,22 @@
 package encryptsl.cekuj.net.api.economy
 
-import encryptsl.cekuj.net.LiteEco
 import encryptsl.cekuj.net.api.PlayerAccount
 import encryptsl.cekuj.net.api.interfaces.LiteEconomyAPIProvider
+import encryptsl.cekuj.net.database.models.PreparedStatements
 import encryptsl.cekuj.net.extensions.compactFormat
 import encryptsl.cekuj.net.extensions.moneyFormat
 import org.bukkit.OfflinePlayer
+import org.bukkit.plugin.Plugin
 
-class LiteEcoEconomyAPI(private val liteEco: LiteEco) : LiteEconomyAPIProvider {
+class LiteEcoEconomyAPI(val plugin: Plugin) : LiteEconomyAPIProvider {
 
-    private val playerAccount: PlayerAccount by lazy { PlayerAccount(liteEco) }
+    private val preparedStatements: PreparedStatements by lazy { PreparedStatements() }
+    private val playerAccount: PlayerAccount by lazy { PlayerAccount(plugin) }
 
     override fun createAccount(player: OfflinePlayer, startAmount: Double): Boolean {
         if (hasAccount(player)) return false
 
-        liteEco.preparedStatements.createPlayerAccount(player.uniqueId, startAmount)
+        preparedStatements.createPlayerAccount(player.uniqueId, startAmount)
         return true
     }
 
@@ -32,13 +34,13 @@ class LiteEcoEconomyAPI(private val liteEco: LiteEco) : LiteEconomyAPIProvider {
             playerAccount.removeAccount(player.uniqueId)
             true
         } else {
-            liteEco.preparedStatements.deletePlayerAccount(player.uniqueId)
+            preparedStatements.deletePlayerAccount(player.uniqueId)
             true
         }
     }
 
     override fun hasAccount(player: OfflinePlayer): Boolean {
-        return liteEco.preparedStatements.getExistPlayerAccount(player.uniqueId)
+        return preparedStatements.getExistPlayerAccount(player.uniqueId)
     }
 
     override fun has(player: OfflinePlayer, amount: Double): Boolean {
@@ -49,14 +51,14 @@ class LiteEcoEconomyAPI(private val liteEco: LiteEco) : LiteEconomyAPIProvider {
         return if (playerAccount.isPlayerOnline(player.uniqueId) && playerAccount.isAccountCached(player.uniqueId))
             playerAccount.getAccount().getOrDefault(player.uniqueId, 0.0)
         else
-            liteEco.preparedStatements.getBalance(player.uniqueId)
+            preparedStatements.getBalance(player.uniqueId)
     }
 
     override fun depositMoney(player: OfflinePlayer, amount: Double) {
         if (playerAccount.isPlayerOnline(player.uniqueId)) {
             cacheAccount(player, getBalance(player).plus(amount))
         } else {
-            liteEco.preparedStatements.depositMoney(player.uniqueId, amount)
+            preparedStatements.depositMoney(player.uniqueId, amount)
         }
     }
 
@@ -64,7 +66,7 @@ class LiteEcoEconomyAPI(private val liteEco: LiteEco) : LiteEconomyAPIProvider {
         if (playerAccount.isPlayerOnline(player.uniqueId)) {
             cacheAccount(player, getBalance(player).minus(amount))
         } else {
-            liteEco.preparedStatements.withdrawMoney(player.uniqueId, amount)
+            preparedStatements.withdrawMoney(player.uniqueId, amount)
         }
     }
 
@@ -72,7 +74,7 @@ class LiteEcoEconomyAPI(private val liteEco: LiteEco) : LiteEconomyAPIProvider {
         if (playerAccount.isPlayerOnline(player.uniqueId)) {
             cacheAccount(player, amount)
         } else {
-            liteEco.preparedStatements.setMoney(player.uniqueId, amount)
+            preparedStatements.setMoney(player.uniqueId, amount)
         }
     }
 
@@ -85,24 +87,24 @@ class LiteEcoEconomyAPI(private val liteEco: LiteEco) : LiteEconomyAPIProvider {
     }
 
     override fun getTopBalance(): MutableMap<String, Double> {
-        return liteEco.preparedStatements.getTopBalance() // This must be same, because cache can be removed or cleared if player leave.
+        return preparedStatements.getTopBalance() // This must be same, because cache can be removed or cleared if player leave.
     }
 
     override fun compacted(amount: Double): String {
-        return amount.compactFormat(liteEco.config.getString("formatting.currency_pattern").toString(), liteEco.config.getString("formatting.compact_pattern").toString(), liteEco.config.getString("formatting.currency_locale").toString())
+        return amount.compactFormat(plugin.config.getString("formatting.currency_pattern").toString(), plugin.config.getString("formatting.compact_pattern").toString(), plugin.config.getString("formatting.currency_locale").toString())
     }
 
     override fun formatted(amount: Double): String {
-        return amount.moneyFormat(liteEco.config.getString("formatting.currency_pattern").toString(), liteEco.config.getString("formatting.currency_locale").toString())
+        return amount.moneyFormat(plugin.config.getString("formatting.currency_pattern").toString(), plugin.config.getString("formatting.currency_locale").toString())
     }
 
     override fun fullFormatting(amount: Double): String {
-        val value = if (liteEco.config.getBoolean("plugin.economy.compact_display")) {
+        val value = if (plugin.config.getBoolean("plugin.economy.compact_display")) {
             compacted(amount)
         }
         else {
             formatted(amount)
         }
-        return "${liteEco.config.getString("economy.currency_prefix").toString()}${value} ${liteEco.config.getString("economy.currency_name").toString()}"
+        return "${plugin.config.getString("economy.currency_prefix").toString()}${value} ${plugin.config.getString("economy.currency_name").toString()}"
     }
 }
