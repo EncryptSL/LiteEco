@@ -33,7 +33,6 @@ class LiteEco : JavaPlugin() {
     companion object {
         const val CONFIG_VERSION = "1.2.0"
         const val LANG_VERSION = "2.0.0"
-        const val PAPI_VERSION = "1.0.5"
     }
 
     val pluginManager: PluginManager = server.pluginManager
@@ -84,7 +83,7 @@ class LiteEco : JavaPlugin() {
     }
 
     private fun hookRegistration() {
-        hookManager.hookPAPI(PAPI_VERSION)
+        hookManager.hookPAPI()
         hookManager.hookVault()
         hookManager.hookTreasury()
     }

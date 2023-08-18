@@ -1,7 +1,6 @@
 package encryptsl.cekuj.net.hook
 
 import encryptsl.cekuj.net.LiteEco
-import encryptsl.cekuj.net.hook.placeholderapi.EconomyPlaceholderAPI
 import encryptsl.cekuj.net.hook.treasury.TreasureCurrency
 import encryptsl.cekuj.net.hook.treasury.TreasuryEconomyAPI
 import encryptsl.cekuj.net.hook.vault.AdaptiveEconomyVaultAPI
@@ -35,10 +34,12 @@ class HookManager(private val liteEco: LiteEco) {
     /**
      * Method of registering Placeholders if plugin PlaceholderAPI is enabled.
      */
-    fun hookPAPI(version: String) {
+    fun hookPAPI() {
         if (isPluginInstalled("PlaceholderAPI")) {
             liteEco.logger.info("###################################")
             liteEco.logger.info("#       PlaceholderAPI Found      #")
+            liteEco.logger.info("#   Please download from ecloud   #")
+            liteEco.logger.info("#  /papi ecloud download LiteEco  #")
             liteEco.logger.info("###################################")
         } else {
             liteEco.logger.info("###################################")
