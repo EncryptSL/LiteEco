@@ -1,6 +1,5 @@
 package encryptsl.cekuj.net.api
 
-import encryptsl.cekuj.net.LiteEco
 import encryptsl.cekuj.net.api.interfaces.AccountAPI
 import encryptsl.cekuj.net.database.models.PreparedStatements
 import org.bukkit.Bukkit
@@ -19,42 +18,48 @@ class PlayerAccount(val plugin: Plugin) : AccountAPI {
             }
         } else {
             cache.put(uuid, value)?.also {
-                plugin.logger.info("Account $uuid with ${it.let { a -> value }} was changed successfully  !")
+                plugin.logger.info("Account $uuid with $value was changed successfully  !")
             }
         }
     }
 
+    override fun getBalance(uuid: UUID): Double {
+        return cache.getOrDefault(uuid, 0.0)
+    }
+
     override fun syncAccount(uuid: UUID) {
-        getAccount()[uuid]?.let { preparedStatements.setMoney(uuid, it) }.also {
+        runCatching {
+            cache[uuid]?.let { preparedStatements.setMoney(uuid, it) }
+        }.onSuccess {
             plugin.logger.info("Account $uuid was synced with database  !")
-            removeAccount(uuid)
+        }.onFailure {
+            plugin.logger.severe(it.message ?: it.localizedMessage)
         }
     }
 
     override fun syncAccounts() {
-        getAccount().toList().forEach { a ->
-            preparedStatements.setMoney(a.first, a.second)
-        }.also {
+        runCatching {
+            cache.toList().forEach { a ->
+                preparedStatements.setMoney(a.first, a.second)
+            }
+        }.onSuccess {
             plugin.logger.info("Accounts are synced with database !")
-            getAccount().clear()
+        }.onFailure {
+            plugin.logger.severe(it.message ?: it.localizedMessage)
         }
     }
 
     override fun removeAccount(uuid: UUID) {
-        val player = getAccount().keys.find { key -> key == uuid } ?: return
+        val player = cache.keys.find { key -> key == uuid } ?: return
 
-        getAccount().remove(player)
+        cache.remove(player)
     }
 
     override fun isAccountCached(uuid: UUID): Boolean {
-        return getAccount().containsKey(uuid)
+        return cache.containsKey(uuid)
     }
 
     override fun isPlayerOnline(uuid: UUID): Boolean {
-        return Bukkit.getOnlinePlayers().find { player -> player.uniqueId == uuid } != null
-    }
-
-    override fun getAccount(): MutableMap<UUID, Double> {
-        return cache
+        return Bukkit.getOnlinePlayers().first { p -> runCatching { p.uniqueId == uuid }.getOrNull() == true } != null
     }
 }
