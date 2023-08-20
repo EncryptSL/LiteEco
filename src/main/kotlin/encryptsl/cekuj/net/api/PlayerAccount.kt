@@ -16,13 +16,11 @@ class PlayerAccount(val plugin: Plugin) : AccountAPI {
 
     override fun cacheAccount(uuid: UUID, value: Double) {
         if (!isAccountCached(uuid)) {
-            cache.put(uuid, value).also {
-                debugLogger.debug(Level.INFO, "Account $uuid with $value was changed successfully !")
-            }
+            cache[uuid] = value
+            debugLogger.debug(Level.INFO, "Account $uuid with $value was changed successfully !")
         } else {
-            cache.put(uuid, value)?.also {
-                debugLogger.debug(Level.INFO, "Account $uuid with $value was changed successfully  !")
-            }
+            cache[uuid] = value
+            debugLogger.debug(Level.INFO, "Account $uuid with $value was changed successfully  !")
         }
     }
 
@@ -32,9 +30,10 @@ class PlayerAccount(val plugin: Plugin) : AccountAPI {
 
     override fun syncAccount(uuid: UUID) {
         runCatching {
-            cache[uuid]?.let { preparedStatements.setMoney(uuid, it) }
+            preparedStatements.setMoney(uuid, getBalance(uuid))
         }.onSuccess {
             debugLogger.debug(Level.INFO,"Account $uuid was synced with database  !")
+            removeAccount(uuid)
         }.onFailure {
             debugLogger.debug(Level.SEVERE,it.message ?: it.localizedMessage)
         }
@@ -47,6 +46,7 @@ class PlayerAccount(val plugin: Plugin) : AccountAPI {
             }
         }.onSuccess {
             debugLogger.debug(Level.INFO,"Accounts are synced with database !")
+            cache.clear()
         }.onFailure {
             debugLogger.debug(Level.SEVERE,it.message ?: it.localizedMessage)
         }
