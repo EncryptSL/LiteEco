@@ -5,6 +5,8 @@ plugin:
   translation: EN_US
   # Plugin prefix
   prefix: "<#64646F>[<#F9AD47>LiteEco<#64646F>]</#64646F>"
+  # Debugging
+  debug: false
 
 economy:
   # Prefix of Currency
