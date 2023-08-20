@@ -11,9 +11,9 @@ interface AccountAPI {
 
     fun removeAccount(uuid: UUID)
 
+    fun getBalance(uuid: UUID): Double
+
     fun isAccountCached(uuid: UUID): Boolean
 
     fun isPlayerOnline(uuid: UUID): Boolean
-
-    fun getAccount(): MutableMap<UUID, Double>
 }
