@@ -48,7 +48,7 @@ class LiteEcoEconomyAPI(val plugin: Plugin) : LiteEconomyAPIProvider {
     }
 
     override fun getBalance(player: OfflinePlayer): Double {
-        return if (playerAccount.isPlayerOnline(player.uniqueId) && playerAccount.isAccountCached(player.uniqueId))
+        return if (playerAccount.isPlayerOnline(player.uniqueId) || playerAccount.isAccountCached(player.uniqueId))
             playerAccount.getBalance(player.uniqueId)
         else
             preparedStatements.getBalance(player.uniqueId)

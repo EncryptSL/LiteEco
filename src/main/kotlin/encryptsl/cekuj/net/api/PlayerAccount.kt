@@ -63,6 +63,6 @@ class PlayerAccount(val plugin: Plugin) : AccountAPI {
     }
 
     override fun isPlayerOnline(uuid: UUID): Boolean {
-        return Bukkit.getOnlinePlayers().first { p -> runCatching { p.uniqueId == uuid }.getOrNull() == true } != null
+        return Bukkit.getOnlinePlayers().first { p -> p.uniqueId == uuid } != null
     }
 }
