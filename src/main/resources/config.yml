@@ -50,4 +50,4 @@ database:
     password: password
 
 # Please don't remove this version settings
-version: 1.2.0
+version: 1.2.1
