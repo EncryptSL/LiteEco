@@ -41,7 +41,7 @@ class HookManager(private val liteEco: LiteEco) {
             liteEco.logger.info("#       PlaceholderAPI Found      #")
             liteEco.logger.info("#   You can now use placeholders  #")
             liteEco.logger.info("###################################")
-            EconomyPlaceholderAPI(liteEco, LiteEco.PAPI_VERSION)
+            EconomyPlaceholderAPI(liteEco, LiteEco.PAPI_VERSION).register()
         } else {
             liteEco.logger.info("###################################")
             liteEco.logger.info("#     PlaceholderAPI not Found    #")
