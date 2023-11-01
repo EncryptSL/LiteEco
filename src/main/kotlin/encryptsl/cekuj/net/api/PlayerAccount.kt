@@ -1,6 +1,7 @@
 package encryptsl.cekuj.net.api
 
 import encryptsl.cekuj.net.api.interfaces.AccountAPI
+import encryptsl.cekuj.net.api.objects.BalanceCache
 import encryptsl.cekuj.net.database.models.PreparedStatements
 import encryptsl.cekuj.net.utils.DebugLogger
 import org.bukkit.Bukkit
@@ -10,22 +11,21 @@ import java.util.logging.Level
 
 class PlayerAccount(val plugin: Plugin) : AccountAPI {
 
-    private val cache: MutableMap<UUID, Double> = HashMap()
     private val preparedStatements: PreparedStatements by lazy { PreparedStatements() }
     val debugLogger: DebugLogger by lazy { DebugLogger(plugin) }
 
     override fun cacheAccount(uuid: UUID, value: Double) {
         if (!isAccountCached(uuid)) {
-            cache[uuid] = value
+            BalanceCache.cache[uuid] = value
             debugLogger.debug(Level.INFO, "Account $uuid with $value was changed successfully !")
         } else {
-            cache[uuid] = value
+            BalanceCache.cache[uuid] = value
             debugLogger.debug(Level.INFO, "Account $uuid with $value was changed successfully  !")
         }
     }
 
     override fun getBalance(uuid: UUID): Double {
-        return cache.getOrDefault(uuid, 0.0)
+        return BalanceCache.cache.getOrDefault(uuid, 0.0)
     }
 
     override fun syncAccount(uuid: UUID) {
@@ -41,25 +41,25 @@ class PlayerAccount(val plugin: Plugin) : AccountAPI {
 
     override fun syncAccounts() {
         runCatching {
-            cache.toList().forEach { a ->
+            BalanceCache.cache.toList().forEach { a ->
                 preparedStatements.setMoney(a.first, a.second)
             }
         }.onSuccess {
             debugLogger.debug(Level.INFO,"Accounts are synced with database !")
-            cache.clear()
+            BalanceCache.cache.clear()
         }.onFailure {
             debugLogger.debug(Level.SEVERE,it.message ?: it.localizedMessage)
         }
     }
 
     override fun removeAccount(uuid: UUID) {
-        val player = cache.keys.find { key -> key == uuid } ?: return
+        val player = BalanceCache.cache.keys.find { key -> key == uuid } ?: return
 
-        cache.remove(player)
+        BalanceCache.cache.remove(player)
     }
 
     override fun isAccountCached(uuid: UUID): Boolean {
-        return cache.containsKey(uuid)
+        return BalanceCache.cache.containsKey(uuid)
     }
 
     override fun isPlayerOnline(uuid: UUID): Boolean {

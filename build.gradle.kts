@@ -40,12 +40,12 @@ dependencies {
         exclude("org.bukkit", "bukkit")
     }
     compileOnly("com.zaxxer:HikariCP:5.0.1")
-    compileOnly("me.clip:placeholderapi:2.11.3")
-    compileOnly("org.jetbrains.exposed:exposed-core:0.42.0")
-    compileOnly("org.jetbrains.exposed:exposed-jdbc:0.42.0")
+    compileOnly("me.clip:placeholderapi:2.11.5")
+    compileOnly("org.jetbrains.exposed:exposed-core:0.44.0")
+    compileOnly("org.jetbrains.exposed:exposed-jdbc:0.44.0")
     compileOnly("com.squareup.okhttp3:okhttp:4.10.0")
 
-    implementation("org.bstats:bstats-bukkit:3.0.0")
+    implementation("org.bstats:bstats-bukkit:3.0.1")
     implementation("cloud.commandframework:cloud-paper:1.8.3")
     implementation("cloud.commandframework:cloud-annotations:1.8.3")
 
