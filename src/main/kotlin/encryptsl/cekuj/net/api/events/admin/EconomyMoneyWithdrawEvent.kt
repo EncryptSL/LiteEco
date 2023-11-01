@@ -1,5 +1,4 @@
-package encryptsl.cekuj.net.api.events
-
+package encryptsl.cekuj.net.api.events.admin
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import org.bukkit.event.Cancellable
@@ -7,7 +6,7 @@ import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 
 @Suppress("UNUSED")
-class AdminEconomyMoneyDepositEvent(val commandSender: CommandSender, val offlinePlayer: OfflinePlayer, val money: Double): Event(), Cancellable {
+class EconomyMoneyWithdrawEvent(val commandSender: CommandSender, val offlinePlayer: OfflinePlayer, val money: Double): Event(), Cancellable {
 
     private var isCancelled: Boolean = false
 

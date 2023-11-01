@@ -7,7 +7,7 @@ import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 
 @Suppress("UNUSED")
-class AccountEconomyManageEvent(val player: Player, val operationType: OperationType) : Event(), Cancellable {
+class AccountManageEvent(val player: Player, val operationType: OperationType) : Event(), Cancellable {
 
     private var isCancelled: Boolean = false
 

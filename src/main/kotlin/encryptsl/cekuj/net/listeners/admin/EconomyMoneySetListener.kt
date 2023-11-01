@@ -1,7 +1,7 @@
-package encryptsl.cekuj.net.listeners
+package encryptsl.cekuj.net.listeners.admin
 
 import encryptsl.cekuj.net.LiteEco
-import encryptsl.cekuj.net.api.events.AdminEconomyMoneyDepositEvent
+import encryptsl.cekuj.net.api.events.admin.EconomyMoneySetEvent
 import encryptsl.cekuj.net.api.objects.ModernText
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
@@ -10,36 +10,39 @@ import org.bukkit.command.CommandSender
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 
-class AdminEconomyMoneyDepositListener(private val liteEco: LiteEco) : Listener {
+class EconomyMoneySetListener(private val liteEco: LiteEco) : Listener {
 
     @EventHandler
-    fun onAdminEconomyDeposit(event: AdminEconomyMoneyDepositEvent) {
+    fun onAdminEconomyMoneySet(event: EconomyMoneySetEvent) {
         val sender: CommandSender = event.commandSender
         val target: OfflinePlayer = event.offlinePlayer
         val money: Double = event.money
 
         if (!liteEco.api.hasAccount(target)) {
-            sender.sendMessage(ModernText.miniModernText(liteEco.locale.getMessage("messages.error.account_not_exist"),
+            sender.sendMessage(
+                ModernText.miniModernText(liteEco.locale.getMessage("messages.error.account_not_exist"),
                 TagResolver.resolver(Placeholder.parsed("account", target.name.toString()))))
             return
         }
 
         liteEco.countTransactions["transactions"] = liteEco.countTransactions.getOrDefault("transactions", 0) + 1
 
-        liteEco.api.depositMoney(target, money)
-        if (sender.name == target.name && !target.isOp) {
+        liteEco.api.setMoney(target, money)
+        if (sender.name == target.name) {
             sender.sendMessage(
-                ModernText.miniModernText(liteEco.locale.getMessage("messages.error.self_pay"), TagResolver.resolver(Placeholder.parsed("money", liteEco.api.fullFormatting(money)))))
+                ModernText.miniModernText(
+                    liteEco.locale.getMessage("messages.self.set_money"), TagResolver.resolver(Placeholder.parsed("money", liteEco.api.fullFormatting(money)))))
             return
         }
 
-        sender.sendMessage(ModernText.miniModernText(
-            liteEco.locale.getMessage("messages.sender.add_money"),
-            TagResolver.resolver(Placeholder.parsed("target", target.name.toString()), Placeholder.parsed("money", liteEco.api.fullFormatting(money)))
-        ))
-        if (target.isOnline && liteEco.config.getBoolean("messages.target.notify_add")) {
+        sender.sendMessage(
+            ModernText.miniModernText(
+            liteEco.locale.getMessage("messages.sender.set_money"),
+            TagResolver.resolver(Placeholder.parsed("target", target.name.toString()), Placeholder.parsed("money", liteEco.api.fullFormatting(money)))))
+
+        if (target.isOnline && liteEco.config.getBoolean("messages.target.notify_set")) {
             target.player?.sendMessage(
-                ModernText.miniModernText(liteEco.locale.getMessage("messages.target.add_money"),
+                ModernText.miniModernText(liteEco.locale.getMessage("messages.target.set_money"),
                 TagResolver.resolver(
                     Placeholder.parsed("sender", sender.name),
                     Placeholder.parsed("money", liteEco.api.fullFormatting(money))

@@ -10,12 +10,13 @@ import encryptsl.cekuj.net.api.enums.CheckLevel
 import encryptsl.cekuj.net.api.enums.LangKey
 import encryptsl.cekuj.net.api.enums.MigrationKey
 import encryptsl.cekuj.net.api.enums.PurgeKey
-import encryptsl.cekuj.net.api.events.*
+import encryptsl.cekuj.net.api.events.admin.*
 import encryptsl.cekuj.net.api.objects.ModernText
 import encryptsl.cekuj.net.extensions.positionIndexed
 import encryptsl.cekuj.net.utils.Helper
 import encryptsl.cekuj.net.utils.MigrationData
 import encryptsl.cekuj.net.utils.MigrationTool
+import encryptsl.cekuj.net.utils.StringGenerator
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.OfflinePlayer
@@ -47,7 +48,7 @@ class EcoCMD(private val liteEco: LiteEco) {
         val amount = helper.validateAmount(amountStr, commandSender) ?: return
 
         liteEco.server.scheduler.runTask(liteEco) { ->
-            liteEco.pluginManager.callEvent(AdminEconomyMoneyDepositEvent(commandSender, offlinePlayer, amount))
+            liteEco.pluginManager.callEvent(EconomyMoneyDepositEvent(commandSender, offlinePlayer, amount))
         }
     }
 
@@ -61,7 +62,7 @@ class EcoCMD(private val liteEco: LiteEco) {
 
         liteEco.server.scheduler.runTask(liteEco) { ->
             liteEco.pluginManager.callEvent(
-                AdminEconomyGlobalDepositEvent(commandSender, amount)
+                EconomyGlobalDepositEvent(commandSender, amount)
             )
         }
     }
@@ -77,7 +78,7 @@ class EcoCMD(private val liteEco: LiteEco) {
 
         liteEco.server.scheduler.runTask(liteEco) { ->
             liteEco.pluginManager.callEvent(
-                AdminEconomyMoneySetEvent(
+                EconomyMoneySetEvent(
                     commandSender,
                     offlinePlayer,
                     amount
@@ -96,7 +97,7 @@ class EcoCMD(private val liteEco: LiteEco) {
 
         liteEco.server.scheduler.runTask(liteEco) { ->
             liteEco.pluginManager.callEvent(
-                AdminEconomyGlobalSetEvent(commandSender, amount)
+                EconomyGlobalSetEvent(commandSender, amount)
             )
         }
     }
@@ -112,7 +113,7 @@ class EcoCMD(private val liteEco: LiteEco) {
 
         liteEco.server.scheduler.runTask(liteEco) { ->
             liteEco.pluginManager.callEvent(
-                AdminEconomyMoneyWithdrawEvent(
+                EconomyMoneyWithdrawEvent(
                     commandSender,
                     offlinePlayer,
                     amount
@@ -131,7 +132,7 @@ class EcoCMD(private val liteEco: LiteEco) {
 
         liteEco.server.scheduler.runTask(liteEco) { ->
             liteEco.pluginManager.callEvent(
-                AdminEconomyGlobalWithdrawEvent(commandSender, amount)
+                EconomyGlobalWithdrawEvent(commandSender, amount)
             )
         }
     }
@@ -213,11 +214,12 @@ class EcoCMD(private val liteEco: LiteEco) {
     @CommandPermission("lite.eco.admin.debug.create.accounts")
     fun onDebugCreateAccounts(commandSender: CommandSender, @Argument("amount") @Range(min = "1", max = "100") amountStr: Int) {
 
+        val randomName = StringGenerator()
         val random = ThreadLocalRandom.current()
 
         val time = measureTimeMillis {
             for (i in 1 .. amountStr) {
-                liteEco.preparedStatements.createPlayerAccount(UUID.randomUUID(), random.nextDouble(1000.0, 500000.0))
+                liteEco.preparedStatements.createPlayerAccount(randomName.getRandomString(10), UUID.randomUUID(), random.nextDouble(1000.0, 500000.0))
             }
         }
 

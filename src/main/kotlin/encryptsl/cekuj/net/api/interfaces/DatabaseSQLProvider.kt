@@ -3,7 +3,7 @@ package encryptsl.cekuj.net.api.interfaces
 import java.util.*
 
 interface DatabaseSQLProvider {
-    fun createPlayerAccount(uuid: UUID, money: Double)
+    fun createPlayerAccount(username: String, uuid: UUID, money: Double)
     fun deletePlayerAccount(uuid: UUID)
     fun getExistPlayerAccount(uuid: UUID): Boolean
     fun getTopBalance(top: Int): MutableMap<String, Double>

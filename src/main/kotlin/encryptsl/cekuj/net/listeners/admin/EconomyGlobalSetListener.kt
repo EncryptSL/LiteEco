@@ -1,7 +1,7 @@
-package encryptsl.cekuj.net.listeners
+package encryptsl.cekuj.net.listeners.admin
 
 import encryptsl.cekuj.net.LiteEco
-import encryptsl.cekuj.net.api.events.AdminEconomyGlobalSetEvent
+import encryptsl.cekuj.net.api.events.admin.EconomyGlobalSetEvent
 import encryptsl.cekuj.net.api.objects.ModernText
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
@@ -10,9 +10,9 @@ import org.bukkit.command.CommandSender
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 
-class AdminEconomyGlobalSetListener(private val liteEco: LiteEco) : Listener {
+class EconomyGlobalSetListener(private val liteEco: LiteEco) : Listener {
     @EventHandler
-    fun onAdminEconomyGlobalSet(event: AdminEconomyGlobalSetEvent) {
+    fun onAdminEconomyGlobalSet(event: EconomyGlobalSetEvent) {
         val sender: CommandSender = event.commandSender
         val money = event.money
         val offlinePlayers = Bukkit.getOfflinePlayers()

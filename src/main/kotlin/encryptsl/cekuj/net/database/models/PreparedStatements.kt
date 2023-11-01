@@ -13,9 +13,10 @@ import java.util.*
 
 class PreparedStatements : DatabaseSQLProvider {
 
-    override fun createPlayerAccount(uuid: UUID, money: Double) {
+    override fun createPlayerAccount(username: String, uuid: UUID, money: Double) {
         transaction {
             Account.insertIgnore {
+                it[Account.username] = username
                 it[Account.uuid] = uuid.toString()
                 it[Account.money] = money
             }

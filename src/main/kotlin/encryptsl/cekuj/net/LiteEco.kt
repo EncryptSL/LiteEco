@@ -20,6 +20,7 @@ import encryptsl.cekuj.net.database.DatabaseConnector
 import encryptsl.cekuj.net.database.models.PreparedStatements
 import encryptsl.cekuj.net.hook.HookManager
 import encryptsl.cekuj.net.listeners.*
+import encryptsl.cekuj.net.listeners.admin.*
 import org.bstats.bukkit.Metrics
 import org.bstats.charts.SingleLineChart
 import org.bukkit.Bukkit
@@ -106,14 +107,14 @@ class LiteEco : JavaPlugin() {
         var amount: Int
         val timeTaken = measureTimeMillis {
             val listeners = arrayListOf(
-                AccountEconomyManageListener(this),
+                AccountManageListener(this),
                 PlayerEconomyPayListener(this),
-                AdminEconomyGlobalDepositListener(this),
-                AdminEconomyGlobalSetListener(this),
-                AdminEconomyGlobalWithdrawListener(this),
-                AdminEconomyMoneyDepositListener(this),
-                AdminEconomyMoneyWithdrawListener(this),
-                AdminEconomyMoneySetListener(this),
+                EconomyGlobalDepositListener(this),
+                EconomyGlobalSetListener(this),
+                EconomyGlobalWithdrawListener(this),
+                EconomyMoneyDepositListener(this),
+                EconomyMoneyWithdrawListener(this),
+                EconomyMoneySetListener(this),
                 PlayerJoinListener(this),
                 PlayerQuitListener(this)
             )

@@ -2,15 +2,15 @@ package encryptsl.cekuj.net.listeners
 
 import encryptsl.cekuj.net.LiteEco
 import encryptsl.cekuj.net.api.enums.OperationType
-import encryptsl.cekuj.net.api.events.AccountEconomyManageEvent
+import encryptsl.cekuj.net.api.events.AccountManageEvent
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 
-class AccountEconomyManageListener(private val liteEco: LiteEco) : Listener {
+class AccountManageListener(private val liteEco: LiteEco) : Listener {
 
     @EventHandler
-    fun onEconomyManage(event: AccountEconomyManageEvent) {
+    fun onEconomyManage(event: AccountManageEvent) {
         val player: Player = event.player
 
         when (event.operationType) {

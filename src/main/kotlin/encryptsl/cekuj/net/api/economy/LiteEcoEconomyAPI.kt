@@ -16,7 +16,7 @@ class LiteEcoEconomyAPI(val plugin: Plugin) : LiteEconomyAPIProvider {
     override fun createAccount(player: OfflinePlayer, startAmount: Double): Boolean {
         if (hasAccount(player)) return false
 
-        preparedStatements.createPlayerAccount(player.uniqueId, startAmount)
+        preparedStatements.createPlayerAccount(player.name.toString(), player.uniqueId, startAmount)
         return true
     }
 
