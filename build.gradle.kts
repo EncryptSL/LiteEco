@@ -39,10 +39,10 @@ dependencies {
     compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
         exclude("org.bukkit", "bukkit")
     }
-    compileOnly("com.zaxxer:HikariCP:5.0.1")
+    compileOnly("com.zaxxer:HikariCP:5.1.0")
     compileOnly("me.clip:placeholderapi:2.11.5")
-    compileOnly("org.jetbrains.exposed:exposed-core:0.44.0")
-    compileOnly("org.jetbrains.exposed:exposed-jdbc:0.44.0")
+    compileOnly("org.jetbrains.exposed:exposed-core:0.44.1")
+    compileOnly("org.jetbrains.exposed:exposed-jdbc:0.44.1")
     compileOnly("com.squareup.okhttp3:okhttp:4.10.0")
 
     implementation("org.bstats:bstats-bukkit:3.0.1")
@@ -50,10 +50,10 @@ dependencies {
     implementation("cloud.commandframework:cloud-annotations:1.8.3")
 
     testImplementation(kotlin("test"))
-    testImplementation("com.zaxxer:HikariCP:5.0.1")
+    testImplementation("com.zaxxer:HikariCP:5.1.0")
     testImplementation("org.xerial:sqlite-jdbc:3.42.0.0")
-    testImplementation("org.jetbrains.exposed:exposed-core:0.42.0")
-    testImplementation("org.jetbrains.exposed:exposed-jdbc:0.42.0")
+    testImplementation("org.jetbrains.exposed:exposed-core:0.44.1")
+    testImplementation("org.jetbrains.exposed:exposed-jdbc:0.44.1")
     testImplementation("com.squareup.okhttp3:okhttp:4.10.0")
 }
 
