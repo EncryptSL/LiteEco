@@ -14,10 +14,10 @@ load: STARTUP
 softdepend: [PlaceholderAPI, Vault, Treasury]
 libraries:
   - com.zaxxer:HikariCP:5.1.0
-  - org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.0
+  - org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.20
   - org.jetbrains.exposed:exposed-core:0.44.1
   - org.jetbrains.exposed:exposed-jdbc:0.44.1
-  - com.squareup.okhttp3:okhttp:4.10.0
+  - com.squareup.okhttp3:okhttp:4.12.0
 
 description: ${description}
 
@@ -47,4 +47,6 @@ permissions:
       lite.eco.admin.lang: true
       lite.eco.admin.purge: true
       lite.eco.admin.migration: true
+      lite.eco.admin.convert: true
+      lite.eco.admin.debug.create.accounts: true
       lite.eco.admin.reload: true

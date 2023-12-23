@@ -1,6 +1,6 @@
 plugins {
-    kotlin("jvm") version "1.9.0" apply true
-    id("io.papermc.paperweight.userdev") version "1.5.5"
+    kotlin("jvm") version "1.9.20" apply true
+    id("io.papermc.paperweight.userdev") version "1.5.10"
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("maven-publish")
 }
@@ -34,7 +34,7 @@ kotlin {
 
 dependencies {
     paperweight.paperDevBundle(providers.gradleProperty("server_version").get())
-    compileOnly(kotlin("stdlib", "1.9.0"))
+    compileOnly(kotlin("stdlib", "1.9.20"))
     compileOnly("me.lokka30:treasury-api:1.2.1")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
         exclude("org.bukkit", "bukkit")
@@ -43,18 +43,17 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.5")
     compileOnly("org.jetbrains.exposed:exposed-core:0.44.1")
     compileOnly("org.jetbrains.exposed:exposed-jdbc:0.44.1")
-    compileOnly("com.squareup.okhttp3:okhttp:4.10.0")
+    compileOnly("com.squareup.okhttp3:okhttp:4.12.0")
 
     implementation("org.bstats:bstats-bukkit:3.0.1")
     implementation("cloud.commandframework:cloud-paper:1.8.3")
     implementation("cloud.commandframework:cloud-annotations:1.8.3")
 
-    testImplementation(kotlin("test"))
+    testImplementation(kotlin("test", "1.9.20"))
     testImplementation("com.zaxxer:HikariCP:5.1.0")
     testImplementation("org.xerial:sqlite-jdbc:3.42.0.0")
     testImplementation("org.jetbrains.exposed:exposed-core:0.44.1")
     testImplementation("org.jetbrains.exposed:exposed-jdbc:0.44.1")
-    testImplementation("com.squareup.okhttp3:okhttp:4.10.0")
 }
 
 tasks {
