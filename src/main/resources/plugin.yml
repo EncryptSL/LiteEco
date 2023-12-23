@@ -50,3 +50,4 @@ permissions:
       lite.eco.admin.convert: true
       lite.eco.admin.debug.create.accounts: true
       lite.eco.admin.reload: true
+      lite.eco.admin.bypass.limit: true
