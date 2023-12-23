@@ -16,7 +16,9 @@ messages:
   # Transaction messages for target
   target:
     add_money: "<prefix> <gold><sender></gold> <white>sent you <green><money></green> money."
+    add_money_silent: "<gray>+ <green><money>"
     withdraw_money: "<prefix> <gold><sender></gold> <white>removed <green><money></green> money from your account."
+    withdraw_money_silent: "<gray>- <red><money>"
     set_money: "<prefix> <gold><sender></gold> <white>set the balance of your account to <green><money></green> money."
 
   # Transaction messages for sender
@@ -49,6 +51,7 @@ messages:
     purge_argument: "<prefix> <red>This <argument> argument is not valid or not ready for production."
     player_is_null: "<prefix> <red>Please provide a player name [!]"
     self_pay: "<prefix> <red>You cannot send money to yourself [!]"
+    convert_fail: "<prefix> <red>Something broke during convert look into console [!]"
 
 
   # Admin commands
@@ -60,6 +63,7 @@ messages:
     purge_null_accounts: "<prefix> <green>All player accounts with null values were purged."
     purge_default_accounts: "<prefix> <green>All player accounts with default values were purged."
     migration_success: "<prefix> <green>Migration of <type> was successful [!]"
+    convert_success: "<prefix> <green>Convert of <converted>x accounts and <balances> balances from <economy> to LiteEco was successful !"
 
   help:
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"

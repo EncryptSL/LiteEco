@@ -17,6 +17,7 @@ class EconomyMoneyWithdrawListener(private val liteEco: LiteEco) : Listener {
         val sender: CommandSender = event.commandSender
         val target: OfflinePlayer = event.offlinePlayer
         val money: Double = event.money
+        val silent: Boolean = event.silent
 
         if (!liteEco.api.hasAccount(target)) {
             sender.sendMessage(
@@ -47,6 +48,14 @@ class EconomyMoneyWithdrawListener(private val liteEco: LiteEco) : Listener {
                 liteEco.locale.getMessage("messages.sender.withdraw_money"),
                 TagResolver.resolver(Placeholder.parsed("target", target.name.toString()), Placeholder.parsed("money", liteEco.api.fullFormatting(money)))))
         if (target.isOnline && liteEco.config.getBoolean("messages.target.notify_withdraw")) {
+            if (silent) {
+                target.player?.sendMessage(ModernText.miniModernText(
+                    liteEco.locale.getMessage("messages.target.withdraw_money_silent"),
+                    Placeholder.parsed("money", liteEco.api.fullFormatting(money))
+                ))
+                return
+            }
+
             target.player?.sendMessage(
                 ModernText.miniModernText(liteEco.locale.getMessage("messages.target.withdraw_money"),
                 TagResolver.resolver(

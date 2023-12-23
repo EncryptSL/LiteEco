@@ -16,7 +16,9 @@ messages:
   # Transaction messages for target
   target:
     add_money: "<prefix> <gold><sender></gold> <white>vám poslal <green><money></green>peněz."
+    add_money_silent: "<gray>+ <green><money>"
     withdraw_money: "<prefix> <gold><sender></gold> <white>vám odebral <green><money></green>peněz."
+    withdraw_money_silent: "<gray>- <red><money>"
     set: "<prefix> <gold><sender></gold> <white>vám nastavil <green><money></green>peněz."
 
   # Transaction messages for sender
@@ -49,6 +51,7 @@ messages:
     purge_argument: "<prefix> <red>Tento <argument> argument není validní nebo není připraven do produkce."
     player_is_null: "<prefix> <red>Jméno hráče musí být vyplněno [!]"
     self_pay: "<prefix> <red>Nemůžeš sám sobě poslat peníze [!]"
+    convert_fail: "<prefix> <red>Něco se pokazilo během konvertování, podívej se do konzole [!]"
 
   # Admin commands
   admin:
@@ -59,6 +62,7 @@ messages:
     purge_null_accounts: "<prefix> <green> Všechny hráčské účty s nulovými hodnotami byly smazány." # TEMP #
     purge_default_accounts: "<prefix> <green>Smazal jsi účty s defaultní hodnotou."
     migration_success: "<prefix> <green>Migrace <type> byla úspěšně vytvořena [!]"
+    convert_success: "<prefix> <green>Převod <converted> účtů a <balances> peněz z <economy> do LiteEco bylo úspěšné !"
 
   help:
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"

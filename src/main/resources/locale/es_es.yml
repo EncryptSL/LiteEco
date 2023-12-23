@@ -16,7 +16,9 @@ messages:
   # Transaction messages for target
   target:
     add_money: "<prefix> <white>Recibiste <green><money></green> de <gold><sender></gold>."
+    add_money_silent: "<gray>+ <green><money>"
     withdraw_money: "<prefix> <gold><sender></gold> <white>te quito <green><money></green> de tu cuenta."
+    withdraw_money_silent: "<gray>- <red><money>"
     set_money: "<prefix> <gold><sender></gold> <white>establecio tu cuenta a <green><money></green>."
 
   # Transaction messages for sender
@@ -49,6 +51,7 @@ messages:
     purge_argument: "<prefix> <red>El argumento <argument> no es valido o no esta listo para produccion."
     player_is_null: "<prefix> <red>Debes especificar un jugador [!]"
     self_pay: "<prefix> <red>No puedes enviarte dinero a ti mismo [!]"
+    convert_fail: "<prefix> <red>Algo se rompió durante la conversión mira en la consola [!]"
 
   # Admin commands
   admin:
@@ -59,6 +62,7 @@ messages:
     purge_null_accounts: "<prefix> <green>Se purgaron todas las cuentas con valores nulos."
     purge_default_accounts: "<prefix> <green>Se purgaron todas las cuentas con valores predeterminados."
     migration_success: "<prefix> <green>La migracion de <type> fue exitosa [!]"
+    convert_success: "<prefix> <green>La conversión <converted>x cuentas y <balances> saldos de <economy> a LiteEco se ha realizado correctamente !"
 
   help:
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"

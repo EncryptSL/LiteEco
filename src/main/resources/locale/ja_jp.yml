@@ -16,7 +16,9 @@ messages:
   # Transaction messages for target
   target:
     add_money: "<prefix> <gold><sender></gold> <white>から <green><money></green> 送金されました。"
+    add_money_silent: "<gray>+ <green><money>"
     withdraw_money: "<prefix> <gold><sender></gold> <white>があなたの所持金から <green><money></green> 引き出しました。"
+    withdraw_money_silent: "<gray>- <red><money>"
     set_money: "<prefix> <gold><sender></gold> <white>があなたの所持金を <green><money></green> に設定しました。"
 
   # Transaction messages for sender
@@ -49,6 +51,7 @@ messages:
     purge_argument: "<prefix> <red>この<argument>は適切ではないか、サーバーの削除の準備が完了していない可能性があります。"
     player_is_null: "<prefix> <red>プレイヤー名を入力してください。"
     self_pay: "<prefix> <red>自分自身にお金を送金することはできません。"
+    convert_fail: "<prefix> <red>Something broke during convert look into console [!]"
 
   admin:
     config_reload: "<prefix> <green>コンフィグは正常に読み込まれました。"
@@ -58,6 +61,7 @@ messages:
     purge_null_accounts: "<prefix> <green> すべてのプレイヤーアカウントのヌル値が削除されました。" # TEMP #
     purge_default_accounts: "<prefix> <green>デフォルトの値で全てのプレイヤーの所持金を再設定しました。"
     migration_success: "<prefix> <green><type>からのマイグレーションが完了しました。"
+    convert_success: "<prefix> <green>Convert of <converted>x accounts and <balances> balances from <economy> to LiteEco was successful !"
 
   help:
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
