@@ -33,7 +33,7 @@ import kotlin.system.measureTimeMillis
 
 class LiteEco : JavaPlugin() {
     companion object {
-        const val CONFIG_VERSION = "1.2.1"
+        const val CONFIG_VERSION = "1.2.2"
         const val LANG_VERSION = "2.0.1"
         const val PAPI_VERSION = "2.0.5"
     }
