@@ -52,6 +52,8 @@ messages:
     player_is_null: "<prefix> <red>プレイヤー名を入力してください。"
     self_pay: "<prefix> <red>自分自身にお金を送金することはできません。"
     convert_fail: "<prefix> <red>Something broke during convert look into console [!]"
+    amount_above_limit: "<prefix> <red>Amount is above, allowed limit of server !"
+    balance_above_limit: "<prefix> <red>Balance of account <account> is above, allowed limit of server !"
 
   admin:
     config_reload: "<prefix> <green>コンフィグは正常に読み込まれました。"

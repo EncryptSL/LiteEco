@@ -52,6 +52,8 @@ messages:
     player_is_null: "<prefix> <red>Jméno hráče musí být vyplněno [!]"
     self_pay: "<prefix> <red>Nemůžeš sám sobě poslat peníze [!]"
     convert_fail: "<prefix> <red>Něco se pokazilo během konvertování, podívej se do konzole [!]"
+    amount_above_limit: "<prefix> <red>Částka přesahuje, povolený limit serverem !"
+    balance_above_limit: "<prefix> <red>Stav účtu <account> přesahuje, povolený limit serverem !"
 
   # Admin commands
   admin:

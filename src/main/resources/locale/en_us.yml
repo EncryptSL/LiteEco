@@ -52,6 +52,8 @@ messages:
     player_is_null: "<prefix> <red>Please provide a player name [!]"
     self_pay: "<prefix> <red>You cannot send money to yourself [!]"
     convert_fail: "<prefix> <red>Something broke during convert look into console [!]"
+    amount_above_limit: "<prefix> <red>Amount is above, allowed limit of server !"
+    balance_above_limit: "<prefix> <red>Balance of account <account> is above, allowed limit of server !"
 
 
   # Admin commands
