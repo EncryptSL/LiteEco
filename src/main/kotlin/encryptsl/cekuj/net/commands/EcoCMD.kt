@@ -6,17 +6,11 @@ import cloud.commandframework.annotations.CommandMethod
 import cloud.commandframework.annotations.CommandPermission
 import cloud.commandframework.annotations.specifier.Range
 import encryptsl.cekuj.net.LiteEco
-import encryptsl.cekuj.net.api.enums.CheckLevel
-import encryptsl.cekuj.net.api.enums.LangKey
-import encryptsl.cekuj.net.api.enums.MigrationKey
-import encryptsl.cekuj.net.api.enums.PurgeKey
+import encryptsl.cekuj.net.api.enums.*
 import encryptsl.cekuj.net.api.events.admin.*
 import encryptsl.cekuj.net.api.objects.ModernText
 import encryptsl.cekuj.net.extensions.positionIndexed
-import encryptsl.cekuj.net.utils.Helper
-import encryptsl.cekuj.net.utils.MigrationData
-import encryptsl.cekuj.net.utils.MigrationTool
-import encryptsl.cekuj.net.utils.StringGenerator
+import encryptsl.cekuj.net.utils.*
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.OfflinePlayer
@@ -28,7 +22,9 @@ import kotlin.system.measureTimeMillis
 @Suppress("UNUSED")
 @CommandDescription("Provided plugin by LiteEco")
 class EcoCMD(private val liteEco: LiteEco) {
+
     private val helper: Helper = Helper(liteEco)
+    private val convertEconomy: ConvertEconomy = ConvertEconomy(liteEco)
 
     @CommandMethod("eco help")
     @CommandPermission("lite.eco.admin.help")
@@ -38,17 +34,19 @@ class EcoCMD(private val liteEco: LiteEco) {
         }
     }
 
-    @CommandMethod("eco add <player> <amount>")
+    @CommandMethod("eco add <player> <amount> [silent]")
     @CommandPermission("lite.eco.admin.add")
     fun onAddMoney(
         commandSender: CommandSender,
         @Argument(value = "player", suggestions = "players") offlinePlayer: OfflinePlayer,
-        @Argument(value = "amount") @Range(min = "1.00", max = "") amountStr: String
+        @Argument(value = "amount") @Range(min = "1.00", max = "") amountStr: String,
+        @Argument(value = "silent") silent: String?
     ) {
         val amount = helper.validateAmount(amountStr, commandSender) ?: return
+        val s = silent?.contains("-s") ?: false
 
         liteEco.server.scheduler.runTask(liteEco) { ->
-            liteEco.pluginManager.callEvent(EconomyMoneyDepositEvent(commandSender, offlinePlayer, amount))
+            liteEco.pluginManager.callEvent(EconomyMoneyDepositEvent(commandSender, offlinePlayer, amount, s))
         }
     }
 
@@ -208,6 +206,31 @@ class EcoCMD(private val liteEco: LiteEco) {
                 Placeholder.parsed("type", migrationKey.name)
             )
         ))
+    }
+
+    @CommandMethod("eco convert <economy>")
+    @CommandPermission("lite.eco.admin.convert")
+    fun onEconomyConvert(commandSender: CommandSender, @Argument("economy", suggestions = "economies") economy: Economies) {
+        try {
+            when (economy) {
+                Economies.EssentialsX -> {
+                    convertEconomy.convertEssentialsXEconomy()
+                }
+            }
+            val (converted, balances) = convertEconomy.getResult()
+            commandSender.sendMessage(ModernText.miniModernText(
+                liteEco.locale.getMessage("messages.admin.convert_success"),
+                TagResolver.resolver(
+                    Placeholder.parsed("economy", economy.name),
+                    Placeholder.parsed("converted", converted.toString()),
+                    Placeholder.parsed("balances", balances.toString())
+                )
+            ))
+            convertEconomy.convertRefresh()
+        } catch (e : Exception) {
+            liteEco.logger.info(e.message ?: e.localizedMessage)
+            commandSender.sendMessage(ModernText.miniModernText(liteEco.locale.getMessage("messages.error.convert_fail")))
+        }
     }
 
     @CommandMethod("eco debug create accounts <amount>")

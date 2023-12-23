@@ -7,7 +7,7 @@ import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 
 @Suppress("UNUSED")
-class EconomyMoneyDepositEvent(val commandSender: CommandSender, val offlinePlayer: OfflinePlayer, val money: Double): Event(), Cancellable {
+class EconomyMoneyDepositEvent(val commandSender: CommandSender, val offlinePlayer: OfflinePlayer, val money: Double, val silent: Boolean): Event(), Cancellable {
 
     private var isCancelled: Boolean = false
 

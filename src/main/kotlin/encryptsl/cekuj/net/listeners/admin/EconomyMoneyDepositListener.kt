@@ -17,6 +17,7 @@ class EconomyMoneyDepositListener(private val liteEco: LiteEco) : Listener {
         val sender: CommandSender = event.commandSender
         val target: OfflinePlayer = event.offlinePlayer
         val money: Double = event.money
+        val silent: Boolean = event.silent
 
         if (!liteEco.api.hasAccount(target)) {
             sender.sendMessage(ModernText.miniModernText(liteEco.locale.getMessage("messages.error.account_not_exist"),
@@ -38,6 +39,14 @@ class EconomyMoneyDepositListener(private val liteEco: LiteEco) : Listener {
             TagResolver.resolver(Placeholder.parsed("target", target.name.toString()), Placeholder.parsed("money", liteEco.api.fullFormatting(money)))
         ))
         if (target.isOnline && liteEco.config.getBoolean("messages.target.notify_add")) {
+            if (silent) {
+                target.player?.sendMessage(ModernText.miniModernText(
+                    liteEco.locale.getMessage("messages.target.add_money_silent"),
+                    Placeholder.parsed("money", liteEco.api.fullFormatting(money))
+                ))
+                return
+            }
+
             target.player?.sendMessage(
                 ModernText.miniModernText(liteEco.locale.getMessage("messages.target.add_money"),
                 TagResolver.resolver(
