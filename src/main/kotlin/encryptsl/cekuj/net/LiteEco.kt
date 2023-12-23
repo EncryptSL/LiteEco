@@ -10,6 +10,7 @@ import cloud.commandframework.paper.PaperCommandManager
 import encryptsl.cekuj.net.api.ConfigAPI
 import encryptsl.cekuj.net.api.UpdateNotifier
 import encryptsl.cekuj.net.api.economy.LiteEcoEconomyAPI
+import encryptsl.cekuj.net.api.enums.Economies
 import encryptsl.cekuj.net.api.enums.LangKey
 import encryptsl.cekuj.net.api.enums.MigrationKey
 import encryptsl.cekuj.net.api.enums.PurgeKey
@@ -33,7 +34,7 @@ import kotlin.system.measureTimeMillis
 class LiteEco : JavaPlugin() {
     companion object {
         const val CONFIG_VERSION = "1.2.1"
-        const val LANG_VERSION = "2.0.0"
+        const val LANG_VERSION = "2.0.1"
         const val PAPI_VERSION = "2.0.5"
     }
 
@@ -164,6 +165,9 @@ class LiteEco : JavaPlugin() {
                     p.name?.startsWith(input) ?: false
                 }
                 .mapNotNull { it.name }
+        }
+        commandManager.parserRegistry().registerSuggestionProvider("economies") {_, _ ->
+            Economies.entries.map { key -> key.name }
         }
         commandManager.parserRegistry().registerSuggestionProvider("langKeys") { _, _ ->
             LangKey.entries.map { key -> key.name }.toList()
