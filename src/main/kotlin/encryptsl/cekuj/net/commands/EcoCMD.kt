@@ -105,16 +105,20 @@ class EcoCMD(private val liteEco: LiteEco) {
     fun onRemoveMoney(
         commandSender: CommandSender,
         @Argument(value = "player", suggestions = "players") offlinePlayer: OfflinePlayer,
-        @Argument(value = "amount") @Range(min = "1.00", max = "") amountStr: String
+        @Argument(value = "amount") @Range(min = "1.00", max = "") amountStr: String,
+        @Argument(value = "silent") silent: String?
     ) {
         val amount = helper.validateAmount(amountStr, commandSender) ?: return
+
+        val s = silent?.contains("-s") ?: false
 
         liteEco.server.scheduler.runTask(liteEco) { ->
             liteEco.pluginManager.callEvent(
                 EconomyMoneyWithdrawEvent(
                     commandSender,
                     offlinePlayer,
-                    amount
+                    amount,
+                    s
                 )
             )
         }
