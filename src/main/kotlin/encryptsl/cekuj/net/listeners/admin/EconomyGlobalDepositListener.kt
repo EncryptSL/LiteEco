@@ -18,7 +18,11 @@ class EconomyGlobalDepositListener(private val liteEco: LiteEco) : Listener {
         val money = event.money
         val offlinePlayers = Bukkit.getOfflinePlayers()
 
-        offlinePlayers.filter { p -> liteEco.api.hasAccount(p) }.forEach { a ->
+        if (liteEco.api.getCheckBalanceLimit(money) || !sender.hasPermission("lite.eco.admin.bypass.limit"))
+            return sender.sendMessage(ModernText.miniModernText(liteEco.locale.getMessage("messages.error.amount_above_limit")))
+
+        //TODO: I don't know now how solve issue with not checking balance, only one way is add other same function with checking sender permission.
+        offlinePlayers.filter { p -> liteEco.api.hasAccount(p) && !liteEco.api.getCheckBalanceLimit(p, money) }.forEach { a ->
             liteEco.api.depositMoney(a, money)
         }
 

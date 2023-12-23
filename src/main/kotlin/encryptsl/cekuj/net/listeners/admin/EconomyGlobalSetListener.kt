@@ -17,6 +17,9 @@ class EconomyGlobalSetListener(private val liteEco: LiteEco) : Listener {
         val money = event.money
         val offlinePlayers = Bukkit.getOfflinePlayers()
 
+        if (liteEco.api.getCheckBalanceLimit(money) || !sender.hasPermission("lite.eco.admin.bypass.limit"))
+            return sender.sendMessage(ModernText.miniModernText(liteEco.locale.getMessage("messages.error.amount_above_limit")))
+
         offlinePlayers.filter { a -> liteEco.api.hasAccount(a) }.forEach { offlinePlayer ->
             liteEco.api.setMoney(offlinePlayer, money)
         }

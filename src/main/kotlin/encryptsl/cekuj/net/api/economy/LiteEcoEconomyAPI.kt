@@ -54,6 +54,14 @@ class LiteEcoEconomyAPI(val plugin: Plugin) : LiteEconomyAPIProvider {
             preparedStatements.getBalance(player.uniqueId)
     }
 
+    override fun getCheckBalanceLimit(amount: Double): Boolean {
+        return (amount > plugin.config.getInt("economy.balance_limit")) && plugin.config.getBoolean("economy.balance_limit_check")
+    }
+
+    override fun getCheckBalanceLimit(player: OfflinePlayer, amount: Double): Boolean {
+        return ((getBalance(player) + amount) > plugin.config.getInt("economy.balance_limit")) && plugin.config.getBoolean("economy.balance_limit_check")
+    }
+
     override fun depositMoney(player: OfflinePlayer, amount: Double) {
         if (playerAccount.isPlayerOnline(player.uniqueId)) {
             cacheAccount(player, getBalance(player).plus(amount))

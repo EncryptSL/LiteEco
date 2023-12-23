@@ -72,7 +72,7 @@ class AdaptiveEconomyVaultAPI(private val liteEco: LiteEco) : DeprecatedEconomy(
     }
 
     override fun depositPlayer(player: OfflinePlayer?, amount: Double): EconomyResponse {
-        if (player == null || !hasAccount(player) || amount.isApproachingZero()) {
+        if (player == null || !hasAccount(player) || amount.isApproachingZero() || liteEco.api.getCheckBalanceLimit(player, amount)) {
             return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.FAILURE, null)
         }
 

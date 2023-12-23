@@ -17,15 +17,19 @@ class PlayerEconomyPayListener(private val liteEco: LiteEco) : Listener {
         val target: OfflinePlayer = event.target
         val money: Double = event.money
 
-        if (!liteEco.api.hasAccount(target)) {
-            sender.sendMessage(ModernText.miniModernText(liteEco.locale.getMessage("messages.error.account_not_exist"),
+        if (!liteEco.api.hasAccount(target))
+            return sender.sendMessage(ModernText.miniModernText(liteEco.locale.getMessage("messages.error.account_not_exist"),
                 TagResolver.resolver(Placeholder.parsed("account", target.name.toString()))))
-            return
-        }
-        if (!liteEco.api.has(sender, money)) {
-            sender.sendMessage(ModernText.miniModernText(liteEco.locale.getMessage("messages.error.insufficient_funds")))
-            return
-        }
+
+        if (!liteEco.api.has(sender, money))
+            return sender.sendMessage(ModernText.miniModernText(liteEco.locale.getMessage("messages.error.insufficient_funds")))
+
+        if (liteEco.api.getCheckBalanceLimit(target, money))
+            return sender.sendMessage(ModernText.miniModernText(
+                liteEco.locale.getMessage("messages.error.balance_above_limit"),
+                Placeholder.parsed("account", target.name.toString())
+            ))
+
         liteEco.api.withDrawMoney(sender, money)
         liteEco.api.depositMoney(target, money)
         liteEco.countTransactions["transactions"] = liteEco.countTransactions.getOrDefault("transactions", 0) + 1

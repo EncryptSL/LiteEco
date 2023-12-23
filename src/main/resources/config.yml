@@ -15,6 +15,10 @@ economy:
   currency_name: LE
   # This amount is granted to players who don't have an existing account in the database.
   starting_balance: 30
+  # This amount is checked when player is above allowed limit
+  balance_limit: 1000000
+  # Enabled or disable balance limit, disabled check mean fully for paid amounts by player, given/set by admins.
+  balance_limit_check: true
   # Convert large currency values into a more compact format.
   compact_display: false
 

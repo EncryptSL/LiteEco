@@ -57,6 +57,22 @@ interface LiteEconomyAPIProvider {
     fun getBalance(player: OfflinePlayer): Double
 
     /**
+     * Get check limit of player balance.
+     * @param amount is Double
+     * @return Boolean
+     * @see OfflinePlayer
+     */
+    fun getCheckBalanceLimit(amount: Double): Boolean
+
+    /**
+     * Get check limit of player balance.
+     * @param player is OfflinePlayer
+     * @return Boolean
+     * @see OfflinePlayer
+     */
+    fun getCheckBalanceLimit(player: OfflinePlayer, amount: Double): Boolean
+
+    /**
      * Deposit money to player account
      * @param player is OfflinePlayer
      * @param amount is amount added to player account

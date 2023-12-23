@@ -18,12 +18,11 @@ class EconomyMoneySetListener(private val liteEco: LiteEco) : Listener {
         val target: OfflinePlayer = event.offlinePlayer
         val money: Double = event.money
 
-        if (!liteEco.api.hasAccount(target)) {
-            sender.sendMessage(
-                ModernText.miniModernText(liteEco.locale.getMessage("messages.error.account_not_exist"),
-                TagResolver.resolver(Placeholder.parsed("account", target.name.toString()))))
-            return
-        }
+        if (!liteEco.api.hasAccount(target))
+            return sender.sendMessage(ModernText.miniModernText(liteEco.locale.getMessage("messages.error.account_not_exist"), TagResolver.resolver(Placeholder.parsed("account", target.name.toString()))))
+
+        if (liteEco.api.getCheckBalanceLimit(money) || !sender.hasPermission("lite.eco.admin.bypass.limit"))
+            return sender.sendMessage(ModernText.miniModernText(liteEco.locale.getMessage("messages.error.amount_above_limit")))
 
         liteEco.countTransactions["transactions"] = liteEco.countTransactions.getOrDefault("transactions", 0) + 1
 
