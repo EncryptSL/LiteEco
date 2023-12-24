@@ -100,7 +100,7 @@ class EcoCMD(private val liteEco: LiteEco) {
         }
     }
 
-    @CommandMethod("eco remove <player> <amount>")
+    @CommandMethod("eco remove <player> <amount> [<silent>]")
     @CommandPermission("lite.eco.admin.remove")
     fun onRemoveMoney(
         commandSender: CommandSender,
