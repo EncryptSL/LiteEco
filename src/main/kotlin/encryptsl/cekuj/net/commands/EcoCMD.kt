@@ -13,6 +13,7 @@ import encryptsl.cekuj.net.extensions.positionIndexed
 import encryptsl.cekuj.net.utils.*
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
+import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import java.util.*
@@ -191,7 +192,7 @@ class EcoCMD(private val liteEco: LiteEco) {
     @CommandPermission("lite.eco.admin.migration")
     fun onMigration(commandSender: CommandSender, @Argument(value = "argument", suggestions = "migrationKeys") migrationKey: MigrationKey) {
         val migrationTool = MigrationTool(liteEco)
-        val output = liteEco.api.getTopBalance().toList().positionIndexed { index, k -> MigrationData(index, k.first, k.second) }
+        val output = liteEco.api.getTopBalance().toList().positionIndexed { index, k -> MigrationData(index, Bukkit.getOfflinePlayer(k.first).name.toString(), k.first, k.second) }
 
         val result = when(migrationKey) {
             MigrationKey.CSV -> migrationTool.migrateToCSV(output, "economy_migration")

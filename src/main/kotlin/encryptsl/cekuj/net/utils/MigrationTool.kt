@@ -16,9 +16,9 @@ class MigrationTool(private val liteEco: LiteEco) {
         return try {
             file.parentFile.mkdirs()
             PrintWriter(FileWriter(file)).use { writer ->
-                writer.println("id,uuid,money")
+                writer.println("id,username,uuid,money")
                 data.forEach {
-                    writer.println("${it.id},${it.uuid},${it.money}")
+                    writer.println("${it.id},${it.username},${it.uuid},${it.money}")
                 }
             }
             true
@@ -36,11 +36,11 @@ class MigrationTool(private val liteEco: LiteEco) {
             file.parentFile.mkdirs()
             PrintWriter(FileWriter(file)).use { writer ->
                 writer.println("DROP TABLE IF EXISTS lite_eco;")
-                writer.println("CREATE TABLE lite_eco (id INT, uuid VARCHAR(36), money DOUBLE);")
+                writer.println("CREATE TABLE lite_eco (id INT, username, uuid VARCHAR(36), money DOUBLE);")
                 val insertStatements = data.joinToString {
-                    "\n(${it.id}, '${it.uuid}', ${it.money})"
+                    "\n(${it.id}, '${it.username}', '${it.uuid}', ${it.money})"
                 }
-                writer.println("INSERT INTO lite_eco (id, uuid, money) VALUES $insertStatements;")
+                writer.println("INSERT INTO lite_eco (id, username, uuid, money) VALUES $insertStatements;")
             }
             true
         } catch (e: IOException) {
@@ -56,4 +56,4 @@ class MigrationTool(private val liteEco: LiteEco) {
     }
 }
 
-data class MigrationData(val id: Int, val uuid: String, val money: Double)
+data class MigrationData(val id: Int, val username: String, val uuid: String, val money: Double)
