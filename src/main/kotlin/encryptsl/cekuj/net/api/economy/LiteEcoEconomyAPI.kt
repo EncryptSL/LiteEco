@@ -87,6 +87,9 @@ class LiteEcoEconomyAPI(val plugin: Plugin) : LiteEconomyAPIProvider {
     }
 
     override fun syncAccount(offlinePlayer: OfflinePlayer) {
+        if (getCheckBalanceLimit(getBalance(offlinePlayer)) && offlinePlayer.player?.hasPermission("lite.eco.admin.bypass") != true)
+            return playerAccount.syncAccount(offlinePlayer.uniqueId, 1_000_000.00)
+
         playerAccount.syncAccount(offlinePlayer.uniqueId)
     }
 

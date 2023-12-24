@@ -4,7 +4,7 @@ import java.util.*
 
 interface AccountAPI {
     fun cacheAccount(uuid: UUID, value: Double)
-
+    fun syncAccount(uuid: UUID, value: Double)
     fun syncAccount(uuid: UUID)
 
     fun syncAccounts()

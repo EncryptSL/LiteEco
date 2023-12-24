@@ -28,6 +28,17 @@ class PlayerAccount(val plugin: Plugin) : AccountAPI {
         return BalanceCache.cache.getOrDefault(uuid, 0.0)
     }
 
+    override fun syncAccount(uuid: UUID, value: Double) {
+        runCatching {
+            preparedStatements.setMoney(uuid, value)
+        }.onSuccess {
+            debugLogger.debug(Level.INFO,"Account $uuid was synced with database  !")
+            removeAccount(uuid)
+        }.onFailure {
+            debugLogger.debug(Level.SEVERE,it.message ?: it.localizedMessage)
+        }
+    }
+
     override fun syncAccount(uuid: UUID) {
         runCatching {
             preparedStatements.setMoney(uuid, getBalance(uuid))
@@ -42,7 +53,7 @@ class PlayerAccount(val plugin: Plugin) : AccountAPI {
     override fun syncAccounts() {
         runCatching {
             BalanceCache.cache.toList().forEach { a ->
-                preparedStatements.setMoney(a.first, a.second)
+                syncAccount(a.first, a.second)
             }
         }.onSuccess {
             debugLogger.debug(Level.INFO,"Accounts are synced with database !")
