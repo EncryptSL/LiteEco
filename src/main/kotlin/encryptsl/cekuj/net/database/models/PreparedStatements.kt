@@ -30,7 +30,7 @@ class PreparedStatements : DatabaseSQLProvider {
     }
 
     override fun getExistPlayerAccount(uuid: UUID): Boolean = transaction {
-        !Account.select(Account.uuid eq uuid.toString()).empty()
+        !Account.select(Account.uuid).where(Account.uuid eq uuid.toString()).empty()
     }
 
     override fun getTopBalance(top: Int): MutableMap<String, Double> = transaction {
@@ -46,7 +46,7 @@ class PreparedStatements : DatabaseSQLProvider {
     }
 
     override fun getBalance(uuid: UUID): Double = transaction {
-        Account.select(Account.uuid eq uuid.toString()).first()[Account.money]
+        Account.select(Account.uuid, Account.money).where(Account.uuid eq uuid.toString()).first()[Account.money]
     }
 
     override fun depositMoney(uuid: UUID, money: Double) {
