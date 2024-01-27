@@ -1,7 +1,7 @@
 package encryptsl.cekuj.net.commands
 
-import cloud.commandframework.annotations.*
-import cloud.commandframework.annotations.specifier.Range
+import org.incendo.cloud.annotation.specifier.Range
+import org.incendo.cloud.annotations.*
 import encryptsl.cekuj.net.LiteEco
 import encryptsl.cekuj.net.api.Paginator
 import encryptsl.cekuj.net.api.events.PlayerEconomyPayEvent
@@ -21,22 +21,22 @@ import java.util.*
 class MoneyCMD(private val liteEco: LiteEco) {
     private val helper: Helper = Helper(liteEco)
 
-    @CommandMethod("money help")
-    @CommandPermission("lite.eco.help")
+    @Command("money help")
+    @Permission("lite.eco.help")
     fun onHelp(commandSender: CommandSender) {
         liteEco.locale.getList("messages.help")?.forEach { s ->
             commandSender.sendMessage(ModernText.miniModernText(s.toString()))
         }
     }
 
-    @CommandMethod("bal|balance [player]")
-    @CommandPermission("lite.eco.balance")
+    @Command("bal|balance [player]")
+    @Permission("lite.eco.balance")
     fun onBalanceProxy(commandSender: CommandSender, @Argument(value = "player", suggestions = "players") offlinePlayer: OfflinePlayer?) {
         onBalance(commandSender, offlinePlayer)
     }
 
-    @CommandMethod("money bal [player]")
-    @CommandPermission("lite.eco.balance")
+    @Command("money bal [player]")
+    @Permission("lite.eco.balance")
     fun onBalance(commandSender: CommandSender, @Argument(value = "player", suggestions = "players") offlinePlayer: OfflinePlayer?) {
         if (commandSender is Player) {
             if (offlinePlayer == null) {
@@ -88,8 +88,8 @@ class MoneyCMD(private val liteEco: LiteEco) {
     }
 
     @ProxiedBy("baltop")
-    @CommandMethod("money top [page]")
-    @CommandPermission("lite.eco.top")
+    @Command("money top [page]")
+    @Permission("lite.eco.top")
     fun onTopBalance(commandSender: CommandSender, @Argument(value = "page") @Range(min = "1", max="") page: Int?) {
         val p = page ?: 1
 
@@ -127,8 +127,8 @@ class MoneyCMD(private val liteEco: LiteEco) {
     }
 
     @ProxiedBy("pay")
-    @CommandMethod("money pay <player> <amount>")
-    @CommandPermission("lite.eco.pay")
+    @Command("money pay <player> <amount>")
+    @Permission("lite.eco.pay")
     fun onPayMoney(
         commandSender: CommandSender,
         @Argument(value = "player", suggestions = "players") offlinePlayer: OfflinePlayer,

@@ -1,10 +1,11 @@
 package encryptsl.cekuj.net.commands
 
-import cloud.commandframework.annotations.Argument
-import cloud.commandframework.annotations.CommandDescription
-import cloud.commandframework.annotations.CommandMethod
-import cloud.commandframework.annotations.CommandPermission
-import cloud.commandframework.annotations.specifier.Range
+import org.incendo.cloud.annotation.specifier.Range
+import org.incendo.cloud.annotations.Argument
+import org.incendo.cloud.annotations.Command
+import org.incendo.cloud.annotations.CommandDescription
+import org.incendo.cloud.annotations.Flag
+import org.incendo.cloud.annotations.Permission
 import encryptsl.cekuj.net.LiteEco
 import encryptsl.cekuj.net.api.enums.*
 import encryptsl.cekuj.net.api.events.admin.*
@@ -27,32 +28,31 @@ class EcoCMD(private val liteEco: LiteEco) {
     private val helper: Helper = Helper(liteEco)
     private val convertEconomy: ConvertEconomy = ConvertEconomy(liteEco)
 
-    @CommandMethod("eco help")
-    @CommandPermission("lite.eco.admin.help")
+    @Command("eco help")
+    @Permission("lite.eco.admin.help")
     fun adminHelp(commandSender: CommandSender) {
         liteEco.locale.getList("messages.admin-help")?.forEach { s ->
             commandSender.sendMessage(ModernText.miniModernText(s.toString()))
         }
     }
 
-    @CommandMethod("eco add <player> <amount> [silent]")
-    @CommandPermission("lite.eco.admin.add")
+    @Command("eco add <player> <amount> [silent]")
+    @Permission("lite.eco.admin.add")
     fun onAddMoney(
         commandSender: CommandSender,
         @Argument(value = "player", suggestions = "players") offlinePlayer: OfflinePlayer,
         @Argument(value = "amount") @Range(min = "1.00", max = "") amountStr: String,
-        @Argument(value = "silent") silent: String?
+        @Flag(value = "-silent", aliases = ["-s"]) silent: Boolean
     ) {
         val amount = helper.validateAmount(amountStr, commandSender) ?: return
-        val s = silent?.contains("-s") ?: false
 
         liteEco.server.scheduler.runTask(liteEco) { ->
-            liteEco.pluginManager.callEvent(EconomyMoneyDepositEvent(commandSender, offlinePlayer, amount, s))
+            liteEco.pluginManager.callEvent(EconomyMoneyDepositEvent(commandSender, offlinePlayer, amount, silent))
         }
     }
 
-    @CommandMethod("eco gadd <amount>")
-    @CommandPermission("lite.eco.admin.gadd")
+    @Command("eco gadd <amount>")
+    @Permission("lite.eco.admin.gadd")
     fun onGlobalAddMoney(
         commandSender: CommandSender,
         @Argument("amount") @Range(min = "1.0", max = "") amountStr: String
@@ -66,8 +66,8 @@ class EcoCMD(private val liteEco: LiteEco) {
         }
     }
 
-    @CommandMethod("eco set <player> <amount>")
-    @CommandPermission("lite.eco.admin.set")
+    @Command("eco set <player> <amount>")
+    @Permission("lite.eco.admin.set")
     fun onSetBalance(
         commandSender: CommandSender,
         @Argument(value = "player", suggestions = "players") offlinePlayer: OfflinePlayer,
@@ -86,8 +86,8 @@ class EcoCMD(private val liteEco: LiteEco) {
         }
     }
 
-    @CommandMethod("eco gset <amount>")
-    @CommandPermission("lite.eco.admin.gset")
+    @Command("eco gset <amount>")
+    @Permission("lite.eco.admin.gset")
     fun onGlobalSetMoney(
         commandSender: CommandSender,
         @Argument("amount") @Range(min = "1.0", max = "") amountStr: String
@@ -101,17 +101,15 @@ class EcoCMD(private val liteEco: LiteEco) {
         }
     }
 
-    @CommandMethod("eco remove <player> <amount> [silent]")
-    @CommandPermission("lite.eco.admin.remove")
+    @Command("eco remove <player> <amount> [silent]")
+    @Permission("lite.eco.admin.remove")
     fun onRemoveMoney(
         commandSender: CommandSender,
         @Argument(value = "player", suggestions = "players") offlinePlayer: OfflinePlayer,
         @Argument(value = "amount") @Range(min = "1.00", max = "") amountStr: String,
-        @Argument(value = "silent") silent: String?
+        @Flag(value = "-silent", aliases = ["-s"]) silent: Boolean
     ) {
         val amount = helper.validateAmount(amountStr, commandSender) ?: return
-
-        val s = silent?.contains("-s") ?: false
 
         liteEco.server.scheduler.runTask(liteEco) { ->
             liteEco.pluginManager.callEvent(
@@ -119,14 +117,14 @@ class EcoCMD(private val liteEco: LiteEco) {
                     commandSender,
                     offlinePlayer,
                     amount,
-                    s
+                    silent
                 )
             )
         }
     }
 
-    @CommandMethod("eco gremove <amount>")
-    @CommandPermission("lite.eco.admin.gremove")
+    @Command("eco gremove <amount>")
+    @Permission("lite.eco.admin.gremove")
     fun onGlobalRemoveMoney(
         commandSender: CommandSender,
         @Argument("amount") @Range(min = "1.0", max = "") amountStr: String
@@ -140,8 +138,8 @@ class EcoCMD(private val liteEco: LiteEco) {
         }
     }
 
-    @CommandMethod("eco lang <isoKey>")
-    @CommandPermission("lite.eco.admin.lang")
+    @Command("eco lang <isoKey>")
+    @Permission("lite.eco.admin.lang")
     fun onLangSwitch(
         commandSender: CommandSender,
         @Argument(value = "isoKey", suggestions = "langKeys") isoKey: String
@@ -164,8 +162,8 @@ class EcoCMD(private val liteEco: LiteEco) {
         }
     }
 
-    @CommandMethod("eco purge <argument>")
-    @CommandPermission("lite.eco.admin.purge")
+    @Command("eco purge <argument>")
+    @Permission("lite.eco.admin.purge")
     fun onPurge(commandSender: CommandSender, @Argument(value = "argument", suggestions = "purgeKeys") purgeKey: PurgeKey)
     {
         @Suppress("REDUNDANT_ELSE_IN_WHEN")
@@ -188,8 +186,8 @@ class EcoCMD(private val liteEco: LiteEco) {
         }
     }
 
-    @CommandMethod("eco migration <argument>")
-    @CommandPermission("lite.eco.admin.migration")
+    @Command("eco migration <argument>")
+    @Permission("lite.eco.admin.migration")
     fun onMigration(commandSender: CommandSender, @Argument(value = "argument", suggestions = "migrationKeys") migrationKey: MigrationKey) {
         val migrationTool = MigrationTool(liteEco)
         val output = liteEco.api.getTopBalance().toList().positionIndexed { index, k -> MigrationData(index, Bukkit.getOfflinePlayer(k.first).name.toString(), k.first, k.second) }
@@ -213,8 +211,8 @@ class EcoCMD(private val liteEco: LiteEco) {
         ))
     }
 
-    @CommandMethod("eco convert <economy>")
-    @CommandPermission("lite.eco.admin.convert")
+    @Command("eco convert <economy>")
+    @Permission("lite.eco.admin.convert")
     fun onEconomyConvert(commandSender: CommandSender, @Argument("economy", suggestions = "economies") economy: Economies) {
         try {
             when (economy) {
@@ -238,8 +236,8 @@ class EcoCMD(private val liteEco: LiteEco) {
         }
     }
 
-    @CommandMethod("eco debug create accounts <amount>")
-    @CommandPermission("lite.eco.admin.debug.create.accounts")
+    @Command("eco debug create accounts <amount>")
+    @Permission("lite.eco.admin.debug.create.accounts")
     fun onDebugCreateAccounts(commandSender: CommandSender, @Argument("amount") @Range(min = "1", max = "100") amountStr: Int) {
 
         val randomName = StringGenerator()
@@ -254,8 +252,8 @@ class EcoCMD(private val liteEco: LiteEco) {
         commandSender.sendMessage("Into database was insterted $amountStr fake accounts in time $time ms")
     }
 
-    @CommandMethod("eco reload")
-    @CommandPermission("lite.eco.admin.reload")
+    @Command("eco reload")
+    @Permission("lite.eco.admin.reload")
     fun onReload(commandSender: CommandSender) {
         liteEco.reloadConfig()
         commandSender.sendMessage(ModernText.miniModernText(liteEco.locale.getMessage("messages.admin.config_reload")))

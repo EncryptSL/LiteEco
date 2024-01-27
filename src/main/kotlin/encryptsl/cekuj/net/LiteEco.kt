@@ -1,12 +1,11 @@
 package encryptsl.cekuj.net
 
-import cloud.commandframework.annotations.AnnotationParser
-import cloud.commandframework.arguments.parser.ParserParameters
-import cloud.commandframework.arguments.parser.StandardParameters
-import cloud.commandframework.bukkit.CloudBukkitCapabilities
-import cloud.commandframework.execution.AsynchronousCommandExecutionCoordinator
-import cloud.commandframework.meta.CommandMeta
-import cloud.commandframework.paper.PaperCommandManager
+import org.incendo.cloud.SenderMapper
+import org.incendo.cloud.annotations.AnnotationParser
+import org.incendo.cloud.bukkit.CloudBukkitCapabilities
+import org.incendo.cloud.execution.ExecutionCoordinator
+import org.incendo.cloud.paper.PaperCommandManager
+import org.incendo.cloud.suggestion.Suggestion
 import encryptsl.cekuj.net.api.ConfigAPI
 import encryptsl.cekuj.net.api.UpdateNotifier
 import encryptsl.cekuj.net.api.economy.LiteEcoEconomyAPI
@@ -28,7 +27,7 @@ import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.plugin.PluginManager
 import org.bukkit.plugin.java.JavaPlugin
-import java.util.function.Function
+import java.util.concurrent.CompletableFuture
 import kotlin.system.measureTimeMillis
 
 class LiteEco : JavaPlugin() {
@@ -140,19 +139,18 @@ class LiteEco : JavaPlugin() {
     }
 
     private fun createCommandManager(): PaperCommandManager<CommandSender> {
-        val executionCoordinatorFunction = AsynchronousCommandExecutionCoordinator.builder<CommandSender>().build()
-        val mapperFunction = Function.identity<CommandSender>()
+        val executionCoordinatorFunction = ExecutionCoordinator.builder<CommandSender>().build()
+        val mapperFunction = SenderMapper.identity<CommandSender>()
+
         val commandManager = PaperCommandManager(
             this,
             executionCoordinatorFunction,
-            mapperFunction,
             mapperFunction
         )
-        if (commandManager.hasCapability(CloudBukkitCapabilities.BRIGADIER)) {
+        if (commandManager.hasCapability(CloudBukkitCapabilities.NATIVE_BRIGADIER)) {
             commandManager.registerBrigadier()
-            commandManager.brigadierManager()?.setNativeNumberSuggestions(false)
-        }
-        if (commandManager.hasCapability(CloudBukkitCapabilities.ASYNCHRONOUS_COMPLETION)) {
+            commandManager.brigadierManager().setNativeNumberSuggestions(false)
+        } else if (commandManager.hasCapability(CloudBukkitCapabilities.ASYNCHRONOUS_COMPLETION)) {
             (commandManager as PaperCommandManager<*>).registerAsynchronousCompletions()
         }
         return commandManager
@@ -160,36 +158,27 @@ class LiteEco : JavaPlugin() {
 
     private fun registerSuggestionProviders(commandManager: PaperCommandManager<CommandSender>) {
         commandManager.parserRegistry().registerSuggestionProvider("players") { _, input ->
-            Bukkit.getOfflinePlayers().toList()
-                .filter { p ->
-                    p.name?.startsWith(input) ?: false
-                }
-                .mapNotNull { it.name }
+            CompletableFuture.completedFuture(Bukkit.getOfflinePlayers().filter { p -> p.name?.startsWith(input.input(), false) ?: false }.map { Suggestion.simple(it.name ?: it.uniqueId.toString()) })
         }
         commandManager.parserRegistry().registerSuggestionProvider("economies") {_, _ ->
-            Economies.entries.map { key -> key.name }
+            CompletableFuture.completedFuture(Economies.entries.map { Suggestion.simple(it.name) })
         }
         commandManager.parserRegistry().registerSuggestionProvider("langKeys") { _, _ ->
-            LangKey.entries.map { key -> key.name }.toList()
+            CompletableFuture.completedFuture(LangKey.entries.map { Suggestion.simple(it.name) })
         }
         commandManager.parserRegistry().registerSuggestionProvider("purgeKeys") { _, _ ->
-            PurgeKey.entries.map { key -> key.name }.toList()
+            CompletableFuture.completedFuture(PurgeKey.entries.map { Suggestion.simple(it.name) })
         }
         commandManager.parserRegistry().registerSuggestionProvider("migrationKeys") { _, _ ->
-            MigrationKey.entries.map { key -> key.name }.toList()
+            CompletableFuture.completedFuture(MigrationKey.entries.map { Suggestion.simple(it.name) })
         }
     }
 
     private fun createAnnotationParser(commandManager: PaperCommandManager<CommandSender>): AnnotationParser<CommandSender> {
-        val commandMetaFunction = Function<ParserParameters, CommandMeta> { p: ParserParameters ->
-            CommandMeta.simple() // Decorate commands with descriptions
-                .with(CommandMeta.DESCRIPTION, p[StandardParameters.DESCRIPTION, "No Description"])
-                .build()
-        }
-        return AnnotationParser(
+        val annotationParser: AnnotationParser<CommandSender> = AnnotationParser(
             commandManager,
-            CommandSender::class.java,
-            commandMetaFunction /* Mapper for command meta instances */
+            CommandSender::class.java
         )
+        return annotationParser
     }
 }

@@ -19,9 +19,6 @@ repositories {
         url = uri("https://repo.extendedclip.com/content/repositories/placeholderapi/")
     }
     maven {
-        url = uri("https://oss.sonatype.org/content/repositories/snapshots")
-    }
-    maven {
         url = uri("https://repo.codemc.io/repository/maven-public/")
     }
 }
@@ -46,8 +43,8 @@ dependencies {
     compileOnly("com.squareup.okhttp3:okhttp:4.12.0")
 
     implementation("org.bstats:bstats-bukkit:3.0.1")
-    implementation("cloud.commandframework:cloud-paper:1.8.3")
-    implementation("cloud.commandframework:cloud-annotations:1.8.3")
+    implementation("org.incendo:cloud-paper:2.0.0-beta.1")
+    implementation("org.incendo:cloud-annotations:2.0.0-beta.1")
 
     testImplementation(kotlin("test", "1.9.22"))
     testImplementation("com.zaxxer:HikariCP:5.1.0")
@@ -78,8 +75,8 @@ tasks {
 
     shadowJar {
         minimize {
-            relocate("org.bstats", "encryptsl.cekuj.net.api.bstats")
-            relocate("cloud.commandframework", "encryptsl.cekuj.net.cloud")
+            relocate("org.bstats", "com.github.encryptsl.metrics")
+            relocate("cloud.commandframework", "com.github.encryptsl.cloud-core")
         }
     }
 }
