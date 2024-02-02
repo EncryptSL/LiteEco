@@ -36,13 +36,13 @@ class EcoCMD(private val liteEco: LiteEco) {
         }
     }
 
-    @Command("eco add <player> <amount> [silent]")
+    @Command("eco add <player> <amount>")
     @Permission("lite.eco.admin.add")
     fun onAddMoney(
         commandSender: CommandSender,
         @Argument(value = "player", suggestions = "players") offlinePlayer: OfflinePlayer,
         @Argument(value = "amount") @Range(min = "1.00", max = "") amountStr: String,
-        @Flag(value = "-silent", aliases = ["-s"]) silent: Boolean
+        @Flag(value = "silent", aliases = ["s"]) silent: Boolean
     ) {
         val amount = helper.validateAmount(amountStr, commandSender) ?: return
 
@@ -101,13 +101,13 @@ class EcoCMD(private val liteEco: LiteEco) {
         }
     }
 
-    @Command("eco remove <player> <amount> [silent]")
+    @Command("eco remove <player> <amount>")
     @Permission("lite.eco.admin.remove")
     fun onRemoveMoney(
         commandSender: CommandSender,
         @Argument(value = "player", suggestions = "players") offlinePlayer: OfflinePlayer,
         @Argument(value = "amount") @Range(min = "1.00", max = "") amountStr: String,
-        @Flag(value = "-silent", aliases = ["-s"]) silent: Boolean
+        @Flag(value = "silent", aliases = ["s"]) silent: Boolean
     ) {
         val amount = helper.validateAmount(amountStr, commandSender) ?: return
 

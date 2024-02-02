@@ -157,8 +157,9 @@ class LiteEco : JavaPlugin() {
     }
 
     private fun registerSuggestionProviders(commandManager: PaperCommandManager<CommandSender>) {
-        commandManager.parserRegistry().registerSuggestionProvider("players") { _, input ->
-            CompletableFuture.completedFuture(Bukkit.getOfflinePlayers().filter { p -> p.name?.startsWith(input.input(), false) ?: false }.map { Suggestion.simple(it.name ?: it.uniqueId.toString()) })
+        commandManager.parserRegistry().registerSuggestionProvider("players") { _, _ ->
+            CompletableFuture.completedFuture(Bukkit.getOfflinePlayers()
+                .map { Suggestion.simple(it.name.toString()) })
         }
         commandManager.parserRegistry().registerSuggestionProvider("economies") {_, _ ->
             CompletableFuture.completedFuture(Economies.entries.map { Suggestion.simple(it.name) })
