@@ -43,8 +43,8 @@ dependencies {
     compileOnly("com.squareup.okhttp3:okhttp:4.12.0")
 
     implementation("org.bstats:bstats-bukkit:3.0.1")
-    implementation("org.incendo:cloud-paper:2.0.0-beta.1")
-    implementation("org.incendo:cloud-annotations:2.0.0-beta.1")
+    implementation("org.incendo:cloud-paper:2.0.0-beta.2")
+    implementation("org.incendo:cloud-annotations:2.0.0-beta.2")
 
     testImplementation(kotlin("test", "1.9.22"))
     testImplementation("com.zaxxer:HikariCP:5.1.0")
