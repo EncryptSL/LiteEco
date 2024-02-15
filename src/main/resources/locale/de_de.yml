@@ -1,0 +1,96 @@
+messages:
+  # Balance messages
+  balance:
+    format: "<prefix> <white>Dein Kontostand ist <green><money></green> [!]"
+    format_target: "<prefix> <white>Kontostand von <gold><target></gold> ist <green><money></green> [!]"
+    top_format: "<yellow><position># <gold><player></gold> <gray>- <green><money></green>"
+    top_header: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>BALTOP</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray> <red><page>/<max_page>"
+    top_footer: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>BALTOP</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray>"
+
+  # Self-transaction messages
+  self:
+    add_money: "<prefix> <white>Du hast <green><money></green> zu deinem Konto hinzugefügt."
+    withdraw_money: "<prefix> <white>Du hast <green><money></green> von deinem Konto entfernt."
+    set_money: "<prefix> <white>Du hast deinen Kontostand auf <green><money></green> gesetzt."
+
+  # Transaction messages for target
+  target:
+    add_money: "<prefix> <gold><sender></gold> <white>hat dir <green><money></green> überwiesen."
+    add_money_silent: "<gray>+ <green><money>"
+    withdraw_money: "<prefix> <gold><sender></gold> <white>hat <green><money></green> von deinem Konto entfernt."
+    withdraw_money_silent: "<gray>- <red><money>"
+    set_money: "<prefix> <gold><sender></gold> <white>hat deinen Kontostand auf <green><money></green> gesetzt."
+
+  # Transaction messages for sender
+  sender:
+    add_money: "<prefix> <white>Du hast <gold><target></gold> <green><money></green> überwiesen."
+    withdraw_money: "<prefix> <white>Du hast <green><money></green> von <gold><target></gold> entfernt."
+    set_money: "<prefix> <white>Du hast den Kontostand von <gold><target></gold> auf <green><money></green> gesetzt."
+
+  # Global actions messages (sent to the sender who made the global action)
+  global:
+    add_money: "<prefix> <white>Du hast <green><money></green> an alle Spieler gegeben."
+    withdraw_money: "<prefix> <white>Du hast <green><money></green> von allen Spielern entfernt."
+    set_money: "<prefix> <white>Du hast alle Kontostände auf <green><money></green> gesetzt."
+
+  # Broadcast messages (sent to all players after a global action)
+  broadcast:
+    add_money: "<prefix> <gold><sender></gold> <white>hat allen Spielern <green><money></green> hinzugefügt."
+    withdraw_money: "<prefix> <gold><sender></gold> <white>hat <green><money></green> von allen Spielern entfernt."
+    set_money: "<prefix> <gold><sender></gold> <white>hat alle Kontostände auf <green><money></green> gesetzt."
+
+  # Error messages
+  error:
+    account_not_exist: "<prefix> <red>Account <account> existiert nicht [!]"
+    format_amount: "<prefix> <red>Ungültiger Betrag. Verwende Gleitkommazahlen oder kompakte Darstellungen (z.B. 1K) [!]"
+    insufficient_funds: "<prefix> <red>Nicht genug Geld [!]"
+    maximum_page: "<red>Grenze der Seitenzahlen ist <max_page>"
+    negative_amount: "<prefix> <red>Negative Beträge sind nicht erlaubt. [!]"
+    migration_argument: "<prefix> <red>Dieses <argument> Argument ist nicht gültig oder nicht bereit für Produktion."
+    migration_failed: "<prefix> <red>Es gab ein Problem während der Migration. Bitte prüfe die Konsole für weitere Details."
+    purge_argument: "<prefix> <red>Dieses <argument> Argument ist nicht gültig oder nicht bereit für Produktion."
+    player_is_null: "<prefix> <red>Bitte gebe einen Spielernamen an [!]"
+    self_pay: "<prefix> <red>Du kannst dir nicht selbst Geld überweisen [!]"
+    convert_fail: "<prefix> <red>Irgendetwas ist bei der Konvertierung kaputt gegangen, prüfe die Konsole [!]"
+    amount_above_limit: "<prefix> <red>Betrag ist über dem Server-Limit [!]"
+    balance_above_limit: "<prefix> <red>Kontostand von <account> ist über dem Server-Limit [!]"
+
+
+  # Admin commands
+  admin:
+    config_reload: "<prefix> <green>Konfiguration erfolgreich neu geladen [!]"
+    translation_switch: "<prefix> <green>Übersetzung zu <locale> gewechselt."
+    translation_missing: "<prefix> <red>Übersetzung für <key> fehlt. Kontaktiere den Entwickler dieses Plugins."
+    purge_accounts: "<prefix> <green>Alle Spieler Accounts wurden gelöscht."
+    purge_null_accounts: "<prefix> <green>Alle Spieler Accounts mit Nullwerten wurden gelöscht."
+    purge_default_accounts: "<prefix> <green>Alle Spieler Accounts mit Standardwerten wurden gelöscht."
+    migration_success: "<prefix> <green>Migration von <type> war erfolgreich [!]"
+    convert_success: "<prefix> <green>Konvertierung von <converted>x Accounts und <balances> Kontoständen von <economy> zu LiteEco war erfolgreich!"
+
+  help:
+    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
+    - " "
+    - "<white>[+] <gray>/money help <white>-<#CFE7F0> Zeigt alle Befehle dieses Plugins"
+    - "<white>[+] <gray>/money top <#b37dc7>[page] <white>-<#CFE7F0> Zeigt die reichsten Spieler"
+    - "<white>[+] <gray>/money bal <yellow>[username] <white>-<#CFE7F0> Zeigt deinen Kontostand oder den eines anderen Spielers"
+    - "<white>[+] <gray>/money pay <yellow>[username] <#3EE84D><amount> <white>-<#CFE7F0> Überweist einem anderen Spieler Geld."
+    - " "
+    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
+
+  admin-help:
+    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix>  <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
+    - " "
+    - "<red>[★] <gray>/eco add <yellow>[username] <#3EE84D><amount> <white>-<#F39E9E> Fügt einem anderen Spieler Geld hinzu."
+    - "<red>[★] <gray>/eco set <yellow>[username] <#3EE84D><amount> <white>-<#F39E9E> Setzt den Kontostand eines anderen Spielers."
+    - "<red>[★] <gray>/eco remove <yellow>[username] <#3EE84D><amount> <white>-<#F39E9E> Entfernt Geld von einem anderen Spieler."
+    - "<red>[★] <gray>/eco gadd <#3EE84D><amount> <white>-<#F39E9E> Fügt allen Spielern Geld hinzu."
+    - "<red>[★] <gray>/eco gset <#3EE84D><amount> <white>-<#F39E9E> Setzt den Kontostand aller Spieler."
+    - "<red>[★] <gray>/eco gremove <#3EE84D><amount> <white>-<#F39E9E> Entfernt Geld von allen Spielern."
+    - "<red>[★] <gray>/eco lang <#b37dc7>[lang] <white>-<#F39E9E> Wechselt die Übersetzung von Nachrichten."
+    - "<red>[★] <gray>/eco purge <#b37dc7><argument> <white>-<#F39E9E> Löscht Daten."
+    - "<red>[★] <gray>/eco migration <#b37dc7><argument> <white>-<#F39E9E> Migriert Datenbanken in ein anderes Format."
+    - "<red>[★] <gray>/eco reload <white>-<#F39E9E> Lädt die Konfiguration neu."
+    - " "
+    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
+
+version: 2.0.0
