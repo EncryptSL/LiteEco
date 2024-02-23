@@ -49,8 +49,8 @@ dependencies {
     testImplementation(kotlin("test", "1.9.22"))
     testImplementation("com.zaxxer:HikariCP:5.1.0")
     testImplementation("org.xerial:sqlite-jdbc:3.42.0.0")
-    testImplementation("org.jetbrains.exposed:exposed-core:0.46.0")
-    testImplementation("org.jetbrains.exposed:exposed-jdbc:0.46.0")
+    testImplementation("org.jetbrains.exposed:exposed-core:0.47.0")
+    testImplementation("org.jetbrains.exposed:exposed-jdbc:0.47.0")
 }
 
 tasks {
@@ -76,7 +76,7 @@ tasks {
     shadowJar {
         minimize {
             relocate("org.bstats", "com.github.encryptsl.metrics")
-            relocate("cloud.commandframework", "com.github.encryptsl.cloud-core")
+            relocate("org.incendo", "com.github.encryptsl.cloud-core")
         }
     }
 }
