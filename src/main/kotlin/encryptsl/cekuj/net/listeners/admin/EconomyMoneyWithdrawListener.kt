@@ -31,7 +31,7 @@ class EconomyMoneyWithdrawListener(private val liteEco: LiteEco) : Listener {
             return
         }
 
-        liteEco.countTransactions["transactions"] = liteEco.countTransactions.getOrDefault("transactions", 0) + 1
+        liteEco.increaseTransactions(1)
         liteEco.api.withDrawMoney(target, money)
         if (sender.name == target.name) {
             sender.sendMessage(

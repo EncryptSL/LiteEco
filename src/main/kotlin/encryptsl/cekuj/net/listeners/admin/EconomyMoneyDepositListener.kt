@@ -36,7 +36,7 @@ class EconomyMoneyDepositListener(private val liteEco: LiteEco) : Listener {
                 )
             )
 
-        liteEco.countTransactions["transactions"] = liteEco.countTransactions.getOrDefault("transactions", 0) + 1
+        liteEco.increaseTransactions(1)
 
         liteEco.api.depositMoney(target, money)
         if (sender.name == target.name && !target.isOp) {

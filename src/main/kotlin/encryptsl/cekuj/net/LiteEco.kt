@@ -79,6 +79,10 @@ class LiteEco : JavaPlugin() {
         logger.info("Plugin is disabled")
     }
 
+    fun increaseTransactions(value: Int) {
+        countTransactions["transactions"] = countTransactions.getOrDefault("transactions", 0) + value
+    }
+
     private fun blockPlugins() {
         hookManager.blockPlugin("Treasury")
         hookManager.blockPlugin("Towny")

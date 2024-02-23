@@ -24,7 +24,7 @@ class EconomyGlobalSetListener(private val liteEco: LiteEco) : Listener {
             liteEco.api.setMoney(offlinePlayer, money)
         }
 
-        liteEco.countTransactions["transactions"] = liteEco.countTransactions.getOrDefault("transactions", 0) + offlinePlayers.size
+        liteEco.increaseTransactions(offlinePlayers.size)
 
         sender.sendMessage(
             ModernText.miniModernText(liteEco.locale.getMessage("messages.global.set_money"),

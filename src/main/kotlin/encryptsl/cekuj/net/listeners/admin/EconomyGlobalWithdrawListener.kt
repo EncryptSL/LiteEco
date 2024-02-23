@@ -21,7 +21,7 @@ class EconomyGlobalWithdrawListener(private val liteEco: LiteEco) : Listener {
             liteEco.api.withDrawMoney(a, money)
         }
 
-        liteEco.countTransactions["transactions"] = liteEco.countTransactions.getOrDefault("transactions", 0) + 1
+        liteEco.increaseTransactions(offlinePlayers.size)
 
         sender.sendMessage(
             ModernText.miniModernText(liteEco.locale.getMessage("messages.global.withdraw_money"),
