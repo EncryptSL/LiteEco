@@ -11,7 +11,7 @@ class ConvertEconomy(private val liteEco: LiteEco) {
     private var balances = 0.0
 
     fun convertEssentialsXEconomy() {
-        Bukkit.getOfflinePlayers().forEach { p ->
+        for (p in Bukkit.getOfflinePlayers()) {
             val playerFile =  File("plugins/Essentials/userdata/", "${p.uniqueId}.yml")
             if (playerFile.exists()) {
                 val essentialsXConfig = YamlConfiguration.loadConfiguration(playerFile)
