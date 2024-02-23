@@ -32,7 +32,7 @@ class PlayerEconomyPayListener(private val liteEco: LiteEco) : Listener {
 
         liteEco.api.withDrawMoney(sender, money)
         liteEco.api.depositMoney(target, money)
-        liteEco.countTransactions["transactions"] = liteEco.countTransactions.getOrDefault("transactions", 0) + 1
+        liteEco.increaseTransactions(1)
         sender.sendMessage(
             ModernText.miniModernText(
                 liteEco.locale.getMessage("messages.sender.add_money"),
