@@ -52,8 +52,8 @@ class PlayerAccount(val plugin: Plugin) : AccountAPI {
 
     override fun syncAccounts() {
         runCatching {
-            BalanceCache.cache.toList().forEach { a ->
-                syncAccount(a.first, a.second)
+            for (c in BalanceCache.cache) {
+                syncAccount(c.key, c.value)
             }
         }.onSuccess {
             debugLogger.debug(Level.INFO,"Accounts are synced with database !")
