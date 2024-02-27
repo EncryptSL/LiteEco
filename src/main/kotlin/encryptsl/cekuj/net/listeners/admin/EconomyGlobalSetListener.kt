@@ -20,8 +20,9 @@ class EconomyGlobalSetListener(private val liteEco: LiteEco) : Listener {
         if (liteEco.api.getCheckBalanceLimit(money) && !sender.hasPermission("lite.eco.admin.bypass.limit"))
             return sender.sendMessage(ModernText.miniModernText(liteEco.locale.getMessage("messages.error.amount_above_limit")))
 
-        offlinePlayers.filter { a -> liteEco.api.hasAccount(a) }.forEach { offlinePlayer ->
-            liteEco.api.setMoney(offlinePlayer, money)
+        for (p in offlinePlayers) {
+            if (!liteEco.api.hasAccount(p)) { continue }
+            liteEco.api.setMoney(p, money)
         }
 
         liteEco.increaseTransactions(offlinePlayers.size)
