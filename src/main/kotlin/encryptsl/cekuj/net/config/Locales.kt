@@ -1,13 +1,13 @@
 package encryptsl.cekuj.net.config
 
 import encryptsl.cekuj.net.LiteEco
-import encryptsl.cekuj.net.api.enums.LangKey
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
 import java.io.IOException
 
 class Locales(private val liteEco: LiteEco, private val langVersion: String) {
+    enum class LangKey { CS_CZ, EN_US, ES_ES, JA_JP, DE_DE, }
 
     private var langYML: FileConfiguration? = null
 
@@ -57,7 +57,7 @@ class Locales(private val liteEco: LiteEco, private val langVersion: String) {
 
     fun reloadTranslation() {
         val currentLocale: String = liteEco.config.getString("plugin.translation") ?: return
-        LangKey.values().find { it.name.equals(currentLocale, ignoreCase = true) }?.let {
+        LangKey.entries.find { it.name.equals(currentLocale, ignoreCase = true) }?.let {
             setTranslationFile(it)
         }
     }
