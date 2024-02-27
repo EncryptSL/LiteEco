@@ -10,7 +10,6 @@ import encryptsl.cekuj.net.api.ConfigAPI
 import encryptsl.cekuj.net.api.UpdateNotifier
 import encryptsl.cekuj.net.api.economy.LiteEcoEconomyAPI
 import encryptsl.cekuj.net.api.enums.Economies
-import encryptsl.cekuj.net.api.enums.LangKey
 import encryptsl.cekuj.net.api.enums.MigrationKey
 import encryptsl.cekuj.net.api.enums.PurgeKey
 import encryptsl.cekuj.net.commands.EcoCMD
@@ -103,8 +102,8 @@ class LiteEco : JavaPlugin() {
 
     @Suppress("UnstableApiUsage")
     private fun checkUpdates() {
-        val updateNotifier = UpdateNotifier("101934", pluginMeta.version)
-        logger.info(updateNotifier.checkPluginVersion())
+        val updateNotifier = UpdateNotifier(this,"101934", pluginMeta.version)
+        updateNotifier.makeUpdateCheck()
     }
 
     private fun registerListeners() {
@@ -122,7 +121,8 @@ class LiteEco : JavaPlugin() {
                 PlayerJoinListener(this),
                 PlayerQuitListener(this)
             )
-            listeners.forEach { listener -> pluginManager.registerEvents(listener, this)
+            for (listener in listeners) {
+                pluginManager.registerEvents(listener, this)
                 logger.info("Bukkit Listener ${listener.javaClass.simpleName} registered () -> ok")
             }
             amount = listeners.size
@@ -169,7 +169,7 @@ class LiteEco : JavaPlugin() {
             CompletableFuture.completedFuture(Economies.entries.map { Suggestion.simple(it.name) })
         }
         commandManager.parserRegistry().registerSuggestionProvider("langKeys") { _, _ ->
-            CompletableFuture.completedFuture(LangKey.entries.map { Suggestion.simple(it.name) })
+            CompletableFuture.completedFuture(Locales.LangKey.entries.map { Suggestion.simple(it.name) })
         }
         commandManager.parserRegistry().registerSuggestionProvider("purgeKeys") { _, _ ->
             CompletableFuture.completedFuture(PurgeKey.entries.map { Suggestion.simple(it.name) })

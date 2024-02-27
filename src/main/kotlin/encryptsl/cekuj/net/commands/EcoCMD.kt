@@ -10,6 +10,7 @@ import encryptsl.cekuj.net.LiteEco
 import encryptsl.cekuj.net.api.enums.*
 import encryptsl.cekuj.net.api.events.admin.*
 import encryptsl.cekuj.net.api.objects.ModernText
+import encryptsl.cekuj.net.config.Locales
 import encryptsl.cekuj.net.extensions.positionIndexed
 import encryptsl.cekuj.net.utils.*
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
@@ -145,7 +146,7 @@ class EcoCMD(private val liteEco: LiteEco) {
         @Argument(value = "isoKey", suggestions = "langKeys") isoKey: String
     ) {
         try {
-            val langKey = LangKey.valueOf(isoKey.uppercase())
+            val langKey = Locales.LangKey.valueOf(isoKey.uppercase())
             liteEco.locale.setTranslationFile(langKey)
             commandSender.sendMessage(
                 ModernText.miniModernText(
