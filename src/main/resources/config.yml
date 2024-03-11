@@ -9,10 +9,10 @@ plugin:
   debug: false
 
 economy:
-  # Prefix of Currency
-  currency_prefix: €
-  # Name of Currency
-  currency_name: LE
+  # Currency Full Format
+  # This format replacing currency_name and currency_prefix.
+  # Placeholders: <balance>, %balance%, {balance}
+  currency_format: "$ <balance> LE"
   # This amount is granted to players who don't have an existing account in the database.
   starting_balance: 30
   # This amount is checked when player is above allowed limit

@@ -23,11 +23,11 @@ class AdaptiveEconomyVaultAPI(private val liteEco: LiteEco) : DeprecatedEconomy(
     override fun format(amount: Double): String = liteEco.api.fullFormatting(amount)
 
     override fun currencyNamePlural(): String? {
-        return liteEco.config.getString("economy.currency_name")
+        return null
     }
 
     override fun currencyNameSingular(): String? {
-        return liteEco.config.getString("economy.currency_prefix")
+        return null
     }
 
     override fun hasAccount(player: OfflinePlayer?): Boolean {

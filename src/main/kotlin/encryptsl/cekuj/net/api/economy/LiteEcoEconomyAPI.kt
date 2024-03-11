@@ -116,6 +116,10 @@ class LiteEcoEconomyAPI(val plugin: Plugin) : LiteEconomyAPIProvider {
         else {
             formatted(amount)
         }
-        return "${plugin.config.getString("economy.currency_prefix").toString()}${value} ${plugin.config.getString("economy.currency_name").toString()}"
+        return plugin.config.getString("economy.currency_format")
+            .toString()
+            .replace("{balance}", value)
+            .replace("<balance>", value)
+            .replace("%balance%", value)
     }
 }
