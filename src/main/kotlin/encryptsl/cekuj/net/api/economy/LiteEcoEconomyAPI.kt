@@ -102,7 +102,7 @@ class LiteEcoEconomyAPI(val plugin: Plugin) : LiteEconomyAPIProvider {
     }
 
     override fun compacted(amount: Double): String {
-        return amount.compactFormat(plugin.config.getString("formatting.currency_pattern").toString(), plugin.config.getString("formatting.compact_pattern").toString(), plugin.config.getString("formatting.currency_locale").toString())
+        return amount.compactFormat(plugin.config.getString("formatting.currency_pattern").toString(), plugin.config.getString("formatting.compacted_pattern").toString(), plugin.config.getString("formatting.currency_locale").toString())
     }
 
     override fun formatted(amount: Double): String {
