@@ -110,7 +110,7 @@ class LiteEcoEconomyAPI(val plugin: Plugin) : LiteEconomyAPIProvider {
     }
 
     override fun fullFormatting(amount: Double): String {
-        val value = if (plugin.config.getBoolean("plugin.economy.compact_display")) {
+        val value = if (plugin.config.getBoolean("economy.compact_display")) {
             compacted(amount)
         }
         else {
