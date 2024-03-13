@@ -100,11 +100,9 @@ class EcoCMD(private val liteEco: LiteEco) {
     ) {
         val amount = helper.validateAmount(amountStr, commandSender) ?: return
 
-        liteEco.server.scheduler.runTask(liteEco) { ->
-            liteEco.pluginManager.callEvent(
-                EconomyGlobalWithdrawEvent(commandSender, amount)
-            )
-        }
+        liteEco.pluginManager.callEvent(
+            EconomyGlobalWithdrawEvent(commandSender, amount)
+        )
     }
 
     @Command("eco lang <isoKey>")
