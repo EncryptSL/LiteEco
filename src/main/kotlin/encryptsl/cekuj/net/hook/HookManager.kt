@@ -2,7 +2,6 @@ package encryptsl.cekuj.net.hook
 
 import encryptsl.cekuj.net.LiteEco
 import encryptsl.cekuj.net.hook.placeholderapi.EconomyPlaceholderAPI
-import encryptsl.cekuj.net.hook.treasury.TreasureCurrency
 import encryptsl.cekuj.net.hook.treasury.TreasuryEconomyAPI
 import encryptsl.cekuj.net.hook.vault.AdaptiveEconomyVaultAPI
 import me.lokka30.treasury.api.common.service.ServiceRegistry
@@ -37,45 +36,29 @@ class HookManager(private val liteEco: LiteEco) {
      */
     fun hookPAPI() {
         if (isPluginInstalled("PlaceholderAPI")) {
-            liteEco.logger.info("###################################")
-            liteEco.logger.info("#       PlaceholderAPI Found      #")
-            liteEco.logger.info("#   You can now use placeholders  #")
-            liteEco.logger.info("###################################")
             EconomyPlaceholderAPI(liteEco, LiteEco.PAPI_VERSION).register()
+            liteEco.logger.info("PlaceholderAPI found, placeholders are registered !")
         } else {
-            liteEco.logger.info("###################################")
-            liteEco.logger.info("#     PlaceholderAPI not Found    #")
-            liteEco.logger.info("###################################")
+            liteEco.logger.warning("Warning plugin PlaceholderAPI not found !")
+            liteEco.logger.warning("Keep in mind without PlaceholderAPI, you can't use LiteEco placeholders.")
         }
     }
 
     fun hookVault() {
         if (isPluginInstalled("Vault")) {
             liteEco.server.servicesManager.register(Economy::class.java, AdaptiveEconomyVaultAPI(liteEco), liteEco, ServicePriority.Highest)
-            liteEco.logger.info("###################################")
-            liteEco.logger.info("# Vault registered like a service #")
-            liteEco.logger.info("###################################")
+            liteEco.logger.info("Vault is registered, LiteEco now working like a provider !")
         } else {
-            liteEco.logger.info("###################################")
-            liteEco.logger.info("#         Vault not Found         #")
-            liteEco.logger.info("#   For better experience please  #")
-            liteEco.logger.info("#    download vault or treasury   #")
-            liteEco.logger.info("###################################")
+            liteEco.logger.warning("Warning plugin Vault not found !")
+            liteEco.logger.warning("For better experience please download Vault.")
+            liteEco.logger.warning("Keep in mind without Vault, LiteEco can't use API from Vault.")
         }
     }
 
     fun hookTreasury() {
         if (isPluginInstalled("Treasury")) {
-            ServiceRegistry.INSTANCE.registerService(EconomyProvider::class.java, TreasuryEconomyAPI(liteEco, TreasureCurrency(liteEco)), "LiteEco", me.lokka30.treasury.api.common.service.ServicePriority.HIGH)
-            liteEco.logger.info("######################################")
-            liteEco.logger.info("# Treasury registered like a service #")
-            liteEco.logger.info("######################################")
-        } else {
-            liteEco.logger.info("###################################")
-            liteEco.logger.info("#       Treasury not Found        #")
-            liteEco.logger.info("#   For better experience please  #")
-            liteEco.logger.info("#    download treasury or vault   #")
-            liteEco.logger.info("###################################")
+            liteEco.logger.warning("Please use Vault instead of Treasury")
+            liteEco.logger.warning("LiteEco in this version not supporting Treasury... because support is not ready.")
         }
     }
 }

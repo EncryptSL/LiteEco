@@ -1,111 +1,50 @@
 package encryptsl.cekuj.net.hook.treasury
 
 import encryptsl.cekuj.net.LiteEco
+import me.lokka30.treasury.api.common.NamespacedKey
+import me.lokka30.treasury.api.common.misc.TriState
 import me.lokka30.treasury.api.economy.EconomyProvider
-import me.lokka30.treasury.api.economy.account.Account
-import me.lokka30.treasury.api.economy.account.PlayerAccount
+import me.lokka30.treasury.api.economy.account.AccountData
+import me.lokka30.treasury.api.economy.account.accessor.AccountAccessor
 import me.lokka30.treasury.api.economy.currency.Currency
-import me.lokka30.treasury.api.economy.misc.OptionalEconomyApiFeature
-import me.lokka30.treasury.api.economy.response.EconomyException
-import me.lokka30.treasury.api.economy.response.EconomyFailureReason
-import me.lokka30.treasury.api.economy.response.EconomySubscriber
-import org.bukkit.Bukkit
-import org.bukkit.OfflinePlayer
 import java.util.*
-import java.util.stream.Collectors
+import java.util.concurrent.CompletableFuture
 
 class TreasuryEconomyAPI(private val liteEco: LiteEco, private val currency: Currency) : EconomyProvider {
-
-    companion object {
-        const val currencyIdentifier = "lite_eco_economy"
+    override fun accountAccessor(): AccountAccessor {
+        TODO("Not yet implemented")
     }
 
-    override fun getSupportedOptionalEconomyApiFeatures(): MutableSet<OptionalEconomyApiFeature> {
-        return Collections.emptySet()
+    override fun hasAccount(accountData: AccountData): CompletableFuture<Boolean> {
+        TODO("Not yet implemented")
     }
 
-    override fun hasPlayerAccount(accountId: UUID, subscription: EconomySubscriber<Boolean>) {
-        liteEco.server.scheduler.runTaskAsynchronously(liteEco, Runnable {
-            if (liteEco.api.hasAccount(Bukkit.getOfflinePlayer(accountId))) {
-                subscription.succeed(true)
-            } else {
-                subscription.fail(EconomyException(EconomyFailureReason.ACCOUNT_NOT_FOUND))
-            }
-        })
+    override fun retrievePlayerAccountIds(): CompletableFuture<MutableCollection<UUID>> {
+        TODO("Not yet implemented")
     }
 
-    override fun retrievePlayerAccount(accountId: UUID, subscription: EconomySubscriber<PlayerAccount>) {
-        liteEco.server.scheduler.runTaskAsynchronously(liteEco, Runnable {
-            if (liteEco.api.hasAccount(Bukkit.getOfflinePlayer(accountId))) {
-                subscription.succeed(TreasuryAccount(liteEco, accountId))
-            } else {
-                subscription.fail(EconomyException(EconomyFailureReason.ACCOUNT_NOT_FOUND))
-            }
-        })
-    }
-
-    override fun createPlayerAccount(accountId: UUID, subscription: EconomySubscriber<PlayerAccount>) {
-        liteEco.server.scheduler.runTaskAsynchronously(liteEco, Runnable {
-            liteEco.api.createAccount(Bukkit.getOfflinePlayer(accountId), TreasureCurrency(liteEco).getStartingBalance(null).toDouble())
-            subscription.succeed(TreasuryAccount(liteEco, accountId))
-        })
-    }
-
-    override fun retrievePlayerAccountIds(subscription: EconomySubscriber<MutableCollection<UUID>>) {
-        liteEco.server.scheduler.runTaskAsynchronously(liteEco, Runnable {
-            val uuid: List<UUID> = Arrays.stream(Bukkit.getOfflinePlayers()).parallel().map(OfflinePlayer::getUniqueId).collect(Collectors.toList())
-
-            val identifiers: MutableList<UUID> = uuid.parallelStream()
-                .filter{ puuid -> liteEco.api.hasAccount(Bukkit.getOfflinePlayer(puuid))}
-                .collect(Collectors.toList())
-
-            subscription.succeed(identifiers)
-        })
-    }
-
-    override fun hasAccount(identifier: String, subscription: EconomySubscriber<Boolean>) {
-        subscription.fail(EconomyException(EconomyFailureReason.FEATURE_NOT_SUPPORTED))
-    }
-
-    override fun retrieveAccount(identifier: String, subscription: EconomySubscriber<Account>) {
-        subscription.fail(EconomyException(EconomyFailureReason.FEATURE_NOT_SUPPORTED))
-    }
-
-    override fun createAccount(name: String?, identifier: String, subscription: EconomySubscriber<Account>) {
-        subscription.fail(EconomyException(EconomyFailureReason.FEATURE_NOT_SUPPORTED))
-    }
-
-    override fun retrieveAccountIds(subscription: EconomySubscriber<MutableCollection<String>>) {
-        liteEco.server.scheduler.runTaskAsynchronously(liteEco, Runnable {
-            val uuid: List<UUID> = Arrays.stream(Bukkit.getOfflinePlayers()).parallel().map(OfflinePlayer::getUniqueId).collect(Collectors.toList())
-
-            val identifiers: MutableList<String> = uuid.parallelStream()
-                .filter{ puuid -> liteEco.api.hasAccount(Bukkit.getOfflinePlayer(puuid))}
-                .map { puuid -> TreasuryAccount(liteEco, puuid) }
-                .map(PlayerAccount::getIdentifier)
-                .collect(Collectors.toList())
-
-            subscription.succeed(identifiers)
-        })
-    }
-
-    override fun retrieveNonPlayerAccountIds(subscription: EconomySubscriber<MutableCollection<String>>) {
-        subscription.succeed(Collections.emptyList())
+    override fun retrieveNonPlayerAccountIds(): CompletableFuture<MutableCollection<NamespacedKey>> {
+        TODO("Not yet implemented")
     }
 
     override fun getPrimaryCurrency(): Currency {
-        return currency
+        TODO("Not yet implemented")
     }
 
     override fun findCurrency(identifier: String): Optional<Currency> {
-        return if (currency.identifier == currencyIdentifier) Optional.of(currency) else Optional.empty()
+        TODO("Not yet implemented")
     }
 
     override fun getCurrencies(): MutableSet<Currency> {
-        return Collections.singleton(currency)
+        TODO("Not yet implemented")
     }
 
-    override fun registerCurrency(currency: Currency, subscription: EconomySubscriber<Boolean>) {
-        subscription.succeed(false)
+    override fun registerCurrency(currency: Currency): CompletableFuture<TriState> {
+        TODO("Not yet implemented")
     }
+
+    override fun unregisterCurrency(currency: Currency): CompletableFuture<TriState> {
+        TODO("Not yet implemented")
+    }
+
 }
