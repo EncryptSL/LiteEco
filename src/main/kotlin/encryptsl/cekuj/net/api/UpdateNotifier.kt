@@ -28,18 +28,14 @@ class UpdateNotifier(private val liteEco: LiteEco, private val id: String, priva
 
     private fun logUpdate(response: Response): String {
         if (response.code != 200)
-            throw Exception("Excepted http code is 200 but returned is ${response.code}")
+            throw Exception("Error during check update.. response code ${response.code}")
 
-        return when(val latestVersion = Gson().fromJson(response.body?.string(), Version::class.java).name) {
+        return when(val latestVersion = Gson().fromJson(response.body?.string(), Version::class.java).name == pluginVersion) {
             latestVersion -> "You are using current version !"
             else -> {
                 "Please download update of plugin LiteEco your version: $pluginVersion > Updated version: $latestVersion"
             }
         }
     }
-
+    data class Version(val name: String)
 }
-
-data class Version(
-    val name: String
-)
