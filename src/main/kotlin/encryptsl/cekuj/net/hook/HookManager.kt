@@ -2,12 +2,10 @@ package encryptsl.cekuj.net.hook
 
 import encryptsl.cekuj.net.LiteEco
 import encryptsl.cekuj.net.hook.placeholderapi.EconomyPlaceholderAPI
-import encryptsl.cekuj.net.hook.treasury.TreasuryEconomyAPI
 import encryptsl.cekuj.net.hook.vault.AdaptiveEconomyVaultAPI
-import me.lokka30.treasury.api.common.service.ServiceRegistry
-import me.lokka30.treasury.api.economy.EconomyProvider
 import net.milkbowl.vault.economy.Economy
 import org.bukkit.plugin.ServicePriority
+
 @Suppress("DEPRECATION")
 class HookManager(private val liteEco: LiteEco) {
 
