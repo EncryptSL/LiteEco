@@ -18,7 +18,7 @@ class EconomyGlobalWithdrawListener(private val liteEco: LiteEco) : Listener {
         val offlinePlayers = Bukkit.getOfflinePlayers()
 
         for (p in offlinePlayers) {
-            if (!liteEco.api.hasAccount(p)) { continue }
+            if (!liteEco.api.hasAccount(p)) continue
             liteEco.api.withDrawMoney(p, money)
         }
 

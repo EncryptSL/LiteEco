@@ -19,28 +19,23 @@ class EconomyMoneyWithdrawListener(private val liteEco: LiteEco) : Listener {
         val money: Double = event.money
         val silent: Boolean = event.silent
 
-        if (!liteEco.api.hasAccount(target)) {
-            sender.sendMessage(
+        if (!liteEco.api.hasAccount(target))
+            return sender.sendMessage(
                 ModernText.miniModernText(liteEco.locale.getMessage("messages.error.account_not_exist"),
                 TagResolver.resolver(Placeholder.parsed("account", target.name.toString()))))
-            return
-        }
 
-        if (!liteEco.api.has(target, money)) {
-            sender.sendMessage(ModernText.miniModernText(liteEco.locale.getMessage("messages.error.insufficient_funds")))
-            return
-        }
+        if (!liteEco.api.has(target, money))
+            return sender.sendMessage(ModernText.miniModernText(liteEco.locale.getMessage("messages.error.insufficient_funds")))
 
         liteEco.increaseTransactions(1)
         liteEco.api.withDrawMoney(target, money)
         if (sender.name == target.name) {
-            sender.sendMessage(
+            return sender.sendMessage(
                 ModernText.miniModernText(
                     liteEco.locale.getMessage("messages.self.withdraw_money"),
                     TagResolver.resolver(Placeholder.parsed("money", liteEco.api.fullFormatting(money)))
                 )
             )
-            return
         }
 
         sender.sendMessage(

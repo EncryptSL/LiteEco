@@ -19,11 +19,9 @@ class EconomyMoneyDepositListener(private val liteEco: LiteEco) : Listener {
         val money: Double = event.money
         val silent: Boolean = event.silent
 
-        if (!liteEco.api.hasAccount(target)) {
-            sender.sendMessage(ModernText.miniModernText(liteEco.locale.getMessage("messages.error.account_not_exist"),
+        if (!liteEco.api.hasAccount(target))
+            return sender.sendMessage(ModernText.miniModernText(liteEco.locale.getMessage("messages.error.account_not_exist"),
                 TagResolver.resolver(Placeholder.parsed("account", target.name.toString()))))
-            return
-        }
 
         if (liteEco.api.getCheckBalanceLimit(money) && !sender.hasPermission("lite.eco.admin.bypass.limit"))
             return sender.sendMessage(ModernText.miniModernText(liteEco.locale.getMessage("messages.error.amount_above_limit")))
@@ -40,9 +38,10 @@ class EconomyMoneyDepositListener(private val liteEco: LiteEco) : Listener {
 
         liteEco.api.depositMoney(target, money)
         if (sender.name == target.name && !target.isOp) {
-            sender.sendMessage(
-                ModernText.miniModernText(liteEco.locale.getMessage("messages.error.self_pay"), TagResolver.resolver(Placeholder.parsed("money", liteEco.api.fullFormatting(money)))))
-            return
+            return sender.sendMessage(ModernText.miniModernText(
+                liteEco.locale.getMessage("messages.error.self_pay"),
+                TagResolver.resolver(Placeholder.parsed("money", liteEco.api.fullFormatting(money)))
+            ))
         }
 
         sender.sendMessage(ModernText.miniModernText(

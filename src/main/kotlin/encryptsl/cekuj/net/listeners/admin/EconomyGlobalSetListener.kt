@@ -21,7 +21,7 @@ class EconomyGlobalSetListener(private val liteEco: LiteEco) : Listener {
             return sender.sendMessage(ModernText.miniModernText(liteEco.locale.getMessage("messages.error.amount_above_limit")))
 
         for (p in offlinePlayers) {
-            if (!liteEco.api.hasAccount(p)) { continue }
+            if (!liteEco.api.hasAccount(p)) continue
             liteEco.api.setMoney(p, money)
         }
 

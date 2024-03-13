@@ -46,10 +46,7 @@ class EcoCMD(private val liteEco: LiteEco) {
         @Flag(value = "silent", aliases = ["s"]) silent: Boolean
     ) {
         val amount = helper.validateAmount(amountStr, commandSender) ?: return
-
-        liteEco.server.scheduler.runTask(liteEco) { ->
-            liteEco.pluginManager.callEvent(EconomyMoneyDepositEvent(commandSender, offlinePlayer, amount, silent))
-        }
+        liteEco.pluginManager.callEvent(EconomyMoneyDepositEvent(commandSender, offlinePlayer, amount, silent))
     }
 
     @Command("eco gadd <amount>")
@@ -59,12 +56,7 @@ class EcoCMD(private val liteEco: LiteEco) {
         @Argument("amount") @Range(min = "1.0", max = "") amountStr: String
     ) {
         val amount = helper.validateAmount(amountStr, commandSender) ?: return
-
-        liteEco.server.scheduler.runTask(liteEco) { ->
-            liteEco.pluginManager.callEvent(
-                EconomyGlobalDepositEvent(commandSender, amount)
-            )
-        }
+        liteEco.pluginManager.callEvent(EconomyGlobalDepositEvent(commandSender, amount))
     }
 
     @Command("eco set <player> <amount>")
@@ -75,16 +67,7 @@ class EcoCMD(private val liteEco: LiteEco) {
         @Argument(value = "amount") amountStr: String
     ) {
         val amount = helper.validateAmount(amountStr, commandSender, CheckLevel.ONLY_NEGATIVE) ?: return
-
-        liteEco.server.scheduler.runTask(liteEco) { ->
-            liteEco.pluginManager.callEvent(
-                EconomyMoneySetEvent(
-                    commandSender,
-                    offlinePlayer,
-                    amount
-                )
-            )
-        }
+        liteEco.pluginManager.callEvent(EconomyMoneySetEvent(commandSender, offlinePlayer, amount))
     }
 
     @Command("eco gset <amount>")
@@ -94,12 +77,7 @@ class EcoCMD(private val liteEco: LiteEco) {
         @Argument("amount") @Range(min = "1.0", max = "") amountStr: String
     ) {
         val amount = helper.validateAmount(amountStr, commandSender, CheckLevel.ONLY_NEGATIVE) ?: return
-
-        liteEco.server.scheduler.runTask(liteEco) { ->
-            liteEco.pluginManager.callEvent(
-                EconomyGlobalSetEvent(commandSender, amount)
-            )
-        }
+        liteEco.pluginManager.callEvent(EconomyGlobalSetEvent(commandSender, amount))
     }
 
     @Command("eco remove <player> <amount>")
@@ -111,17 +89,7 @@ class EcoCMD(private val liteEco: LiteEco) {
         @Flag(value = "silent", aliases = ["s"]) silent: Boolean
     ) {
         val amount = helper.validateAmount(amountStr, commandSender) ?: return
-
-        liteEco.server.scheduler.runTask(liteEco) { ->
-            liteEco.pluginManager.callEvent(
-                EconomyMoneyWithdrawEvent(
-                    commandSender,
-                    offlinePlayer,
-                    amount,
-                    silent
-                )
-            )
-        }
+        liteEco.pluginManager.callEvent(EconomyMoneyWithdrawEvent(commandSender, offlinePlayer, amount, silent))
     }
 
     @Command("eco gremove <amount>")
