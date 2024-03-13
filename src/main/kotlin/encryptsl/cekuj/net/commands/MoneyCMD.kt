@@ -43,16 +43,19 @@ class MoneyCMD(private val liteEco: LiteEco) {
                 null -> liteEco.locale.getMessage("messages.balance.format")
                 else -> liteEco.locale.getMessage("messages.balance.format_target")
             }
+            val cSender = offlinePlayer ?: commandSender
 
-            val getSender = offlinePlayer ?: commandSender
+            if (!liteEco.api.hasAccount(cSender))
+                return commandSender.sendMessage(ModernText.miniModernText(liteEco.locale.getMessage("messages.error.account_not_exist"),
+                    TagResolver.resolver(Placeholder.parsed("account", cSender.name.toString()))))
 
-            if (!liteEco.api.hasAccount(getSender))
-                commandSender.sendMessage(ModernText.miniModernText(liteEco.locale.getMessage("messages.error.account_not_exist"),
-                    TagResolver.resolver(Placeholder.parsed("account", getSender.name.toString()))))
-
-            commandSender.sendMessage(ModernText.miniModernText(formatMessage, helper.getComponentBal(getSender)))
+            commandSender.sendMessage(ModernText.miniModernText(formatMessage, helper.getComponentBal(cSender)))
         } else {
            offlinePlayer?.let {
+               if (!liteEco.api.hasAccount(it))
+                   return commandSender.sendMessage(ModernText.miniModernText(liteEco.locale.getMessage("messages.error.account_not_exist"),
+                       TagResolver.resolver(Placeholder.parsed("account", it.name.toString()))))
+
               return commandSender.sendMessage(
                    ModernText.miniModernText(liteEco.locale.getMessage("messages.balance.format_target"),
                    helper.getComponentBal(offlinePlayer))
