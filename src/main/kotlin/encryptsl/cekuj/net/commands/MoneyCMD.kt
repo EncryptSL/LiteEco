@@ -39,46 +39,26 @@ class MoneyCMD(private val liteEco: LiteEco) {
     @Permission("lite.eco.balance")
     fun onBalance(commandSender: CommandSender, @Argument(value = "player", suggestions = "players") offlinePlayer: OfflinePlayer?) {
         if (commandSender is Player) {
-            if (offlinePlayer == null) {
-                return commandSender.sendMessage(
-                    ModernText.miniModernText(
-                        liteEco.locale.getMessage("messages.balance.format"),
-                        TagResolver.resolver(
-                            Placeholder.parsed(
-                                "money",
-                                liteEco.api.fullFormatting(liteEco.api.getBalance(commandSender))
-                            )
-                        )
-                    )
-                )
+            val formatMessage = when(offlinePlayer) {
+                null -> liteEco.locale.getMessage("messages.balance.format")
+                else -> liteEco.locale.getMessage("messages.balance.format_target")
             }
-            commandSender.sendMessage(
-                ModernText.miniModernText(
-                    liteEco.locale.getMessage("messages.balance.format_target"),
-                    TagResolver.resolver(
-                        Placeholder.parsed("target", offlinePlayer.name.toString()),
-                        Placeholder.parsed(
-                            "money",
-                            liteEco.api.fullFormatting(liteEco.api.getBalance(offlinePlayer))
-                        )
-                    )
-                )
-            )
+
+            val getSender = offlinePlayer ?: commandSender
+
+            if (!liteEco.api.hasAccount(getSender))
+                commandSender.sendMessage(ModernText.miniModernText(liteEco.locale.getMessage("messages.error.account_not_exist"),
+                    TagResolver.resolver(Placeholder.parsed("account", getSender.name.toString()))))
+
+            commandSender.sendMessage(ModernText.miniModernText(formatMessage, helper.getComponentBal(getSender)))
         } else {
-            if (offlinePlayer != null) {
-                return commandSender.sendMessage(
-                    ModernText.miniModernText(
-                        liteEco.locale.getMessage("messages.balance.format_target"),
-                        TagResolver.resolver(
-                            Placeholder.parsed("target", offlinePlayer.name.toString()),
-                            Placeholder.parsed(
-                                "money",
-                                liteEco.api.fullFormatting(liteEco.api.getBalance(offlinePlayer))
-                            )
-                        )
-                    )
-                )
+           offlinePlayer?.let {
+              return commandSender.sendMessage(
+                   ModernText.miniModernText(liteEco.locale.getMessage("messages.balance.format_target"),
+                   helper.getComponentBal(offlinePlayer))
+               )
             }
+
             liteEco.locale.getList("messages.help")?.forEach { s ->
                 commandSender.sendMessage(ModernText.miniModernText(s.toString()))
             }
@@ -91,7 +71,6 @@ class MoneyCMD(private val liteEco: LiteEco) {
     fun onTopBalance(commandSender: CommandSender, @Argument(value = "page") @Range(min = "1", max="") page: Int?) {
         val p = page ?: 1
 
-
         val topPlayers = liteEco.api.getTopBalance().toList()
             .sortedByDescending { e -> e.second }.positionIndexed { index, pair ->
                 liteEco.locale.getMessage("messages.balance.top_format")
@@ -101,9 +80,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
             }
         if (topPlayers.isEmpty()) return
 
-        val pagination = Paginator(topPlayers).apply {
-            page(p)
-        }
+        val pagination = Paginator(topPlayers).apply { page(p) }
 
         if (p > pagination.maxPages) {
             return commandSender.sendMessage(
@@ -131,15 +108,13 @@ class MoneyCMD(private val liteEco: LiteEco) {
         @Argument(value = "player", suggestions = "players") offlinePlayer: OfflinePlayer,
         @Argument(value = "amount") @Range(min = "1.00", max = "") amountStr: String
     ) {
-        if (commandSender is Player) {
-            if (commandSender.name == offlinePlayer.name) {
-                return commandSender.sendMessage(ModernText.miniModernText(liteEco.locale.getMessage("messages.error.self_pay")))
-            }
+        if (commandSender !is Player)
+            return commandSender.sendMessage(ModernText.miniModernText("<red>Only a player can use this command."))
 
-            val amount = helper.validateAmount(amountStr, commandSender) ?: return
-            liteEco.pluginManager.callEvent(PlayerEconomyPayEvent(commandSender, offlinePlayer, amount))
-        } else {
-            commandSender.sendMessage(ModernText.miniModernText("<red>Only a player can use this command."))
-        }
+        if (commandSender.name == offlinePlayer.name)
+            return commandSender.sendMessage(ModernText.miniModernText(liteEco.locale.getMessage("messages.error.self_pay")))
+
+        val amount = helper.validateAmount(amountStr, commandSender) ?: return
+        liteEco.pluginManager.callEvent(PlayerEconomyPayEvent(commandSender, offlinePlayer, amount))
     }
 }

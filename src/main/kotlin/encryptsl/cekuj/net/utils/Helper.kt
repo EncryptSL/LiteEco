@@ -6,6 +6,9 @@ import encryptsl.cekuj.net.api.objects.ModernText
 import encryptsl.cekuj.net.extensions.isApproachingZero
 import encryptsl.cekuj.net.extensions.isNegative
 import encryptsl.cekuj.net.extensions.toValidDecimal
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
+import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 
 class Helper(private val liteEco: LiteEco) {
@@ -22,5 +25,12 @@ class Helper(private val liteEco: LiteEco) {
             }
             else -> amount
         }
+    }
+
+    fun getComponentBal(offlinePlayer: OfflinePlayer): TagResolver {
+        return TagResolver.resolver(
+            Placeholder.parsed("target", offlinePlayer.name.toString()),
+            Placeholder.parsed("money", liteEco.api.fullFormatting(liteEco.api.getBalance(offlinePlayer)))
+        )
     }
 }
