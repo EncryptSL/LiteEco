@@ -64,6 +64,7 @@ messages:
     purge_accounts: "<prefix> <green>Alle Spieler Accounts wurden gelöscht."
     purge_null_accounts: "<prefix> <green>Alle Spieler Accounts mit Nullwerten wurden gelöscht."
     purge_default_accounts: "<prefix> <green>Alle Spieler Accounts mit Standardwerten wurden gelöscht."
+    delete_account: "<prefix> <green>Account of player <account> was deleted !"
     migration_success: "<prefix> <green>Migration von <type> war erfolgreich [!]"
     convert_success: "<prefix> <green>Konvertierung von <converted>x Accounts und <balances> Kontoständen von <economy> zu LiteEco war erfolgreich!"
 
@@ -82,10 +83,10 @@ messages:
     - " "
     - "<red>[★] <gray>/eco add <yellow>[username] <#3EE84D><amount> <white>-<#F39E9E> Fügt einem anderen Spieler Geld hinzu."
     - "<red>[★] <gray>/eco set <yellow>[username] <#3EE84D><amount> <white>-<#F39E9E> Setzt den Kontostand eines anderen Spielers."
-    - "<red>[★] <gray>/eco remove <yellow>[username] <#3EE84D><amount> <white>-<#F39E9E> Entfernt Geld von einem anderen Spieler."
-    - "<red>[★] <gray>/eco gadd <#3EE84D><amount> <white>-<#F39E9E> Fügt allen Spielern Geld hinzu."
-    - "<red>[★] <gray>/eco gset <#3EE84D><amount> <white>-<#F39E9E> Setzt den Kontostand aller Spieler."
-    - "<red>[★] <gray>/eco gremove <#3EE84D><amount> <white>-<#F39E9E> Entfernt Geld von allen Spielern."
+    - "<red>[★] <gray>/eco withdraw <yellow>[username] <#3EE84D><amount> <white>-<#F39E9E> Entfernt Geld von einem anderen Spieler."
+    - "<red>[★] <gray>/eco global add <#3EE84D><amount> <white>-<#F39E9E> Fügt allen Spielern Geld hinzu."
+    - "<red>[★] <gray>/eco global set <#3EE84D><amount> <white>-<#F39E9E> Setzt den Kontostand aller Spieler."
+    - "<red>[★] <gray>/eco global withdraw <#3EE84D><amount> <white>-<#F39E9E> Entfernt Geld von allen Spielern."
     - "<red>[★] <gray>/eco lang <#b37dc7>[lang] <white>-<#F39E9E> Wechselt die Übersetzung von Nachrichten."
     - "<red>[★] <gray>/eco purge <#b37dc7><argument> <white>-<#F39E9E> Löscht Daten."
     - "<red>[★] <gray>/eco migration <#b37dc7><argument> <white>-<#F39E9E> Migriert Datenbanken in ein anderes Format."
@@ -93,4 +94,4 @@ messages:
     - " "
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
 
-version: 2.0.1
+version: 2.0.2

@@ -63,6 +63,7 @@ messages:
     purge_accounts: "<prefix> <green>Se purgaron todas las cuentas."
     purge_null_accounts: "<prefix> <green>Se purgaron todas las cuentas con valores nulos."
     purge_default_accounts: "<prefix> <green>Se purgaron todas las cuentas con valores predeterminados."
+    delete_account: "<prefix> <green>Account of player <account> was deleted !"
     migration_success: "<prefix> <green>La migracion de <type> fue exitosa [!]"
     convert_success: "<prefix> <green>La conversión <converted>x cuentas y <balances> saldos de <economy> a LiteEco se ha realizado correctamente !"
 
@@ -81,10 +82,10 @@ messages:
     - " "
     - "<red>[★] <gray>/eco add <yellow>[username] <#3EE84D><amount> <white>-<#F39E9E> Agregar dinero a otro jugador."
     - "<red>[★] <gray>/eco set <yellow>[username] <#3EE84D><amount> <white>-<#F39E9E> Establecer dinero de otro jugador."
-    - "<red>[★] <gray>/eco remove <yellow>[username] <#3EE84D><amount> <white>-<#F39E9E> Quitar dinero a otro jugador."
-    - "<red>[★] <gray>/eco gadd <#3EE84D><amount> <white>-<#F39E9E> Agregar dinero a todas las cuentas."
-    - "<red>[★] <gray>/eco gset <#3EE84D><amount> <white>-<#F39E9E> Establecer dinero de todas las cuentas."
-    - "<red>[★] <gray>/eco gremove <#3EE84D><amount> <white>-<#F39E9E> Quitar dinero a todas las cuentas."
+    - "<red>[★] <gray>/eco withdraw <yellow>[username] <#3EE84D><amount> <white>-<#F39E9E> Quitar dinero a otro jugador."
+    - "<red>[★] <gray>/eco global add <#3EE84D><amount> <white>-<#F39E9E> Agregar dinero a todas las cuentas."
+    - "<red>[★] <gray>/eco global set <#3EE84D><amount> <white>-<#F39E9E> Establecer dinero de todas las cuentas."
+    - "<red>[★] <gray>/eco global withdraw <#3EE84D><amount> <white>-<#F39E9E> Quitar dinero a todas las cuentas."
     - "<red>[★] <gray>/eco lang <#b37dc7>[lang] <white>-<#F39E9E> Cambiar la traduccion de mensajes."
     - "<red>[★] <gray>/eco purge <#b37dc7><argument> <white>-<#F39E9E> Purgar datos."
     - "<red>[★] <gray>/eco migration <#b37dc7><argument> <white>-<#F39E9E> Migración de base de datos a otros formatos."
@@ -92,4 +93,4 @@ messages:
     - " "
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
 
-version: 2.0.1
+version: 2.0.2

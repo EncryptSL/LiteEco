@@ -62,6 +62,7 @@ messages:
     purge_accounts: "<prefix> <green>すべてのプレイヤーのアカウントを削除しました。"
     purge_null_accounts: "<prefix> <green> すべてのプレイヤーアカウントのヌル値が削除されました。" # TEMP #
     purge_default_accounts: "<prefix> <green>デフォルトの値で全てのプレイヤーの所持金を再設定しました。"
+    delete_account: "<prefix> <green>Account of player <account> was deleted !"
     migration_success: "<prefix> <green><type>からのマイグレーションが完了しました。"
     convert_success: "<prefix> <green>Convert of <converted>x accounts and <balances> balances from <economy> to LiteEco was successful !"
 
@@ -80,10 +81,10 @@ messages:
     - " "
     - "<red>[★] <gray>/eco add <yellow>[ユーザー名] <金額> <white>-<#F39E9E> 他のプレイヤーの所持金を増加させます。"
     - "<red>[★] <gray>/eco set <yellow>[ユーザー名] <金額> <white>-<#F39E9E> 他のプレイヤーの所持金を設定します。"
-    - "<red>[★] <gray>/eco remove <yellow>[ユーザー名] <#3EE84D><金額> <white>-<#F39E9E> 他のプレイヤーの所持金を減少させます。"
-    - "<red>[★] <gray>/eco gadd <#3EE84D><金額> <white>-<#F39E9E> サーバー全員の所持金を一括で増加させます。"
-    - "<red>[★] <gray>/eco gset <#3EE84D><金額> <white>-<#F39E9E> サーバー全員の所持金を一括で設定します。"
-    - "<red>[★] <gray>/eco gremove <#3EE84D><金額> <white>-<#F39E9E> サーバー全員の所持金を一括で減少させます。"
+    - "<red>[★] <gray>/eco withdraw <yellow>[ユーザー名] <#3EE84D><金額> <white>-<#F39E9E> 他のプレイヤーの所持金を減少させます。"
+    - "<red>[★] <gray>/eco global add <#3EE84D><金額> <white>-<#F39E9E> サーバー全員の所持金を一括で増加させます。"
+    - "<red>[★] <gray>/eco global set <#3EE84D><金額> <white>-<#F39E9E> サーバー全員の所持金を一括で設定します。"
+    - "<red>[★] <gray>/eco global withdraw <#3EE84D><金額> <white>-<#F39E9E> サーバー全員の所持金を一括で減少させます。"
     - "<red>[★] <gray>/eco lang <#b37dc7>[lang] <white>-<#F39E9E> 表示メッセージの言語を変更します。"
     - "<red>[★] <gray>/eco purge <#b37dc7><argument> <white>-<#F39E9E> 選択したデータを削除します。"
     - "<red>[★] <gray>/eco migration <#b37dc7><argument> <white>-<#F39E9E> 他の経済プラグインのデータから移行します。"
@@ -91,4 +92,4 @@ messages:
     - " "
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
 
-version: 2.0.1
+version: 2.0.2

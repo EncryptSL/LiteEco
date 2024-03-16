@@ -64,6 +64,7 @@ messages:
     purge_accounts: "<prefix> <green>All player accounts were purged."
     purge_null_accounts: "<prefix> <green>All player accounts with null values were purged."
     purge_default_accounts: "<prefix> <green>All player accounts with default values were purged."
+    delete_account: "<prefix> <green>Account of player <account> was deleted !"
     migration_success: "<prefix> <green>Migration of <type> was successful [!]"
     convert_success: "<prefix> <green>Convert of <converted>x accounts and <balances> balances from <economy> to LiteEco was successful !"
 
@@ -82,10 +83,10 @@ messages:
     - " "
     - "<red>[★] <gray>/eco add <yellow>[username] <#3EE84D><amount> <white>-<#F39E9E> Add money to another player."
     - "<red>[★] <gray>/eco set <yellow>[username] <#3EE84D><amount> <white>-<#F39E9E> Set money amount of another player."
-    - "<red>[★] <gray>/eco remove <yellow>[username] <#3EE84D><amount> <white>-<#F39E9E> Remove money from another player."
-    - "<red>[★] <gray>/eco gadd <#3EE84D><amount> <white>-<#F39E9E> Add money to all players."
-    - "<red>[★] <gray>/eco gset <#3EE84D><amount> <white>-<#F39E9E> Set money amount of all players."
-    - "<red>[★] <gray>/eco gremove <#3EE84D><amount> <white>-<#F39E9E> Remove money from all players."
+    - "<red>[★] <gray>/eco withdraw <yellow>[username] <#3EE84D><amount> <white>-<#F39E9E> Remove money from another player."
+    - "<red>[★] <gray>/eco global add <#3EE84D><amount> <white>-<#F39E9E> Add money to all players."
+    - "<red>[★] <gray>/eco global set <#3EE84D><amount> <white>-<#F39E9E> Set money amount of all players."
+    - "<red>[★] <gray>/eco global withdraw <#3EE84D><amount> <white>-<#F39E9E> Remove money from all players."
     - "<red>[★] <gray>/eco lang <#b37dc7>[lang] <white>-<#F39E9E> Switch message translation."
     - "<red>[★] <gray>/eco purge <#b37dc7><argument> <white>-<#F39E9E> Purge data."
     - "<red>[★] <gray>/eco migration <#b37dc7><argument> <white>-<#F39E9E> Migration of database to another format."
@@ -93,4 +94,4 @@ messages:
     - " "
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
 
-version: 2.0.1
+version: 2.0.2
