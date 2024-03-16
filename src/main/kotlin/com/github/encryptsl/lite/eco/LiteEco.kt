@@ -89,6 +89,7 @@ class LiteEco : JavaPlugin() {
 
     private fun hookRegistration() {
         hookManager.hookPAPI()
+        hookManager.hookMiniPlaceholders()
         hookManager.hookVault()
         hookManager.hookTreasury() // Not supported : EncryptSL
     }

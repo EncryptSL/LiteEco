@@ -10,8 +10,7 @@ author: EncryptSL
 contributors: [LcyDev]
 website: https://encryptsl.cekuj.net
 
-load: STARTUP
-softdepend: [PlaceholderAPI, Vault, Treasury]
+softdepend: [PlaceholderAPI, Vault, Treasury, MiniPlaceholders]
 libraries:
   - com.zaxxer:HikariCP:5.1.0
   - org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.23

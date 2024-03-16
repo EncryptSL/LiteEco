@@ -1,6 +1,7 @@
 package com.github.encryptsl.lite.eco.common.hook
 
 import com.github.encryptsl.lite.eco.LiteEco
+import com.github.encryptsl.lite.eco.common.hook.miniplaceholder.EconomyMiniPlaceholder
 import com.github.encryptsl.lite.eco.common.hook.placeholderapi.EconomyPlaceholderAPI
 import com.github.encryptsl.lite.eco.common.hook.vault.AdaptiveEconomyVaultAPI
 import net.milkbowl.vault.economy.Economy
@@ -38,6 +39,16 @@ class HookManager(private val liteEco: LiteEco) {
         } else {
             liteEco.logger.warning("Warning plugin PlaceholderAPI not found !")
             liteEco.logger.warning("Keep in mind without PlaceholderAPI, you can't use LiteEco placeholders.")
+        }
+    }
+
+    fun hookMiniPlaceholders() {
+        if (isPluginInstalled("MiniPlaceholders")) {
+            EconomyMiniPlaceholder(liteEco).register()
+            liteEco.logger.info("MiniPlaceholders found, placeholders are registered !")
+        } else {
+            liteEco.logger.warning("Warning plugin MiniPlaceholders not found !")
+            liteEco.logger.warning("Keep in mind without MiniPlaceholders, you can't use LiteEco placeholders.")
         }
     }
 
