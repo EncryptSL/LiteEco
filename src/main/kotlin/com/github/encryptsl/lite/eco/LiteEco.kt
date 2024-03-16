@@ -44,11 +44,7 @@ class LiteEco : JavaPlugin() {
     val locale: Locales by lazy { Locales(this, LANG_VERSION) }
     val preparedStatements: PreparedStatements by lazy { PreparedStatements() }
 
-    private val configAPI: com.github.encryptsl.lite.eco.api.ConfigAPI by lazy {
-        com.github.encryptsl.lite.eco.api.ConfigAPI(
-            this
-        )
-    }
+    private val configAPI: ConfigAPI by lazy { ConfigAPI(this) }
     private val hookManager: HookManager by lazy { HookManager(this) }
 
     override fun onLoad() {
