@@ -1,7 +1,5 @@
 package com.github.encryptsl.lite.eco.api.interfaces
 
-import com.github.encryptsl.lite.eco.api.ConfigAPI
-
 interface ConfigAPIProvider {
     fun create(fileName: String): com.github.encryptsl.lite.eco.api.ConfigAPI
 

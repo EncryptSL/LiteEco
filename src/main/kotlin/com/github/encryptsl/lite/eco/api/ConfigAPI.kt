@@ -11,7 +11,7 @@ import java.io.File
  * Called static in mainMethod.
  */
 class ConfigAPI(private val liteEco: LiteEco) : ConfigAPIProvider {
-    override fun create(fileName: String) : com.github.encryptsl.lite.eco.api.ConfigAPI {
+    override fun create(fileName: String) : ConfigAPI {
         val file = File(liteEco.dataFolder, fileName)
         if (!file.exists()) {
             liteEco.saveResource(fileName, false)
@@ -21,7 +21,7 @@ class ConfigAPI(private val liteEco: LiteEco) : ConfigAPIProvider {
         return this
     }
 
-    override fun createConfig(configName: String, version: String): com.github.encryptsl.lite.eco.api.ConfigAPI {
+    override fun createConfig(configName: String, version: String): ConfigAPI {
         val file = File(liteEco.dataFolder, configName)
         if (!file.exists()) {
             liteEco.saveResource(configName, false)

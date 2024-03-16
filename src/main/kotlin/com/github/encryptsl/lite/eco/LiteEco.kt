@@ -53,7 +53,7 @@ class LiteEco : JavaPlugin() {
             .createConfig("config.yml", CONFIG_VERSION)
         locale
             .reloadTranslation()
-        DatabaseConnector(this)
+        DatabaseConnector()
             .initConnect(
                 config.getString("database.connection.jdbc_url") ?: "jdbc:sqlite:plugins/LiteEco/database.db",
                 config.getString("database.connection.username") ?: "root",

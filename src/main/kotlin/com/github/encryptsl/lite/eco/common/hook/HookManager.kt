@@ -6,7 +6,6 @@ import com.github.encryptsl.lite.eco.common.hook.vault.AdaptiveEconomyVaultAPI
 import net.milkbowl.vault.economy.Economy
 import org.bukkit.plugin.ServicePriority
 
-@Suppress("DEPRECATION")
 class HookManager(private val liteEco: LiteEco) {
 
     /**
