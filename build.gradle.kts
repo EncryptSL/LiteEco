@@ -1,17 +1,17 @@
 plugins {
     kotlin("jvm") version "1.9.23" apply true
-    id("io.papermc.paperweight.userdev") version "1.5.10"
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("maven-publish")
 }
 
-group = "encryptsl.cekuj.net"
+group = "com.github.encryptsl"
 version = providers.gradleProperty("plugin_version").get()
 description = providers.gradleProperty("plugin_description").get()
 
 repositories {
     mavenLocal()
     mavenCentral()
+    maven("https://repo.papermc.io/repository/maven-public/")
     maven {
         url = uri("https://jitpack.io")
     }
@@ -30,7 +30,7 @@ kotlin {
 }
 
 dependencies {
-    paperweight.paperDevBundle(providers.gradleProperty("server_version").get())
+    compileOnly("io.papermc.paper:paper-api:${providers.gradleProperty("server_version").get()}")
     compileOnly(kotlin("stdlib", "1.9.23"))
     compileOnly("me.lokka30:treasury-api:2.0.0")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
@@ -56,7 +56,7 @@ dependencies {
 tasks {
 
     build {
-        dependsOn(reobfJar)
+        dependsOn(shadowJar)
     }
 
     test {
@@ -69,11 +69,8 @@ tasks {
         }
     }
 
-    reobfJar {
-        outputJar.set(layout.buildDirectory.file("libs/${providers.gradleProperty("plugin_name").get()}-${version}.jar"))
-    }
-
     shadowJar {
+        archiveFileName.set("${providers.gradleProperty("plugin_name").get()}-$version.jar")
         minimize {
             relocate("org.bstats", "com.github.encryptsl.metrics")
             relocate("org.incendo", "com.github.encryptsl.cloud-core")
