@@ -1,6 +1,6 @@
 # noinspection YAMLSchemaValidation
 name: ${name}
-main: encryptsl.cekuj.net.LiteEco
+main: com.github.encryptsl.lite.eco.LiteEco
 version: ${version}
 api-version: 1.13
 
@@ -40,10 +40,14 @@ permissions:
       lite.eco.admin.eco: true
       lite.eco.admin.add: true
       lite.eco.admin.gadd: true
+      lite.eco.admin.global.add: true
       lite.eco.admin.set: true
       lite.eco.admin.gset: true
+      lite.eco.admin.global.set: true
       lite.eco.admin.remove: true
+      lite.eco.admin.withdraw: true
       lite.eco.admin.gremove: true
+      lite.eco.admin.global.withdraw: true
       lite.eco.admin.lang: true
       lite.eco.admin.purge: true
       lite.eco.admin.migration: true
