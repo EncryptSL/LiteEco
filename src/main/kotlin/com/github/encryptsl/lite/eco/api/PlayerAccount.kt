@@ -52,7 +52,9 @@ class PlayerAccount(val plugin: Plugin) : AccountAPI {
 
     override fun syncAccounts() {
         runCatching {
-            for (c in BalanceCache.cache) {
+            val cache = BalanceCache.cache
+            if (cache.isEmpty()) return
+            for (c in cache) {
                 syncAccount(c.key, c.value)
             }
         }.onSuccess {
