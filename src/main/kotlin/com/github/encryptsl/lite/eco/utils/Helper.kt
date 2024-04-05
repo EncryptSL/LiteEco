@@ -2,9 +2,11 @@ package com.github.encryptsl.lite.eco.utils
 
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.enums.CheckLevel
-import com.github.encryptsl.lite.eco.api.objects.ModernText
 import com.github.encryptsl.lite.eco.common.database.entity.EconomyLog
-import com.github.encryptsl.lite.eco.common.extensions.*
+import com.github.encryptsl.lite.eco.common.extensions.isApproachingZero
+import com.github.encryptsl.lite.eco.common.extensions.isNegative
+import com.github.encryptsl.lite.eco.common.extensions.positionIndexed
+import com.github.encryptsl.lite.eco.common.extensions.toValidDecimal
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.Bukkit
