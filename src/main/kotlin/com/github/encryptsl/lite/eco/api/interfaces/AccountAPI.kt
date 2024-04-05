@@ -7,7 +7,7 @@ interface AccountAPI {
     fun syncAccount(uuid: UUID, value: Double)
     fun syncAccount(uuid: UUID)
     fun syncAccounts()
-    fun removeAccount(uuid: UUID)
+    fun clearFromCache(uuid: UUID)
     fun getBalance(uuid: UUID): Double
     fun isAccountCached(uuid: UUID): Boolean
     fun isPlayerOnline(uuid: UUID): Boolean
