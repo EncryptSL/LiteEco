@@ -34,13 +34,13 @@ class DatabaseEcoModel : PlayerSQLProvider {
     }
 
     override fun getTopBalance(top: Int): MutableMap<String, Double> = loggedTransaction {
-        Account.selectAll().limit(top).associate {
+        Account.selectAll().limit(top).orderBy(Account.money, SortOrder.DESC).associate {
             it[Account.uuid] to it[Account.money]
         }.toMutableMap()
     }
 
     override fun getTopBalance(): MutableMap<String, Double> = loggedTransaction {
-        Account.selectAll().associate {
+        Account.selectAll().orderBy(Account.money, SortOrder.DESC).associate {
             it[Account.uuid] to it[Account.money]
         }.toMutableMap()
     }

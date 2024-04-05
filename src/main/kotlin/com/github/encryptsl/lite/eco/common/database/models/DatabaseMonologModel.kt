@@ -5,6 +5,7 @@ import com.github.encryptsl.lite.eco.common.database.entity.EconomyLog
 import com.github.encryptsl.lite.eco.common.database.tables.MonologTable
 import com.github.encryptsl.lite.eco.common.extensions.loggedTransaction
 import org.bukkit.plugin.Plugin
+import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
@@ -28,7 +29,7 @@ class DatabaseMonologModel(val plugin: Plugin) : AdapterLogger {
     }
 
     override fun getLog(): List<EconomyLog> {
-        val query = loggedTransaction { MonologTable.selectAll() }
+        val query = loggedTransaction { MonologTable.selectAll().orderBy(MonologTable.timestamp, SortOrder.DESC) }
         return query.mapNotNull { EconomyLog(it[MonologTable.level], it[MonologTable.log], it[MonologTable.timestamp]) }
     }
 
