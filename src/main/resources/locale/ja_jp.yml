@@ -49,6 +49,7 @@ messages:
     migration_argument: "<prefix> <red>この<argument>は適切ではないか、サーバーの移行の準備が完了していない可能性があります。"
     migration_failed: "<prefix> <red>マイグレーション中に問題が発生しました。詳細についてはコンソールをご確認ください。" # TEMP #
     purge_argument: "<prefix> <red>この<argument>は適切ではないか、サーバーの削除の準備が完了していない可能性があります。"
+    purge_monolog_fail: "<prefix> <red>You can't delete logs, because table is empty [!]"
     player_is_null: "<prefix> <red>プレイヤー名を入力してください。"
     self_pay: "<prefix> <red>自分自身にお金を送金することはできません。"
     convert_fail: "<prefix> <red>Something broke during convert look into console [!]"
@@ -56,12 +57,15 @@ messages:
     balance_above_limit: "<prefix> <red>Balance of account <account> is above, allowed limit of server !"
 
   admin:
+    monolog_format: "<hover:show_text:'<green><timestamp>'><blue>[<level>] <white>- <gray><log></hover>"
+
     config_reload: "<prefix> <green>コンフィグは正常に読み込まれました。"
     translation_switch: "<prefix> <green>言語の切り替えが完了しました。(言語: <locale>)"
     translation_missing: "<prefix> <red>翻訳が見つかりません。このプラグインの開発者に連絡してください。(言語: <key>)"
     purge_accounts: "<prefix> <green>すべてのプレイヤーのアカウントを削除しました。"
     purge_null_accounts: "<prefix> <green> すべてのプレイヤーアカウントのヌル値が削除されました。" # TEMP #
     purge_default_accounts: "<prefix> <green>デフォルトの値で全てのプレイヤーの所持金を再設定しました。"
+    purge_monolog_success: "<prefix> <green>All logs about economy activities was purged [!]"
     delete_account: "<prefix> <green>Account of player <account> was deleted !"
     migration_success: "<prefix> <green><type>からのマイグレーションが完了しました。"
     convert_success: "<prefix> <green>Convert of <converted>x accounts and <balances> balances from <economy> to LiteEco was successful !"
@@ -92,4 +96,4 @@ messages:
     - " "
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
 
-version: 2.0.2
+version: 2.0.3
