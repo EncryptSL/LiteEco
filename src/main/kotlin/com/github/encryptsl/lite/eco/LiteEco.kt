@@ -12,11 +12,13 @@ import com.github.encryptsl.lite.eco.api.economy.LiteEcoEconomyAPI
 import com.github.encryptsl.lite.eco.api.enums.Economies
 import com.github.encryptsl.lite.eco.api.enums.MigrationKey
 import com.github.encryptsl.lite.eco.api.enums.PurgeKey
+import com.github.encryptsl.lite.eco.api.objects.ModernText
 import com.github.encryptsl.lite.eco.commands.EcoCMD
 import com.github.encryptsl.lite.eco.commands.MoneyCMD
 import com.github.encryptsl.lite.eco.common.config.Locales
 import com.github.encryptsl.lite.eco.common.database.DatabaseConnector
-import com.github.encryptsl.lite.eco.common.database.models.PreparedStatements
+import com.github.encryptsl.lite.eco.common.database.models.DatabaseEcoModel
+import com.github.encryptsl.lite.eco.common.database.models.DatabaseLoggerModel
 import com.github.encryptsl.lite.eco.common.hook.HookManager
 import com.github.encryptsl.lite.eco.listeners.*
 import com.github.encryptsl.lite.eco.listeners.admin.*
@@ -26,23 +28,25 @@ import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.plugin.PluginManager
 import org.bukkit.plugin.java.JavaPlugin
+import org.incendo.cloud.minecraft.extras.MinecraftExceptionHandler
 import java.util.concurrent.CompletableFuture
 import kotlin.system.measureTimeMillis
 
 class LiteEco : JavaPlugin() {
     companion object {
-        const val CONFIG_VERSION = "1.2.3"
-        const val LANG_VERSION = "2.0.2"
+        const val CONFIG_VERSION = "1.2.4"
+        const val LANG_VERSION = "2.0.3"
         const val PAPI_VERSION = "2.0.5"
     }
 
     val pluginManager: PluginManager = server.pluginManager
 
-    var countTransactions: LinkedHashMap<String, Int> = LinkedHashMap()
+    private var countTransactions: LinkedHashMap<String, Int> = LinkedHashMap()
 
     val api: LiteEcoEconomyAPI by lazy { LiteEcoEconomyAPI(this) }
     val locale: Locales by lazy { Locales(this, LANG_VERSION) }
-    val preparedStatements: PreparedStatements by lazy { PreparedStatements() }
+    val databaseEcoModel: DatabaseEcoModel by lazy { DatabaseEcoModel() }
+    val loggerModel: DatabaseLoggerModel by lazy { DatabaseLoggerModel(this) }
 
     private val configAPI: ConfigAPI by lazy { ConfigAPI(this) }
     private val hookManager: HookManager by lazy { HookManager(this) }
@@ -95,10 +99,12 @@ class LiteEco : JavaPlugin() {
     }
 
     private fun setupMetrics() {
-        val metrics = Metrics(this, 15144)
-        metrics.addCustomChart(SingleLineChart("transactions") {
-            countTransactions["transactions"]
-        })
+        if (config.getBoolean("plugin.metrics", true)) {
+            val metrics = Metrics(this, 15144)
+            metrics.addCustomChart(SingleLineChart("transactions") {
+                countTransactions["transactions"]
+            })
+        }
     }
 
     @Suppress("UnstableApiUsage")
@@ -108,27 +114,25 @@ class LiteEco : JavaPlugin() {
     }
 
     private fun registerListeners() {
-        var amount: Int
+        val listeners = arrayListOf(
+            AccountManageListener(this),
+            PlayerEconomyPayListener(this),
+            EconomyGlobalDepositListener(this),
+            EconomyGlobalSetListener(this),
+            EconomyGlobalWithdrawListener(this),
+            EconomyMoneyDepositListener(this),
+            EconomyMoneyWithdrawListener(this),
+            EconomyMoneySetListener(this),
+            PlayerJoinListener(this),
+            PlayerQuitListener(this)
+        )
         val timeTaken = measureTimeMillis {
-            val listeners = arrayListOf(
-                AccountManageListener(this),
-                PlayerEconomyPayListener(this),
-                EconomyGlobalDepositListener(this),
-                EconomyGlobalSetListener(this),
-                EconomyGlobalWithdrawListener(this),
-                EconomyMoneyDepositListener(this),
-                EconomyMoneyWithdrawListener(this),
-                EconomyMoneySetListener(this),
-                PlayerJoinListener(this),
-                PlayerQuitListener(this)
-            )
             for (listener in listeners) {
                 pluginManager.registerEvents(listener, this)
                 logger.info("Bukkit Listener ${listener.javaClass.simpleName} registered () -> ok")
             }
-            amount = listeners.size
         }
-        logger.info("Listeners registered ($amount) in time $timeTaken ms -> ok")
+        logger.info("Listeners registered (${listeners.size}) in time $timeTaken ms -> ok")
     }
 
     private fun registerCommands() {
@@ -136,6 +140,7 @@ class LiteEco : JavaPlugin() {
 
         val commandManager = createCommandManager()
 
+        registerMinecraftExceptionHandler(commandManager)
         registerSuggestionProviders(commandManager)
 
         val annotationParser = createAnnotationParser(commandManager)
@@ -159,6 +164,17 @@ class LiteEco : JavaPlugin() {
             (commandManager as PaperCommandManager<*>).registerAsynchronousCompletions()
         }
         return commandManager
+    }
+
+    private fun registerMinecraftExceptionHandler(commandManager: PaperCommandManager<CommandSender>) {
+        MinecraftExceptionHandler.createNative<CommandSender>()
+            .defaultHandlers()
+            .decorator { component ->
+                ModernText.miniModernText(config.getString("prefix", "<red>[!]").toString())
+                    .appendSpace()
+                    .append(component)
+            }
+            .registerTo(commandManager)
     }
 
     private fun registerSuggestionProviders(commandManager: PaperCommandManager<CommandSender>) {
