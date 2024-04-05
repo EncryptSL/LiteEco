@@ -2,7 +2,7 @@ package com.github.encryptsl.lite.eco.api.economy
 
 import com.github.encryptsl.lite.eco.api.PlayerAccount
 import com.github.encryptsl.lite.eco.api.interfaces.LiteEconomyAPIProvider
-import com.github.encryptsl.lite.eco.common.database.models.PreparedStatements
+import com.github.encryptsl.lite.eco.common.database.models.DatabaseEcoModel
 import com.github.encryptsl.lite.eco.common.extensions.compactFormat
 import com.github.encryptsl.lite.eco.common.extensions.moneyFormat
 import org.bukkit.Bukkit
@@ -12,13 +12,12 @@ import java.util.*
 
 class LiteEcoEconomyAPI(val plugin: Plugin) : LiteEconomyAPIProvider {
 
-    private val preparedStatements: PreparedStatements by lazy { PreparedStatements() }
+    private val databaseEcoModel: DatabaseEcoModel by lazy { DatabaseEcoModel() }
     private val playerAccount: PlayerAccount by lazy { PlayerAccount(plugin) }
-
     override fun createAccount(player: OfflinePlayer, startAmount: Double): Boolean {
         if (hasAccount(player)) return false
 
-        preparedStatements.createPlayerAccount(player.name.toString(), player.uniqueId, startAmount)
+        databaseEcoModel.createPlayerAccount(player.name.toString(), player.uniqueId, startAmount)
         return true
     }
 
@@ -32,14 +31,14 @@ class LiteEcoEconomyAPI(val plugin: Plugin) : LiteEconomyAPIProvider {
     override fun deleteAccount(player: OfflinePlayer): Boolean {
         if (!hasAccount(player)) return false
 
-        playerAccount.removeAccount(player.uniqueId)
-        preparedStatements.deletePlayerAccount(player.uniqueId)
+        playerAccount.clearFromCache(player.uniqueId)
+        databaseEcoModel.deletePlayerAccount(player.uniqueId)
 
         return true
     }
 
     override fun hasAccount(player: OfflinePlayer): Boolean {
-        return preparedStatements.getExistPlayerAccount(player.uniqueId)
+        return databaseEcoModel.getExistPlayerAccount(player.uniqueId)
     }
 
     override fun has(player: OfflinePlayer, amount: Double): Boolean {
@@ -50,7 +49,7 @@ class LiteEcoEconomyAPI(val plugin: Plugin) : LiteEconomyAPIProvider {
         return if (playerAccount.isPlayerOnline(player.uniqueId) || playerAccount.isAccountCached(player.uniqueId))
             playerAccount.getBalance(player.uniqueId)
         else
-            preparedStatements.getBalance(player.uniqueId)
+            databaseEcoModel.getBalance(player.uniqueId)
     }
 
     override fun getCheckBalanceLimit(amount: Double): Boolean {
@@ -65,7 +64,7 @@ class LiteEcoEconomyAPI(val plugin: Plugin) : LiteEconomyAPIProvider {
         if (playerAccount.isPlayerOnline(player.uniqueId)) {
             cacheAccount(player, getBalance(player).plus(amount))
         } else {
-            preparedStatements.depositMoney(player.uniqueId, amount)
+            databaseEcoModel.depositMoney(player.uniqueId, amount)
         }
     }
 
@@ -73,7 +72,7 @@ class LiteEcoEconomyAPI(val plugin: Plugin) : LiteEconomyAPIProvider {
         if (playerAccount.isPlayerOnline(player.uniqueId)) {
             cacheAccount(player, getBalance(player).minus(amount))
         } else {
-            preparedStatements.withdrawMoney(player.uniqueId, amount)
+            databaseEcoModel.withdrawMoney(player.uniqueId, amount)
         }
     }
 
@@ -81,13 +80,13 @@ class LiteEcoEconomyAPI(val plugin: Plugin) : LiteEconomyAPIProvider {
         if (playerAccount.isPlayerOnline(player.uniqueId)) {
             cacheAccount(player, amount)
         } else {
-            preparedStatements.setMoney(player.uniqueId, amount)
+            databaseEcoModel.setMoney(player.uniqueId, amount)
         }
     }
 
     override fun syncAccount(offlinePlayer: OfflinePlayer) {
         if (getCheckBalanceLimit(getBalance(offlinePlayer)) && offlinePlayer.player?.hasPermission("lite.eco.admin.bypass") != true)
-            return playerAccount.syncAccount(offlinePlayer.uniqueId, 1_000_000.00)
+            return playerAccount.syncAccount(offlinePlayer.uniqueId, plugin.config.getDouble("economy.balance_limit", 1_000_000.00))
 
         playerAccount.syncAccount(offlinePlayer.uniqueId)
     }
@@ -97,7 +96,7 @@ class LiteEcoEconomyAPI(val plugin: Plugin) : LiteEconomyAPIProvider {
     }
 
     override fun getTopBalance(): MutableMap<String, Double> {
-        val databaseStoredBalance = preparedStatements.getTopBalance().filterNot { e -> Bukkit.getOfflinePlayer(e.key).name == null }
+        val databaseStoredBalance = databaseEcoModel.getTopBalance().filterNot { e -> Bukkit.getOfflinePlayer(e.key).name == null }
         return databaseStoredBalance.mapValues { getBalance(Bukkit.getOfflinePlayer(UUID.fromString(it.key))) }.toMutableMap()
     }
 
@@ -112,8 +111,7 @@ class LiteEcoEconomyAPI(val plugin: Plugin) : LiteEconomyAPIProvider {
     override fun fullFormatting(amount: Double): String {
         val value = if (plugin.config.getBoolean("economy.compact_display")) {
             compacted(amount)
-        }
-        else {
+        } else {
             formatted(amount)
         }
         return plugin.config.getString("economy.currency_format")

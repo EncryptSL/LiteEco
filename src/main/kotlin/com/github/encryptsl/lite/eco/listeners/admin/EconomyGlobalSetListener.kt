@@ -18,7 +18,7 @@ class EconomyGlobalSetListener(private val liteEco: LiteEco) : Listener {
         val offlinePlayers = Bukkit.getOfflinePlayers()
 
         if (liteEco.api.getCheckBalanceLimit(money) && !sender.hasPermission("lite.eco.admin.bypass.limit"))
-            return sender.sendMessage(ModernText.miniModernText(liteEco.locale.getMessage("messages.error.amount_above_limit")))
+            return sender.sendMessage(liteEco.locale.translation("messages.error.amount_above_limit"))
 
         for (p in offlinePlayers) {
             if (!liteEco.api.hasAccount(p)) continue
@@ -26,20 +26,18 @@ class EconomyGlobalSetListener(private val liteEco: LiteEco) : Listener {
         }
 
         liteEco.increaseTransactions(offlinePlayers.size)
+        liteEco.loggerModel.info("Admin ${sender.name} set ${liteEco.api.fullFormatting(money)} to ${offlinePlayers.size} accounts")
 
         sender.sendMessage(
-            ModernText.miniModernText(liteEco.locale.getMessage("messages.global.set_money"),
-            TagResolver.resolver(
-                Placeholder.parsed("money", liteEco.api.fullFormatting(money))
-            )
+            liteEco.locale.translation("messages.global.set_money", Placeholder.parsed("money", liteEco.api.fullFormatting(money))
         ))
+
         if (liteEco.config.getBoolean("messages.global.notify_set"))
             Bukkit.broadcast(
-                ModernText.miniModernText(liteEco.locale.getMessage("messages.broadcast.set_money"),
+                liteEco.locale.translation("messages.broadcast.set_money",
                     TagResolver.resolver(
                         Placeholder.parsed("sender", sender.name),
                         Placeholder.parsed("money", liteEco.api.fullFormatting(money))
                     )))
-            return
     }
 }

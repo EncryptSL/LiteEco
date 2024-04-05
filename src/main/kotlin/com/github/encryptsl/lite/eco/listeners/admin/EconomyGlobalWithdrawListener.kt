@@ -23,21 +23,22 @@ class EconomyGlobalWithdrawListener(private val liteEco: LiteEco) : Listener {
         }
 
         liteEco.increaseTransactions(offlinePlayers.size)
+        liteEco.loggerModel.info("Admin ${sender.name} withdraw ${liteEco.api.fullFormatting(money)} from ${offlinePlayers.size} accounts")
 
         sender.sendMessage(
-            ModernText.miniModernText(liteEco.locale.getMessage("messages.global.withdraw_money"),
+            liteEco.locale.translation("messages.global.withdraw_money",
             TagResolver.resolver(
                 Placeholder.parsed("money", liteEco.api.fullFormatting(money))
             )
         ))
         if (liteEco.config.getBoolean("messages.global.notify_withdraw"))
             Bukkit.broadcast(
-                ModernText.miniModernText(liteEco.locale.getMessage("messages.broadcast.withdraw_money"),
+                liteEco.locale.translation("messages.broadcast.withdraw_money",
                 TagResolver.resolver(
                     Placeholder.parsed("sender", sender.name),
                     Placeholder.parsed("money", liteEco.api.fullFormatting(money))
                 )
             ))
-        return
+            return
     }
 }

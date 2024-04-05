@@ -19,7 +19,7 @@ class EconomyGlobalDepositListener(private val liteEco: LiteEco) : Listener {
         val offlinePlayers = Bukkit.getOfflinePlayers()
 
         if (liteEco.api.getCheckBalanceLimit(money) && !sender.hasPermission("lite.eco.admin.bypass.limit"))
-            return sender.sendMessage(ModernText.miniModernText(liteEco.locale.getMessage("messages.error.amount_above_limit")))
+            return sender.sendMessage(liteEco.locale.translation("messages.error.amount_above_limit"))
 
         //TODO: I don't know now how solve issue with not checking balance, only one way is add other same function with checking sender permission.
         for (p in offlinePlayers) {
@@ -28,16 +28,14 @@ class EconomyGlobalDepositListener(private val liteEco: LiteEco) : Listener {
         }
 
         liteEco.increaseTransactions(offlinePlayers.size)
+        liteEco.loggerModel.info("Admin ${sender.name} deposit ${liteEco.api.fullFormatting(money)} to ${offlinePlayers.size}x accounts")
 
         sender.sendMessage(
-            ModernText.miniModernText(liteEco.locale.getMessage("messages.global.add_money"),
-            TagResolver.resolver(
-                Placeholder.parsed("money", liteEco.api.fullFormatting(money))
-            )
+            liteEco.locale.translation("messages.global.add_money", Placeholder.parsed("money", liteEco.api.fullFormatting(money))
         ))
-        if (!liteEco.config.getBoolean("messages.global.notify_add")) {
+        if (liteEco.config.getBoolean("messages.global.notify_add")) {
             Bukkit.broadcast(
-                ModernText.miniModernText(liteEco.locale.getMessage("messages.broadcast.add_money"),
+                liteEco.locale.translation("messages.broadcast.add_money",
                 TagResolver.resolver(
                     Placeholder.parsed("sender", sender.name),
                     Placeholder.parsed("money", liteEco.api.fullFormatting(money))
