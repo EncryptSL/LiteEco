@@ -2,7 +2,6 @@ package com.github.encryptsl.lite.eco.common.extensions
 
 import kotlinx.datetime.Instant
 import kotlinx.datetime.toJavaInstant
-import java.io.File
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
@@ -12,9 +11,6 @@ fun getRandomString(length: Int) : String {
         .map { allowedChars.random() }
         .joinToString("")
 }
-
-fun readFile(fileName: String): MutableList<String>
-        = File(fileName).readLines().toMutableList()
 
 fun convertInstant(instant: Instant): String {
    return instant
