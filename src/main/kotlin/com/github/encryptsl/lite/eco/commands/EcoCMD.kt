@@ -233,6 +233,10 @@ class EcoCMD(private val liteEco: LiteEco) {
                 Economies.EssentialsX -> {
                     convertEconomy.convertEssentialsXEconomy()
                 }
+
+                Economies.BetterEconomy -> {
+                    convertEconomy.convertBetterEconomy()
+                }
             }
             val (converted, balances) = convertEconomy.getResult()
             commandSender.sendMessage(

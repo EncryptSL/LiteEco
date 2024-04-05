@@ -1,6 +1,7 @@
 package com.github.encryptsl.lite.eco.utils
 
 import com.github.encryptsl.lite.eco.LiteEco
+import com.github.encryptsl.lite.eco.common.hook.bettereconomy.BetterEconomyHook
 import org.bukkit.Bukkit
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
@@ -16,12 +17,29 @@ class ConvertEconomy(private val liteEco: LiteEco) {
             if (playerFile.exists()) {
                 val essentialsXConfig = YamlConfiguration.loadConfiguration(playerFile)
                 val balance = essentialsXConfig.getString("money") ?: "0.0"
-                liteEco.api.setMoney(p, balance.toDouble())
-                balances = balance.toDouble()
-                converted += 1
+                if (liteEco.api.createAccount(p, balance.toDouble())) {
+                    balances = balance.toDouble()
+                    converted += 1
+                }
             }
         }
     }
+
+    fun convertBetterEconomy() {
+        try {
+            val betterEconomy = BetterEconomyHook()
+            for (p in Bukkit.getOfflinePlayers()) {
+                val balance = betterEconomy.getBalance(p.uniqueId)
+                if (liteEco.api.createAccount(p, balance)) {
+                    balances = balance
+                    converted += 1
+                }
+            }
+        } catch (e : Exception) {
+            liteEco.logger.severe(e.message ?: e.localizedMessage)
+        }
+    }
+
     fun getResult(): EconomyConvertResult {
         return EconomyConvertResult(converted, balances)
     }

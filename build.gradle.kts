@@ -9,6 +9,9 @@ version = providers.gradleProperty("plugin_version").get()
 description = providers.gradleProperty("plugin_description").get()
 
 repositories {
+    flatDir {
+        dirs("lib")
+    }
     mavenLocal()
     mavenCentral()
     maven("https://repo.papermc.io/repository/maven-public/")
@@ -42,6 +45,7 @@ dependencies {
     compileOnly("org.jetbrains.exposed:exposed-jdbc:0.48.0")
     compileOnly("org.jetbrains.exposed:exposed-kotlin-datetime:0.48.0")
     compileOnly("com.squareup.okhttp3:okhttp:4.12.0")
+    compileOnly("me.hsgamer:bettereconomy:3.0")
 
     implementation("org.bstats:bstats-bukkit:3.0.1")
     implementation("org.incendo:cloud-paper:2.0.0-beta.2")

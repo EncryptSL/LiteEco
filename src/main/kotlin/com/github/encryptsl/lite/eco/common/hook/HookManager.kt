@@ -1,6 +1,7 @@
 package com.github.encryptsl.lite.eco.common.hook
 
 import com.github.encryptsl.lite.eco.LiteEco
+import com.github.encryptsl.lite.eco.common.hook.bettereconomy.BetterEconomyHook
 import com.github.encryptsl.lite.eco.common.hook.miniplaceholder.EconomyMiniPlaceholder
 import com.github.encryptsl.lite.eco.common.hook.placeholderapi.EconomyPlaceholderAPI
 import com.github.encryptsl.lite.eco.common.hook.vault.AdaptiveEconomyVaultAPI
@@ -60,6 +61,13 @@ class HookManager(private val liteEco: LiteEco) {
             liteEco.logger.warning("Warning plugin Vault not found !")
             liteEco.logger.warning("For better experience please download Vault.")
             liteEco.logger.warning("Keep in mind without Vault, LiteEco can't use API from Vault.")
+        }
+    }
+
+    fun hookBetterEconomy() {
+        if (BetterEconomyHook().getBetterEconomy() || isPluginInstalled("BetterEconomy")) {
+            liteEco.logger.info("Plugin BetterEconomy found.")
+            liteEco.logger.info("You can now convert from BetterEconomy to LiteEco, with /eco convert BetterEconomy.")
         }
     }
 
