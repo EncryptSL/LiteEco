@@ -1,23 +1,28 @@
 package com.github.encryptsl.lite.eco.commands
 
-import org.incendo.cloud.annotation.specifier.Range
-import org.incendo.cloud.annotations.Argument
-import org.incendo.cloud.annotations.Command
-import org.incendo.cloud.annotations.CommandDescription
-import org.incendo.cloud.annotations.Flag
-import org.incendo.cloud.annotations.Permission
 import com.github.encryptsl.lite.eco.LiteEco
-import com.github.encryptsl.lite.eco.api.enums.*
+import com.github.encryptsl.lite.eco.api.Paginator
+import com.github.encryptsl.lite.eco.api.enums.CheckLevel
+import com.github.encryptsl.lite.eco.api.enums.Economies
+import com.github.encryptsl.lite.eco.api.enums.MigrationKey
+import com.github.encryptsl.lite.eco.api.enums.PurgeKey
 import com.github.encryptsl.lite.eco.api.events.admin.*
 import com.github.encryptsl.lite.eco.api.objects.ModernText
 import com.github.encryptsl.lite.eco.common.config.Locales
+import com.github.encryptsl.lite.eco.common.extensions.convertInstant
+import com.github.encryptsl.lite.eco.common.extensions.getRandomString
 import com.github.encryptsl.lite.eco.common.extensions.positionIndexed
-import com.github.encryptsl.lite.eco.utils.*
+import com.github.encryptsl.lite.eco.utils.ConvertEconomy
+import com.github.encryptsl.lite.eco.utils.Helper
+import com.github.encryptsl.lite.eco.utils.MigrationData
+import com.github.encryptsl.lite.eco.utils.MigrationTool
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
+import org.incendo.cloud.annotation.specifier.Range
+import org.incendo.cloud.annotations.*
 import java.util.*
 import java.util.concurrent.ThreadLocalRandom
 import kotlin.system.measureTimeMillis
@@ -116,7 +121,29 @@ class EcoCMD(private val liteEco: LiteEco) {
         } else {
             "messages.error.account_not_exist"
         }
-        commandSender.sendMessage(ModernText.miniModernText(liteEco.locale.getMessage(message), Placeholder.parsed("player", offlinePlayer.name.toString())))
+        commandSender.sendMessage(liteEco.locale.translation(message, Placeholder.parsed("player", offlinePlayer.name.toString())))
+    }
+
+    @Command("eco monolog [page] [player]")
+    @Permission("lite.eco.admin.monolog")
+    fun onLogView(commandSender: CommandSender, @Argument("page") @Default(value = "1") page: Int, @Argument("player") player: String?) {
+
+        val log = helper.validateLog(player).map {
+            liteEco.locale.getMessage("messages.admin.monolog_format")
+                .replace("<level>", it.level)
+                .replace("<timestamp>", convertInstant(it.timestamp))
+                .replace("<log>", it.log)
+        }
+        if (log.isEmpty()) return
+        val pagination = Paginator(log).apply { page(page) }
+        val isPageAboveMaxPages = page > pagination.maxPages
+
+        if (isPageAboveMaxPages)
+            return commandSender.sendMessage(liteEco.locale.translation("messages.error.maximum_page",
+                Placeholder.parsed("max_page", pagination.maxPages.toString()))
+            )
+
+        commandSender.sendMessage(ModernText.miniModernText(pagination.display()))
     }
 
     @Command("eco lang <isoKey>")
@@ -129,10 +156,7 @@ class EcoCMD(private val liteEco: LiteEco) {
             val langKey = Locales.LangKey.valueOf(isoKey.uppercase())
             liteEco.locale.setTranslationFile(langKey)
             commandSender.sendMessage(
-                ModernText.miniModernText(
-                    liteEco.locale.getMessage("messages.admin.translation_switch"),
-                    TagResolver.resolver(Placeholder.parsed("locale", langKey.name))
-                )
+                liteEco.locale.translation("messages.admin.translation_switch", Placeholder.parsed("locale", langKey.name))
             )
         } catch (_: IllegalArgumentException) {
             commandSender.sendMessage(
@@ -150,19 +174,28 @@ class EcoCMD(private val liteEco: LiteEco) {
         @Suppress("REDUNDANT_ELSE_IN_WHEN")
         when (purgeKey) {
             PurgeKey.ACCOUNTS -> {
-                liteEco.preparedStatements.purgeAccounts()
-                commandSender.sendMessage(ModernText.miniModernText(liteEco.locale.getMessage("messages.admin.purge_accounts")))
+                liteEco.databaseEcoModel.purgeAccounts()
+                commandSender.sendMessage(liteEco.locale.translation("messages.admin.purge_accounts"))
             }
             PurgeKey.NULL_ACCOUNTS -> {
-                liteEco.preparedStatements.purgeInvalidAccounts()
-                commandSender.sendMessage(ModernText.miniModernText(liteEco.locale.getMessage("messages.admin.purge_null_accounts")))
+                liteEco.databaseEcoModel.purgeInvalidAccounts()
+                commandSender.sendMessage(liteEco.locale.translation("messages.admin.purge_null_accounts"))
             }
             PurgeKey.DEFAULT_ACCOUNTS -> {
-                liteEco.preparedStatements.purgeDefaultAccounts(liteEco.config.getDouble("economy.starting_balance"))
-                commandSender.sendMessage(ModernText.miniModernText(liteEco.locale.getMessage("messages.admin.purge_default_accounts")))
+                liteEco.databaseEcoModel.purgeDefaultAccounts(liteEco.config.getDouble("economy.starting_balance"))
+                commandSender.sendMessage(liteEco.locale.translation("messages.admin.purge_default_accounts"))
+            }
+            PurgeKey.LOGS -> {
+                val logs = liteEco.loggerModel.getLog()
+
+                if (logs.isEmpty())
+                    return commandSender.sendMessage(liteEco.locale.translation("messages.error.purge_monolog_fail"))
+
+                liteEco.loggerModel.clearLogs()
+                commandSender.sendMessage(liteEco.locale.translation("messages.admin.purge_monolog_success"))
             }
             else -> {
-                commandSender.sendMessage(ModernText.miniModernText(liteEco.locale.getMessage("messages.error.purge_argument")))
+                commandSender.sendMessage(liteEco.locale.translation("messages.error.purge_argument"))
             }
         }
     }
@@ -184,8 +217,8 @@ class EcoCMD(private val liteEco: LiteEco) {
             "messages.error.migration_failed"
         }
 
-        commandSender.sendMessage(ModernText.miniModernText(
-            liteEco.locale.getMessage(messageKey),
+        commandSender.sendMessage(
+            liteEco.locale.translation(messageKey,
             TagResolver.resolver(
                 Placeholder.parsed("type", migrationKey.name)
             )
@@ -202,8 +235,8 @@ class EcoCMD(private val liteEco: LiteEco) {
                 }
             }
             val (converted, balances) = convertEconomy.getResult()
-            commandSender.sendMessage(ModernText.miniModernText(
-                liteEco.locale.getMessage("messages.admin.convert_success"),
+            commandSender.sendMessage(
+                liteEco.locale.translation("messages.admin.convert_success",
                 TagResolver.resolver(
                     Placeholder.parsed("economy", economy.name),
                     Placeholder.parsed("converted", converted.toString()),
@@ -213,20 +246,18 @@ class EcoCMD(private val liteEco: LiteEco) {
             convertEconomy.convertRefresh()
         } catch (e : Exception) {
             liteEco.logger.info(e.message ?: e.localizedMessage)
-            commandSender.sendMessage(ModernText.miniModernText(liteEco.locale.getMessage("messages.error.convert_fail")))
+            commandSender.sendMessage(liteEco.locale.translation("messages.error.convert_fail"))
         }
     }
 
     @Command("eco debug create accounts <amount>")
     @Permission("lite.eco.admin.debug.create.accounts")
     fun onDebugCreateAccounts(commandSender: CommandSender, @Argument("amount") @Range(min = "1", max = "100") amountStr: Int) {
-
-        val randomName = StringGenerator()
         val random = ThreadLocalRandom.current()
 
         val time = measureTimeMillis {
             for (i in 1 .. amountStr) {
-                liteEco.preparedStatements.createPlayerAccount(randomName.getRandomString(10), UUID.randomUUID(), random.nextDouble(1000.0, 500000.0))
+                liteEco.databaseEcoModel.createPlayerAccount(getRandomString(10), UUID.randomUUID(), random.nextDouble(1000.0, 500000.0))
             }
         }
 
@@ -237,7 +268,7 @@ class EcoCMD(private val liteEco: LiteEco) {
     @Permission("lite.eco.admin.reload")
     fun onReload(commandSender: CommandSender) {
         liteEco.reloadConfig()
-        commandSender.sendMessage(ModernText.miniModernText(liteEco.locale.getMessage("messages.admin.config_reload")))
+        commandSender.sendMessage(liteEco.locale.translation("messages.admin.config_reload"))
         liteEco.logger.info("Config.yml was reloaded [!]")
         liteEco.saveConfig()
         liteEco.locale.reloadTranslation()
