@@ -10,7 +10,7 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
 import java.util.logging.Level
 
-class DatabaseLoggerModel(val plugin: Plugin) : AdapterLogger {
+class DatabaseMonologModel(val plugin: Plugin) : AdapterLogger {
     override fun error(message: String) {
         log(Level.SEVERE, message)
     }
@@ -33,7 +33,7 @@ class DatabaseLoggerModel(val plugin: Plugin) : AdapterLogger {
     }
 
     private fun log(level: Level, message: String) {
-        if (plugin.config.getBoolean("economy.monolog_activity", true)) return
+        if (!plugin.config.getBoolean("economy.monolog_activity", true)) return
         loggedTransaction {
             MonologTable.insert {
                 it[MonologTable.level] = level.name

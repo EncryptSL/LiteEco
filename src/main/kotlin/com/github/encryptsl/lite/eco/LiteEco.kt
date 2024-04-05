@@ -18,7 +18,7 @@ import com.github.encryptsl.lite.eco.commands.MoneyCMD
 import com.github.encryptsl.lite.eco.common.config.Locales
 import com.github.encryptsl.lite.eco.common.database.DatabaseConnector
 import com.github.encryptsl.lite.eco.common.database.models.DatabaseEcoModel
-import com.github.encryptsl.lite.eco.common.database.models.DatabaseLoggerModel
+import com.github.encryptsl.lite.eco.common.database.models.DatabaseMonologModel
 import com.github.encryptsl.lite.eco.common.hook.HookManager
 import com.github.encryptsl.lite.eco.listeners.*
 import com.github.encryptsl.lite.eco.listeners.admin.*
@@ -46,7 +46,7 @@ class LiteEco : JavaPlugin() {
     val api: LiteEcoEconomyAPI by lazy { LiteEcoEconomyAPI(this) }
     val locale: Locales by lazy { Locales(this, LANG_VERSION) }
     val databaseEcoModel: DatabaseEcoModel by lazy { DatabaseEcoModel() }
-    val loggerModel: DatabaseLoggerModel by lazy { DatabaseLoggerModel(this) }
+    val loggerModel: DatabaseMonologModel by lazy { DatabaseMonologModel(this) }
 
     private val configAPI: ConfigAPI by lazy { ConfigAPI(this) }
     private val hookManager: HookManager by lazy { HookManager(this) }
