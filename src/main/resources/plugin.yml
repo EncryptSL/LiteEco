@@ -8,7 +8,7 @@ api-version: 1.13
 prefix: LiteEco
 author: EncryptSL
 contributors: [LcyDev]
-website: https://encryptsl.cekuj.net
+website: https://encryptsl.github.io
 
 load: STARTUP
 softdepend: [PlaceholderAPI, Vault, Treasury, MiniPlaceholders]
