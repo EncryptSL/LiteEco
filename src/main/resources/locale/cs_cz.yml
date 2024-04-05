@@ -49,6 +49,7 @@ messages:
     migration_argument: "<prefix> <red>Tento <argument> argument není validní nebo není připraven do produkce."
     migration_failed: "<prefix> <red>Při migraci došlo k chybě. Podrobnosti naleznete v konzoli." # TEMP #
     purge_argument: "<prefix> <red>Tento <argument> argument není validní nebo není připraven do produkce."
+    purge_monolog_fail: "<prefix> <red>Nemůžeš provést smazání logů, tabulka je prázdná [!]"
     player_is_null: "<prefix> <red>Jméno hráče musí být vyplněno [!]"
     self_pay: "<prefix> <red>Nemůžeš sám sobě poslat peníze [!]"
     convert_fail: "<prefix> <red>Něco se pokazilo během konvertování, podívej se do konzole [!]"
@@ -57,12 +58,15 @@ messages:
 
   # Admin commands
   admin:
+    monolog_format: "<hover:show_text:'<green><timestamp>'><blue>[<level>] <white>- <gray><log></hover>"
+
     config_reload: "<prefix> <green>Config byl znovu načten [!]"
     translation_switch: "<prefix> <green>Překlad byl přepnut na <locale>"
     translation_missing: "<prefix> <red>Překlad <key> chybí.... kontaktuj vývojáře tohoto pluginu."
     purge_accounts: "<prefix> <green>Smazal jsi všechny účty."
     purge_null_accounts: "<prefix> <green> Všechny hráčské účty s nulovými hodnotami byly smazány." # TEMP #
     purge_default_accounts: "<prefix> <green>Smazal jsi účty s defaultní hodnotou."
+    purge_monolog_success: "<prefix> <green>Záznam o ekonomických aktivitách byl smazán, <deleted> [!]"
     delete_account: "<prefix> <green>Účet hráče <account> byl smazán !"
     migration_success: "<prefix> <green>Migrace <type> byla úspěšně vytvořena [!]"
     convert_success: "<prefix> <green>Převod <converted> účtů a <balances> peněz z <economy> do LiteEco bylo úspěšné !"
@@ -93,4 +97,4 @@ messages:
     - " "
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
 
-version: 2.0.2
+version: 2.0.3

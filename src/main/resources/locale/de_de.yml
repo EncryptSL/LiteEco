@@ -49,6 +49,7 @@ messages:
     migration_argument: "<prefix> <red>Dieses <argument> Argument ist nicht gültig oder nicht bereit für Produktion."
     migration_failed: "<prefix> <red>Es gab ein Problem während der Migration. Bitte prüfe die Konsole für weitere Details."
     purge_argument: "<prefix> <red>Dieses <argument> Argument ist nicht gültig oder nicht bereit für Produktion."
+    purge_monolog_fail: "<prefix> <red>You can't delete logs, because table is empty [!]"
     player_is_null: "<prefix> <red>Bitte gebe einen Spielernamen an [!]"
     self_pay: "<prefix> <red>Du kannst dir nicht selbst Geld überweisen [!]"
     convert_fail: "<prefix> <red>Irgendetwas ist bei der Konvertierung kaputt gegangen, prüfe die Konsole [!]"
@@ -58,12 +59,15 @@ messages:
 
   # Admin commands
   admin:
+    monolog_format: "<hover:show_text:'<green><timestamp>'><blue>[<level>] <white>- <gray><log></hover>"
+
     config_reload: "<prefix> <green>Konfiguration erfolgreich neu geladen [!]"
     translation_switch: "<prefix> <green>Übersetzung zu <locale> gewechselt."
     translation_missing: "<prefix> <red>Übersetzung für <key> fehlt. Kontaktiere den Entwickler dieses Plugins."
     purge_accounts: "<prefix> <green>Alle Spieler Accounts wurden gelöscht."
     purge_null_accounts: "<prefix> <green>Alle Spieler Accounts mit Nullwerten wurden gelöscht."
     purge_default_accounts: "<prefix> <green>Alle Spieler Accounts mit Standardwerten wurden gelöscht."
+    purge_monolog_success: "<prefix> <green>All logs about economy activities was purged [!]"
     delete_account: "<prefix> <green>Account of player <account> was deleted !"
     migration_success: "<prefix> <green>Migration von <type> war erfolgreich [!]"
     convert_success: "<prefix> <green>Konvertierung von <converted>x Accounts und <balances> Kontoständen von <economy> zu LiteEco war erfolgreich!"
@@ -94,4 +98,4 @@ messages:
     - " "
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
 
-version: 2.0.2
+version: 2.0.3
