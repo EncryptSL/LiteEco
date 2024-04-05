@@ -1,6 +1,9 @@
 package com.github.encryptsl.lite.eco.common.config
 
 import com.github.encryptsl.lite.eco.LiteEco
+import com.github.encryptsl.lite.eco.api.objects.ModernText
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
@@ -11,18 +14,27 @@ class Locales(private val liteEco: LiteEco, private val langVersion: String) {
 
     private var langYML: FileConfiguration? = null
 
+    fun translation(translationKey: String): Component {
+        return ModernText.miniModernText(getMessage(translationKey))
+    }
+
+    fun translation(translationKey: String, tagResolver: TagResolver): Component {
+
+        return ModernText.miniModernText(getMessage(translationKey), tagResolver)
+    }
+
     fun getMessage(value: String): String {
         val key = langYML?.getString(value) ?:
         langYML?.getString("messages.admin.translation_missing")?.replace("<key>", value)
-        val prefix = liteEco.config.getString("plugin.prefix")
+        val prefix = liteEco.config.getString("plugin.prefix", "").toString()
 
-        return key?.replace("<prefix>", prefix ?: "") ?: "Translation missing error: $value"
+        return key?.replace("<prefix>", prefix) ?: "Translation missing error: $value"
     }
 
     fun getList(value: String): MutableList<*>? {
         val list = langYML?.getList(value)?.toMutableList()
-        val prefix = liteEco.config.getString("plugin.prefix")
-        list?.replaceAll { it?.toString()?.replace("<prefix>", prefix ?: "") }
+        val prefix = liteEco.config.getString("plugin.prefix", "").toString()
+        list?.replaceAll { it?.toString()?.replace("<prefix>", prefix) }
 
         return list
     }
