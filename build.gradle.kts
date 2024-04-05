@@ -40,11 +40,13 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.5")
     compileOnly("org.jetbrains.exposed:exposed-core:0.48.0")
     compileOnly("org.jetbrains.exposed:exposed-jdbc:0.48.0")
+    compileOnly("org.jetbrains.exposed:exposed-kotlin-datetime:0.48.0")
     compileOnly("com.squareup.okhttp3:okhttp:4.12.0")
 
     implementation("org.bstats:bstats-bukkit:3.0.1")
     implementation("org.incendo:cloud-paper:2.0.0-beta.2")
     implementation("org.incendo:cloud-annotations:2.0.0-beta.2")
+    implementation("org.incendo:cloud-minecraft-extras:2.0.0-beta.2")
     implementation("io.github.miniplaceholders:miniplaceholders-kotlin-ext:2.2.3")
 
     testImplementation(kotlin("test", "1.9.23"))
