@@ -2,7 +2,7 @@ package com.github.encryptsl.lite.eco.api.interfaces
 
 import java.util.*
 
-interface DatabaseSQLProvider {
+interface PlayerSQLProvider {
     fun createPlayerAccount(username: String, uuid: UUID, money: Double)
     fun deletePlayerAccount(uuid: UUID)
     fun getExistPlayerAccount(uuid: UUID): Boolean

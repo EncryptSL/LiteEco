@@ -1,6 +1,6 @@
 package com.github.encryptsl.lite.eco.common.database.models
 
-import com.github.encryptsl.lite.eco.api.interfaces.DatabaseSQLProvider
+import com.github.encryptsl.lite.eco.api.interfaces.PlayerSQLProvider
 import com.github.encryptsl.lite.eco.common.database.tables.Account
 import com.github.encryptsl.lite.eco.common.extensions.loggedTransaction
 import org.bukkit.Bukkit
@@ -11,7 +11,7 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.notInList
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.plus
 import java.util.*
 
-class PreparedStatements : DatabaseSQLProvider {
+class DatabaseEcoModel : PlayerSQLProvider {
 
     override fun createPlayerAccount(username: String, uuid: UUID, money: Double) {
         loggedTransaction {
