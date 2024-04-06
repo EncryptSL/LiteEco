@@ -32,7 +32,11 @@ class EconomyMoneyWithdrawListener(private val liteEco: LiteEco) : Listener {
 
         liteEco.increaseTransactions(1)
         liteEco.api.withDrawMoney(target, money)
-        liteEco.loggerModel.info("Admin ${sender.name} withdraw player ${target.name} : ${liteEco.api.fullFormatting(money)}")
+        liteEco.loggerModel.info(liteEco.locale.getMessage("messages.monolog.admin.normal.withdraw")
+            .replace("<sender>", sender.name)
+            .replace("<target>", target.name.toString())
+            .replace("<money>", liteEco.api.fullFormatting(money))
+        )
 
         sender.sendMessage(
                 liteEco.locale.translation("messages.sender.withdraw_money",

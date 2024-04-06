@@ -56,10 +56,23 @@ messages:
     amount_above_limit: "<prefix> <red>Betrag ist über dem Server-Limit [!]"
     balance_above_limit: "<prefix> <red>Kontostand von <account> ist über dem Server-Limit [!]"
 
+  # Monolog messages logged to table lite_eco_monolog.
+  monolog:
+    admin:
+      normal:
+        deposit: "Admin <sender> einzahlung an <target> : <money>"
+        set: "Admin <sender> eingestellt auf <target> : <money>"
+        withdraw: "Admin <sender> abheben von <target> : <money>"
+      global:
+        deposit: "Admin <sender> einzahlung auf <accounts>x konten : <money>"
+        set: "Admin <sender> eingestellt auf <accounts>x konten : <money>"
+        withdraw: "Admin <sender> hebt von <accounts>x konten ab: <money>"
+    player:
+      pay: "Spieler <sender> zahlt an <target> : <money>"
 
   # Admin commands
   admin:
-    monolog_format: "<hover:show_text:'<green><timestamp>'><blue>[<level>] <white>- <gray><log></hover>"
+    monolog_format: "<hover:show_text:'<dark_green>Datum und Uhrzeit: <green><timestamp>'><blue>[<level>] <gray><log></hover>"
 
     config_reload: "<prefix> <green>Konfiguration erfolgreich neu geladen [!]"
     translation_switch: "<prefix> <green>Übersetzung zu <locale> gewechselt."
@@ -94,6 +107,7 @@ messages:
     - "<red>[★] <gray>/eco lang <#b37dc7>[lang] <white>-<#F39E9E> Wechselt die Übersetzung von Nachrichten."
     - "<red>[★] <gray>/eco purge <#b37dc7><argument> <white>-<#F39E9E> Löscht Daten."
     - "<red>[★] <gray>/eco migration <#b37dc7><argument> <white>-<#F39E9E> Migriert Datenbanken in ein anderes Format."
+    - "<red>[★] <gray>/eco convert <#b37dc7><argument> <white>-<#F39E9E> Konvertieren Sie von einem anderen Economy-Plugin zu LiteEco."
     - "<red>[★] <gray>/eco reload <white>-<#F39E9E> Lädt die Konfiguration neu."
     - " "
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"

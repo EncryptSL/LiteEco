@@ -56,9 +56,23 @@ messages:
     amount_above_limit: "<prefix> <red>Částka přesahuje, povolený limit serverem !"
     balance_above_limit: "<prefix> <red>Stav účtu <account> přesahuje, povolený limit serverem !"
 
+  # Monolog messages logged to table lite_eco_monolog.
+  monolog:
+    admin:
+      normal:
+        deposit: "Admin <sender> přidal hráči <target> : <money>"
+        set: "Admin <sender> nastavil hráči <target> : <money>"
+        withdraw: "Admin <sender> odebral od <target> : <money>"
+      global:
+        deposit: "Admin <sender> přidal všem <accounts>x účtům : <money>"
+        set: "Admin <sender> nastavil všem <accounts>x účtům : <money>"
+        withdraw: "Admin <sender> odebral všem <accounts>x účtům : <money>"
+    player:
+      pay: "Hráč <sender> zaplatil hráči <target> : <money>"
+
   # Admin commands
   admin:
-    monolog_format: "<hover:show_text:'<green><timestamp>'><blue>[<level>] <white>- <gray><log></hover>"
+    monolog_format: "<hover:show_text:'<dark_green>Datum a čas: <green><timestamp>'><blue>[<level>] <gray><log></hover>"
 
     config_reload: "<prefix> <green>Config byl znovu načten [!]"
     translation_switch: "<prefix> <green>Překlad byl přepnut na <locale>"
@@ -93,6 +107,7 @@ messages:
     - "<red>[★] <gray>/eco lang <#b37dc7>[lang] <white>-<#F39E9E> Přepne překlad zpráv."
     - "<red>[★] <gray>/eco purge <#b37dc7><argument> <white>-<#F39E9E> Čištění dat."
     - "<red>[★] <gray>/eco migration <#b37dc7><argument> <white>-<#F39E9E> Migrace databáze do různých formátů."
+    - "<red>[★] <gray>/eco convert <#b37dc7><argument> <white>-<#F39E9E> Přesun z jiného Economy pluginu do LiteEco."
     - "<red>[★] <gray>/eco reload <white>-<#F39E9E> Znovu načte konfiguraci."
     - " "
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"

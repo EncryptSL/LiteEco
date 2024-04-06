@@ -29,7 +29,11 @@ class EconomyMoneySetListener(private val liteEco: LiteEco) : Listener {
             return sender.sendMessage(liteEco.locale.translation("messages.self.set_money", Placeholder.parsed("money", liteEco.api.fullFormatting(money))))
 
         liteEco.api.setMoney(target, money)
-        liteEco.loggerModel.info("Admin ${sender.name} set player ${target.name} : ${liteEco.api.fullFormatting(money)}")
+        liteEco.loggerModel.info(liteEco.locale.getMessage("messages.monolog.admin.normal.set")
+            .replace("<sender>", sender.name)
+            .replace("<target>", target.name.toString())
+            .replace("<money>", liteEco.api.fullFormatting(money))
+        )
 
         sender.sendMessage(
             liteEco.locale.translation("messages.sender.set_money",

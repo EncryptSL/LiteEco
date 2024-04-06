@@ -25,7 +25,11 @@ class EconomyGlobalSetListener(private val liteEco: LiteEco) : Listener {
         }
 
         liteEco.increaseTransactions(offlinePlayers.size)
-        liteEco.loggerModel.info("Admin ${sender.name} set ${liteEco.api.fullFormatting(money)} to ${offlinePlayers.size} accounts")
+        liteEco.loggerModel.info(liteEco.locale.getMessage("messages.monolog.admin.global.set")
+            .replace("<sender>", sender.name)
+            .replace("<accounts>", offlinePlayers.size.toString())
+            .replace("<money>", liteEco.api.fullFormatting(money))
+        )
 
         sender.sendMessage(
             liteEco.locale.translation("messages.global.set_money", Placeholder.parsed("money", liteEco.api.fullFormatting(money))

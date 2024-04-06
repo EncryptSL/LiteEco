@@ -53,12 +53,26 @@ messages:
     player_is_null: "<prefix> <red>Debes especificar un jugador [!]"
     self_pay: "<prefix> <red>No puedes enviarte dinero a ti mismo [!]"
     convert_fail: "<prefix> <red>Algo se rompió durante la conversión mira en la consola [!]"
-    amount_above_limit: "<prefix> <red>Amount is above, allowed limit of server !"
-    balance_above_limit: "<prefix> <red>Balance of account <account> is above, allowed limit of server !"
+    amount_above_limit: "<prefix> <red>El importe es superior al límite permitido por el servidor !"
+    balance_above_limit: "<prefix> <red>Saldo de la cuenta <account> está por encima del límite permitido del servidor !"
+
+  # Monolog messages logged to table lite_eco_monolog.
+  monolog:
+    admin:
+      normal:
+        deposit: "Admin <sender> deposit to <target> : <money>"
+        set: "Admin <sender> set to <target> : <money>"
+        withdraw: "Admin <sender> withdraw from <target> : <money>"
+      global:
+        deposit: "Admin <sender> deposit to <accounts>x accounts : <money>"
+        set: "Admin <sender> set to <accounts>x accounts : <money>"
+        withdraw: "Admin <sender> withdraw from <accounts>x accounts : <money>"
+    player:
+      pay: "Player <sender> pay to <target> : <money>"
 
   # Admin commands
   admin:
-    monolog_format: "<hover:show_text:'<green><timestamp>'><blue>[<level>] <white>- <gray><log></hover>"
+    monolog_format: "<hover:show_text:'<dark_green>Fecha y hora: <green><timestamp>'><blue>[<level>] <gray><log></hover>"
 
     config_reload: "<prefix> <green>Configuracion recargada exitosamente [!]"
     translation_switch: "<prefix> <green>Traduccion cambiada a <locale>"
@@ -93,6 +107,7 @@ messages:
     - "<red>[★] <gray>/eco lang <#b37dc7>[lang] <white>-<#F39E9E> Cambiar la traduccion de mensajes."
     - "<red>[★] <gray>/eco purge <#b37dc7><argument> <white>-<#F39E9E> Purgar datos."
     - "<red>[★] <gray>/eco migration <#b37dc7><argument> <white>-<#F39E9E> Migración de base de datos a otros formatos."
+    - "<red>[★] <gray>/eco convert <#b37dc7><argument> <white>-<#F39E9E> Convertir de otro plugin de Economía a LiteEco."
     - "<red>[★] <gray>/eco reload <white>-<#F39E9E> Recargar la configuracion."
     - " "
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"

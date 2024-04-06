@@ -56,8 +56,23 @@ messages:
     amount_above_limit: "<prefix> <red>Amount is above, allowed limit of server !"
     balance_above_limit: "<prefix> <red>Balance of account <account> is above, allowed limit of server !"
 
+  # Monolog messages logged to table lite_eco_monolog.
+  monolog:
+    admin:
+      normal:
+        deposit: "Admin <sender> deposit to <target> : <money>"
+        set: "Admin <sender> set to <target> : <money>"
+        withdraw: "Admin <sender> withdraw from <target> : <money>"
+      global:
+        deposit: "Admin <sender> deposit to <accounts>x accounts : <money>"
+        set: "Admin <sender> set to <accounts>x accounts : <money>"
+        withdraw: "Admin <sender> withdraw from <accounts>x accounts : <money>"
+    player:
+      pay: "Player <sender> pay to <target> : <money>"
+
+  # Admin commands
   admin:
-    monolog_format: "<hover:show_text:'<green><timestamp>'><blue>[<level>] <white>- <gray><log></hover>"
+    monolog_format: "<hover:show_text:'<dark_green>日時: <green><timestamp>'><blue>[<level>] <gray><log></hover>"
 
     config_reload: "<prefix> <green>コンフィグは正常に読み込まれました。"
     translation_switch: "<prefix> <green>言語の切り替えが完了しました。(言語: <locale>)"
@@ -92,6 +107,7 @@ messages:
     - "<red>[★] <gray>/eco lang <#b37dc7>[lang] <white>-<#F39E9E> 表示メッセージの言語を変更します。"
     - "<red>[★] <gray>/eco purge <#b37dc7><argument> <white>-<#F39E9E> 選択したデータを削除します。"
     - "<red>[★] <gray>/eco migration <#b37dc7><argument> <white>-<#F39E9E> 他の経済プラグインのデータから移行します。"
+    - "<red>[★] <gray>/eco convert <#b37dc7><argument> <white>-<#F39E9E> 他のエコノミープラグインからライトエコに変換。"
     - "<red>[★] <gray>/eco reload <white>-<#F39E9E> 設定を再読み込みします。"
     - " "
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"

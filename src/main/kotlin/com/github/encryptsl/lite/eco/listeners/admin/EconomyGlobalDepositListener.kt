@@ -27,7 +27,11 @@ class EconomyGlobalDepositListener(private val liteEco: LiteEco) : Listener {
         }
 
         liteEco.increaseTransactions(offlinePlayers.size)
-        liteEco.loggerModel.info("Admin ${sender.name} deposit ${liteEco.api.fullFormatting(money)} to ${offlinePlayers.size}x accounts")
+        liteEco.loggerModel.info(liteEco.locale.getMessage("messages.monolog.admin.global.deposit")
+            .replace("<sender>", sender.name)
+            .replace("<accounts", offlinePlayers.size.toString())
+            .replace("<money>", liteEco.api.fullFormatting(money))
+        )
 
         sender.sendMessage(
             liteEco.locale.translation("messages.global.add_money", Placeholder.parsed("money", liteEco.api.fullFormatting(money))

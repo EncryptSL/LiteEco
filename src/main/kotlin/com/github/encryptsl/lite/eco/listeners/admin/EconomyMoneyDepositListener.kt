@@ -40,6 +40,11 @@ class EconomyMoneyDepositListener(private val liteEco: LiteEco) : Listener {
         liteEco.api.depositMoney(target, money)
 
         liteEco.loggerModel.info("Admin ${sender.name} deposit player ${target.name} : ${liteEco.api.fullFormatting(money)}")
+        liteEco.loggerModel.info(liteEco.locale.getMessage("messages.monolog.admin.normal.deposit")
+            .replace("<sender>", sender.name)
+            .replace("<target>", target.name.toString())
+            .replace("<money>", liteEco.api.fullFormatting(money))
+        )
 
         sender.sendMessage(liteEco.locale.translation("messages.sender.add_money",
             TagResolver.resolver(
