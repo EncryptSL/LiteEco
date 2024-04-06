@@ -29,8 +29,9 @@ class DatabaseMonologModel(val plugin: Plugin) : AdapterLogger {
     }
 
     override fun getLog(): List<EconomyLog> {
-        val query = loggedTransaction { MonologTable.selectAll().orderBy(MonologTable.timestamp, SortOrder.DESC) }
-        return query.mapNotNull { EconomyLog(it[MonologTable.level], it[MonologTable.log], it[MonologTable.timestamp]) }
+        return loggedTransaction { MonologTable.selectAll().orderBy(MonologTable.timestamp, SortOrder.DESC).mapNotNull {
+            EconomyLog(it[MonologTable.level], it[MonologTable.log], it[MonologTable.timestamp])
+        } }
     }
 
     private fun log(level: Level, message: String) {
