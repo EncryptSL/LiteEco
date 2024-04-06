@@ -112,7 +112,7 @@ interface LiteEconomyAPIProvider {
      * Get top player accounts
      * @return MutableMap
      */
-    fun getTopBalance(): MutableMap<String, Double>
+    fun getTopBalance(): Map<String, Double>
 
     /**
      * Compacted money value

@@ -63,13 +63,8 @@ class EconomyMiniPlaceholder(private val liteEco: LiteEco) {
         }
     }
 
-    private fun topBalance(): LinkedHashMap<String, Double> {
+    private fun topBalance(): Map<String, Double> {
         return liteEco.api.getTopBalance()
-            .filterKeys { uuid -> Bukkit.getOfflinePlayer(UUID.fromString(uuid)).hasPlayedBefore() }
-            .toList()
-            .sortedByDescending { (_, balance) -> balance }
-            .toMap()
-            .let { LinkedHashMap<String, Double>(it) }
     }
 
 }

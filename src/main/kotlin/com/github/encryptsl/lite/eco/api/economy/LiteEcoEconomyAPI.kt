@@ -95,9 +95,11 @@ class LiteEcoEconomyAPI(val plugin: Plugin) : LiteEconomyAPIProvider {
         playerAccount.syncAccounts()
     }
 
-    override fun getTopBalance(): MutableMap<String, Double> {
-        val databaseStoredBalance = databaseEcoModel.getTopBalance().filterKeys { e -> Bukkit.getOfflinePlayer(e).name != null || Bukkit.getOfflinePlayer(e).hasPlayedBefore() }
-        return databaseStoredBalance.mapValues { getBalance(Bukkit.getOfflinePlayer(UUID.fromString(it.key))) }.toMutableMap()
+    override fun getTopBalance(): Map<String, Double> {
+        val databaseStoredBalance = databaseEcoModel.getTopBalance().filterKeys { e -> Bukkit.getOfflinePlayer(e).hasPlayedBefore() }
+        return databaseStoredBalance.mapValues { getBalance(Bukkit.getOfflinePlayer(UUID.fromString(it.key))) }
+            .toList()
+            .sortedByDescending { (_, e) -> e }.toMap()
     }
 
     override fun compacted(amount: Double): String {

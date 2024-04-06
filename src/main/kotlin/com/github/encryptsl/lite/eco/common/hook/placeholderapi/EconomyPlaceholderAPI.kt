@@ -63,9 +63,7 @@ class EconomyPlaceholderAPI(private val liteEco: LiteEco, private val extVersion
         }
     }
 
-    private fun topBalance(): LinkedHashMap<String, Double> {
+    private fun topBalance(): Map<String, Double> {
         return liteEco.api.getTopBalance()
-            .filterKeys { uuid -> Bukkit.getOfflinePlayer(UUID.fromString(uuid)).hasPlayedBefore() }
-            .let { LinkedHashMap<String, Double>(it) }
     }
 }
