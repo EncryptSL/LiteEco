@@ -171,7 +171,7 @@ class LiteEco : JavaPlugin() {
         MinecraftExceptionHandler.createNative<CommandSender>()
             .defaultHandlers()
             .decorator { component ->
-                ModernText.miniModernText(config.getString("prefix", "<red>[!]").toString())
+                ModernText.miniModernText(config.getString("plugin.prefix", "<red>[!]").toString())
                     .appendSpace()
                     .append(component)
             }
