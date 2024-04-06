@@ -185,14 +185,14 @@ class EcoCMD(private val liteEco: LiteEco) {
                 liteEco.databaseEcoModel.purgeDefaultAccounts(liteEco.config.getDouble("economy.starting_balance"))
                 commandSender.sendMessage(liteEco.locale.translation("messages.admin.purge_default_accounts"))
             }
-            PurgeKey.LOGS -> {
+            PurgeKey.MONO_LOG -> {
                 val logs = liteEco.loggerModel.getLog()
 
                 if (logs.isEmpty())
                     return commandSender.sendMessage(liteEco.locale.translation("messages.error.purge_monolog_fail"))
 
                 liteEco.loggerModel.clearLogs()
-                commandSender.sendMessage(liteEco.locale.translation("messages.admin.purge_monolog_success"))
+                commandSender.sendMessage(liteEco.locale.translation("messages.admin.purge_monolog_success", Placeholder.parsed("deleted", logs.size.toString())))
             }
             else -> {
                 commandSender.sendMessage(liteEco.locale.translation("messages.error.purge_argument"))
