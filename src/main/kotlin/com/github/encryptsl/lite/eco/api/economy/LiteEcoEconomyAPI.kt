@@ -96,7 +96,7 @@ class LiteEcoEconomyAPI(val plugin: Plugin) : LiteEconomyAPIProvider {
     }
 
     override fun getTopBalance(): MutableMap<String, Double> {
-        val databaseStoredBalance = databaseEcoModel.getTopBalance().filterNot { e -> Bukkit.getOfflinePlayer(e.key).name == null }
+        val databaseStoredBalance = databaseEcoModel.getTopBalance().filterKeys { e -> Bukkit.getOfflinePlayer(e).name != null || Bukkit.getOfflinePlayer(e).hasPlayedBefore() }
         return databaseStoredBalance.mapValues { getBalance(Bukkit.getOfflinePlayer(UUID.fromString(it.key))) }.toMutableMap()
     }
 
