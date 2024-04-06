@@ -20,7 +20,7 @@ interface LiteEconomyAPIProvider {
      * @return Boolean
      * @see Boolean
      * @see OfflinePlayer
-     * @see PreparedStatements.getBalance(uuid: UUID)
+     * @see com.github.encryptsl.lite.eco.common.database.models.DatabaseEcoModel.getBalance(uuid: UUID)
      */
     fun cacheAccount(player: OfflinePlayer, amount: Double): Boolean
 
