@@ -37,13 +37,16 @@ class LiteEco : JavaPlugin() {
         const val CONFIG_VERSION = "1.2.4"
         const val LANG_VERSION = "2.0.3"
         const val PAPI_VERSION = "2.0.5"
+
+        lateinit var instance: LiteEco
+            private set
     }
 
     val pluginManager: PluginManager = server.pluginManager
 
     private var countTransactions: LinkedHashMap<String, Int> = LinkedHashMap()
 
-    val api: LiteEcoEconomyAPI by lazy { LiteEcoEconomyAPI(this) }
+    val api: LiteEcoEconomyAPI by lazy { LiteEcoEconomyAPI()}
     val locale: Locales by lazy { Locales(this, LANG_VERSION) }
     val databaseEcoModel: DatabaseEcoModel by lazy { DatabaseEcoModel() }
     val loggerModel: DatabaseMonologModel by lazy { DatabaseMonologModel(this) }
@@ -52,6 +55,8 @@ class LiteEco : JavaPlugin() {
     private val hookManager: HookManager by lazy { HookManager(this) }
 
     override fun onLoad() {
+        instance = this
+
         configAPI
             .create("database.db")
             .createConfig("config.yml", CONFIG_VERSION)
