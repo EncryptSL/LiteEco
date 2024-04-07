@@ -4,7 +4,6 @@ import com.github.encryptsl.lite.eco.api.interfaces.AccountAPI
 import com.github.encryptsl.lite.eco.api.objects.BalanceCache
 import com.github.encryptsl.lite.eco.common.database.models.DatabaseEcoModel
 import org.bukkit.Bukkit
-import org.bukkit.plugin.Plugin
 import java.util.*
 
 object PlayerAccount : AccountAPI {
