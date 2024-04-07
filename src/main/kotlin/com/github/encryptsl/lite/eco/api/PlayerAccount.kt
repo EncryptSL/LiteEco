@@ -7,7 +7,7 @@ import org.bukkit.Bukkit
 import org.bukkit.plugin.Plugin
 import java.util.*
 
-class PlayerAccount(val plugin: Plugin) : AccountAPI {
+object PlayerAccount : AccountAPI {
 
     private val databaseEcoModel: DatabaseEcoModel by lazy { DatabaseEcoModel() }
 
@@ -27,7 +27,7 @@ class PlayerAccount(val plugin: Plugin) : AccountAPI {
         try {
             databaseEcoModel.setMoney(uuid, value)
         } catch (e : Exception) {
-            plugin.logger.severe(e.message ?: e.localizedMessage)
+            Bukkit.getServer().logger.severe(e.message ?: e.localizedMessage)
         }
     }
 
@@ -36,7 +36,7 @@ class PlayerAccount(val plugin: Plugin) : AccountAPI {
             databaseEcoModel.setMoney(uuid, getBalance(uuid))
             clearFromCache(uuid)
         } catch (e : Exception) {
-            plugin.logger.severe(e.message ?: e.localizedMessage)
+            Bukkit.getServer().logger.severe(e.message ?: e.localizedMessage)
         }
     }
 
@@ -46,7 +46,7 @@ class PlayerAccount(val plugin: Plugin) : AccountAPI {
             for (c in BalanceCache.cache) { syncAccount(c.key, c.value) }
             BalanceCache.cache.clear()
         } catch (e : Exception) {
-            plugin.logger.severe(e.message ?: e.localizedMessage)
+            Bukkit.getServer().logger.severe(e.message ?: e.localizedMessage)
         }
     }
 
