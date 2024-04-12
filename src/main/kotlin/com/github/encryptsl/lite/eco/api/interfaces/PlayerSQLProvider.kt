@@ -8,6 +8,7 @@ interface PlayerSQLProvider {
     fun getExistPlayerAccount(uuid: UUID): Boolean
     fun getTopBalance(top: Int): MutableMap<String, Double>
     fun getTopBalance(): MutableMap<String, Double>
+    fun getPlayersIds(): MutableCollection<UUID>
     fun getBalance(uuid: UUID): Double
     fun depositMoney(uuid: UUID, money: Double)
     fun withdrawMoney(uuid: UUID, money: Double)

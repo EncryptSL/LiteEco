@@ -45,6 +45,10 @@ class DatabaseEcoModel : PlayerSQLProvider {
         }.toMutableMap()
     }
 
+    override fun getPlayersIds(): MutableCollection<UUID> = loggedTransaction {
+        Account.selectAll().map { UUID.fromString(it[Account.uuid]) }.toMutableList()
+    }
+
     override fun getBalance(uuid: UUID): Double = loggedTransaction {
         Account.select(Account.uuid, Account.money).where(Account.uuid eq uuid.toString()).first()[Account.money]
     }
