@@ -4,9 +4,7 @@ import com.github.encryptsl.lite.eco.LiteEco
 import io.github.miniplaceholders.kotlin.asInsertingTag
 import io.github.miniplaceholders.kotlin.expansion
 import net.kyori.adventure.text.Component
-import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
-import java.util.*
 
 
 class EconomyMiniPlaceholder(private val liteEco: LiteEco) {
@@ -47,8 +45,7 @@ class EconomyMiniPlaceholder(private val liteEco: LiteEco) {
     private fun nameByRank(rank: Int): String {
         val topBalance = topBalance()
         return if (rank in 1..topBalance.size) {
-            val playerUuid = topBalance.keys.elementAt(rank - 1)
-            Bukkit.getOfflinePlayer(UUID.fromString(playerUuid)).name ?: "UNKNOWN"
+            topBalance.keys.elementAt(rank - 1)
         } else {
             "EMPTY"
         }
