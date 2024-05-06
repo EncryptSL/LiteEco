@@ -64,8 +64,8 @@ private fun compactNumber(number: Double): Pair<Double, Char>? {
 private fun getLocale(localeStr: String): Locale {
     val parts = localeStr.split("-", "_")
     return when (parts.size) {
-        1 -> Locale(parts[0])
-        2 -> Locale(parts[0], parts[1])
-        else -> Locale(parts[0], parts[1], parts[2])
+        1 -> Locale.of(parts[0])
+        2 -> Locale.of(parts[0], parts[1])
+        else -> Locale.of(parts[0], parts[1], parts[2])
     }
 }

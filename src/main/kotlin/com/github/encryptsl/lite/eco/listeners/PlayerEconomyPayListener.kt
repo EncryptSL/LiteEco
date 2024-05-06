@@ -29,15 +29,12 @@ class PlayerEconomyPayListener(private val liteEco: LiteEco) : Listener {
                     Placeholder.parsed("account", target.name.toString())
             ))
 
-        liteEco.api.withDrawMoney(sender, money)
-        liteEco.api.depositMoney(target, money)
-        liteEco.loggerModel.info("Player ${sender.name} send to player ${target.name} : ${liteEco.api.fullFormatting(money)}")
+        liteEco.api.transfer(sender, target, money)
         liteEco.loggerModel.info(liteEco.locale.getMessage("messages.monolog.player.pay")
             .replace("<sender>", sender.name)
             .replace("<target>", target.name.toString())
             .replace("<money>", liteEco.api.fullFormatting(money))
         )
-
         liteEco.increaseTransactions(1)
         sender.sendMessage(
                 liteEco.locale.translation("messages.sender.add_money",

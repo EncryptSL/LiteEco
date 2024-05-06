@@ -96,17 +96,14 @@ class MoneyCMD(private val liteEco: LiteEco) {
     @Command("money pay <player> <amount>")
     @Permission("lite.eco.pay")
     fun onPayMoney(
-        commandSender: CommandSender,
+        sender: Player,
         @Argument(value = "player", suggestions = "players") offlinePlayer: OfflinePlayer,
         @Argument(value = "amount") @Range(min = "1.00", max = "") amountStr: String
     ) {
-        if (commandSender !is Player)
-            return commandSender.sendMessage(ModernText.miniModernText("<red>Only a player can use this command."))
+        if (sender.uniqueId == offlinePlayer.uniqueId)
+            return sender.sendMessage(liteEco.locale.translation("messages.error.self_pay"))
 
-        if (commandSender.name == offlinePlayer.name)
-            return commandSender.sendMessage(liteEco.locale.translation("messages.error.self_pay"))
-
-        val amount = helper.validateAmount(amountStr, commandSender) ?: return
-        liteEco.pluginManager.callEvent(PlayerEconomyPayEvent(commandSender, offlinePlayer, amount))
+        val amount = helper.validateAmount(amountStr, sender) ?: return
+        liteEco.pluginManager.callEvent(PlayerEconomyPayEvent(sender, offlinePlayer, amount))
     }
 }

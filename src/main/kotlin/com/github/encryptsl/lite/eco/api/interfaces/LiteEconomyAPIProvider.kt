@@ -1,6 +1,7 @@
 package com.github.encryptsl.lite.eco.api.interfaces
 
 import org.bukkit.OfflinePlayer
+import org.bukkit.entity.Player
 
 interface LiteEconomyAPIProvider {
     /**
@@ -81,12 +82,21 @@ interface LiteEconomyAPIProvider {
     fun depositMoney(player: OfflinePlayer, amount: Double)
 
     /**
-     * WithDraw money from player account
+     * Withdraw money from player account
      * @param player is OfflinePlayer
      * @param amount is amount removed from player account
      * @see OfflinePlayer
      */
     fun withDrawMoney(player: OfflinePlayer, amount: Double)
+
+    /**
+     * Transfer of money from player account to another player account.
+     * @param fromPlayer is sender Player
+     * @param target is offline player who receive money.
+     * @see Player
+     * @see OfflinePlayer
+     */
+    fun transfer(fromPlayer: Player, target: OfflinePlayer, amount: Double)
 
     /**
      * Set fixed money to player account

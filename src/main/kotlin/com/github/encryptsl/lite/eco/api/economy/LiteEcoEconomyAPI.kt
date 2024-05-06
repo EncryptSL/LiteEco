@@ -8,6 +8,7 @@ import com.github.encryptsl.lite.eco.common.extensions.compactFormat
 import com.github.encryptsl.lite.eco.common.extensions.moneyFormat
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
+import org.bukkit.entity.Player
 import java.util.*
 
 class LiteEcoEconomyAPI : LiteEconomyAPIProvider {
@@ -74,6 +75,11 @@ class LiteEcoEconomyAPI : LiteEconomyAPIProvider {
         } else {
             databaseEcoModel.withdrawMoney(player.uniqueId, amount)
         }
+    }
+
+    override fun transfer(fromPlayer: Player, target: OfflinePlayer, amount: Double) {
+        withDrawMoney(fromPlayer, amount)
+        depositMoney(target, amount)
     }
 
     override fun setMoney(player: OfflinePlayer, amount: Double) {

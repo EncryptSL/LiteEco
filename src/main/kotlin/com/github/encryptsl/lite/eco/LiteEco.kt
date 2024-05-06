@@ -92,7 +92,6 @@ class LiteEco : JavaPlugin() {
     }
 
     private fun blockPlugins() {
-        hookManager.blockPlugin("Treasury")
         hookManager.blockPlugin("Towny")
     }
 
@@ -186,19 +185,19 @@ class LiteEco : JavaPlugin() {
     private fun registerSuggestionProviders(commandManager: PaperCommandManager<CommandSender>) {
         commandManager.parserRegistry().registerSuggestionProvider("players") { _, _ ->
             CompletableFuture.completedFuture(Bukkit.getOfflinePlayers()
-                .map { Suggestion.simple(it.name.toString()) })
+                .map { Suggestion.suggestion(it.name.toString()) })
         }
         commandManager.parserRegistry().registerSuggestionProvider("economies") {_, _ ->
-            CompletableFuture.completedFuture(Economies.entries.map { Suggestion.simple(it.name) })
+            CompletableFuture.completedFuture(Economies.entries.map { Suggestion.suggestion(it.name) })
         }
         commandManager.parserRegistry().registerSuggestionProvider("langKeys") { _, _ ->
-            CompletableFuture.completedFuture(Locales.LangKey.entries.map { Suggestion.simple(it.name) })
+            CompletableFuture.completedFuture(Locales.LangKey.entries.map { Suggestion.suggestion(it.name) })
         }
         commandManager.parserRegistry().registerSuggestionProvider("purgeKeys") { _, _ ->
-            CompletableFuture.completedFuture(PurgeKey.entries.map { Suggestion.simple(it.name) })
+            CompletableFuture.completedFuture(PurgeKey.entries.map { Suggestion.suggestion(it.name) })
         }
         commandManager.parserRegistry().registerSuggestionProvider("migrationKeys") { _, _ ->
-            CompletableFuture.completedFuture(MigrationKey.entries.map { Suggestion.simple(it.name) })
+            CompletableFuture.completedFuture(MigrationKey.entries.map { Suggestion.suggestion(it.name) })
         }
     }
 

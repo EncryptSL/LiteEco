@@ -1,6 +1,6 @@
 plugins {
     kotlin("jvm") version "1.9.23" apply true
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("io.github.goooler.shadow") version "8.1.7"
     id("maven-publish")
 }
 
@@ -15,20 +15,15 @@ repositories {
     mavenLocal()
     mavenCentral()
     maven("https://repo.papermc.io/repository/maven-public/")
-    maven {
-        url = uri("https://jitpack.io")
-    }
-    maven {
-        url = uri("https://repo.extendedclip.com/content/repositories/placeholderapi/")
-    }
-    maven {
-        url = uri("https://repo.codemc.io/repository/maven-public/")
-    }
+    maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+    maven("https://jitpack.io")
+    maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
+    maven("https://repo.codemc.io/repository/maven-public/")
 }
 
 kotlin {
     jvmToolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion.set(JavaLanguageVersion.of(21))
     }
 }
 
@@ -41,16 +36,23 @@ dependencies {
     }
     compileOnly("com.zaxxer:HikariCP:5.1.0")
     compileOnly("me.clip:placeholderapi:2.11.5")
-    compileOnly("org.jetbrains.exposed:exposed-core:0.48.0")
-    compileOnly("org.jetbrains.exposed:exposed-jdbc:0.48.0")
-    compileOnly("org.jetbrains.exposed:exposed-kotlin-datetime:0.48.0")
+    compileOnly("org.jetbrains.exposed:exposed-core:0.49.0")
+    compileOnly("org.jetbrains.exposed:exposed-jdbc:0.49.0")
+    compileOnly("org.jetbrains.exposed:exposed-kotlin-datetime:0.49.0")
     compileOnly("com.squareup.okhttp3:okhttp:4.12.0")
     compileOnly("me.hsgamer:bettereconomy:3.0")
 
     implementation("org.bstats:bstats-bukkit:3.0.1")
-    implementation("org.incendo:cloud-paper:2.0.0-beta.2")
-    implementation("org.incendo:cloud-annotations:2.0.0-beta.2")
-    implementation("org.incendo:cloud-minecraft-extras:2.0.0-beta.2")
+    implementation("org.incendo:cloud-paper:2.0.0-SNAPSHOT")
+    implementation("org.incendo:cloud-annotations:2.0.0-SNAPSHOT") {
+        exclude("org.incendo", "cloud-core")
+    }
+    implementation("org.incendo:cloud-minecraft-extras:2.0.0-SNAPSHOT") {
+        exclude("org.incendo", "cloud-core")
+        exclude("net.kyori", "adventure-text-api")
+        exclude("net.kyori", "adventure-text-minimessage")
+        exclude("net.kyori", "adventure-text-serializer-plain")
+    }
     implementation("io.github.miniplaceholders:miniplaceholders-kotlin-ext:2.2.3")
 
     testImplementation(kotlin("test", "1.9.23"))

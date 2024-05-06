@@ -60,11 +60,11 @@ class Locales(private val liteEco: LiteEco, private val langVersion: String) {
             liteEco.saveConfig()
             liteEco.reloadConfig()
             liteEco.logger.info("Loaded translation $fileName [!]")
-        } catch (e: IOException) {
+
+            langYML = YamlConfiguration.loadConfiguration(file)
+        } catch (_: IOException) {
             liteEco.logger.warning("Unsupported language, lang file for $langKey doesn't exist [!]")
-            return
         }
-        langYML = YamlConfiguration.loadConfiguration(file)
     }
 
     fun reloadTranslation() {
