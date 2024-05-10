@@ -1,0 +1,64 @@
+# noinspection YAMLSchemaValidation
+name: ${name}
+main: com.github.encryptsl.lite.eco.LiteEco
+version: ${version}
+api-version: '1.19'
+loader: com.github.encryptsl.lite.eco.LiteEcoLoader
+has-open-classloader: false
+
+prefix: LiteEco
+author: EncryptSL
+contributors: [LcyDev]
+website: https://encryptsl.github.io
+
+load: STARTUP
+
+dependencies:
+  server:
+    PlaceholderAPI:
+      required: false
+    Vault:
+      required: false
+    Treasury:
+      required: false
+    MiniPlaceholders:
+      required: false
+
+
+description: ${description}
+
+permissions:
+  lite.eco.player:
+    default: true
+    description: Gives access to all player commands
+    children:
+      lite.eco.help: true
+      lite.eco.money: true
+      lite.eco.balance: true
+      lite.eco.top: true
+      lite.eco.pay: true
+
+  lite.eco.admin:
+    default: op
+    description: Gives access to all admin commands
+    children:
+      lite.eco.admin.help: true
+      lite.eco.admin.eco: true
+      lite.eco.admin.add: true
+      lite.eco.admin.gadd: true
+      lite.eco.admin.global.add: true
+      lite.eco.admin.set: true
+      lite.eco.admin.gset: true
+      lite.eco.admin.global.set: true
+      lite.eco.admin.remove: true
+      lite.eco.admin.withdraw: true
+      lite.eco.admin.gremove: true
+      lite.eco.admin.global.withdraw: true
+      lite.eco.admin.monolog: true
+      lite.eco.admin.lang: true
+      lite.eco.admin.purge: true
+      lite.eco.admin.migration: true
+      lite.eco.admin.convert: true
+      lite.eco.admin.debug.create.accounts: true
+      lite.eco.admin.reload: true
+      lite.eco.admin.bypass.limit: true
