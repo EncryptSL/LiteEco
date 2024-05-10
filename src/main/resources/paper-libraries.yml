@@ -4,4 +4,4 @@ libraries:
   - org.jetbrains.exposed:exposed-core:0.49.0
   - org.jetbrains.exposed:exposed-jdbc:0.49.0
   - org.jetbrains.exposed:exposed-kotlin-datetime:0.49.0
-  - com.squareup.okhttp3:okhttp:4.12.0v
+  - com.squareup.okhttp3:okhttp:4.12.0
