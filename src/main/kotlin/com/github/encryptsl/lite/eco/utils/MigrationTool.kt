@@ -10,6 +10,8 @@ import java.time.format.DateTimeFormatter
 
 class MigrationTool(private val liteEco: LiteEco) {
 
+    enum class MigrationKey { CSV, SQL, }
+
     fun migrateToCSV(data: List<MigrationData>, fileName: String): Boolean {
         val file = File("${liteEco.dataFolder}/migration/", "${fileName}_${dateTime()}.csv")
 
@@ -54,6 +56,6 @@ class MigrationTool(private val liteEco: LiteEco) {
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH-mm")
         return LocalDateTime.now().format(formatter)
     }
-}
 
-data class MigrationData(val id: Int, val username: String, val uuid: String, val money: Double)
+    data class MigrationData(val id: Int, val username: String, val uuid: String, val money: Double)
+}

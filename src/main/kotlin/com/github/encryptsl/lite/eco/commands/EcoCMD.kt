@@ -3,8 +3,6 @@ package com.github.encryptsl.lite.eco.commands
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.Paginator
 import com.github.encryptsl.lite.eco.api.enums.CheckLevel
-import com.github.encryptsl.lite.eco.api.enums.Economies
-import com.github.encryptsl.lite.eco.api.enums.MigrationKey
 import com.github.encryptsl.lite.eco.api.enums.PurgeKey
 import com.github.encryptsl.lite.eco.api.events.admin.*
 import com.github.encryptsl.lite.eco.api.objects.ModernText
@@ -13,9 +11,10 @@ import com.github.encryptsl.lite.eco.common.extensions.convertInstant
 import com.github.encryptsl.lite.eco.common.extensions.getRandomString
 import com.github.encryptsl.lite.eco.common.extensions.positionIndexed
 import com.github.encryptsl.lite.eco.utils.ConvertEconomy
+import com.github.encryptsl.lite.eco.utils.ConvertEconomy.Economies
 import com.github.encryptsl.lite.eco.utils.Helper
-import com.github.encryptsl.lite.eco.utils.MigrationData
 import com.github.encryptsl.lite.eco.utils.MigrationTool
+import com.github.encryptsl.lite.eco.utils.MigrationTool.MigrationKey
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.Bukkit
@@ -150,11 +149,11 @@ class EcoCMD(private val liteEco: LiteEco) {
     @Permission("lite.eco.admin.lang")
     fun onLangSwitch(
         commandSender: CommandSender,
-        @Argument(value = "isoKey", suggestions = "langKeys") isoKey: String
+        @Argument(value = "isoKey", suggestions = "langKeys") isoKey: Locales.LangKey
     ) {
         try {
-            val langKey = Locales.LangKey.valueOf(isoKey.uppercase())
-            liteEco.locale.setTranslationFile(langKey)
+            val langKey = Locales.LangKey.valueOf(isoKey.name)
+            liteEco.locale.setLocale(langKey)
             commandSender.sendMessage(
                 liteEco.locale.translation("messages.admin.translation_switch", Placeholder.parsed("locale", langKey.name))
             )
@@ -204,7 +203,7 @@ class EcoCMD(private val liteEco: LiteEco) {
     @Permission("lite.eco.admin.migration")
     fun onMigration(commandSender: CommandSender, @Argument(value = "argument", suggestions = "migrationKeys") migrationKey: MigrationKey) {
         val migrationTool = MigrationTool(liteEco)
-        val output = liteEco.api.getTopBalance().toList().positionIndexed { index, k -> MigrationData(index, Bukkit.getOfflinePlayer(k.first).name.toString(), k.first, k.second) }
+        val output = liteEco.api.getTopBalance().toList().positionIndexed { index, k -> MigrationTool.MigrationData(index, Bukkit.getOfflinePlayer(k.first).name.toString(), k.first, k.second) }
 
         val result = when(migrationKey) {
             MigrationKey.CSV -> migrationTool.migrateToCSV(output, "economy_migration")
@@ -275,6 +274,6 @@ class EcoCMD(private val liteEco: LiteEco) {
         commandSender.sendMessage(liteEco.locale.translation("messages.admin.config_reload"))
         liteEco.logger.info("Config.yml was reloaded [!]")
         liteEco.saveConfig()
-        liteEco.locale.reloadTranslation()
+        liteEco.locale.loadCurrentTranslation()
     }
 }

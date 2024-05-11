@@ -7,7 +7,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
-import java.io.IOException
+import java.util.Optional
 
 class Locales(private val liteEco: LiteEco, private val langVersion: String) {
     enum class LangKey { CS_CZ, EN_US, ES_ES, JA_JP, DE_DE, }
@@ -24,11 +24,9 @@ class Locales(private val liteEco: LiteEco, private val langVersion: String) {
     }
 
     fun getMessage(value: String): String {
-        val key = langYML?.getString(value) ?:
-        langYML?.getString("messages.admin.translation_missing")?.replace("<key>", value)
+        val key = Optional.ofNullable(langYML?.getString(value)).orElse(langYML?.getString("messages.admin.translation_missing")?.replace("<key>", value))
         val prefix = liteEco.config.getString("plugin.prefix", "").toString()
-
-        return key?.replace("<prefix>", prefix) ?: "Translation missing error: $value"
+        return Optional.ofNullable(key?.replace("<prefix>", prefix)).orElse("Translation missing error: $value")
     }
 
     fun getList(value: String): MutableList<*>? {
@@ -39,38 +37,39 @@ class Locales(private val liteEco: LiteEco, private val langVersion: String) {
         return list
     }
 
-    fun setTranslationFile(langKey: LangKey) {
-        val fileName = "${langKey.name.lowercase()}.yml"
+    fun setLocale(langKey: LangKey) {
+        val currentLocale: String = Optional.ofNullable(liteEco.config.getString("plugin.translation")).orElse("CS")
+        val fileName = "message_${getRequiredLocaleOrFallback(langKey, currentLocale)}.yml"
         val file = File("${liteEco.dataFolder}/locale/", fileName)
-
         try {
             if (!file.exists()) {
                 file.parentFile.mkdirs()
                 liteEco.saveResource("locale/$fileName", false)
-            } else {
-                val existingVersion = YamlConfiguration.loadConfiguration(file).getString("version")
-
-                if (existingVersion.isNullOrEmpty() || existingVersion != langVersion) {
-                    val backupFile = File(liteEco.dataFolder, "locale/old_$fileName")
-                    file.copyTo(backupFile, true)
-                    liteEco.saveResource("locale/$fileName", true)
-                }
             }
-            liteEco.config["plugin.translation"] = langKey.name
+            val existingVersion = YamlConfiguration.loadConfiguration(file).getString("version")
+            if (existingVersion.isNullOrEmpty() || existingVersion != langVersion) {
+                val backupFile = File(liteEco.dataFolder, "locale/old_$fileName")
+                file.copyTo(backupFile, true)
+                liteEco.saveResource("locale/$fileName", true)
+            }
+
+            liteEco.config.set("plugin.translation", langKey.name)
             liteEco.saveConfig()
             liteEco.reloadConfig()
             liteEco.logger.info("Loaded translation $fileName [!]")
 
             langYML = YamlConfiguration.loadConfiguration(file)
-        } catch (_: IOException) {
+        } catch (_: Exception) {
             liteEco.logger.warning("Unsupported language, lang file for $langKey doesn't exist [!]")
         }
     }
 
-    fun reloadTranslation() {
-        val currentLocale: String = liteEco.config.getString("plugin.translation") ?: return
-        LangKey.entries.find { it.name.equals(currentLocale, ignoreCase = true) }?.let {
-            setTranslationFile(it)
-        }
+    private fun getRequiredLocaleOrFallback(langKey: LangKey, currentLocale: String): String {
+        return LangKey.entries.stream().map<String>(LangKey::name).filter {el -> el.equals(langKey.name, true)}.findFirst().orElse(currentLocale)
+    }
+
+    fun loadCurrentTranslation() {
+        val optionalLocale: String = Optional.ofNullable(liteEco.config.getString("plugin.translation")).orElse("CS")
+        setLocale(LangKey.valueOf(optionalLocale))
     }
 }

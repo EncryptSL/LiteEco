@@ -8,7 +8,7 @@ import java.util.UUID
 
 object PlayerUtils {
     fun getOfflinePlayer(uuid: UUID): OfflinePlayer {
-        return Optional.ofNullable(Bukkit.getOfflinePlayer(uuid)).orElseGet { Bukkit.getPlayer(uuid) }
+        return Bukkit.getPlayer(uuid) ?: Bukkit.getOfflinePlayer(uuid)
     }
 
     fun getUniqueId(offlinePlayer: OfflinePlayer): UUID {

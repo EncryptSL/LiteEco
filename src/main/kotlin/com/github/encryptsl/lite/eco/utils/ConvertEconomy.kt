@@ -11,6 +11,8 @@ class ConvertEconomy(private val liteEco: LiteEco) {
     private var converted = 0
     private var balances = 0.0
 
+    enum class Economies { EssentialsX, BetterEconomy, }
+
     fun convertEssentialsXEconomy() {
         for (p in Bukkit.getOfflinePlayers()) {
             val playerFile =  File("plugins/Essentials/userdata/", "${p.uniqueId}.yml")
@@ -44,6 +46,6 @@ class ConvertEconomy(private val liteEco: LiteEco) {
         return EconomyConvertResult(converted, balances)
     }
     fun convertRefresh() { converted = 0 }
-}
 
-data class EconomyConvertResult(val converted: Int, val balances: Double)
+    data class EconomyConvertResult(val converted: Int, val balances: Double)
+}

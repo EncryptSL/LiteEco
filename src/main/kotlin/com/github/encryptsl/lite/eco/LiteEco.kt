@@ -9,8 +9,6 @@ import org.incendo.cloud.suggestion.Suggestion
 import com.github.encryptsl.lite.eco.api.ConfigAPI
 import com.github.encryptsl.lite.eco.api.UpdateNotifier
 import com.github.encryptsl.lite.eco.api.economy.LiteEcoEconomyAPI
-import com.github.encryptsl.lite.eco.api.enums.Economies
-import com.github.encryptsl.lite.eco.api.enums.MigrationKey
 import com.github.encryptsl.lite.eco.api.enums.PurgeKey
 import com.github.encryptsl.lite.eco.api.objects.ModernText
 import com.github.encryptsl.lite.eco.commands.EcoCMD
@@ -22,6 +20,8 @@ import com.github.encryptsl.lite.eco.common.database.models.DatabaseMonologModel
 import com.github.encryptsl.lite.eco.common.hook.HookManager
 import com.github.encryptsl.lite.eco.listeners.*
 import com.github.encryptsl.lite.eco.listeners.admin.*
+import com.github.encryptsl.lite.eco.utils.ConvertEconomy.Economies
+import com.github.encryptsl.lite.eco.utils.MigrationTool
 import org.bstats.bukkit.Metrics
 import org.bstats.charts.SingleLineChart
 import org.bukkit.Bukkit
@@ -61,7 +61,7 @@ class LiteEco : JavaPlugin() {
             .create("database.db")
             .createConfig("config.yml", CONFIG_VERSION)
         locale
-            .reloadTranslation()
+            .loadCurrentTranslation()
         DatabaseConnector()
             .initConnect(
                 config.getString("database.connection.jdbc_url") ?: "jdbc:sqlite:plugins/LiteEco/database.db",
@@ -93,6 +93,7 @@ class LiteEco : JavaPlugin() {
 
     private fun blockPlugins() {
         hookManager.blockPlugin("Towny")
+        hookManager.blockPlugin("Treasury")
     }
 
     private fun hookRegistration() {
@@ -197,7 +198,7 @@ class LiteEco : JavaPlugin() {
             CompletableFuture.completedFuture(PurgeKey.entries.map { Suggestion.suggestion(it.name) })
         }
         commandManager.parserRegistry().registerSuggestionProvider("migrationKeys") { _, _ ->
-            CompletableFuture.completedFuture(MigrationKey.entries.map { Suggestion.suggestion(it.name) })
+            CompletableFuture.completedFuture(MigrationTool.MigrationKey.entries.map { Suggestion.suggestion(it.name) })
         }
     }
 

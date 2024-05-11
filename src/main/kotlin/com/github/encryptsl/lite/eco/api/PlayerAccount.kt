@@ -1,7 +1,7 @@
 package com.github.encryptsl.lite.eco.api
 
+import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.interfaces.AccountAPI
-import com.github.encryptsl.lite.eco.api.objects.BalanceCache
 import com.github.encryptsl.lite.eco.common.database.models.DatabaseEcoModel
 import org.bukkit.Bukkit
 import java.util.*
@@ -9,24 +9,25 @@ import java.util.*
 object PlayerAccount : AccountAPI {
 
     private val databaseEcoModel: DatabaseEcoModel by lazy { DatabaseEcoModel() }
+    private val cache: HashMap<UUID, Double> = HashMap()
 
     override fun cacheAccount(uuid: UUID, value: Double) {
         if (!isAccountCached(uuid)) {
-            BalanceCache.cache[uuid] = value
+            cache[uuid] = value
         } else {
-            BalanceCache.cache[uuid] = value
+            cache[uuid] = value
         }
     }
 
     override fun getBalance(uuid: UUID): Double {
-        return BalanceCache.cache.getOrDefault(uuid, 0.0)
+        return cache.getOrDefault(uuid, 0.0)
     }
 
     override fun syncAccount(uuid: UUID, value: Double) {
         try {
             databaseEcoModel.setMoney(uuid, value)
         } catch (e : Exception) {
-            Bukkit.getServer().logger.severe(e.message ?: e.localizedMessage)
+            LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
         }
     }
 
@@ -35,28 +36,28 @@ object PlayerAccount : AccountAPI {
             databaseEcoModel.setMoney(uuid, getBalance(uuid))
             clearFromCache(uuid)
         } catch (e : Exception) {
-            Bukkit.getServer().logger.severe(e.message ?: e.localizedMessage)
+            LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
         }
     }
 
     override fun syncAccounts() {
         try {
-            if (BalanceCache.cache.isEmpty()) return
-            for (c in BalanceCache.cache) { syncAccount(c.key, c.value) }
-            BalanceCache.cache.clear()
+            if (cache.isEmpty()) return
+            for (c in cache) { syncAccount(c.key, c.value) }
+            cache.clear()
         } catch (e : Exception) {
-            Bukkit.getServer().logger.severe(e.message ?: e.localizedMessage)
+            LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
         }
     }
 
     override fun clearFromCache(uuid: UUID) {
-        val player = BalanceCache.cache.keys.find { key -> key == uuid } ?: return
+        val player = cache.keys.find { key -> key == uuid } ?: return
 
-        BalanceCache.cache.remove(player)
+        cache.remove(player)
     }
 
     override fun isAccountCached(uuid: UUID): Boolean {
-        return BalanceCache.cache.containsKey(uuid)
+        return cache.containsKey(uuid)
     }
 
     override fun isPlayerOnline(uuid: UUID): Boolean {
