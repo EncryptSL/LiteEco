@@ -38,8 +38,8 @@ class Locales(private val liteEco: LiteEco, private val langVersion: String) {
     }
 
     fun setLocale(langKey: LangKey) {
-        val currentLocale: String = Optional.ofNullable(liteEco.config.getString("plugin.translation")).orElse("CS")
-        val fileName = "message_${getRequiredLocaleOrFallback(langKey, currentLocale)}.yml"
+        val currentLocale: String = Optional.ofNullable(liteEco.config.getString("plugin.translation")).orElse(LangKey.EN_US.name)
+        val fileName = "${getRequiredLocaleOrFallback(langKey, currentLocale)}.yml"
         val file = File("${liteEco.dataFolder}/locale/", fileName)
         try {
             if (!file.exists()) {
@@ -59,17 +59,19 @@ class Locales(private val liteEco: LiteEco, private val langVersion: String) {
             liteEco.logger.info("Loaded translation $fileName [!]")
 
             langYML = YamlConfiguration.loadConfiguration(file)
-        } catch (_: Exception) {
+        } catch (e: Exception) {
             liteEco.logger.warning("Unsupported language, lang file for $langKey doesn't exist [!]")
+            liteEco.logger.severe(e.message ?: e.localizedMessage)
+            e.fillInStackTrace()
         }
     }
 
     private fun getRequiredLocaleOrFallback(langKey: LangKey, currentLocale: String): String {
-        return LangKey.entries.stream().map<String>(LangKey::name).filter {el -> el.equals(langKey.name, true)}.findFirst().orElse(currentLocale)
+        return LangKey.entries.stream().map<String>(LangKey::name).filter {el -> el.equals(langKey.name, true)}.findFirst().orElse(currentLocale).lowercase()
     }
 
     fun loadCurrentTranslation() {
-        val optionalLocale: String = Optional.ofNullable(liteEco.config.getString("plugin.translation")).orElse("CS")
+        val optionalLocale: String = Optional.ofNullable(liteEco.config.getString("plugin.translation")).orElse(LangKey.EN_US.name)
         setLocale(LangKey.valueOf(optionalLocale))
     }
 }
