@@ -1,7 +1,7 @@
 libraries:
   - com.zaxxer:HikariCP:5.1.0
   - org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.23
-  - org.jetbrains.exposed:exposed-core:0.49.0
-  - org.jetbrains.exposed:exposed-jdbc:0.49.0
-  - org.jetbrains.exposed:exposed-kotlin-datetime:0.49.0
+  - org.jetbrains.exposed:exposed-core:0.50.1
+  - org.jetbrains.exposed:exposed-jdbc:0.50.1
+  - org.jetbrains.exposed:exposed-kotlin-datetime:0.50.1
   - com.squareup.okhttp3:okhttp:4.12.0

@@ -36,9 +36,9 @@ dependencies {
     }
     compileOnly("com.zaxxer:HikariCP:5.1.0")
     compileOnly("me.clip:placeholderapi:2.11.5")
-    compileOnly("org.jetbrains.exposed:exposed-core:0.49.0")
-    compileOnly("org.jetbrains.exposed:exposed-jdbc:0.49.0")
-    compileOnly("org.jetbrains.exposed:exposed-kotlin-datetime:0.49.0")
+    compileOnly("org.jetbrains.exposed:exposed-core:0.50.1")
+    compileOnly("org.jetbrains.exposed:exposed-jdbc:0.50.1")
+    compileOnly("org.jetbrains.exposed:exposed-kotlin-datetime:0.50.1")
     compileOnly("com.squareup.okhttp3:okhttp:4.12.0")
     compileOnly("me.hsgamer:bettereconomy:3.0")
 
@@ -58,8 +58,8 @@ dependencies {
     testImplementation(kotlin("test", "1.9.23"))
     testImplementation("com.zaxxer:HikariCP:5.1.0")
     testImplementation("org.xerial:sqlite-jdbc:3.42.0.0")
-    testImplementation("org.jetbrains.exposed:exposed-core:0.48.0")
-    testImplementation("org.jetbrains.exposed:exposed-jdbc:0.48.0")
+    testImplementation("org.jetbrains.exposed:exposed-core:0.50.1")
+    testImplementation("org.jetbrains.exposed:exposed-jdbc:0.50.1")
 }
 
 sourceSets {
