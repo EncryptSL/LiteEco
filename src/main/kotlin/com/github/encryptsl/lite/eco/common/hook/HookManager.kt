@@ -91,7 +91,7 @@ class HookManager(private val liteEco: LiteEco) {
             liteEco.logger.info("LiteEco in version 1.4.6 and above supports TreasuryAPI.")
         } else {
             liteEco.logger.warning("Warning plugin Treasury not found !")
-            liteEco.logger.warning("For better experience please download Treasury or LiteEco.")
+            liteEco.logger.warning("For better experience please download Treasury or Vault.")
             liteEco.logger.warning("Keep in mind without Treasury, LiteEco can't use API from Treasury.")
         }
     }
