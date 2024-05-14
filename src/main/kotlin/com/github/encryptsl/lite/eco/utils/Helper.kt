@@ -31,11 +31,13 @@ class Helper(private val liteEco: LiteEco) {
     }
 
     fun validateLog(player: String?): List<EconomyLog> {
-        val log = liteEco.loggerModel.getLog().join()
-        if (player != null) {
-            return log.filter { l -> l.log.contains(player, true) }
+        val log = liteEco.loggerModel.getLog().thenApply { el ->
+            if (player != null) {
+                return@thenApply el.filter { l -> l.log.contains(player, true) }
+            }
+            return@thenApply el
         }
-        return log
+        return log.join()
     }
 
     fun getTopBalancesFormatted(): List<String> {
