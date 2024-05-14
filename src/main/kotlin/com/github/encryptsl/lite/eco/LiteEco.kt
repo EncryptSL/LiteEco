@@ -1,11 +1,5 @@
 package com.github.encryptsl.lite.eco
 
-import org.incendo.cloud.SenderMapper
-import org.incendo.cloud.annotations.AnnotationParser
-import org.incendo.cloud.bukkit.CloudBukkitCapabilities
-import org.incendo.cloud.execution.ExecutionCoordinator
-import org.incendo.cloud.paper.PaperCommandManager
-import org.incendo.cloud.suggestion.Suggestion
 import com.github.encryptsl.lite.eco.api.ConfigAPI
 import com.github.encryptsl.lite.eco.api.UpdateNotifier
 import com.github.encryptsl.lite.eco.api.economy.LiteEcoEconomyAPI
@@ -28,7 +22,13 @@ import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.plugin.PluginManager
 import org.bukkit.plugin.java.JavaPlugin
+import org.incendo.cloud.SenderMapper
+import org.incendo.cloud.annotations.AnnotationParser
+import org.incendo.cloud.bukkit.CloudBukkitCapabilities
+import org.incendo.cloud.execution.ExecutionCoordinator
 import org.incendo.cloud.minecraft.extras.MinecraftExceptionHandler
+import org.incendo.cloud.paper.LegacyPaperCommandManager
+import org.incendo.cloud.suggestion.Suggestion
 import java.util.concurrent.CompletableFuture
 import kotlin.system.measureTimeMillis
 
@@ -154,25 +154,22 @@ class LiteEco : JavaPlugin() {
         annotationParser.parse(EcoCMD(this))
     }
 
-    private fun createCommandManager(): PaperCommandManager<CommandSender> {
-        val executionCoordinatorFunction = ExecutionCoordinator.builder<CommandSender>().build()
-        val mapperFunction = SenderMapper.identity<CommandSender>()
-
-        val commandManager = PaperCommandManager(
+    private fun createCommandManager(): LegacyPaperCommandManager<CommandSender> {
+        val commandManager = LegacyPaperCommandManager(
             this,
-            executionCoordinatorFunction,
-            mapperFunction
+            ExecutionCoordinator.builder<CommandSender>().build(),
+            SenderMapper.identity<CommandSender>()
         )
         if (commandManager.hasCapability(CloudBukkitCapabilities.NATIVE_BRIGADIER)) {
             commandManager.registerBrigadier()
             commandManager.brigadierManager().setNativeNumberSuggestions(false)
         } else if (commandManager.hasCapability(CloudBukkitCapabilities.ASYNCHRONOUS_COMPLETION)) {
-            (commandManager as PaperCommandManager<*>).registerAsynchronousCompletions()
+            (commandManager as LegacyPaperCommandManager<*>).registerAsynchronousCompletions()
         }
         return commandManager
     }
 
-    private fun registerMinecraftExceptionHandler(commandManager: PaperCommandManager<CommandSender>) {
+    private fun registerMinecraftExceptionHandler(commandManager: LegacyPaperCommandManager<CommandSender>) {
         MinecraftExceptionHandler.createNative<CommandSender>()
             .defaultHandlers()
             .decorator { component ->
@@ -183,7 +180,7 @@ class LiteEco : JavaPlugin() {
             .registerTo(commandManager)
     }
 
-    private fun registerSuggestionProviders(commandManager: PaperCommandManager<CommandSender>) {
+    private fun registerSuggestionProviders(commandManager: LegacyPaperCommandManager<CommandSender>) {
         commandManager.parserRegistry().registerSuggestionProvider("players") { _, _ ->
             CompletableFuture.completedFuture(Bukkit.getOfflinePlayers()
                 .map { Suggestion.suggestion(it.name.toString()) })
@@ -202,7 +199,7 @@ class LiteEco : JavaPlugin() {
         }
     }
 
-    private fun createAnnotationParser(commandManager: PaperCommandManager<CommandSender>): AnnotationParser<CommandSender> {
+    private fun createAnnotationParser(commandManager: LegacyPaperCommandManager<CommandSender>): AnnotationParser<CommandSender> {
         return AnnotationParser<CommandSender>(commandManager, CommandSender::class.java)
     }
 }
