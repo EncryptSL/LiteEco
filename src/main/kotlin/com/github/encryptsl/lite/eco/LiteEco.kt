@@ -203,10 +203,6 @@ class LiteEco : JavaPlugin() {
     }
 
     private fun createAnnotationParser(commandManager: PaperCommandManager<CommandSender>): AnnotationParser<CommandSender> {
-        val annotationParser: AnnotationParser<CommandSender> = AnnotationParser(
-            commandManager,
-            CommandSender::class.java
-        )
-        return annotationParser
+        return AnnotationParser<CommandSender>(commandManager, CommandSender::class.java)
     }
 }

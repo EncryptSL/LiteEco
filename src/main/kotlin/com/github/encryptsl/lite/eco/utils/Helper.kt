@@ -31,8 +31,7 @@ class Helper(private val liteEco: LiteEco) {
     }
 
     fun validateLog(player: String?): List<EconomyLog> {
-        val log = liteEco.loggerModel.getLog()
-
+        val log = liteEco.loggerModel.getLog().join()
         if (player != null) {
             return log.filter { l -> l.log.contains(player, true) }
         }

@@ -39,7 +39,7 @@ class LiteEcoEconomyAPI : LiteEconomyAPIProvider {
     }
 
     override fun hasAccount(player: OfflinePlayer): Boolean {
-        return databaseEcoModel.getExistPlayerAccount(player.uniqueId)
+        return databaseEcoModel.getExistPlayerAccount(player.uniqueId).join()
     }
 
     override fun has(player: OfflinePlayer, amount: Double): Boolean {
@@ -50,7 +50,7 @@ class LiteEcoEconomyAPI : LiteEconomyAPIProvider {
         return if (PlayerAccount.isPlayerOnline(player.uniqueId) || PlayerAccount.isAccountCached(player.uniqueId))
             PlayerAccount.getBalance(player.uniqueId)
         else
-            databaseEcoModel.getBalance(player.uniqueId)
+            databaseEcoModel.getBalance(player.uniqueId).join()
     }
 
     override fun getCheckBalanceLimit(amount: Double): Boolean {
@@ -85,8 +85,12 @@ class LiteEcoEconomyAPI : LiteEconomyAPIProvider {
     override fun setMoney(player: OfflinePlayer, amount: Double) {
         if (PlayerAccount.isPlayerOnline(player.uniqueId)) {
             cacheAccount(player, amount)
+            println(amount)
+            println(getBalance(player))
         } else {
             databaseEcoModel.setMoney(player.uniqueId, amount)
+            println(amount)
+            println(getBalance(player))
         }
     }
 

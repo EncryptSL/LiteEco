@@ -185,7 +185,7 @@ class EcoCMD(private val liteEco: LiteEco) {
                 commandSender.sendMessage(liteEco.locale.translation("messages.admin.purge_default_accounts"))
             }
             PurgeKey.MONO_LOG -> {
-                val logs = liteEco.loggerModel.getLog()
+                val logs = liteEco.loggerModel.getLog().join()
 
                 if (logs.isEmpty())
                     return commandSender.sendMessage(liteEco.locale.translation("messages.error.purge_monolog_fail"))

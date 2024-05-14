@@ -30,12 +30,6 @@ class EconomyMoneyDepositListener(private val liteEco: LiteEco) : Listener {
                     Placeholder.parsed("account", target.name.toString())
                 ))
 
-        if (sender.name == target.name && !target.isOp) {
-            return sender.sendMessage(
-                liteEco.locale.translation("messages.error.self_pay", Placeholder.parsed("money", liteEco.api.fullFormatting(money)))
-            )
-        }
-
         liteEco.increaseTransactions(1)
         liteEco.api.depositMoney(target, money)
         liteEco.loggerModel.info(liteEco.locale.getMessage("messages.monolog.admin.normal.deposit")
@@ -43,6 +37,12 @@ class EconomyMoneyDepositListener(private val liteEco: LiteEco) : Listener {
             .replace("<target>", target.name.toString())
             .replace("<money>", liteEco.api.fullFormatting(money))
         )
+
+        if (sender.name == target.name && !target.isOp) {
+            return sender.sendMessage(
+                liteEco.locale.translation("messages.error.self_pay", Placeholder.parsed("money", liteEco.api.fullFormatting(money)))
+            )
+        }
 
         sender.sendMessage(liteEco.locale.translation("messages.sender.add_money",
             TagResolver.resolver(

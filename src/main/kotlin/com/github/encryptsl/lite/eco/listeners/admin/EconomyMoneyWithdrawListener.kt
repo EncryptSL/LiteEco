@@ -25,11 +25,6 @@ class EconomyMoneyWithdrawListener(private val liteEco: LiteEco) : Listener {
         if (!liteEco.api.has(target, money))
             return sender.sendMessage(liteEco.locale.translation("messages.error.insufficient_funds"))
 
-        if (sender.name == target.name)
-            return sender.sendMessage(
-                liteEco.locale.translation("messages.self.withdraw_money", Placeholder.parsed("money", liteEco.api.fullFormatting(money)))
-            )
-
         liteEco.increaseTransactions(1)
         liteEco.api.withDrawMoney(target, money)
         liteEco.loggerModel.info(liteEco.locale.getMessage("messages.monolog.admin.normal.withdraw")
@@ -38,9 +33,15 @@ class EconomyMoneyWithdrawListener(private val liteEco: LiteEco) : Listener {
             .replace("<money>", liteEco.api.fullFormatting(money))
         )
 
+        if (sender.name == target.name)
+            return sender.sendMessage(
+                liteEco.locale.translation("messages.self.withdraw_money", Placeholder.parsed("money", liteEco.api.fullFormatting(money)))
+            )
+
         sender.sendMessage(
                 liteEco.locale.translation("messages.sender.withdraw_money",
                 TagResolver.resolver(Placeholder.parsed("target", target.name.toString()), Placeholder.parsed("money", liteEco.api.fullFormatting(money)))))
+
         if (target.isOnline && liteEco.config.getBoolean("messages.target.notify_withdraw")) {
             if (silent) {
                 target.player?.sendMessage(

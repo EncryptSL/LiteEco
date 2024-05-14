@@ -10,6 +10,7 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.minus
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.notInList
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.plus
 import java.util.*
+import java.util.concurrent.CompletableFuture
 
 class DatabaseEcoModel : PlayerSQLProvider {
 
@@ -29,8 +30,11 @@ class DatabaseEcoModel : PlayerSQLProvider {
         }
     }
 
-    override fun getExistPlayerAccount(uuid: UUID): Boolean = loggedTransaction {
-        !Account.select(Account.uuid).where(Account.uuid eq uuid.toString()).empty()
+    override fun getExistPlayerAccount(uuid: UUID): CompletableFuture<Boolean> {
+        val future = CompletableFuture<Boolean>()
+        val boolean = loggedTransaction { !Account.select(Account.uuid).where(Account.uuid eq uuid.toString()).empty() }
+        future.completeAsync { boolean }
+        return future
     }
 
     override fun getTopBalance(top: Int): MutableMap<String, Double> = loggedTransaction {
@@ -49,8 +53,13 @@ class DatabaseEcoModel : PlayerSQLProvider {
         Account.selectAll().map { UUID.fromString(it[Account.uuid]) }.toMutableList()
     }
 
-    override fun getBalance(uuid: UUID): Double = loggedTransaction {
-        Account.select(Account.uuid, Account.money).where(Account.uuid eq uuid.toString()).first()[Account.money]
+    override fun getBalance(uuid: UUID): CompletableFuture<Double> {
+        val future = CompletableFuture<Double>()
+        val balance = loggedTransaction {
+            Account.select(Account.uuid, Account.money).where(Account.uuid eq uuid.toString()).first()[Account.money]
+        }
+        future.completeAsync { balance }
+        return future
     }
 
     override fun depositMoney(uuid: UUID, money: Double) {
