@@ -1,7 +1,6 @@
 package com.github.encryptsl.lite.eco.commands
 
 import com.github.encryptsl.lite.eco.LiteEco
-import com.github.encryptsl.lite.eco.api.Paginator
 import com.github.encryptsl.lite.eco.api.enums.CheckLevel
 import com.github.encryptsl.lite.eco.api.enums.PurgeKey
 import com.github.encryptsl.lite.eco.api.events.admin.*
@@ -20,6 +19,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
+import org.bukkit.util.ChatPaginator
 import org.incendo.cloud.annotation.specifier.Range
 import org.incendo.cloud.annotations.*
 import java.util.*
@@ -134,15 +134,17 @@ class EcoCMD(private val liteEco: LiteEco) {
                 .replace("<log>", it.log)
         }
         if (log.isEmpty()) return
-        val pagination = Paginator(log).apply { page(page) }
-        val isPageAboveMaxPages = page > pagination.maxPages
+        val pagination = ChatPaginator.paginate(log.joinToString("\n"), page)
+        val isPageAboveMaxPages = page > pagination.totalPages
 
         if (isPageAboveMaxPages)
             return commandSender.sendMessage(liteEco.locale.translation("messages.error.maximum_page",
-                Placeholder.parsed("max_page", pagination.maxPages.toString()))
+                Placeholder.parsed("max_page", pagination.totalPages.toString()))
             )
 
-        commandSender.sendMessage(ModernText.miniModernText(pagination.display()))
+        for (line in pagination.lines) {
+            commandSender.sendMessage(ModernText.miniModernText(line))
+        }
     }
 
     @Command("eco lang <isoKey>")
@@ -185,13 +187,18 @@ class EcoCMD(private val liteEco: LiteEco) {
                 commandSender.sendMessage(liteEco.locale.translation("messages.admin.purge_default_accounts"))
             }
             PurgeKey.MONO_LOG -> {
-                val logs = liteEco.loggerModel.getLog().join()
-
-                if (logs.isEmpty())
-                    return commandSender.sendMessage(liteEco.locale.translation("messages.error.purge_monolog_fail"))
-
-                liteEco.loggerModel.clearLogs()
-                commandSender.sendMessage(liteEco.locale.translation("messages.admin.purge_monolog_success", Placeholder.parsed("deleted", logs.size.toString())))
+                liteEco.loggerModel.getLog().thenApply { el ->
+                    if (el.isEmpty()) {
+                        throw Exception("You can't remove monolog because is empty.")
+                    }
+                    return@thenApply el
+                }.thenApply { el ->
+                    liteEco.loggerModel.clearLogs()
+                    commandSender.sendMessage(liteEco.locale.translation("messages.admin.purge_monolog_success", Placeholder.parsed("deleted", el.size.toString())))
+                }.exceptionally { el ->
+                    commandSender.sendMessage(liteEco.locale.translation("messages.error.purge_monolog_fail"))
+                    liteEco.logger.severe(el.message ?: el.localizedMessage)
+                }
             }
             else -> {
                 commandSender.sendMessage(liteEco.locale.translation("messages.error.purge_argument"))
