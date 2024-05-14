@@ -85,12 +85,8 @@ class LiteEcoEconomyAPI : LiteEconomyAPIProvider {
     override fun setMoney(player: OfflinePlayer, amount: Double) {
         if (PlayerAccount.isPlayerOnline(player.uniqueId)) {
             cacheAccount(player, amount)
-            println(amount)
-            println(getBalance(player))
         } else {
             databaseEcoModel.setMoney(player.uniqueId, amount)
-            println(amount)
-            println(getBalance(player))
         }
     }
 
