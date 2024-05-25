@@ -1,5 +1,7 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
-    kotlin("jvm") version "1.9.23" apply true
+    kotlin("jvm") version "2.0.0" apply true
     id("io.github.goooler.shadow") version "8.1.7"
     id("maven-publish")
 }
@@ -29,7 +31,7 @@ kotlin {
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:${providers.gradleProperty("server_version").get()}")
-    compileOnly(kotlin("stdlib", "1.9.23"))
+    compileOnly(kotlin("stdlib", "2.0.0"))
     compileOnly("me.lokka30:treasury-api:2.0.0")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
         exclude("org.bukkit", "bukkit")
@@ -55,7 +57,7 @@ dependencies {
     }
     implementation("io.github.miniplaceholders:miniplaceholders-kotlin-ext:2.2.3")
 
-    testImplementation(kotlin("test", "1.9.23"))
+    testImplementation(kotlin("test", "2.0.0"))
     testImplementation("com.zaxxer:HikariCP:5.1.0")
     testImplementation("org.xerial:sqlite-jdbc:3.42.0.0")
     testImplementation("org.jetbrains.exposed:exposed-core:0.50.1")
@@ -84,10 +86,7 @@ tasks {
     }
 
     processResources {
-        filesMatching("plugin.yml") {
-            expand(project.properties)
-        }
-        filesMatching("paper-plugin.yml") {
+        filesMatching(listOf("plugin.yml", "paper-plugin.yml")) {
             expand(project.properties)
         }
     }
@@ -97,7 +96,7 @@ tasks {
         options.compilerArgs.add("-Xlint:deprecation")
     }
     compileKotlin {
-        kotlinOptions.jvmTarget = "21"
+        compilerOptions.jvmTarget.set(JvmTarget.JVM_21)
     }
     shadowJar {
         archiveFileName.set("${providers.gradleProperty("plugin_name").get()}-$version.jar")
