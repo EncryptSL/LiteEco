@@ -42,7 +42,7 @@ dependencies {
     compileOnly("org.jetbrains.exposed:exposed-jdbc:0.50.1")
     compileOnly("org.jetbrains.exposed:exposed-kotlin-datetime:0.50.1")
     compileOnly("com.squareup.okhttp3:okhttp:4.12.0")
-    compileOnly("me.hsgamer:bettereconomy:3.0")
+    compileOnly("me.hsgamer:bettereconomy:3.1")
 
     implementation("org.bstats:bstats-bukkit:3.0.1")
     implementation("org.incendo:cloud-paper:2.0.0-SNAPSHOT")
