@@ -1,7 +1,7 @@
 package com.github.encryptsl.lite.eco.commands
 
 import com.github.encryptsl.lite.eco.LiteEco
-import com.github.encryptsl.lite.eco.api.Paginator
+import com.github.encryptsl.lite.eco.api.ComponentPaginator
 import com.github.encryptsl.lite.eco.api.events.PlayerEconomyPayEvent
 import com.github.encryptsl.lite.eco.api.objects.ModernText
 import com.github.encryptsl.lite.eco.utils.Helper
@@ -38,14 +38,14 @@ class MoneyCMD(private val liteEco: LiteEco) {
         if (commandSender is Player) {
             val cSender = offlinePlayer ?: commandSender
 
+            if (!liteEco.api.hasAccount(cSender))
+                return commandSender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist",
+                    Placeholder.parsed("account", cSender.name.toString())))
+
             val formatMessage = when(offlinePlayer) {
                 null -> liteEco.locale.translation("messages.balance.format", helper.getComponentBal(commandSender))
                 else -> liteEco.locale.translation("messages.balance.format_target", helper.getComponentBal(offlinePlayer))
             }
-
-            if (!liteEco.api.hasAccount(cSender))
-                return commandSender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist",
-                    Placeholder.parsed("account", cSender.name.toString())))
 
             commandSender.sendMessage(formatMessage)
         } else {
@@ -68,28 +68,28 @@ class MoneyCMD(private val liteEco: LiteEco) {
     @ProxiedBy("baltop")
     @Command("money top [page]")
     @Permission("lite.eco.top")
-    fun onTopBalance(commandSender: CommandSender, @Argument(value = "page") @Range(min = "1", max="") page: Int?) {
-        val p = page ?: 1
+    fun onTopBalance(commandSender: CommandSender, @Argument(value = "page") @Range(min = "1", max="") @Default("1") page: Int) {
 
         val topPlayers = helper.getTopBalancesFormatted()
         if (topPlayers.isEmpty()) return
 
-        val pagination = Paginator(topPlayers).apply { page(p) }
-        val isPageAboveMaxPages = p > pagination.maxPages
+        val pagination = ComponentPaginator(topPlayers) { itemsPerPage = 10 }.apply { page(page) }
 
-        if (isPageAboveMaxPages)
+        if (pagination.isAboveMaxPage(page))
             return commandSender.sendMessage(liteEco.locale.translation("messages.error.maximum_page",
                 Placeholder.parsed("max_page", pagination.maxPages.toString()))
             )
 
-        commandSender.sendMessage(
-                liteEco.locale.translation("messages.balance.top_header",
-                TagResolver.resolver(
-                    Placeholder.parsed("page", pagination.page().toString()), Placeholder.parsed("max_page", pagination.maxPages.toString())
-                ))
-                .appendNewline().append(ModernText.miniModernText(pagination.display()))
-                .appendNewline().append(liteEco.locale.translation("messages.balance.top_footer"))
-        )
+        for (content in pagination.display()) {
+            commandSender.sendMessage(
+                liteEco.locale.translation("messages.balance.top_header", TagResolver.resolver(
+                    Placeholder.parsed("page", pagination.currentPage().toString()),
+                    Placeholder.parsed("max_page", pagination.maxPages.toString())
+                )).appendNewline()
+                    .append(content)
+                    .appendNewline()
+                    .append(liteEco.locale.translation("messages.balance.top_footer")))
+        }
     }
 
     @ProxiedBy("pay")

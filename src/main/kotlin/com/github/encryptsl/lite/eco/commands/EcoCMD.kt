@@ -1,7 +1,7 @@
 package com.github.encryptsl.lite.eco.commands
 
 import com.github.encryptsl.lite.eco.LiteEco
-import com.github.encryptsl.lite.eco.api.Paginator
+import com.github.encryptsl.lite.eco.api.ComponentPaginator
 import com.github.encryptsl.lite.eco.api.enums.CheckLevel
 import com.github.encryptsl.lite.eco.api.enums.PurgeKey
 import com.github.encryptsl.lite.eco.api.events.admin.*
@@ -128,22 +128,24 @@ class EcoCMD(private val liteEco: LiteEco) {
     fun onLogView(commandSender: CommandSender, @Argument("page") @Default(value = "1") page: Int, @Argument("player") player: String?) {
 
         val log = helper.validateLog(player).map {
-            liteEco.locale.getMessage("messages.admin.monolog_format")
-                .replace("<level>", it.level)
-                .replace("<timestamp>", convertInstant(it.timestamp))
-                .replace("<log>", it.log)
+            liteEco.locale.translation("messages.admin.monolog_format", TagResolver.resolver(
+                Placeholder.parsed("level", it.level),
+                Placeholder.parsed("timestamp", convertInstant(it.timestamp)),
+                Placeholder.parsed("log", it.log)
+            ))
         }
         if (log.isEmpty()) return
 
-        val pagination = Paginator(log).apply { page(1) }
-        val isPageAboveMaxPages = page > pagination.maxPages
+        val pagination = ComponentPaginator(log) { itemsPerPage = 10 }.apply { page(page) }
 
-        if (isPageAboveMaxPages)
+        if (pagination.isAboveMaxPage(page))
             return commandSender.sendMessage(liteEco.locale.translation("messages.error.maximum_page",
                 Placeholder.parsed("max_page", pagination.maxPages.toString()))
             )
 
-        commandSender.sendMessage(ModernText.miniModernText(pagination.display()))
+        for (content in pagination.display()) {
+            commandSender.sendMessage(content)
+        }
     }
 
     @Command("eco lang <isoKey>")
