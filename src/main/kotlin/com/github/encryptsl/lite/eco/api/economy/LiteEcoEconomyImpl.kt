@@ -2,7 +2,7 @@ package com.github.encryptsl.lite.eco.api.economy
 
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.PlayerAccount
-import com.github.encryptsl.lite.eco.api.interfaces.LiteEconomyAPIProvider
+import com.github.encryptsl.lite.eco.api.interfaces.LiteEconomyAPI
 import com.github.encryptsl.lite.eco.common.database.models.DatabaseEcoModel
 import com.github.encryptsl.lite.eco.common.extensions.compactFormat
 import com.github.encryptsl.lite.eco.common.extensions.moneyFormat
@@ -11,7 +11,7 @@ import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import java.util.*
 
-class LiteEcoEconomyAPI : LiteEconomyAPIProvider {
+class LiteEcoEconomyImpl : LiteEconomyAPI {
 
     private val databaseEcoModel: DatabaseEcoModel by lazy { DatabaseEcoModel() }
 

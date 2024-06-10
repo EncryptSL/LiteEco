@@ -3,7 +3,7 @@ package com.github.encryptsl.lite.eco.api.interfaces
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 
-interface LiteEconomyAPIProvider {
+interface LiteEconomyAPI {
     /**
      * Create player account to database
      * @param player is OfflinePlayer

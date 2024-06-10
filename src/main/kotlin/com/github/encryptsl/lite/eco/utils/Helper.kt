@@ -7,6 +7,7 @@ import com.github.encryptsl.lite.eco.common.extensions.isApproachingZero
 import com.github.encryptsl.lite.eco.common.extensions.isNegative
 import com.github.encryptsl.lite.eco.common.extensions.positionIndexed
 import com.github.encryptsl.lite.eco.common.extensions.toValidDecimal
+import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.Bukkit
@@ -40,12 +41,13 @@ class Helper(private val liteEco: LiteEco) {
         return log.join()
     }
 
-    fun getTopBalancesFormatted(): List<String> {
+    fun getTopBalancesFormatted(): List<Component> {
         return liteEco.api.getTopBalance().toList().positionIndexed { index, pair ->
-            liteEco.locale.getMessage("messages.balance.top_format")
-                .replace("<position>", index.toString())
-                .replace("<player>", Bukkit.getOfflinePlayer(UUID.fromString(pair.first)).name.toString())
-                .replace("<money>", liteEco.api.fullFormatting(pair.second))
+            liteEco.locale.translation("messages.balance.top_format", TagResolver.resolver(
+                Placeholder.parsed("position", index.toString()),
+                Placeholder.parsed("player", Bukkit.getOfflinePlayer(UUID.fromString(pair.first)).name.toString()),
+                Placeholder.parsed("money", liteEco.api.fullFormatting(pair.second))
+            ))
         }
     }
 
