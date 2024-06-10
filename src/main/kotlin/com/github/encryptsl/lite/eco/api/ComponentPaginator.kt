@@ -31,6 +31,6 @@ class ComponentPaginator(private val components: List<Component>, options: Pagin
 
     inner class PaginationOptions(
         var selectedPage: Int = 1,
-        var itemsPerPage: Int = 1,
+        var itemsPerPage: Int = 10,
     )
 }
