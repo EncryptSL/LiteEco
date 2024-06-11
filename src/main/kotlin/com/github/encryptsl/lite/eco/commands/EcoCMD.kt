@@ -109,6 +109,21 @@ class EcoCMD(private val liteEco: LiteEco) {
         )
     }
 
+    @Command("eco create <player> [amount]")
+    @Permission("lite.eco.admin.create")
+    fun onCreateWalletAccount(
+        commandSender: CommandSender,
+        @Argument("player", suggestions = "players") offlinePlayer: OfflinePlayer,
+        @Argument("amount") @Default("30.00") amount: Double
+    ) {
+        val message = if (liteEco.api.createAccount(offlinePlayer, amount)) {
+            "messages.admin.create_account"
+        } else {
+            "messages.error.account_now_exist"
+        }
+        commandSender.sendMessage(liteEco.locale.translation(message, Placeholder.parsed("account", offlinePlayer.name.toString())))
+    }
+
     @Command("eco delete <player>")
     @Permission("lite.eco.admin.delete")
     fun onDeleteWalletAccount(
@@ -120,7 +135,7 @@ class EcoCMD(private val liteEco: LiteEco) {
         } else {
             "messages.error.account_not_exist"
         }
-        commandSender.sendMessage(liteEco.locale.translation(message, Placeholder.parsed("player", offlinePlayer.name.toString())))
+        commandSender.sendMessage(liteEco.locale.translation(message, Placeholder.parsed("account", offlinePlayer.name.toString())))
     }
 
     @Command("eco monolog [page] [player]")

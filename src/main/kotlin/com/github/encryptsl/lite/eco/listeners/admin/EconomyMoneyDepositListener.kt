@@ -18,9 +18,6 @@ class EconomyMoneyDepositListener(private val liteEco: LiteEco) : Listener {
         val money: Double = event.money
         val silent: Boolean = event.silent
 
-        if (!liteEco.api.hasAccount(target))
-            return sender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist", Placeholder.parsed("account", target.name.toString())))
-
         if (liteEco.api.getCheckBalanceLimit(money) && !sender.hasPermission("lite.eco.admin.bypass.limit"))
             return sender.sendMessage(liteEco.locale.translation("messages.error.amount_above_limit"))
 
@@ -30,17 +27,21 @@ class EconomyMoneyDepositListener(private val liteEco: LiteEco) : Listener {
                     Placeholder.parsed("account", target.name.toString())
                 ))
 
-        liteEco.increaseTransactions(1)
-        liteEco.api.depositMoney(target, money)
-        liteEco.loggerModel.info(liteEco.locale.getMessage("messages.monolog.admin.normal.deposit")
-            .replace("<sender>", sender.name)
-            .replace("<target>", target.name.toString())
-            .replace("<money>", liteEco.api.fullFormatting(money))
-        )
+        liteEco.api.getUserByUUID(target).thenApply {
+            liteEco.increaseTransactions(1)
+            liteEco.api.depositMoney(target, money)
+            liteEco.loggerModel.info(liteEco.locale.getMessage("messages.monolog.admin.normal.deposit")
+                .replace("<sender>", sender.name)
+                .replace("<target>", target.name.toString())
+                .replace("<money>", liteEco.api.fullFormatting(money))
+            )
+        }.exceptionally {
+            sender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist", Placeholder.parsed("account", target.name.toString())))
+        }
 
-        if (sender.name == target.name && !target.isOp) {
+        if (sender.name == target.name) {
             return sender.sendMessage(
-                liteEco.locale.translation("messages.error.self_pay", Placeholder.parsed("money", liteEco.api.fullFormatting(money)))
+                liteEco.locale.translation("messages.self.add_money", Placeholder.parsed("money", liteEco.api.fullFormatting(money)))
             )
         }
 

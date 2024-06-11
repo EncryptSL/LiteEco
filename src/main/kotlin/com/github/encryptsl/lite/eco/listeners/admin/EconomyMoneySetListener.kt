@@ -17,20 +17,21 @@ class EconomyMoneySetListener(private val liteEco: LiteEco) : Listener {
         val target: OfflinePlayer = event.offlinePlayer
         val money: Double = event.money
 
-        if (!liteEco.api.hasAccount(target))
-            return sender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist", Placeholder.parsed("account", target.name.toString())))
-
         if (liteEco.api.getCheckBalanceLimit(money) && !sender.hasPermission("lite.eco.admin.bypass.limit"))
             return sender.sendMessage(liteEco.locale.translation("messages.error.amount_above_limit"))
 
-        liteEco.increaseTransactions(1)
+        liteEco.api.getUserByUUID(target).thenApply {
+            liteEco.increaseTransactions(1)
 
-        liteEco.api.setMoney(target, money)
-        liteEco.loggerModel.info(liteEco.locale.getMessage("messages.monolog.admin.normal.set")
-            .replace("<sender>", sender.name)
-            .replace("<target>", target.name.toString())
-            .replace("<money>", liteEco.api.fullFormatting(money))
-        )
+            liteEco.api.setMoney(target, money)
+            liteEco.loggerModel.info(liteEco.locale.getMessage("messages.monolog.admin.normal.set")
+                .replace("<sender>", sender.name)
+                .replace("<target>", target.name.toString())
+                .replace("<money>", liteEco.api.fullFormatting(money))
+            )
+        }.exceptionally {
+            sender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist", Placeholder.parsed("account", target.name.toString())))
+        }
 
         if (sender.name == target.name)
             return sender.sendMessage(liteEco.locale.translation("messages.self.set_money", Placeholder.parsed("money", liteEco.api.fullFormatting(money))))

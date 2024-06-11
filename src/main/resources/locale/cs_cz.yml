@@ -9,9 +9,9 @@ messages:
 
   # Self-transaction messages
   self:
-    add_money: "<prefix> <white>Přidal jsi si <green><money></green>peněz."
-    withdraw_money: "<prefix> <white>Odebral jsi si <green><money></green>peněz."
-    set_money: "<prefix> <white>Nastavil jsi si <green><money></green>peněz."
+    add_money: "<prefix> <white>Přidal jsi si <green><money></green> peněz."
+    withdraw_money: "<prefix> <white>Odebral jsi si <green><money></green> peněz."
+    set_money: "<prefix> <white>Nastavil jsi si <green><money></green> peněz."
 
   # Transaction messages for target
   target:
@@ -29,9 +29,9 @@ messages:
 
   # Global actions messages (sent to the sender who made the global action)
   global:
-    add: "<prefix> <white>Přidal jsi všem <green><money></green>peněz."
-    withdraw: "<prefix> <white>Odstranil jsi všem <green><money></green>peněz."
-    set: "<prefix> <white>Nastavil jsi všem <green><money></green>peněz."
+    add_money: "<prefix> <white>Přidal jsi všem <green><money></green>peněz."
+    withdraw_money: "<prefix> <white>Odstranil jsi všem <green><money></green>peněz."
+    set_money: "<prefix> <white>Nastavil jsi všem <green><money></green>peněz."
 
   # Broadcast messages (sent to all players after a global action)
   broadcast:
@@ -42,6 +42,7 @@ messages:
   # Error messages
   error:
     account_not_exist: "<prefix> <red>Účet <account> neexistuje [!]"
+    account_now_exist: "<prefix> <red>Účet <account> existuje [!]"
     format_amount: "<prefix> <red>Neplatná částka. Použijte desetinná čísla nebo kompaktní reprezentace (např. 1K) [!]" # TEMP #
     insufficient_funds: "<prefix> <red>Nemáš dostatek peněz [!]"
     maximum_page: "<red>Limit stránkování je <max_page>"
@@ -74,6 +75,7 @@ messages:
   admin:
     monolog_format: "<hover:show_text:'<dark_green>Datum a čas: <green><timestamp>'><blue>[<level>] <gray><log></hover>"
 
+    create_account: "<prefix> <green>Účet <account> byl vytvořen [!]"
     config_reload: "<prefix> <green>Config byl znovu načten [!]"
     translation_switch: "<prefix> <green>Překlad byl přepnut na <locale>"
     translation_missing: "<prefix> <red>Překlad <key> chybí.... kontaktuj vývojáře tohoto pluginu."

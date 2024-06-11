@@ -43,7 +43,7 @@ abstract class TreasuryAccount(private val uuid: UUID) : Account {
             val money = economyTransaction.amount.toDouble()
             val player = PlayerUtils.getOfflinePlayer(uuid)
             val isApproachingZero = money.isApproachingZero()
-            val playerHasAccount = LiteEco.instance.api.hasAccount(player)
+            val playerHasAccount = LiteEco.instance.api.hasAccount(player).join()
 
             when (economyTransaction.type) {
                 EconomyTransactionType.DEPOSIT -> {
@@ -81,8 +81,8 @@ abstract class TreasuryAccount(private val uuid: UUID) : Account {
     }
 
     override fun deleteAccount(): CompletableFuture<Boolean> {
-        if (!LiteEco.instance.api.hasAccount(PlayerUtils.getOfflinePlayer(uuid)))
-            return CompletableFuture.completedFuture<Boolean>(false)
+        if (!LiteEco.instance.api.hasAccount(PlayerUtils.getOfflinePlayer(uuid)).join())
+            return CompletableFuture.completedFuture(false)
 
         return CompletableFuture.completedFuture(LiteEco.instance.api.deleteAccount(Bukkit.getOfflinePlayer(uuid)))
     }

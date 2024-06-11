@@ -129,6 +129,7 @@ class LiteEco : JavaPlugin() {
             EconomyMoneyDepositListener(this),
             EconomyMoneyWithdrawListener(this),
             EconomyMoneySetListener(this),
+            PlayerLoginListener(this),
             PlayerJoinListener(this),
             PlayerQuitListener(this)
         )

@@ -18,7 +18,7 @@ import java.lang.UnsupportedOperationException
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
-class TreasuryEconomyAPI(private val liteEco: LiteEco) : EconomyProvider, AccountAccessor {
+class TreasuryEconomyAPI(liteEco: LiteEco) : EconomyProvider, AccountAccessor {
 
     private val playerAccessor: TreasuryPlayerAccessor = TreasuryPlayerAccessor(liteEco)
     private val nonPlayerAccessor: TreasuryNonPlayerAccessor = TreasuryNonPlayerAccessor()
@@ -41,11 +41,11 @@ class TreasuryEconomyAPI(private val liteEco: LiteEco) : EconomyProvider, Accoun
             return CompletableFuture.failedFuture(UnsupportedOperationException(TreasuryNonPlayerAccount.UNSUPPORTED_NON_PLAYER))
         }
 
-        return CompletableFuture.completedFuture(LiteEco.instance.api.hasAccount(PlayerUtils.getOfflinePlayer(accountData.playerIdentifier.get())))
+        return LiteEco.instance.api.hasAccount(PlayerUtils.getOfflinePlayer(accountData.playerIdentifier.get()))
     }
 
     override fun retrievePlayerAccountIds(): CompletableFuture<MutableCollection<UUID>> {
-        return CompletableFuture.completedFuture(LiteEco.instance.databaseEcoModel.getPlayersIds())
+        return LiteEco.instance.databaseEcoModel.getPlayersIds()
     }
 
     override fun retrieveNonPlayerAccountIds(): CompletableFuture<MutableCollection<NamespacedKey>> {

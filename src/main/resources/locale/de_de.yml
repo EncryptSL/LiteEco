@@ -42,6 +42,7 @@ messages:
   # Error messages
   error:
     account_not_exist: "<prefix> <red>Account <account> existiert nicht [!]"
+    account_now_exist: "<prefix> <red>Account <account> now exists [!]"
     format_amount: "<prefix> <red>Ungültiger Betrag. Verwende Gleitkommazahlen oder kompakte Darstellungen (z.B. 1K) [!]"
     insufficient_funds: "<prefix> <red>Nicht genug Geld [!]"
     maximum_page: "<red>Grenze der Seitenzahlen ist <max_page>"
@@ -74,6 +75,7 @@ messages:
   admin:
     monolog_format: "<hover:show_text:'<dark_green>Datum und Uhrzeit: <green><timestamp>'><blue>[<level>] <gray><log></hover>"
 
+    create_account: "<prefix> <green>Account <account> was created [!]"
     config_reload: "<prefix> <green>Konfiguration erfolgreich neu geladen [!]"
     translation_switch: "<prefix> <green>Übersetzung zu <locale> gewechselt."
     translation_missing: "<prefix> <red>Übersetzung für <key> fehlt. Kontaktiere den Entwickler dieses Plugins."

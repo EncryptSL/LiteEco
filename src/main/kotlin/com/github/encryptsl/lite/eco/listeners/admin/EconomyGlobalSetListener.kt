@@ -20,8 +20,9 @@ class EconomyGlobalSetListener(private val liteEco: LiteEco) : Listener {
             return sender.sendMessage(liteEco.locale.translation("messages.error.amount_above_limit"))
 
         for (p in offlinePlayers) {
-            if (!liteEco.api.hasAccount(p)) continue
-            liteEco.api.setMoney(p, money)
+            liteEco.api.hasAccount(p).thenAccept { el ->
+                if (el == true) liteEco.api.setMoney(p, money)
+            }
         }
 
         liteEco.increaseTransactions(offlinePlayers.size)

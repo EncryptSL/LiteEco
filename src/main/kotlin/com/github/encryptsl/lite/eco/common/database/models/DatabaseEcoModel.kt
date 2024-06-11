@@ -1,6 +1,7 @@
 package com.github.encryptsl.lite.eco.common.database.models
 
-import com.github.encryptsl.lite.eco.api.interfaces.PlayerSQLProvider
+import com.github.encryptsl.lite.eco.api.interfaces.PlayerSQL
+import com.github.encryptsl.lite.eco.common.database.entity.User
 import com.github.encryptsl.lite.eco.common.database.tables.Account
 import com.github.encryptsl.lite.eco.common.extensions.loggedTransaction
 import org.bukkit.Bukkit
@@ -12,7 +13,7 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.plus
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
-class DatabaseEcoModel : PlayerSQLProvider {
+class DatabaseEcoModel : PlayerSQL {
 
     override fun createPlayerAccount(username: String, uuid: UUID, money: Double) {
         loggedTransaction {
@@ -24,6 +25,21 @@ class DatabaseEcoModel : PlayerSQLProvider {
         }
     }
 
+    override fun getUserByUUID(uuid: UUID): CompletableFuture<User> {
+        val future = CompletableFuture<User>()
+        loggedTransaction {
+            val row = Account.select(Account.uuid, Account.username, Account.money).where(Account.uuid eq uuid.toString())
+                .singleOrNull()
+            if (row == null) {
+                future.completeExceptionally(Exception("User not Found"))
+            } else {
+                future.completeAsync { User(row[Account.username], UUID.fromString(row[Account.uuid]), row[Account.money]) }
+            }
+        }
+
+        return future
+    }
+
     override fun deletePlayerAccount(uuid: UUID) {
         loggedTransaction {
             Account.deleteWhere { Account.uuid eq uuid.toString() }
@@ -33,14 +49,7 @@ class DatabaseEcoModel : PlayerSQLProvider {
     override fun getExistPlayerAccount(uuid: UUID): CompletableFuture<Boolean> {
         val future = CompletableFuture<Boolean>()
         val boolean = loggedTransaction { !Account.select(Account.uuid).where(Account.uuid eq uuid.toString()).empty() }
-        future.completeAsync { boolean }
-        return future
-    }
-
-    override fun getTopBalance(top: Int): MutableMap<String, Double> = loggedTransaction {
-        Account.selectAll().limit(top).orderBy(Account.money, SortOrder.DESC).associate {
-            it[Account.uuid] to it[Account.money]
-        }.toMutableMap()
+        return future.completeAsync { boolean }
     }
 
     override fun getTopBalance(): MutableMap<String, Double> = loggedTransaction {
@@ -49,17 +58,13 @@ class DatabaseEcoModel : PlayerSQLProvider {
         }.toMutableMap()
     }
 
-    override fun getPlayersIds(): MutableCollection<UUID> = loggedTransaction {
-        Account.selectAll().map { UUID.fromString(it[Account.uuid]) }.toMutableList()
-    }
-
-    override fun getBalance(uuid: UUID): CompletableFuture<Double> {
-        val future = CompletableFuture<Double>()
-        val balance = loggedTransaction {
-            Account.select(Account.uuid, Account.money).where(Account.uuid eq uuid.toString()).first()[Account.money]
+    override fun getPlayersIds(): CompletableFuture<MutableCollection<UUID>> {
+        val future = CompletableFuture<MutableCollection<UUID>>()
+        val collection = loggedTransaction {
+            Account.selectAll().map { UUID.fromString(it[Account.uuid]) }.toMutableList()
         }
-        future.completeAsync { balance }
-        return future
+
+        return future.completeAsync { collection }
     }
 
     override fun depositMoney(uuid: UUID, money: Double) {

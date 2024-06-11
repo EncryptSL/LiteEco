@@ -37,27 +37,29 @@ class MoneyCMD(private val liteEco: LiteEco) {
     fun onBalance(commandSender: CommandSender, @Argument(value = "player", suggestions = "players") offlinePlayer: OfflinePlayer?) {
         if (commandSender is Player) {
             val cSender = offlinePlayer ?: commandSender
-
-            if (!liteEco.api.hasAccount(cSender))
-                return commandSender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist",
+            liteEco.api.getUserByUUID(cSender).thenApply { user ->
+                val formatMessage = when(offlinePlayer) {
+                    null -> liteEco.locale.translation("messages.balance.format", helper.getComponentBal(user))
+                    else -> liteEco.locale.translation("messages.balance.format_target", helper.getComponentBal(user))
+                }
+                commandSender.sendMessage(formatMessage)
+            }.exceptionally {
+                commandSender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist",
                     Placeholder.parsed("account", cSender.name.toString())))
-
-            val formatMessage = when(offlinePlayer) {
-                null -> liteEco.locale.translation("messages.balance.format", helper.getComponentBal(commandSender))
-                else -> liteEco.locale.translation("messages.balance.format_target", helper.getComponentBal(offlinePlayer))
             }
-
-            commandSender.sendMessage(formatMessage)
         } else {
-           offlinePlayer?.let {
-               if (!liteEco.api.hasAccount(it))
-                   return commandSender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist",
-                       Placeholder.parsed("account", it.name.toString())))
+           if (offlinePlayer != null) {
+               liteEco.api.getUserByUUID(offlinePlayer).thenApply { user ->
+                   commandSender.sendMessage(
+                       liteEco.locale.translation("messages.balance.format_target", helper.getComponentBal(user))
+                   )
+               }.exceptionally {
+                   commandSender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist",
+                       Placeholder.parsed("account", offlinePlayer.name.toString())))
+               }
 
-              return commandSender.sendMessage(
-                   liteEco.locale.translation("messages.balance.format_target", helper.getComponentBal(offlinePlayer))
-               )
-            }
+               return
+           }
 
             liteEco.locale.getList("messages.help")?.forEach { s ->
                 commandSender.sendMessage(ModernText.miniModernText(s.toString()))

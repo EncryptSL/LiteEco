@@ -42,6 +42,7 @@ messages:
   # Error messages
   error:
     account_not_exist: "<prefix> <red>そのプレイヤーは存在しません。(プレイヤー名: <account>)"
+    account_now_exist: "<prefix> <red>Account <account> now exists [!]"
     format_amount: "<prefix> <red>無効な金額です。小数点を使用するか、コンパクトな表記（例：1K）を利用してください。" # TEMP #
     insufficient_funds: "<prefix> <red>お金が足りていません。"
     maximum_page: "<red>ページ数の上限は <max_page>"
@@ -74,6 +75,7 @@ messages:
   admin:
     monolog_format: "<hover:show_text:'<dark_green>日時: <green><timestamp>'><blue>[<level>] <gray><log></hover>"
 
+    create_account: "<prefix> <green>Account <account> was created [!]"
     config_reload: "<prefix> <green>コンフィグは正常に読み込まれました。"
     translation_switch: "<prefix> <green>言語の切り替えが完了しました。(言語: <locale>)"
     translation_missing: "<prefix> <red>翻訳が見つかりません。このプラグインの開発者に連絡してください。(言語: <key>)"

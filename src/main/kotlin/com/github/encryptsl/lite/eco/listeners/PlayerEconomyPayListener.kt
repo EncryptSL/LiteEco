@@ -16,10 +16,6 @@ class PlayerEconomyPayListener(private val liteEco: LiteEco) : Listener {
         val target: OfflinePlayer = event.target
         val money: Double = event.money
 
-        if (!liteEco.api.hasAccount(target))
-            return sender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist",
-                Placeholder.parsed("account", target.name.toString())))
-
         if (!liteEco.api.has(sender, money))
             return sender.sendMessage(liteEco.locale.translation("messages.error.insufficient_funds"))
 
@@ -29,16 +25,23 @@ class PlayerEconomyPayListener(private val liteEco: LiteEco) : Listener {
                     Placeholder.parsed("account", target.name.toString())
             ))
 
-        liteEco.api.transfer(sender, target, money)
-        liteEco.loggerModel.info(liteEco.locale.getMessage("messages.monolog.player.pay")
-            .replace("<sender>", sender.name)
-            .replace("<target>", target.name.toString())
-            .replace("<money>", liteEco.api.fullFormatting(money))
-        )
-        liteEco.increaseTransactions(1)
-        sender.sendMessage(
+        liteEco.api.getUserByUUID(target).thenAccept { user ->
+            sender.sendMessage(
                 liteEco.locale.translation("messages.sender.add_money",
-                TagResolver.resolver(Placeholder.parsed("target", target.name.toString()), Placeholder.parsed("money", liteEco.api.fullFormatting(money)))))
+                    TagResolver.resolver(Placeholder.parsed("target", user.userName), Placeholder.parsed("money", liteEco.api.fullFormatting(money)))))
+        }.thenApply {
+            liteEco.api.transfer(sender, target, money)
+            liteEco.loggerModel.info(liteEco.locale.getMessage("messages.monolog.player.pay")
+                .replace("<sender>", sender.name)
+                .replace("<target>", target.name.toString())
+                .replace("<money>", liteEco.api.fullFormatting(money))
+            )
+            liteEco.increaseTransactions(1)
+        }.exceptionally {
+            return@exceptionally sender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist",
+                Placeholder.parsed("account", target.name.toString())))
+        }
+
         if (target.isOnline) {
             target.player?.sendMessage(
                 liteEco.locale.translation("messages.target.add_money",

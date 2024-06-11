@@ -1,7 +1,9 @@
 package com.github.encryptsl.lite.eco.api.interfaces
 
+import com.github.encryptsl.lite.eco.common.database.entity.User
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
+import java.util.concurrent.CompletableFuture
 
 interface LiteEconomyAPI {
     /**
@@ -19,11 +21,10 @@ interface LiteEconomyAPI {
      * @param player is OfflinePlayer
      * @param amount is value of player account from database.
      * @return Boolean
-     * @see Boolean
      * @see OfflinePlayer
-     * @see com.github.encryptsl.lite.eco.common.database.models.DatabaseEcoModel.getBalance(uuid: UUID)
+     * @see com.github.encryptsl.lite.eco.common.database.models.DatabaseEcoModel.getUserByUUID(uuid)
      */
-    fun cacheAccount(player: OfflinePlayer, amount: Double): Boolean
+    fun cacheAccount(player: OfflinePlayer, amount: Double)
 
     /**
      * Delete player account from database
@@ -39,7 +40,7 @@ interface LiteEconomyAPI {
      * @return Boolean
      * @see OfflinePlayer
      */
-    fun hasAccount(player: OfflinePlayer): Boolean
+    fun hasAccount(player: OfflinePlayer): CompletableFuture<Boolean>
 
     /**
      * Boolean for check if player have enough money
@@ -48,6 +49,14 @@ interface LiteEconomyAPI {
      * @see OfflinePlayer
      */
     fun has(player: OfflinePlayer, amount: Double): Boolean
+
+    /**
+     * Get user account
+     * @param player is OfflinePlayer
+     * @return User
+     * @see OfflinePlayer
+     */
+    fun getUserByUUID(player: OfflinePlayer): CompletableFuture<User>
 
     /**
      * Get balance of player account
