@@ -47,24 +47,23 @@ class MoneyCMD(private val liteEco: LiteEco) {
                 commandSender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist",
                     Placeholder.parsed("account", cSender.name.toString())))
             }
-        } else {
-           if (offlinePlayer != null) {
-               liteEco.api.getUserByUUID(offlinePlayer).thenApply { user ->
-                   commandSender.sendMessage(
-                       liteEco.locale.translation("messages.balance.format_target", helper.getComponentBal(user))
-                   )
-               }.exceptionally {
-                   commandSender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist",
-                       Placeholder.parsed("account", offlinePlayer.name.toString())))
-               }
-
-               return
-           }
-
-            liteEco.locale.getList("messages.help")?.forEach { s ->
-                commandSender.sendMessage(ModernText.miniModernText(s.toString()))
-            }
+            return
         }
+
+        if (offlinePlayer != null) {
+            liteEco.api.getUserByUUID(offlinePlayer).thenApply { user ->
+                commandSender.sendMessage(
+                    liteEco.locale.translation("messages.balance.format_target", helper.getComponentBal(user))
+                )
+            }.exceptionally {
+                commandSender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist",
+                    Placeholder.parsed("account", offlinePlayer.name.toString())))
+            }
+            return
+        }
+
+        liteEco.locale.getList("messages.help")
+            ?.forEach { s -> commandSender.sendMessage(ModernText.miniModernText(s.toString())) }
     }
 
     @ProxiedBy("baltop")
@@ -73,7 +72,6 @@ class MoneyCMD(private val liteEco: LiteEco) {
     fun onTopBalance(commandSender: CommandSender, @Argument(value = "page") @Range(min = "1", max="") @Default("1") page: Int) {
 
         val topPlayers = helper.getTopBalancesFormatted()
-        if (topPlayers.isEmpty()) return
 
         val pagination = ComponentPaginator(topPlayers) { itemsPerPage = 10 }.apply { page(page) }
 
