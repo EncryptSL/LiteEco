@@ -30,11 +30,15 @@ class AdaptiveEconomyVaultAPI(private val liteEco: LiteEco) : DeprecatedEconomy(
         return null
     }
 
-    override fun hasAccount(player: OfflinePlayer?): Boolean {
-        return if (player != null) liteEco.api.hasAccount(player).join() else false
+    override fun hasAccount(player: OfflinePlayer): Boolean {
+        return liteEco.api.getUserByUUID(player).thenApply {
+            return@thenApply true
+        }.exceptionally {
+            return@exceptionally false
+        }.get()
     }
 
-    override fun hasAccount(player: OfflinePlayer?, worldName: String?): Boolean {
+    override fun hasAccount(player: OfflinePlayer, worldName: String?): Boolean {
         return hasAccount(player)
     }
 

@@ -36,8 +36,7 @@ class DatabaseMonologModel(val plugin: Plugin) : AdapterLogger {
                      EconomyLog(it[MonologTable.level], it[MonologTable.log], it[MonologTable.timestamp])
             }
         }
-        future.completeAsync { log }
-        return future
+        return future.completeAsync { log }
     }
 
     private fun log(level: Level, message: String) {
