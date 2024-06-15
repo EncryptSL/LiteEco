@@ -149,8 +149,6 @@ class EcoCMD(private val liteEco: LiteEco) {
                 Placeholder.parsed("log", it.log)
             ))
         }
-        if (log.isEmpty()) return
-
         val pagination = ComponentPaginator(log) { itemsPerPage = 10 }.apply { page(page) }
 
         if (pagination.isAboveMaxPage(page))

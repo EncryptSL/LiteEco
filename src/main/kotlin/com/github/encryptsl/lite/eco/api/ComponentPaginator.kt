@@ -22,6 +22,8 @@ class ComponentPaginator(private val components: List<Component>, options: Pagin
         val selectedPage = paginationOptions.selectedPage
         val itemsPerPage = paginationOptions.itemsPerPage
 
+        if (components.isEmpty()) return emptyList()
+
         val indexStart = (selectedPage - 1) * itemsPerPage
         val indexEnd = min(indexStart + itemsPerPage, components.size)
 
