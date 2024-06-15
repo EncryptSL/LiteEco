@@ -47,16 +47,8 @@ class Locales(private val liteEco: LiteEco, private val langVersion: String) {
                 liteEco.saveResource("locale/$fileName", false)
             }
             val existingVersion = YamlConfiguration.loadConfiguration(file).getString("version")
-            if (existingVersion.isNullOrEmpty() || existingVersion != langVersion) {
-                val backupFile = File(liteEco.dataFolder, "locale/old_$fileName")
-                file.copyTo(backupFile, true)
-                liteEco.saveResource("locale/$fileName", true)
-            }
-
-            liteEco.config.set("plugin.translation", langKey.name)
-            liteEco.saveConfig()
-            liteEco.reloadConfig()
-            liteEco.logger.info("Loaded translation $fileName [!]")
+            copyOutDateLocale(file, fileName, existingVersion)
+            reloadLangFile(langKey, fileName)
 
             langYML = YamlConfiguration.loadConfiguration(file)
         } catch (e: Exception) {
@@ -66,8 +58,23 @@ class Locales(private val liteEco: LiteEco, private val langVersion: String) {
         }
     }
 
+    private fun reloadLangFile(langKey: LangKey, fileName: String) {
+        liteEco.config.set("plugin.translation", langKey.name)
+        liteEco.saveConfig()
+        liteEco.reloadConfig()
+        liteEco.logger.info("Loaded translation $fileName [!]")
+    }
+
+    private fun copyOutDateLocale(file: File, fileName: String, version: String?) {
+        if (version.isNullOrEmpty() || version != langVersion) {
+            val backupFile = File(liteEco.dataFolder, "locale/old_$fileName")
+            file.copyTo(backupFile, true)
+            liteEco.saveResource("locale/$fileName", true)
+        }
+    }
+
     private fun getRequiredLocaleOrFallback(langKey: LangKey, currentLocale: String): String {
-        return LangKey.entries.stream().map<String>(LangKey::name).filter {el -> el.equals(langKey.name, true)}.findFirst().orElse(currentLocale).lowercase()
+        return LangKey.entries.stream().map(LangKey::name).filter { el -> el.equals(langKey.name, true)}.findFirst().orElse(currentLocale).lowercase()
     }
 
     fun loadCurrentTranslation() {
