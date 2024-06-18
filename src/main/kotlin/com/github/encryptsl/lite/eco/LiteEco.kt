@@ -182,6 +182,9 @@ class LiteEco : JavaPlugin() {
     }
 
     private fun registerSuggestionProviders(commandManager: LegacyPaperCommandManager<CommandSender>) {
+        commandManager.parserRegistry().registerSuggestionProvider("onlinePlayers") {_, _ ->
+            CompletableFuture.completedFuture(Bukkit.getOnlinePlayers().map { Suggestion.suggestion(it.name) })
+        }
         commandManager.parserRegistry().registerSuggestionProvider("players") { _, _ ->
             CompletableFuture.completedFuture(Bukkit.getOfflinePlayers()
                 .map { Suggestion.suggestion(it.name.toString()) })

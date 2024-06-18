@@ -28,13 +28,13 @@ class MoneyCMD(private val liteEco: LiteEco) {
 
     @Command("bal|balance [player]")
     @Permission("lite.eco.balance")
-    fun onBalanceProxy(commandSender: CommandSender, @Argument(value = "player", suggestions = "players") offlinePlayer: OfflinePlayer?) {
+    fun onBalanceProxy(commandSender: CommandSender, @Argument(value = "player", suggestions = "onlinePlayers") offlinePlayer: OfflinePlayer?) {
         onBalance(commandSender, offlinePlayer)
     }
 
     @Command("money bal [player]")
     @Permission("lite.eco.balance")
-    fun onBalance(commandSender: CommandSender, @Argument(value = "player", suggestions = "players") offlinePlayer: OfflinePlayer?) {
+    fun onBalance(commandSender: CommandSender, @Argument(value = "player", suggestions = "onlinePlayers") offlinePlayer: OfflinePlayer?) {
         if (commandSender is Player) {
             val cSender = offlinePlayer ?: commandSender
             liteEco.api.getUserByUUID(cSender).thenApply { user ->
