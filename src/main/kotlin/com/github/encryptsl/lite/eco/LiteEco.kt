@@ -34,7 +34,7 @@ import kotlin.system.measureTimeMillis
 
 class LiteEco : JavaPlugin() {
     companion object {
-        const val CONFIG_VERSION = "1.2.4"
+        const val CONFIG_VERSION = "1.2.5"
         const val LANG_VERSION = "2.0.3"
         const val PAPI_VERSION = "2.0.5"
 
@@ -182,12 +182,8 @@ class LiteEco : JavaPlugin() {
     }
 
     private fun registerSuggestionProviders(commandManager: LegacyPaperCommandManager<CommandSender>) {
-        commandManager.parserRegistry().registerSuggestionProvider("onlinePlayers") {_, _ ->
-            CompletableFuture.completedFuture(Bukkit.getOnlinePlayers().map { Suggestion.suggestion(it.name) })
-        }
         commandManager.parserRegistry().registerSuggestionProvider("players") { _, _ ->
-            CompletableFuture.completedFuture(Bukkit.getOfflinePlayers()
-                .map { Suggestion.suggestion(it.name.toString()) })
+            modifiableSuggestionPlayerSuggestion()
         }
         commandManager.parserRegistry().registerSuggestionProvider("economies") {_, _ ->
             CompletableFuture.completedFuture(Economies.entries.map { Suggestion.suggestion(it.name) })
@@ -203,7 +199,18 @@ class LiteEco : JavaPlugin() {
         }
     }
 
+    private fun modifiableSuggestionPlayerSuggestion(): CompletableFuture<List<Suggestion>> {
+        val suggestion = if (config.getBoolean("plugin.offline-suggestion-players", true)) {
+            CompletableFuture.completedFuture(Bukkit.getOfflinePlayers()
+                .map { Suggestion.suggestion(it.name.toString()) })
+        } else {
+            CompletableFuture.completedFuture(Bukkit.getOnlinePlayers().map { Suggestion.suggestion(it.name) })
+        }
+
+        return suggestion
+    }
+
     private fun createAnnotationParser(commandManager: LegacyPaperCommandManager<CommandSender>): AnnotationParser<CommandSender> {
-        return AnnotationParser<CommandSender>(commandManager, CommandSender::class.java)
+        return AnnotationParser(commandManager, CommandSender::class.java)
     }
 }
