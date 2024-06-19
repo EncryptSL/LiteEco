@@ -98,10 +98,9 @@ class DatabaseEcoModel : PlayerSQL {
     }
 
     override fun purgeInvalidAccounts() {
-        val validPlayerUUIDs = Bukkit.getOfflinePlayers().mapNotNull { runCatching { it.uniqueId }.getOrNull() }.map { it.toString() }
         loggedTransaction {
             Account.deleteWhere {
-                uuid notInList validPlayerUUIDs
+                uuid notInList Bukkit.getOfflinePlayers().map { it.uniqueId.toString() }
             }
         }
     }
