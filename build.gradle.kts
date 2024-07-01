@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     kotlin("jvm") version "2.0.0" apply true
-    id("io.github.goooler.shadow") version "8.1.7"
+    id("io.github.goooler.shadow") version "8.1.8"
     id("maven-publish")
 }
 
@@ -43,6 +43,7 @@ dependencies {
     compileOnly("org.jetbrains.exposed:exposed-kotlin-datetime:0.50.1")
     compileOnly("com.squareup.okhttp3:okhttp:4.12.0")
     compileOnly("me.hsgamer:bettereconomy:3.1")
+    compileOnly("net.milkbowl.vault:VaultUnlockedAPI:2.2")
 
     implementation("org.bstats:bstats-bukkit:3.0.1")
     implementation("org.incendo:cloud-paper:2.0.0-SNAPSHOT")
