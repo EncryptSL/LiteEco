@@ -1,0 +1,117 @@
+messages:
+  # Balance messages
+  balance:
+    format: "<prefix> <white>Stan konta <green><money></green> [!]"
+    format_target: "<prefix> <white>Stan konta <gold><target></gold>, <green><money></green> [!]"
+    top_format: "<yellow><position># <gold><player></gold> <gray>- <green><money></green>"
+    top_header: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>TOP PIENIĘDZY</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray> <red><page>/<max_page>"
+    top_footer: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>TOP PIENIĘDZY</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray>"
+
+  # Self-transaction messages
+  self:
+    add_money: "<prefix> <white>Dodałeś <green><money></green> do swojego konta."
+    withdraw_money: "<prefix> <white>Usunąłeś <green><money></green> ze swojego konta."
+    set_money: "<prefix> <white>Ustawiłeś <green><money></green> dla swojego konta."
+
+  # Transaction messages for target
+  target:
+    add_money: "<prefix> <gold><sender></gold> <white>wysłał Ci <green><money></green> pieniędzy."
+    add_money_silent: "<gray>+ <green><money>"
+    withdraw_money: "<prefix> <gold><sender></gold> <white>usunął <green><money></green> pieniędzy z twojego konta."
+    withdraw_money_silent: "<gray>- <red><money>"
+    set_money: "<prefix> <gold><sender></gold> <white>ustawił wartość twojego konta na <green><money></green> pieniędzy."
+
+  # Transaction messages for sender
+  sender:
+    add_money: "<prefix> <white>Wysłałeś <green><money></green> pieniędzy do <gold><target></gold>."
+    withdraw_money: "<prefix> <white>Usunąłeś <green><money></green> pieniędzy z konta <gold><target></gold>."
+    set_money: "<prefix> <white>Ustawiłeś <green><money></green> pieniędzy dla <gold><target></gold>."
+
+  # Global actions messages (sent to the sender who made the global action)
+  global:
+    add_money: "<prefix> <white>Dodałeś <green><money></green> pieniędzy dla wszystkich graczy."
+    withdraw_money: "<prefix> <white>Wypłaciłeś <green><money></green> pieniędzy od wszystkich graczy."
+    set_money: "<prefix> <white>Ustawiłeś <green><money></green> pieniędzy dla wszystkich graczy."
+
+  # Broadcast messages (sent to all players after a global action)
+  broadcast:
+    add_money: "<prefix> <gold><sender></gold> <white>dodał <green><money></green> pieniędzy dla wszystkich graczy."
+    withdraw_money: "<prefix> <gold><sender></gold> <white>wypłacił <green><money></green> pieniędzy od wszystkich graczy."
+    set_money: "<prefix> <gold><sender></gold> <white>ustawił <green><money></green> pieniędzy dla wszystkich graczy."
+
+  # Error messages
+  error:
+    account_not_exist: "<prefix> <red>Konto <account> nie istnieje [!]"
+    account_now_exist: "<prefix> <red>Konto <account> od teraz istnieje [!]"
+    format_amount: "<prefix> <red>Nieprawidłowa kwota. Użyj liczb zmienno przecinkowych lub kompaktowego rozwiązania (np. 1K) [!]"
+    insufficient_funds: "<prefix> <red>Niewystarczająca kwota! [!]"
+    maximum_page: "<red>Limit stron to <max_page>"
+    negative_amount: "<prefix> <red>Negatywne wartości są niedozwolone. [!]"
+    migration_argument: "<prefix> <red><argument> argument jest nieprawidłowy lub niegotowy do użycia."
+    migration_failed: "<prefix> <red>Wystąpił błąd podczas migracji. Sprawdź konsolę po więcej szczegółów."
+    purge_argument: "<prefix> <red><argument> argument jest nieprawidłowy lub niegotowy do użycia."
+    purge_monolog_fail: "<prefix> <red>Nie możesz usunąć logów, ponieważ tabela jest pusta [!]"
+    player_is_null: "<prefix> <red>Podaj nick gracza [!]"
+    self_pay: "<prefix> <red>Nie możesz wysłać pieniędzy samemu sobie [!]"
+    convert_fail: "<prefix> <red>Wystąpił błąd podczas konwertowania, sprawdź konsolę [!]"
+    amount_above_limit: "<prefix> <red>Kwota przekracza limit serwera !"
+    balance_above_limit: "<prefix> <red>Stan konta <account> przekracza limit serwera !"
+
+  # Monolog messages logged to table lite_eco_monolog.
+  monolog:
+    admin:
+      normal:
+        deposit: "Administrator <sender> wpłacił <target> : <money>"
+        set: "Administrator <sender> ustawił <target> : <money>"
+        withdraw: "Administrator <sender> wypłacił <target> : <money>"
+      global:
+        deposit: "Administrator <sender> wpłacił dla <accounts>x kont : <money> pieniędzy"
+        set: "Administrator <sender> ustawił dla <accounts>x kont : <money> pieniędzy"
+        withdraw: "Administrator <sender> wypłącił z <accounts>x kont : <money> pieniędzy"
+    player:
+      pay: "Gracz <sender> wysłał <target> : <money> pieniędzy"
+
+  # Admin commands
+  admin:
+    monolog_format: "<hover:show_text:'<dark_green>Data i godzina: <green><timestamp>'><blue>[<level>] <gray><log></hover>"
+
+    create_account: "<prefix> <green>Konto <account> zostało stworzone [!]"
+    config_reload: "<prefix> <green>Plik konfiguracyjny przeładowany pomyślnie [!]"
+    translation_switch: "<prefix> <green>Tłumaczenie zmienione na <locale>."
+    translation_missing: "<prefix> <red>Brakujące tłumaczenie dla <key>. Skontaktuj się z deweloperem pluginu."
+    purge_accounts: "<prefix> <green>Konta wszystkich graczy zostały wyczyszczone."
+    purge_null_accounts: "<prefix> <green>Konta wszystkich graczy z nieprawidłową wartością zostały wyczyszczone."
+    purge_default_accounts: "<prefix> <green>Konta wszystkich graczy z domyślną wartością zostały wyczyszczone."
+    purge_monolog_success: "<prefix> <green>Wszytkie logi dotyczące aktywności ekonomii zostały wyczyszczone [!]"
+    delete_account: "<prefix> <green>Konto gracza <account> zostało usunięte !"
+    migration_success: "<prefix> <green>Migracja <type> przebiegła pomyślnie [!]"
+    convert_success: "<prefix> <green>Konwersja <converted>x kont i <balances> pieniędzy z <economy> do LiteEco przebiegło pomyślnie [!]"
+
+  help:
+    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
+    - " "
+    - "<white>[+] <gray>/money help <white>-<#CFE7F0> Wyświetla listę komend pluginu"
+    - "<white>[+] <gray>/money top <#b37dc7>[page] <white>-<#CFE7F0> Wyświetla najbogatszych graczy"
+    - "<white>[+] <gray>/money bal <yellow>[username] <white>-<#CFE7F0> Wyświetl stan swojego konta bądź podanego gracza"
+    - "<white>[+] <gray>/money pay <yellow>[username] <#3EE84D><amount> <white>-<#CFE7F0> Wyślij pieniądze do podanego gracza."
+    - " "
+    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
+
+  admin-help:
+    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix>  <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
+    - " "
+    - "<red>[★] <gray>/eco add <yellow>[username] <#3EE84D><amount> <white>-<#F39E9E> Dodaj pieniądze do konta podanego gracza."
+    - "<red>[★] <gray>/eco set <yellow>[username] <#3EE84D><amount> <white>-<#F39E9E> Ustaw pieniądze dla konta podanego gracza."
+    - "<red>[★] <gray>/eco withdraw <yellow>[username] <#3EE84D><amount> <white>-<#F39E9E> Usuń pieniądze z konta podanego gracza."
+    - "<red>[★] <gray>/eco global add <#3EE84D><amount> <white>-<#F39E9E> Dodaj pieniądze do kont wszystkich graczy."
+    - "<red>[★] <gray>/eco global set <#3EE84D><amount> <white>-<#F39E9E> Ustaw pieniądze dla wszystkich graczy."
+    - "<red>[★] <gray>/eco global withdraw <#3EE84D><amount> <white>-<#F39E9E> Usuń pieniądze z konta wszystkich graczy."
+    - "<red>[★] <gray>/eco lang <#b37dc7>[lang] <white>-<#F39E9E> Zmień tłumaczenie pluginu."
+    - "<red>[★] <gray>/eco purge <#b37dc7><argument> <white>-<#F39E9E> Wyczyszść dane."
+    - "<red>[★] <gray>/eco migration <#b37dc7><argument> <white>-<#F39E9E> Migruj bazę danych do innego rodzaju."
+    - "<red>[★] <gray>/eco convert <#b37dc7><argument> <white>-<#F39E9E> Konwertuj pieniądze z innej ekonomii do LiteEco."
+    - "<red>[★] <gray>/eco reload <white>-<#F39E9E> Przeładuj konfiguracje."
+    - " "
+    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
+
+version: 2.0.3
