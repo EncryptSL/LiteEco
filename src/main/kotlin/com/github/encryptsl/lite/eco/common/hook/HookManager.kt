@@ -6,6 +6,7 @@ import com.github.encryptsl.lite.eco.common.hook.miniplaceholder.EconomyMiniPlac
 import com.github.encryptsl.lite.eco.common.hook.placeholderapi.EconomyPlaceholderAPI
 import com.github.encryptsl.lite.eco.common.hook.treasury.TreasuryEconomyAPI
 import com.github.encryptsl.lite.eco.common.hook.vault.AdaptiveEconomyVaultAPI
+import com.github.encryptsl.lite.eco.common.hook.vaultunlocked.AdaptiveEconomyVaultUnlockedAPI
 import me.lokka30.treasury.api.common.service.ServiceRegistry
 import me.lokka30.treasury.api.economy.EconomyProvider
 import net.milkbowl.vault.economy.Economy
@@ -64,6 +65,24 @@ class HookManager(private val liteEco: LiteEco) {
             liteEco.logger.warning("Warning plugin Vault not found !")
             liteEco.logger.warning("For better experience please download Vault.")
             liteEco.logger.warning("Keep in mind without Vault, LiteEco can't use API from Vault.")
+        }
+    }
+
+    /**
+     * Experimental hook to VaultUnlocked modern fork of classic Vault.
+     * Keep in mind this function is not tested and maybe can throw errors and other stuff.
+     *
+     * Now implementation support only one currency.... !!!
+     * Plugin needs rewrite core of own api and other stuff...
+     */
+    fun hookVaultUnlocked() {
+        if (isPluginInstalled("VaultUnlocked")) {
+            liteEco.server.servicesManager.register(net.milkbowl.vault2.economy.Economy::class.java, AdaptiveEconomyVaultUnlockedAPI(liteEco), liteEco, ServicePriority.Highest)
+            liteEco.logger.info("VaultUnlocked is registered, LiteEco now working like a provider !")
+        } else {
+            liteEco.logger.warning("Warning plugin VaultUnlocked not found !")
+            liteEco.logger.warning("For better experience please download Vault.")
+            liteEco.logger.warning("Keep in mind without VaultUnlocked, LiteEco can't use API from VaultUnlocked.")
         }
     }
 

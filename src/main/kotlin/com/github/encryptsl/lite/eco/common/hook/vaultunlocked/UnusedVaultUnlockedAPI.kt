@@ -10,11 +10,11 @@ abstract class UnusedVaultUnlockedAPI : Economy {
         private const val BANK_NOT_SUPPORTED_MESSAGE = "LiteEco does not support bank accounts!"
     }
 
-    override fun createBank(p0: String?, p1: String?, p2: UUID?): Boolean {
+    override fun createBank(p0: String, p1: String, p2: UUID): Boolean {
         return false
     }
 
-    override fun deleteBank(p0: String?, p1: UUID?): Boolean {
+    override fun deleteBank(p0: String, p1: UUID): Boolean {
         return false
     }
 
@@ -79,6 +79,6 @@ abstract class UnusedVaultUnlockedAPI : Economy {
     }
 
     override fun getBanks(): MutableCollection<UUID> {
-        TODO("Not yet implemented")
+        return mutableListOf()
     }
 }
