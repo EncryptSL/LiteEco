@@ -13,6 +13,7 @@ class EconomyGlobalSetListener(private val liteEco: LiteEco) : Listener {
     @EventHandler
     fun onAdminEconomyGlobalSet(event: EconomyGlobalSetEvent) {
         val sender: CommandSender = event.commandSender
+        val currency = event.currency
         val money = event.money
         val offlinePlayers = Bukkit.getOfflinePlayers()
 
@@ -20,8 +21,8 @@ class EconomyGlobalSetListener(private val liteEco: LiteEco) : Listener {
             return sender.sendMessage(liteEco.locale.translation("messages.error.amount_above_limit"))
 
         for (p in offlinePlayers) {
-            liteEco.api.hasAccount(p).thenAccept { el ->
-                if (el == true) liteEco.api.setMoney(p, money)
+            liteEco.api.hasAccount(p, currency).thenAccept { el ->
+                if (el == true) liteEco.api.setMoney(p, currency, money)
             }
         }
 

@@ -57,7 +57,7 @@ class TreasuryCurrency(private val liteEco: LiteEco) : Currency {
     }
 
     override fun format(amount: BigDecimal, locale: Locale?): String {
-        return liteEco.api.fullFormatting(amount.toDouble())
+        return liteEco.api.fullFormatting(amount)
     }
 
     override fun format(amount: BigDecimal, locale: Locale?, precision: Int): String {

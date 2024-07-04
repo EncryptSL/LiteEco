@@ -28,16 +28,24 @@ class MoneyCMD(private val liteEco: LiteEco) {
 
     @Command("bal|balance [player]")
     @Permission("lite.eco.balance")
-    fun onBalanceProxy(commandSender: CommandSender, @Argument(value = "player", suggestions = "players") offlinePlayer: OfflinePlayer?) {
-        onBalance(commandSender, offlinePlayer)
+    fun onBalanceProxy(
+        commandSender: CommandSender,
+        @Argument(value = "player", suggestions = "players") offlinePlayer: OfflinePlayer?,
+        @Default("dollar") @Argument("currency", suggestions = "currencies") currency: String
+    ) {
+        onBalance(commandSender, offlinePlayer, currency)
     }
 
-    @Command("money bal [player]")
+    @Command("money bal [player] [currency]")
     @Permission("lite.eco.balance")
-    fun onBalance(commandSender: CommandSender, @Argument(value = "player", suggestions = "players") offlinePlayer: OfflinePlayer?) {
+    fun onBalance(
+        commandSender: CommandSender,
+        @Argument(value = "player", suggestions = "players") offlinePlayer: OfflinePlayer?,
+        @Default("dollar") @Argument("currency", suggestions = "currencies") currency: String
+    ) {
         if (commandSender is Player) {
             val cSender = offlinePlayer ?: commandSender
-            liteEco.api.getUserByUUID(cSender).thenApply { user ->
+            liteEco.api.getUserByUUID(cSender, currency).thenApply { user ->
                 val formatMessage = when(offlinePlayer) {
                     null -> liteEco.locale.translation("messages.balance.format", helper.getComponentBal(user))
                     else -> liteEco.locale.translation("messages.balance.format_target", helper.getComponentBal(user))
@@ -67,11 +75,15 @@ class MoneyCMD(private val liteEco: LiteEco) {
     }
 
     @ProxiedBy("baltop")
-    @Command("money top [page]")
+    @Command("money top [page] [currency]")
     @Permission("lite.eco.top")
-    fun onTopBalance(commandSender: CommandSender, @Argument(value = "page") @Range(min = "1", max="") @Default("1") page: Int) {
+    fun onTopBalance(
+        commandSender: CommandSender,
+        @Argument(value = "page") @Range(min = "1", max="") @Default("1") page: Int,
+        @Default("dollar") @Argument("currency", suggestions = "currencies") currency: String
+    ) {
 
-        val topPlayers = helper.getTopBalancesFormatted()
+        val topPlayers = helper.getTopBalancesFormatted(currency)
 
         val pagination = ComponentPaginator(topPlayers) { itemsPerPage = 10 }.apply { page(page) }
 
@@ -98,12 +110,13 @@ class MoneyCMD(private val liteEco: LiteEco) {
     fun onPayMoney(
         sender: Player,
         @Argument(value = "player", suggestions = "players") offlinePlayer: OfflinePlayer,
-        @Argument(value = "amount") @Range(min = "1.00", max = "") amountStr: String
+        @Argument(value = "amount") @Range(min = "1.00", max = "") amountStr: String,
+        @Default("dollar") @Argument("currency", suggestions = "currencies") currency: String
     ) {
         if (sender.uniqueId == offlinePlayer.uniqueId)
             return sender.sendMessage(liteEco.locale.translation("messages.error.self_pay"))
 
         val amount = helper.validateAmount(amountStr, sender) ?: return
-        liteEco.pluginManager.callEvent(PlayerEconomyPayEvent(sender, offlinePlayer, amount))
+        liteEco.pluginManager.callEvent(PlayerEconomyPayEvent(sender, offlinePlayer, currency, amount))
     }
 }

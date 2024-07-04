@@ -19,8 +19,6 @@ dependencies:
       required: false
     Vault:
       required: false
-    VaultUnlocked:
-      required: false
     Treasury:
       required: false
     MiniPlaceholders:

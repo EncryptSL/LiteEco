@@ -1,10 +1,10 @@
 package com.github.encryptsl.lite.eco.common.hook.vault
 
-import net.milkbowl.vault.economy.AbstractEconomy
+import net.milkbowl.vault.economy.Economy
 import net.milkbowl.vault.economy.EconomyResponse
 import org.bukkit.Bukkit
 
-abstract class DeprecatedEconomy : AbstractEconomy()  {
+abstract class DeprecatedEconomy : Economy  {
 
     companion object {
         private const val BANK_NOT_SUPPORTED_MESSAGE = "LiteEco does not support bank accounts!"

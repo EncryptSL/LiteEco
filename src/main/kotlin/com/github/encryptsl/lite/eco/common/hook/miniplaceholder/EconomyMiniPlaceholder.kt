@@ -5,6 +5,7 @@ import io.github.miniplaceholders.kotlin.asInsertingTag
 import io.github.miniplaceholders.kotlin.expansion
 import net.kyori.adventure.text.Component
 import org.bukkit.OfflinePlayer
+import java.math.BigDecimal
 
 
 class EconomyMiniPlaceholder(private val liteEco: LiteEco) {
@@ -13,7 +14,7 @@ class EconomyMiniPlaceholder(private val liteEco: LiteEco) {
         val expansion = expansion("lite-eco") {
             audiencePlaceholder("balance") { p, _, _ ->
                 val player: OfflinePlayer = p as OfflinePlayer
-                return@audiencePlaceholder Component.text(liteEco.api.getBalance(player)).asInsertingTag()
+                return@audiencePlaceholder Component.text(liteEco.api.getBalance(player).toPlainString()).asInsertingTag()
             }
             audiencePlaceholder("balance_formatted") { p, _, _ ->
                 val player: OfflinePlayer = p as OfflinePlayer
@@ -33,7 +34,7 @@ class EconomyMiniPlaceholder(private val liteEco: LiteEco) {
                 return@globalPlaceholder Component.text(liteEco.api.compacted(balanceByRank(i.popOr("You need provide position.").value().toInt()))).asInsertingTag()
             }
             globalPlaceholder("top_balance") { i, _ ->
-                return@globalPlaceholder Component.text(balanceByRank(i.popOr("You need provide position.").value().toInt())).asInsertingTag()
+                return@globalPlaceholder Component.text(balanceByRank(i.popOr("You need provide position.").value().toInt()).toPlainString()).asInsertingTag()
             }
             globalPlaceholder("top_player") { i, _ ->
                 return@globalPlaceholder Component.text(nameByRank(i.popOr("You need provide position.").value().toInt())).asInsertingTag()
@@ -51,16 +52,16 @@ class EconomyMiniPlaceholder(private val liteEco: LiteEco) {
         }
     }
 
-    private fun balanceByRank(rank: Int): Double {
+    private fun balanceByRank(rank: Int): BigDecimal {
         val topBalance = topBalance()
         return if (rank in 1..topBalance.size) {
             topBalance.values.elementAt(rank - 1)
         } else {
-            0.0
+            BigDecimal.ZERO
         }
     }
 
-    private fun topBalance(): Map<String, Double> {
+    private fun topBalance(): Map<String, BigDecimal> {
         return liteEco.api.getTopBalance()
     }
 

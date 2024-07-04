@@ -1,4 +1,4 @@
-package com.github.encryptsl.lite.eco.common.hook.vaultunlocked
+package com.github.encryptsl.lite.eco.common.hook.vault.unlocked
 
 import net.milkbowl.vault2.economy.Economy
 import net.milkbowl.vault2.economy.EconomyResponse
@@ -23,7 +23,7 @@ abstract class UnusedVaultUnlockedAPI : Economy {
     }
 
     override fun getBankAccountName(p0: UUID?): String {
-        return ""
+        return "Empty"
     }
 
     override fun hasBankAccount(p0: UUID?): Boolean {

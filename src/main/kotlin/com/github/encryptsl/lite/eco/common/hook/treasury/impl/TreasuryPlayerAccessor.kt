@@ -17,7 +17,7 @@ class TreasuryPlayerAccessor(private val liteEco: LiteEco) : PlayerAccountAccess
             return CompletableFuture.failedFuture(IllegalArgumentException("Invalid player UUID"))
         }
 
-        liteEco.api.createAccount(offlinePlayer, liteEco.config.getDouble("economy.starting_balance"))
+        liteEco.api.createAccount(offlinePlayer, liteEco.currencyImpl.defaultCurrency(), liteEco.currencyImpl.defaultStartBalance())
 
         return CompletableFuture.completedFuture(TreasuryPlayerAccount(context.uniqueId))
     }

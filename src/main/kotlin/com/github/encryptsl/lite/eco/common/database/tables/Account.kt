@@ -2,11 +2,11 @@ package com.github.encryptsl.lite.eco.common.database.tables
 
 import org.jetbrains.exposed.sql.Table
 
-object Account : Table("lite_eco") {
-    private val id = integer( "id").autoIncrement()
+class Account(currency: String) : Table("lite_eco_$currency") {
+    private val id = integer("id").autoIncrement()
     val username = varchar("username", 36)
-    val uuid = varchar("uuid", 36)
-    val money = double("money")
+    val uuid = uuid("uuid")
+    val money = decimal("money", 1, 2)
 
     override val primaryKey: PrimaryKey = PrimaryKey(id)
 }

@@ -13,18 +13,38 @@ plugin:
   offline-suggestion-players: true
 
 economy:
-  # Currency Full Format
-  # This format replacing currency_name and currency_prefix.
-  # Placeholders: <balance>, %balance%, {balance}
-  currency_format: "$ <balance> LE"
-  # This amount is granted to players who don't have an existing account in the database.
-  starting_balance: 30
-  # This amount is checked when player is above allowed limit
-  balance_limit: 1000000
-  # Enabled or disable balance limit, disabled check mean fully for paid amounts by player, given/set by admins.
-  balance_limit_check: true
-  # Convert large currency values into a more compact format.
-  compact_display: false
+  currencies:
+    # Don't change this currency because this is implemented for vault....
+    default:
+      # Name of currency is used in database for table, please don't change name of default currency....
+      # Name of currency generating every start of server new table if not exist.
+      currency_name: dollar
+      # Name of plural currency
+      currency_plural_name: Dollars
+      # Name of single currency
+      currency_singular_name: Dollar
+      # This amount is granted to players who don't have an existing account in the database.
+      starting_balance: 30
+      # This amount is checked when player is above allowed limit
+      balance_limit: 1000000
+      # Enabled or disable balance limit, disabled check mean fully for paid amounts by player, given/set by admins.
+      balance_limit_check: true
+      # Convert large currency values into a more compact format.
+      compact_display: false
+
+    # Example of other currencies
+    # credits:
+        # currency_plural_name: Credits
+        # currency_singular_name: Credit
+        # # This amount is granted to players who don't have an existing account in the database.
+        # starting_balance: 30
+        # # This amount is checked when player is above allowed limit
+        # balance_limit: 1000000
+        # # Enabled or disable balance limit, disabled check mean fully for paid amounts by player, given/set by admins.
+        # balance_limit_check: true
+        # # Convert large currency values into a more compact format.
+        # compact_display: false
+
   # Enable logging about economies activities add, set, withdraw, pay money.
   # Command /eco monolog [player]
   monolog_activity: true

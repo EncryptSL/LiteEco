@@ -2,6 +2,7 @@ package com.github.encryptsl.lite.eco
 
 import com.github.encryptsl.lite.eco.api.ConfigAPI
 import com.github.encryptsl.lite.eco.api.UpdateNotifier
+import com.github.encryptsl.lite.eco.api.economy.Currency
 import com.github.encryptsl.lite.eco.api.economy.LiteEcoEconomyImpl
 import com.github.encryptsl.lite.eco.api.enums.PurgeKey
 import com.github.encryptsl.lite.eco.api.objects.ModernText
@@ -50,6 +51,7 @@ class LiteEco : JavaPlugin() {
     val locale: Locales by lazy { Locales(this, LANG_VERSION) }
     val databaseEcoModel: DatabaseEcoModel by lazy { DatabaseEcoModel() }
     val loggerModel: DatabaseMonologModel by lazy { DatabaseMonologModel(this) }
+    val currencyImpl: Currency by lazy { Currency(this) }
 
     private val configAPI: ConfigAPI by lazy { ConfigAPI(this) }
     private val hookManager: HookManager by lazy { HookManager(this) }
@@ -62,7 +64,7 @@ class LiteEco : JavaPlugin() {
             .createConfig("config.yml", CONFIG_VERSION)
         locale
             .loadCurrentTranslation()
-        DatabaseConnector()
+        DatabaseConnector(this)
             .initConnect(
                 config.getString("database.connection.jdbc_url") ?: "jdbc:sqlite:plugins/LiteEco/database.db",
                 config.getString("database.connection.username") ?: "root",
@@ -101,7 +103,6 @@ class LiteEco : JavaPlugin() {
         hookManager.hookMiniPlaceholders()
         hookManager.hookVault()
         hookManager.hookBetterEconomy()
-        hookManager.hookVaultUnlocked() // Experimental support for this api...
         hookManager.hookTreasury() // Experimental support for this api.
     }
 
@@ -160,7 +161,7 @@ class LiteEco : JavaPlugin() {
         val commandManager = LegacyPaperCommandManager(
             this,
             ExecutionCoordinator.builder<CommandSender>().build(),
-            SenderMapper.identity<CommandSender>()
+            SenderMapper.identity()
         )
         if (commandManager.hasCapability(CloudBukkitCapabilities.NATIVE_BRIGADIER)) {
             commandManager.registerBrigadier()

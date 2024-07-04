@@ -18,7 +18,7 @@ import java.lang.UnsupportedOperationException
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
-class TreasuryEconomyAPI(liteEco: LiteEco) : EconomyProvider, AccountAccessor {
+class TreasuryEconomyAPI(private val liteEco: LiteEco) : EconomyProvider, AccountAccessor {
 
     private val playerAccessor: TreasuryPlayerAccessor = TreasuryPlayerAccessor(liteEco)
     private val nonPlayerAccessor: TreasuryNonPlayerAccessor = TreasuryNonPlayerAccessor()
@@ -45,7 +45,7 @@ class TreasuryEconomyAPI(liteEco: LiteEco) : EconomyProvider, AccountAccessor {
     }
 
     override fun retrievePlayerAccountIds(): CompletableFuture<MutableCollection<UUID>> {
-        return LiteEco.instance.databaseEcoModel.getPlayersIds()
+        return LiteEco.instance.databaseEcoModel.getPlayersIds(liteEco.currencyImpl.defaultCurrency())
     }
 
     override fun retrieveNonPlayerAccountIds(): CompletableFuture<MutableCollection<NamespacedKey>> {

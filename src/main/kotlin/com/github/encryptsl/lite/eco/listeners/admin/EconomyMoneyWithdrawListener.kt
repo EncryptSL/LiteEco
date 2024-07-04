@@ -8,6 +8,7 @@ import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import java.math.BigDecimal
 
 class EconomyMoneyWithdrawListener(private val liteEco: LiteEco) : Listener {
 
@@ -15,15 +16,16 @@ class EconomyMoneyWithdrawListener(private val liteEco: LiteEco) : Listener {
     fun onAdminEconomyMoneyWithdraw(event: EconomyMoneyWithdrawEvent) {
         val sender: CommandSender = event.commandSender
         val target: OfflinePlayer = event.offlinePlayer
-        val money: Double = event.money
+        val currency = event.currency
+        val money: BigDecimal = event.money
         val silent: Boolean = event.silent
 
-        if (!liteEco.api.has(target, money))
+        if (!liteEco.api.has(target, currency, money))
             return sender.sendMessage(liteEco.locale.translation("messages.error.insufficient_funds"))
 
-        liteEco.api.getUserByUUID(target).thenApply {
+        liteEco.api.getUserByUUID(target, currency).thenApply {
             liteEco.increaseTransactions(1)
-            liteEco.api.withDrawMoney(target, money)
+            liteEco.api.withDrawMoney(target, currency, money)
             liteEco.loggerModel.info(liteEco.locale.getMessage("messages.monolog.admin.normal.withdraw")
                 .replace("<sender>", sender.name)
                 .replace("<target>", target.name.toString())

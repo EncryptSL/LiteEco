@@ -5,6 +5,7 @@ import java.io.File
 import java.io.FileWriter
 import java.io.IOException
 import java.io.PrintWriter
+import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -38,7 +39,7 @@ class MigrationTool(private val liteEco: LiteEco) {
             file.parentFile.mkdirs()
             PrintWriter(FileWriter(file)).use { writer ->
                 writer.println("DROP TABLE IF EXISTS lite_eco;")
-                writer.println("CREATE TABLE lite_eco (id INT, username, uuid VARCHAR(36), money DOUBLE);")
+                writer.println("CREATE TABLE lite_eco (id INT, username, uuid VARCHAR(36), money BigDecimal);")
                 val insertStatements = data.joinToString {
                     "\n(${it.id}, '${it.username}', '${it.uuid}', ${it.money})"
                 }
@@ -57,5 +58,5 @@ class MigrationTool(private val liteEco: LiteEco) {
         return LocalDateTime.now().format(formatter)
     }
 
-    data class MigrationData(val id: Int, val username: String, val uuid: String, val money: Double)
+    data class MigrationData(val id: Int, val username: String, val uuid: String, val money: BigDecimal)
 }

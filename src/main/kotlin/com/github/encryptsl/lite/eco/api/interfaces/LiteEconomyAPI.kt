@@ -3,124 +3,138 @@ package com.github.encryptsl.lite.eco.api.interfaces
 import com.github.encryptsl.lite.eco.common.database.entity.User
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
+import java.math.BigDecimal
 import java.util.concurrent.CompletableFuture
 
 interface LiteEconomyAPI {
     /**
      * Create player account to database
      * @param player is OfflinePlayer
+     * @param currency name of currency.
      * @param startAmount an amount added to player when accounts is created.
      * @return Boolean
      * @see Boolean
      * @see OfflinePlayer
      */
-    fun createAccount(player: OfflinePlayer, startAmount: Double): Boolean
+    fun createAccount(player: OfflinePlayer, currency: String = "dollar", startAmount: BigDecimal): Boolean
 
     /**
      * Cache player account during login
      * @param player is OfflinePlayer
+     * @param currency name of currency
      * @param amount is value of player account from database.
      * @return Boolean
      * @see OfflinePlayer
      * @see com.github.encryptsl.lite.eco.common.database.models.DatabaseEcoModel.getUserByUUID(uuid)
      */
-    fun cacheAccount(player: OfflinePlayer, amount: Double)
+    fun cacheAccount(player: OfflinePlayer, currency: String = "dollar", amount: BigDecimal)
 
     /**
      * Delete player account from database
      * @param player is OfflinePlayer
+     * @param currency name of currency
      * @return Boolean
      * @see OfflinePlayer
      */
-    fun deleteAccount(player: OfflinePlayer): Boolean
+    fun deleteAccount(player: OfflinePlayer, currency: String = "dollar"): Boolean
 
     /**
      * Boolean for check if player have account in database
      * @param player is {@link OfflinePlayer}
+     * @param currency name of currency
      * @return Boolean
      * @see OfflinePlayer
      */
-    fun hasAccount(player: OfflinePlayer): CompletableFuture<Boolean>
+    fun hasAccount(player: OfflinePlayer, currency: String = "dollar"): CompletableFuture<Boolean>
 
     /**
      * Boolean for check if player have enough money
      * @param player is OfflinePlayer
+     * @param currency name of currency
      * @return Boolean
      * @see OfflinePlayer
      */
-    fun has(player: OfflinePlayer, amount: Double): Boolean
+    fun has(player: OfflinePlayer, currency: String = "dollar", amount: BigDecimal): Boolean
 
     /**
      * Get user account
      * @param player is OfflinePlayer
+     * @param currency name of currency
      * @return User
      * @see OfflinePlayer
      */
-    fun getUserByUUID(player: OfflinePlayer): CompletableFuture<User>
+    fun getUserByUUID(player: OfflinePlayer, currency: String = "dollar"): CompletableFuture<User>
 
     /**
      * Get balance of player account
      * @param player is OfflinePlayer
+     * @param currency name of currency
      * @return Double
      * @see OfflinePlayer
      */
-    fun getBalance(player: OfflinePlayer): Double
+    fun getBalance(player: OfflinePlayer, currency: String = "dollar"): BigDecimal
 
     /**
      * Get check limit of player balance.
-     * @param amount is Double
+     * @param amount is BigDecimal
+     * @param currency name of currency
      * @return Boolean
      * @see OfflinePlayer
      */
-    fun getCheckBalanceLimit(amount: Double): Boolean
+    fun getCheckBalanceLimit(amount: BigDecimal, currency: String = "dollar"): Boolean
 
     /**
      * Get check limit of player balance.
      * @param player is OfflinePlayer
+     * @param currency name of currency
      * @return Boolean
      * @see OfflinePlayer
      */
-    fun getCheckBalanceLimit(player: OfflinePlayer, amount: Double): Boolean
+    fun getCheckBalanceLimit(player: OfflinePlayer, currency: String = "dollar", amount: BigDecimal): Boolean
 
     /**
      * Deposit money to player account
      * @param player is OfflinePlayer
+     * @param currency name of currency
      * @param amount is amount added to player account
      * @see OfflinePlayer
      */
-    fun depositMoney(player: OfflinePlayer, amount: Double)
+    fun depositMoney(player: OfflinePlayer, currency: String = "dollar", amount: BigDecimal)
 
     /**
      * Withdraw money from player account
      * @param player is OfflinePlayer
+     * @param currency name of currency
      * @param amount is amount removed from player account
      * @see OfflinePlayer
      */
-    fun withDrawMoney(player: OfflinePlayer, amount: Double)
+    fun withDrawMoney(player: OfflinePlayer, currency: String = "dollar", amount: BigDecimal)
 
     /**
      * Transfer of money from player account to another player account.
      * @param fromPlayer is sender Player
      * @param target is offline player who receive money.
+     * @param currency name of currency
      * @see Player
      * @see OfflinePlayer
      */
-    fun transfer(fromPlayer: Player, target: OfflinePlayer, amount: Double)
+    fun transfer(fromPlayer: Player, target: OfflinePlayer, currency: String = "dollar", amount: BigDecimal)
 
     /**
      * Set fixed money to player account
      * @param player is OfflinePlayer
+     * @param currency name of currency
      * @param amount is amount fixed value
      * @see OfflinePlayer
      */
-    fun setMoney(player: OfflinePlayer, amount: Double)
+    fun setMoney(player: OfflinePlayer, currency: String = "dollar", amount: BigDecimal)
 
     /**
      * Synchronize cache with database
      * @param offlinePlayer is OfflinePlayer
      * @see OfflinePlayer
      */
-    fun syncAccount(offlinePlayer: OfflinePlayer)
+    fun syncAccount(offlinePlayer: OfflinePlayer, currency: String = "dollar")
 
     /**
      * Synchronize all saved data in cache with database
@@ -129,29 +143,30 @@ interface LiteEconomyAPI {
 
     /**
      * Get top player accounts
+     * @param currency name of currency
      * @return MutableMap
      */
-    fun getTopBalance(): Map<String, Double>
+    fun getTopBalance(currency: String = "dollar"): Map<String, BigDecimal>
 
     /**
      * Compacted money value
      * @param amount is only formatted to a compacted value
      * @return String
      */
-    fun compacted(amount: Double): String
+    fun compacted(amount: BigDecimal): String
 
     /**
      * Formatted money value
      * @param amount is formatted to readable value
      * @return String
      */
-    fun formatted(amount: Double): String
+    fun formatted(amount: BigDecimal): String
 
     /**
      * Formatting currency value
      * @param amount is formatted to readable value with currency prefix and name
      * @return String
      */
-    fun fullFormatting(amount: Double): String
+    fun fullFormatting(amount: BigDecimal): String
 
 }

@@ -14,6 +14,7 @@ class EconomyGlobalDepositListener(private val liteEco: LiteEco) : Listener {
     @EventHandler
     fun onAdminEconomyGlobalDeposit(event: EconomyGlobalDepositEvent) {
         val sender: CommandSender = event.commandSender
+        val currency = event.currency
         val money = event.money
         val offlinePlayers = Bukkit.getOfflinePlayers()
 
@@ -22,10 +23,10 @@ class EconomyGlobalDepositListener(private val liteEco: LiteEco) : Listener {
 
         //TODO: I don't know now how solve issue with not checking balance, only one way is add other same function with checking permission.
         for (p in offlinePlayers) {
-            if (liteEco.api.getCheckBalanceLimit(p, money)) continue
-            liteEco.api.hasAccount(p).thenAccept { el ->
+            if (liteEco.api.getCheckBalanceLimit(p, currency, money)) continue
+            liteEco.api.hasAccount(p, currency).thenAccept { el ->
                 if (el == true) {
-                    liteEco.api.depositMoney(p, money)
+                    liteEco.api.depositMoney(p, currency, money)
                 }
             }
         }

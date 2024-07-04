@@ -8,6 +8,7 @@ import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import java.math.BigDecimal
 
 class EconomyMoneySetListener(private val liteEco: LiteEco) : Listener {
 
@@ -15,7 +16,8 @@ class EconomyMoneySetListener(private val liteEco: LiteEco) : Listener {
     fun onAdminEconomyMoneySet(event: EconomyMoneySetEvent) {
         val sender: CommandSender = event.commandSender
         val target: OfflinePlayer = event.offlinePlayer
-        val money: Double = event.money
+        val currency = event.currency
+        val money: BigDecimal = event.money
 
         if (liteEco.api.getCheckBalanceLimit(money) && !sender.hasPermission("lite.eco.admin.bypass.limit"))
             return sender.sendMessage(liteEco.locale.translation("messages.error.amount_above_limit"))
@@ -23,7 +25,7 @@ class EconomyMoneySetListener(private val liteEco: LiteEco) : Listener {
         liteEco.api.getUserByUUID(target).thenApply {
             liteEco.increaseTransactions(1)
 
-            liteEco.api.setMoney(target, money)
+            liteEco.api.setMoney(target, currency, money)
             liteEco.loggerModel.info(liteEco.locale.getMessage("messages.monolog.admin.normal.set")
                 .replace("<sender>", sender.name)
                 .replace("<target>", target.name.toString())

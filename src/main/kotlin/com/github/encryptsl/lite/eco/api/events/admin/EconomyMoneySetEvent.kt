@@ -5,9 +5,10 @@ import org.bukkit.command.CommandSender
 import org.bukkit.event.Cancellable
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
+import java.math.BigDecimal
 
 @Suppress("UNUSED")
-class EconomyMoneySetEvent(val commandSender: CommandSender, val offlinePlayer: OfflinePlayer, val money: Double): Event(), Cancellable {
+class EconomyMoneySetEvent(val commandSender: CommandSender, val offlinePlayer: OfflinePlayer, val currency: String, val money: BigDecimal): Event(), Cancellable {
 
     private var isCancelled: Boolean = false
 

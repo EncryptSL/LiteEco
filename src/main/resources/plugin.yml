@@ -11,7 +11,7 @@ contributors: [LcyDev]
 website: https://encryptsl.github.io
 
 load: STARTUP
-softdepend: [PlaceholderAPI, Vault, VaultUnlocked, Treasury, MiniPlaceholders]
+softdepend: [PlaceholderAPI, Vault, Treasury, MiniPlaceholders]
 libraries:
   - com.zaxxer:HikariCP:5.1.0
   - org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.0.0

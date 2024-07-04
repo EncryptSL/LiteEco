@@ -8,6 +8,7 @@ import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import java.math.BigDecimal
 
 class EconomyMoneyDepositListener(private val liteEco: LiteEco) : Listener {
 
@@ -15,21 +16,22 @@ class EconomyMoneyDepositListener(private val liteEco: LiteEco) : Listener {
     fun onAdminEconomyDeposit(event: EconomyMoneyDepositEvent) {
         val sender: CommandSender = event.commandSender
         val target: OfflinePlayer = event.offlinePlayer
-        val money: Double = event.money
+        val currency = event.currency
+        val money: BigDecimal = event.money
         val silent: Boolean = event.silent
 
         if (liteEco.api.getCheckBalanceLimit(money) && !sender.hasPermission("lite.eco.admin.bypass.limit"))
             return sender.sendMessage(liteEco.locale.translation("messages.error.amount_above_limit"))
 
-        if (liteEco.api.getCheckBalanceLimit(target, money) || !sender.hasPermission("lite.eco.admin.bypass.limit"))
+        if (liteEco.api.getCheckBalanceLimit(target, currency, money) || !sender.hasPermission("lite.eco.admin.bypass.limit"))
             return sender.sendMessage(
                 liteEco.locale.translation("messages.error.balance_above_limit",
                     Placeholder.parsed("account", target.name.toString())
                 ))
 
-        liteEco.api.getUserByUUID(target).thenApply {
+        liteEco.api.getUserByUUID(target, currency).thenApply {
             liteEco.increaseTransactions(1)
-            liteEco.api.depositMoney(target, money)
+            liteEco.api.depositMoney(target, currency, money)
             liteEco.loggerModel.info(liteEco.locale.getMessage("messages.monolog.admin.normal.deposit")
                 .replace("<sender>", sender.name)
                 .replace("<target>", target.name.toString())

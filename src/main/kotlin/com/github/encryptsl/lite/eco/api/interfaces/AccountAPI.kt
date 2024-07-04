@@ -1,14 +1,15 @@
 package com.github.encryptsl.lite.eco.api.interfaces
 
+import java.math.BigDecimal
 import java.util.*
 
 interface AccountAPI {
-    fun cacheAccount(uuid: UUID, value: Double)
-    fun syncAccount(uuid: UUID, value: Double)
+    fun cacheAccount(uuid: UUID, currency: String, value: BigDecimal)
+    fun syncAccount(uuid: UUID, currency: String, value: BigDecimal)
     fun syncAccount(uuid: UUID)
     fun syncAccounts()
     fun clearFromCache(uuid: UUID)
-    fun getBalance(uuid: UUID): Double
+    fun getBalance(uuid: UUID, currency: String): BigDecimal
     fun isAccountCached(uuid: UUID): Boolean
     fun isPlayerOnline(uuid: UUID): Boolean
 }

@@ -1,4 +1,4 @@
-package com.github.encryptsl.lite.eco.common.hook.vaultunlocked
+package com.github.encryptsl.lite.eco.common.hook.vault.unlocked
 
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.common.extensions.isApproachingZero
@@ -10,7 +10,6 @@ import java.util.*
 class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaultUnlockedAPI() {
 
     companion object {
-        private const val MULTI_CURRENCIES_NOT_SUPPORTED_MESSAGE = "LiteEco does not support multi currencies, actions !"
         private const val MULTI_WORLD_CURRENCIES_NOT_SUPPORTED_MESSAGE = "LiteEco does not support multi world currencies, actions !"
     }
 
@@ -23,56 +22,57 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
 
     override fun hasMultiCurrencySupport(): Boolean = false
 
-    override fun fractionalDigits(): Int { return 2 }
+    override fun fractionalDigits(): Int = -1
 
     override fun format(value: BigDecimal): String {
-        return liteEco.api.formatted(value.toDouble())
+        return liteEco.api.formatted(value)
     }
 
     override fun format(value: BigDecimal, p1: String?): String {
-        return liteEco.api.formatted(value.toDouble())
+        return liteEco.api.formatted(value)
     }
 
-    override fun hasCurrency(p0: String?): Boolean = false
+    override fun hasCurrency(currencyName: String): Boolean = false
 
     override fun getDefaultCurrency(): String {
-        return "dollars"
+        return liteEco.currencyImpl.defaultCurrency()
     }
 
     override fun defaultCurrencyNamePlural(): String {
-        return "dollars"
+        return liteEco.currencyImpl.defaultCurrencyPluralName()
     }
 
     override fun defaultCurrencyNameSingular(): String {
-        return "dollar"
+        return liteEco.currencyImpl.defaultCurrencySingularName()
     }
 
     override fun currencies(): MutableCollection<String> {
-        return mutableSetOf("dollars")
+        return liteEco.currencyImpl.getCurrenciesNames()?.toMutableList() ?: mutableListOf()
     }
 
     override fun createAccount(uuid: UUID?, p1: String?): Boolean {
         if (uuid == null) { return false }
 
-        return liteEco.api.createAccount(Bukkit.getOfflinePlayer(uuid), liteEco.config.getDouble("economy.starting_balance"))
+        return liteEco.api.createAccount(Bukkit.getOfflinePlayer(uuid), "", liteEco.config.getDouble("economy.starting_balance").toBigDecimal())
     }
 
     override fun createAccount(uuid: UUID?, p1: String?, p2: String?): Boolean {
         if (uuid == null) return false
 
-        return liteEco.api.createAccount(Bukkit.getOfflinePlayer(uuid), liteEco.config.getDouble("economy.starting_balance"))
+        return liteEco.api.createAccount(Bukkit.getOfflinePlayer(uuid), "", liteEco.config.getDouble("economy.starting_balance").toBigDecimal())
     }
 
     override fun getUUIDNameMap(): MutableMap<UUID, String> {
         return emptyMap<UUID, String>().toMutableMap()
     }
 
-    override fun getAccountName(p0: UUID?): Optional<String> {
-        TODO("Not yet implemented")
+    override fun getAccountName(uuid: UUID): Optional<String> {
+        val username = liteEco.api.getUserByUUID(Bukkit.getOfflinePlayer(uuid), liteEco.currencyImpl.defaultCurrency()).join().userName
+        return Optional.of(username)
     }
 
     override fun hasAccount(uuid: UUID): Boolean {
-        return liteEco.api.getUserByUUID(Bukkit.getOfflinePlayer(uuid)).thenApply {
+        return liteEco.api.getUserByUUID(Bukkit.getOfflinePlayer(uuid), liteEco.currencyImpl.defaultCurrency()).thenApply {
             return@thenApply true
         }.exceptionally {
             return@exceptionally false
@@ -88,29 +88,33 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
     override fun getBalance(pluginName: String?, uuid: UUID?): BigDecimal {
         if (uuid == null) return BigDecimal.ZERO
 
-        return liteEco.api.getBalance(Bukkit.getOfflinePlayer(uuid)).toBigDecimal()
+        return liteEco.api.getBalance(Bukkit.getOfflinePlayer(uuid), liteEco.currencyImpl.defaultCurrency())
     }
 
-    override fun getBalance(pluginName: String?, uuid: UUID?, p2: String?): BigDecimal {
+    override fun getBalance(pluginName: String?, uuid: UUID?, worldName: String?): BigDecimal {
         return getBalance(null, uuid)
     }
 
-    override fun getBalance(pluginName: String?, uuid: UUID?, p2: String?, p3: String?): BigDecimal {
-        return getBalance(null, uuid)
+    override fun getBalance(pluginName: String?, uuid: UUID?, p2: String?, currency: String?): BigDecimal {
+        if (uuid == null || currency == null) return BigDecimal.ZERO
+
+        return liteEco.api.getBalance(Bukkit.getOfflinePlayer(uuid), currency)
     }
 
     override fun has(pluginName: String, uuid: UUID?, value: BigDecimal?): Boolean {
         if (uuid == null || value == null) return false
 
-        return liteEco.api.has(Bukkit.getOfflinePlayer(uuid), value.toDouble())
+        return liteEco.api.has(Bukkit.getOfflinePlayer(uuid), liteEco.currencyImpl.defaultCurrency() , value)
     }
 
-    override fun has(pluginName: String, uuid: UUID?, currency: String?, value: BigDecimal?): Boolean {
+    override fun has(pluginName: String, uuid: UUID?, worldName: String?, value: BigDecimal?): Boolean {
         return has(pluginName, uuid, value)
     }
 
     override fun has(pluginName: String, uuid: UUID?, worldName: String?, currency: String?, value: BigDecimal?): Boolean {
-        return has(pluginName, uuid, value)
+        if (uuid == null || currency == null || value == null) return false
+
+        return liteEco.api.has(Bukkit.getOfflinePlayer(uuid), currency , value)
     }
 
     override fun withdraw(pluginName: String, uuid: UUID?, amount: BigDecimal?): EconomyResponse {
@@ -118,23 +122,23 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
             return EconomyResponse(amount, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, null)
         }
 
-        if (uuid == null || amount.toDouble().isApproachingZero()) {
+        if (uuid == null || amount.isApproachingZero()) {
             return EconomyResponse(amount, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, null)
         }
 
         val player = Bukkit.getOfflinePlayer(uuid)
 
         return if (has(pluginName, uuid, amount)) {
-            liteEco.api.withDrawMoney(player, amount.toDouble())
+            liteEco.api.withDrawMoney(player, liteEco.currencyImpl.defaultCurrency(), amount)
             EconomyResponse(amount, getBalance(null, player.uniqueId), EconomyResponse.ResponseType.SUCCESS, null)
         } else {
             EconomyResponse(amount, getBalance(null, player.uniqueId), EconomyResponse.ResponseType.SUCCESS, null)
         }
     }
 
-    override fun withdraw(pluginName: String, uuid: UUID?, currency: String?, amount: BigDecimal?): EconomyResponse {
-        if (currency != null) {
-            return EconomyResponse(amount, getBalance(pluginName, uuid), EconomyResponse.ResponseType.FAILURE, MULTI_CURRENCIES_NOT_SUPPORTED_MESSAGE)
+    override fun withdraw(pluginName: String, uuid: UUID?, worldName: String?, amount: BigDecimal?): EconomyResponse {
+        if (worldName != null) {
+            return EconomyResponse(amount, getBalance(pluginName, uuid), EconomyResponse.ResponseType.FAILURE, MULTI_WORLD_CURRENCIES_NOT_SUPPORTED_MESSAGE)
         }
 
         return withdraw(pluginName, uuid, amount)
@@ -146,30 +150,45 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
         }
 
         if (currency != null) {
-            return EconomyResponse(amount, getBalance(pluginName, uuid), EconomyResponse.ResponseType.FAILURE, MULTI_CURRENCIES_NOT_SUPPORTED_MESSAGE)
+            if (amount == null) {
+                return EconomyResponse(amount, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, null)
+            }
+
+            if (uuid == null || amount.isApproachingZero()) {
+                return EconomyResponse(amount, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, null)
+            }
+
+            val player = Bukkit.getOfflinePlayer(uuid)
+
+            return if (has(pluginName, uuid, amount)) {
+                liteEco.api.withDrawMoney(player, currency, amount)
+                EconomyResponse(amount, getBalance(pluginName, player.uniqueId, null, currency), EconomyResponse.ResponseType.SUCCESS, null)
+            } else {
+                EconomyResponse(amount, getBalance(pluginName, player.uniqueId, null, currency), EconomyResponse.ResponseType.SUCCESS, null)
+            }
         }
 
         return withdraw(pluginName, uuid, amount)
     }
 
     override fun deposit(pluginName: String, uuid: UUID?, amount: BigDecimal): EconomyResponse {
-        if (uuid == null || amount.toDouble().isApproachingZero()) {
+        if (uuid == null || amount.isApproachingZero()) {
             return EconomyResponse(amount, getBalance(pluginName, uuid), EconomyResponse.ResponseType.FAILURE, null)
         }
 
         val player = Bukkit.getOfflinePlayer(uuid)
 
         return if (has(pluginName, player.uniqueId, amount)) {
-            liteEco.api.withDrawMoney(player, amount.toDouble())
+            liteEco.api.withDrawMoney(player, liteEco.currencyImpl.defaultCurrency(), amount)
             EconomyResponse(amount, getBalance(pluginName, player.uniqueId), EconomyResponse.ResponseType.SUCCESS, null)
         } else {
             EconomyResponse(amount, getBalance(pluginName, player.uniqueId), EconomyResponse.ResponseType.FAILURE, null)
         }
     }
 
-    override fun deposit(pluginName: String, uuid: UUID?, currency: String?, amount: BigDecimal): EconomyResponse {
-        if (currency != null) {
-            return EconomyResponse(amount, getBalance(pluginName, uuid), EconomyResponse.ResponseType.FAILURE, MULTI_CURRENCIES_NOT_SUPPORTED_MESSAGE)
+    override fun deposit(pluginName: String, uuid: UUID?, worldName: String?, amount: BigDecimal): EconomyResponse {
+        if (worldName != null) {
+            return EconomyResponse(amount, getBalance(pluginName, uuid), EconomyResponse.ResponseType.FAILURE, MULTI_WORLD_CURRENCIES_NOT_SUPPORTED_MESSAGE)
         }
 
         return deposit(pluginName, uuid, amount)
@@ -181,7 +200,18 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
         }
 
         if (currency != null) {
-            return EconomyResponse(amount, getBalance(pluginName, uuid), EconomyResponse.ResponseType.FAILURE, MULTI_CURRENCIES_NOT_SUPPORTED_MESSAGE)
+            if (uuid == null || amount.isApproachingZero()) {
+                return EconomyResponse(amount, getBalance(pluginName, uuid, null, currency), EconomyResponse.ResponseType.FAILURE, null)
+            }
+
+            val player = Bukkit.getOfflinePlayer(uuid)
+
+            return if (has(pluginName, player.uniqueId, amount)) {
+                liteEco.api.withDrawMoney(player, currency, amount)
+                EconomyResponse(amount, getBalance(pluginName, player.uniqueId, null, currency), EconomyResponse.ResponseType.SUCCESS, null)
+            } else {
+                EconomyResponse(amount, getBalance(pluginName, player.uniqueId, null, currency), EconomyResponse.ResponseType.FAILURE, null)
+            }
         }
 
         return deposit(pluginName, uuid, amount)

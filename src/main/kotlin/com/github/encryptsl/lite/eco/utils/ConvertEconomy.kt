@@ -5,34 +5,35 @@ import com.github.encryptsl.lite.eco.common.hook.bettereconomy.BetterEconomyHook
 import org.bukkit.Bukkit
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
+import java.math.BigDecimal
 
 class ConvertEconomy(private val liteEco: LiteEco) {
 
     private var converted = 0
-    private var balances = 0.0
+    private var balances = BigDecimal.ZERO
 
     enum class Economies { EssentialsX, BetterEconomy, }
 
-    fun convertEssentialsXEconomy() {
+    fun convertEssentialsXEconomy(currency: String) {
         for (p in Bukkit.getOfflinePlayers()) {
             val playerFile =  File("plugins/Essentials/userdata/", "${p.uniqueId}.yml")
             if (playerFile.exists()) {
                 val essentialsXConfig = YamlConfiguration.loadConfiguration(playerFile)
-                val balance = essentialsXConfig.getString("money") ?: "0.0"
-                if (liteEco.api.createAccount(p, balance.toDouble())) {
-                    balances = balance.toDouble()
+                val balance = essentialsXConfig.getString("money") ?: BigDecimal.valueOf(0.00).toPlainString()
+                if (liteEco.api.createAccount(p, currency, balance.toBigDecimal())) {
+                    balances = balance.toBigDecimal()
                     converted += 1
                 }
             }
         }
     }
 
-    fun convertBetterEconomy() {
+    fun convertBetterEconomy(currency: String) {
         try {
             val betterEconomy = BetterEconomyHook()
             for (p in Bukkit.getOfflinePlayers()) {
-                val balance = betterEconomy.getBalance(p.uniqueId)
-                if (liteEco.api.createAccount(p, balance)) {
+                val balance = betterEconomy.getBalance(p.uniqueId).toBigDecimal()
+                if (liteEco.api.createAccount(p, currency, balance)) {
                     balances = balance
                     converted += 1
                 }
@@ -47,5 +48,5 @@ class ConvertEconomy(private val liteEco: LiteEco) {
     }
     fun convertRefresh() { converted = 0 }
 
-    data class EconomyConvertResult(val converted: Int, val balances: Double)
+    data class EconomyConvertResult(val converted: Int, val balances: BigDecimal)
 }

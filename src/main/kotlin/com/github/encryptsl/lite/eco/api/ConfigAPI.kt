@@ -3,6 +3,8 @@ package com.github.encryptsl.lite.eco.api
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.interfaces.ConfigAPIProvider
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 
 /**
  * @author EncryptSL(Patrik Kolařík)
@@ -24,21 +26,32 @@ class ConfigAPI(private val liteEco: LiteEco) : ConfigAPIProvider {
     override fun createConfig(configName: String, version: String): ConfigAPI {
         val file = File(liteEco.dataFolder, configName)
         if (!file.exists()) {
-            liteEco.saveResource(configName, false)
+            saveResource(configName, false)
             liteEco.logger.info("Configuration $configName was successfully created !")
         } else {
             val fileVersion = liteEco.config.getString("version")
-
             if (fileVersion.isNullOrEmpty() || fileVersion != version) {
-                file.copyTo(File(liteEco.dataFolder, "old_$configName"), true)
-                liteEco.saveResource(configName, true)
-                liteEco.config["version"] = version
+                copyOldConfig(file, configName)
+                liteEco.config.options().parseComments(true)
+                liteEco.config.options().copyDefaults(true)
                 liteEco.saveConfig()
-                liteEco.logger.info("Configuration config.yml was outdated [!]")
             } else {
                 liteEco.logger.info("Configuration config.yml is the latest [!]")
             }
         }
         return this
+    }
+
+    private fun saveResource(configName: String, replace: Boolean = true) {
+        try {
+            liteEco.saveResource(configName, replace)
+        } catch (e : Exception) {
+            liteEco.logger.severe(e.message ?: e.localizedMessage)
+        }
+    }
+
+    private fun copyOldConfig(file: File, configName: String) {
+        Files.copy(file.toPath(), File(liteEco.dataFolder, "old_$configName").toPath(), StandardCopyOption.REPLACE_EXISTING)
+        liteEco.logger.info("Configuration config.yml was outdated and copied into old_config. [!]")
     }
 }

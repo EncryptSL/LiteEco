@@ -8,18 +8,20 @@ import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import java.math.BigDecimal
 
 class PlayerEconomyPayListener(private val liteEco: LiteEco) : Listener {
     @EventHandler
     fun onEconomyPay(event: PlayerEconomyPayEvent) {
         val sender: Player = event.sender
         val target: OfflinePlayer = event.target
-        val money: Double = event.money
+        val money: BigDecimal = event.money
+        val currency: String = event.currency
 
-        if (!liteEco.api.has(sender, money))
+        if (!liteEco.api.has(sender, currency, money))
             return sender.sendMessage(liteEco.locale.translation("messages.error.insufficient_funds"))
 
-        if (liteEco.api.getCheckBalanceLimit(target, money))
+        if (liteEco.api.getCheckBalanceLimit(target, currency, money))
             return sender.sendMessage(
                 liteEco.locale.translation("messages.error.balance_above_limit",
                     Placeholder.parsed("account", target.name.toString())
@@ -30,7 +32,7 @@ class PlayerEconomyPayListener(private val liteEco: LiteEco) : Listener {
                 liteEco.locale.translation("messages.sender.add_money",
                     TagResolver.resolver(Placeholder.parsed("target", user.userName), Placeholder.parsed("money", liteEco.api.fullFormatting(money)))))
         }.thenApply {
-            liteEco.api.transfer(sender, target, money)
+            liteEco.api.transfer(sender, target, currency, money)
             liteEco.loggerModel.info(liteEco.locale.getMessage("messages.monolog.player.pay")
                 .replace("<sender>", sender.name)
                 .replace("<target>", target.name.toString())
