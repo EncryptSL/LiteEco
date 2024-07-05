@@ -17,6 +17,9 @@ class EconomyGlobalWithdrawListener(private val liteEco: LiteEco) : Listener {
         val money = event.money
         val offlinePlayers = Bukkit.getOfflinePlayers()
 
+        if (!liteEco.currencyImpl.getCurrencyNameExist(currency))
+            return sender.sendMessage(liteEco.locale.translation("messages.error.currencies_not_exist", Placeholder.parsed("currency", currency)))
+
         for (p in offlinePlayers) {
             liteEco.api.hasAccount(p, currency).thenAccept { el ->
                 if (el == true) liteEco.api.withDrawMoney(p, currency, money)

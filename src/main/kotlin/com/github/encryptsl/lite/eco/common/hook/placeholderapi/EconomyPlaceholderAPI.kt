@@ -26,21 +26,23 @@ class EconomyPlaceholderAPI(private val liteEco: LiteEco, private val extVersion
     override fun onRequest(player: OfflinePlayer?, identifier: String): String? {
         if (player == null) return null
         val args = identifier.split("_")
-        val currencyName = args.getOrNull(1) ?: args.getOrNull(2).toString()
-        val rank = args.getOrNull(3)?.toIntOrNull()
+        val currencyName = args.getOrNull(0) ?: args.getOrNull(3).toString()
+        val rank = args.getOrNull(2)?.toIntOrNull()
 
         return when (identifier) {
-            "balance" -> liteEco.api.getBalance(player, Optional.ofNullable(currencyName).orElse(liteEco.currencyImpl.defaultCurrency())).toString()
-            "balance_formatted" -> liteEco.api.fullFormatting(liteEco.api.getBalance(player, Optional.ofNullable(currencyName).orElse(liteEco.currencyImpl.defaultCurrency())))
-            "balance_compacted" -> liteEco.api.compacted(liteEco.api.getBalance(player, Optional.ofNullable(currencyName).orElse(liteEco.currencyImpl.defaultCurrency())))
-            "top_rank_player" -> nameByRank(1, Optional.ofNullable(currencyName).orElse(liteEco.currencyImpl.defaultCurrency()))
-            else -> rank?.let {
-                when {
-                    identifier.startsWith("top_formatted_") -> liteEco.api.fullFormatting(balanceByRank(rank, Optional.ofNullable(currencyName).orElse(liteEco.currencyImpl.defaultCurrency())))
-                    identifier.startsWith("top_compacted_") -> liteEco.api.compacted(balanceByRank(rank, Optional.ofNullable(currencyName).orElse(liteEco.currencyImpl.defaultCurrency())))
-                    identifier.startsWith("top_balance_") -> balanceByRank(rank, Optional.ofNullable(currencyName).orElse(liteEco.currencyImpl.defaultCurrency())).toString()
-                    identifier.startsWith("top_player_") -> nameByRank(rank, Optional.ofNullable(currencyName).orElse(liteEco.currencyImpl.defaultCurrency()))
-                    else -> null
+            "balance_" -> liteEco.api.getBalance(player, Optional.ofNullable(currencyName).orElse(liteEco.currencyImpl.defaultCurrency())).toString()
+            "balance_formatted_" -> liteEco.api.fullFormatting(liteEco.api.getBalance(player, Optional.ofNullable(currencyName).orElse(liteEco.currencyImpl.defaultCurrency())))
+            "balance_compacted_" -> liteEco.api.compacted(liteEco.api.getBalance(player, Optional.ofNullable(currencyName).orElse(liteEco.currencyImpl.defaultCurrency())))
+            "top_rank_player_" -> nameByRank(1, Optional.ofNullable(currencyName).orElse(liteEco.currencyImpl.defaultCurrency()))
+            else -> {
+                rank?.let {
+                    when {
+                        identifier.startsWith("top_formatted_") -> liteEco.api.fullFormatting(balanceByRank(rank, Optional.ofNullable(currencyName).orElse(liteEco.currencyImpl.defaultCurrency())))
+                        identifier.startsWith("top_compacted_") -> liteEco.api.compacted(balanceByRank(rank, Optional.ofNullable(currencyName).orElse(liteEco.currencyImpl.defaultCurrency())))
+                        identifier.startsWith("top_balance_") -> balanceByRank(rank, Optional.ofNullable(currencyName).orElse(liteEco.currencyImpl.defaultCurrency())).toString()
+                        identifier.startsWith("top_player_") -> nameByRank(rank, Optional.ofNullable(currencyName).orElse(liteEco.currencyImpl.defaultCurrency()))
+                        else -> null
+                    }
                 }
             }
         }

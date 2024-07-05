@@ -43,6 +43,7 @@ messages:
   error:
     account_not_exist: "<prefix> <red>Account <account> existiert nicht [!]"
     account_now_exist: "<prefix> <red>Account <account> now exists [!]"
+    currency_not_exist: "<prefix> <red>These currency <currency> not exist !"
     format_amount: "<prefix> <red>Ungültiger Betrag. Verwende Gleitkommazahlen oder kompakte Darstellungen (z.B. 1K) [!]"
     insufficient_funds: "<prefix> <red>Nicht genug Geld [!]"
     maximum_page: "<red>Grenze der Seitenzahlen ist <max_page>"

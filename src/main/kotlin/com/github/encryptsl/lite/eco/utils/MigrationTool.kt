@@ -32,14 +32,14 @@ class MigrationTool(private val liteEco: LiteEco) {
         }
     }
 
-    fun migrateToSQL(data: List<MigrationData>, fileName: String): Boolean {
+    fun migrateToSQL(data: List<MigrationData>, fileName: String, currency: String = "dollar"): Boolean {
         val file = File("${liteEco.dataFolder}/migration/", "${fileName}_${dateTime()}.sql")
 
         return try {
             file.parentFile.mkdirs()
             PrintWriter(FileWriter(file)).use { writer ->
                 writer.println("DROP TABLE IF EXISTS lite_eco;")
-                writer.println("CREATE TABLE lite_eco (id INT, username, uuid VARCHAR(36), money BigDecimal);")
+                writer.println("CREATE TABLE lite_eco_$currency (id INT, username, uuid VARCHAR(36), money BigDecimal);")
                 val insertStatements = data.joinToString {
                     "\n(${it.id}, '${it.username}', '${it.uuid}', ${it.money})"
                 }

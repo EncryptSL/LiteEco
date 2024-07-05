@@ -48,7 +48,7 @@ class EcoCMD(private val liteEco: LiteEco) {
         commandSender: CommandSender,
         @Argument(value = "player", suggestions = "players") offlinePlayer: OfflinePlayer,
         @Argument(value = "amount") @Range(min = "1.00", max = "") amountStr: String,
-        @Default("dollar") @Argument("currency", suggestions = "currencies") currency: String,
+        @Argument(value = "currency", suggestions = "currencies") @Default("dollar") currency: String,
         @Flag(value = "silent", aliases = ["s"]) silent: Boolean
     ) {
         val amount = helper.validateAmount(amountStr, commandSender) ?: return
@@ -60,7 +60,7 @@ class EcoCMD(private val liteEco: LiteEco) {
     fun onGlobalAddMoney(
         commandSender: CommandSender,
         @Argument("amount") @Range(min = "1.0", max = "") amountStr: String,
-        @Default("dollar") @Argument("currency", suggestions = "currencies") currency: String
+        @Argument(value = "currency", suggestions = "currencies") @Default("dollar") currency: String,
     ) {
         val amount = helper.validateAmount(amountStr, commandSender) ?: return
         liteEco.pluginManager.callEvent(EconomyGlobalDepositEvent(commandSender, currency, amount))
@@ -72,7 +72,7 @@ class EcoCMD(private val liteEco: LiteEco) {
         commandSender: CommandSender,
         @Argument(value = "player", suggestions = "players") offlinePlayer: OfflinePlayer,
         @Default("0.00") @Argument(value = "amount") amountStr: String,
-        @Default("dollar") @Argument("currency", suggestions = "currencies") currency: String
+        @Argument(value = "currency", suggestions = "currencies") @Default("dollar") currency: String,
     ) {
         val amount = helper.validateAmount(amountStr, commandSender, CheckLevel.ONLY_NEGATIVE) ?: return
         liteEco.pluginManager.callEvent(EconomyMoneySetEvent(commandSender, offlinePlayer, currency, amount))
@@ -83,7 +83,7 @@ class EcoCMD(private val liteEco: LiteEco) {
     fun onGlobalSetMoney(
         commandSender: CommandSender,
         @Argument("amount") @Range(min = "1.0", max = "") amountStr: String,
-        @Default("dollar") @Argument("currency", suggestions = "currencies") currency: String,
+        @Argument(value = "currency", suggestions = "currencies") @Default("dollar") currency: String,
     ) {
         val amount = helper.validateAmount(amountStr, commandSender, CheckLevel.ONLY_NEGATIVE) ?: return
         liteEco.pluginManager.callEvent(EconomyGlobalSetEvent(commandSender, currency, amount))
@@ -94,8 +94,8 @@ class EcoCMD(private val liteEco: LiteEco) {
     fun onWithdrawMoney(
         commandSender: CommandSender,
         @Argument(value = "player", suggestions = "players") offlinePlayer: OfflinePlayer,
-        @Default("dollar") @Argument("currency", suggestions = "currencies") currency: String,
         @Argument(value = "amount") @Range(min = "1.00", max = "") amountStr: String,
+        @Argument(value = "currency", suggestions = "currencies") @Default("dollar") currency: String,
         @Flag(value = "silent", aliases = ["s"]) silent: Boolean
     ) {
         val amount = helper.validateAmount(amountStr, commandSender) ?: return
@@ -106,8 +106,8 @@ class EcoCMD(private val liteEco: LiteEco) {
     @Permission("lite.eco.admin.gremove", "lite.eco.admin.global.withdraw")
     fun onGlobalWithdrawMoney(
         commandSender: CommandSender,
-        @Default("dollar") @Argument("currency", suggestions = "currencies") currency: String,
-        @Argument("amount") @Range(min = "1.0", max = "") amountStr: String
+        @Argument("amount") @Range(min = "1.0", max = "") amountStr: String,
+        @Argument("currency", suggestions = "currencies") @Default("dollar") currency: String
     ) {
         val amount = helper.validateAmount(amountStr, commandSender) ?: return
 
@@ -122,7 +122,7 @@ class EcoCMD(private val liteEco: LiteEco) {
         commandSender: CommandSender,
         @Argument("player", suggestions = "players") offlinePlayer: OfflinePlayer,
         @Argument("amount") @Default("30.00") amount: Double,
-        @Default("dollar") @Argument("currency", suggestions = "currencies") currency: String
+        @Argument(value = "currency", suggestions = "currencies") @Default("dollar") currency: String
     ) {
         val message = if (liteEco.api.createAccount(offlinePlayer, currency, amount.toBigDecimal())) {
             "messages.admin.create_account"
@@ -132,13 +132,14 @@ class EcoCMD(private val liteEco: LiteEco) {
         commandSender.sendMessage(liteEco.locale.translation(message, Placeholder.parsed("account", offlinePlayer.name.toString())))
     }
 
-    @Command("eco delete <player>")
+    @Command("eco delete <player> [currency]")
     @Permission("lite.eco.admin.delete")
     fun onDeleteWalletAccount(
         commandSender: CommandSender,
-        @Argument("player", suggestions = "players") offlinePlayer: OfflinePlayer
+        @Argument("player", suggestions = "players") offlinePlayer: OfflinePlayer,
+        @Argument(value = "currency", suggestions = "currencies") @Default("dollar") currency: String
     ) {
-        val message = if (liteEco.api.deleteAccount(offlinePlayer)) {
+        val message = if (liteEco.api.deleteAccount(offlinePlayer, currency)) {
             "messages.admin.delete_account"
         } else {
             "messages.error.account_not_exist"
@@ -195,8 +196,8 @@ class EcoCMD(private val liteEco: LiteEco) {
     fun onPurge(
         commandSender: CommandSender,
         @Argument(value = "argument", suggestions = "purgeKeys") purgeKey: PurgeKey,
-        @Default("dollar") @Argument("currency", suggestions = "currencies") currency: String
-        ) {
+        @Argument(value = "currency", suggestions = "currencies") @Default("dollar") currency: String
+    ) {
         @Suppress("REDUNDANT_ELSE_IN_WHEN")
         when (purgeKey) {
             PurgeKey.ACCOUNTS -> {
@@ -231,15 +232,19 @@ class EcoCMD(private val liteEco: LiteEco) {
         }
     }
 
-    @Command("eco migration <argument>")
+    @Command("eco migration <argument> [currency]")
     @Permission("lite.eco.admin.migration")
-    fun onMigration(commandSender: CommandSender, @Argument(value = "argument", suggestions = "migrationKeys") migrationKey: MigrationKey) {
+    fun onMigration(
+        commandSender: CommandSender,
+        @Argument(value = "argument", suggestions = "migrationKeys") migrationKey: MigrationKey,
+        @Argument(value = "currency", suggestions = "currencies") @Default("dollar") currency: String
+    ) {
         val migrationTool = MigrationTool(liteEco)
         val output = liteEco.api.getTopBalance().toList().positionIndexed { index, k -> MigrationTool.MigrationData(index, Bukkit.getOfflinePlayer(k.first).name.toString(), k.first, k.second) }
 
         val result = when(migrationKey) {
             MigrationKey.CSV -> migrationTool.migrateToCSV(output, "economy_migration")
-            MigrationKey.SQL -> migrationTool.migrateToSQL(output, "economy_migration")
+            MigrationKey.SQL -> migrationTool.migrateToSQL(output, "economy_migration", currency)
         }
 
         val messageKey = if (result) {
@@ -261,7 +266,7 @@ class EcoCMD(private val liteEco: LiteEco) {
     fun onEconomyConvert(
         commandSender: CommandSender,
         @Argument("economy", suggestions = "economies") economy: Economies,
-        @Default("dollar") @Argument("currency", suggestions = "currencies") currency: String
+        @Argument(value = "currency", suggestions = "currencies") @Default("dollar") currency: String
     ) {
         try {
             when (economy) {
@@ -294,7 +299,7 @@ class EcoCMD(private val liteEco: LiteEco) {
     fun onDebugCreateAccounts(
         commandSender: CommandSender,
         @Argument("amount") @Range(min = "1", max = "100") amountStr: Int,
-        @Default("dollar") @Argument("currency", suggestions = "currencies") currency: String
+        @Argument(value = "currency", suggestions = "currencies") @Default("dollar") currency: String
     ) {
         val random = ThreadLocalRandom.current()
 
@@ -305,6 +310,19 @@ class EcoCMD(private val liteEco: LiteEco) {
         }
 
         commandSender.sendMessage("Into database was insterted $amountStr fake accounts in time $time ms")
+    }
+
+    @Command("eco debug database accounts [currency]")
+    @Permission("lite.eco.admin.debug.database.accounts")
+    fun onDebugDatabaseAccounts(
+        commandSender: CommandSender,
+        @Argument(value = "currency", suggestions = "currencies") @Default("dollar") currency: String
+    ) {
+        val data = liteEco.databaseEcoModel.getTopBalance(currency)
+
+        commandSender.sendMessage("Accounts list " + data.entries.map { k -> k.key })
+        commandSender.sendMessage("Accounts balances " + data.entries.sumOf { it.value })
+        commandSender.sendMessage("Accounts in database " + data.size.toString())
     }
 
     @Command("eco reload")

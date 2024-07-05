@@ -12,12 +12,16 @@ object PlayerAccount : AccountAPI {
 
     private val databaseEcoModel: DatabaseEcoModel by lazy { DatabaseEcoModel() }
     private val cache: HashMap<UUID, HashMap<String, BigDecimal>> = HashMap()
+    private val wallet: HashMap<String, BigDecimal> = HashMap()
+
 
     override fun cacheAccount(uuid: UUID, currency: String, value: BigDecimal) {
         if (!isAccountCached(uuid)) {
-            cache[uuid] = HashMap<String, BigDecimal>().apply { currency to value }
+            wallet[currency] = value
+            cache[uuid] = wallet
         } else {
-            cache[uuid] = HashMap<String, BigDecimal>().apply { currency to value }
+            wallet[currency] = value
+            cache[uuid] = wallet
         }
     }
 

@@ -43,6 +43,7 @@ messages:
   error:
     account_not_exist: "<prefix> <red>Účet <account> neexistuje [!]"
     account_now_exist: "<prefix> <red>Účet <account> existuje [!]"
+    currency_not_exist: "<prefix> <red>Tato měna <currency> neexistuje !"
     format_amount: "<prefix> <red>Neplatná částka. Použijte desetinná čísla nebo kompaktní reprezentace (např. 1K) [!]" # TEMP #
     insufficient_funds: "<prefix> <red>Nemáš dostatek peněz [!]"
     maximum_page: "<red>Limit stránkování je <max_page>"

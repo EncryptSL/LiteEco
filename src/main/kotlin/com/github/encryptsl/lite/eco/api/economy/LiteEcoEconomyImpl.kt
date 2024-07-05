@@ -11,7 +11,6 @@ import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import java.math.BigDecimal
-import java.util.*
 import java.util.concurrent.CompletableFuture
 
 class LiteEcoEconomyImpl : LiteEconomyAPI {
@@ -114,7 +113,7 @@ class LiteEcoEconomyImpl : LiteEconomyAPI {
     }
 
     override fun getTopBalance(currency: String): Map<String, BigDecimal> {
-        val databaseStoredBalance = databaseEcoModel.getTopBalance(currency).filterKeys { e -> Bukkit.getOfflinePlayer(UUID.fromString(e)).hasPlayedBefore() }
+        val databaseStoredBalance = databaseEcoModel.getTopBalance(currency).filterKeys { e -> Bukkit.getOfflinePlayer(e).hasPlayedBefore() }
         return databaseStoredBalance
             .mapValues { getBalance(Bukkit.getOfflinePlayer(it.key), currency) }
             .toList()
@@ -129,23 +128,19 @@ class LiteEcoEconomyImpl : LiteEconomyAPI {
         )
     }
 
-    override fun formatted(amount: BigDecimal): String {
+    override fun formatted(amount: BigDecimal, currency: String): String {
         return amount.moneyFormat(
             LiteEco.instance.config.getString("formatting.currency_pattern").toString(),
             LiteEco.instance.config.getString("formatting.currency_locale").toString()
         )
     }
 
-    override fun fullFormatting(amount: BigDecimal): String {
-        val value = if (LiteEco.instance.config.getBoolean("economy.compact_display")) {
+    override fun fullFormatting(amount: BigDecimal, currency: String): String {
+        val value = if (LiteEco.instance.config.getBoolean("economy.currencies.${LiteEco.instance.currencyImpl.getKeyOfCurrency(currency)}.compact_display")) {
             compacted(amount)
         } else {
             formatted(amount)
         }
-        return LiteEco.instance.config.getString("economy.currency_format")
-            .toString()
-            .replace("{balance}", value)
-            .replace("<balance>", value)
-            .replace("%balance%", value)
+        return value
     }
 }

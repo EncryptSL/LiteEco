@@ -187,6 +187,9 @@ class LiteEco : JavaPlugin() {
         commandManager.parserRegistry().registerSuggestionProvider("players") { _, _ ->
             modifiableSuggestionPlayerSuggestion()
         }
+        commandManager.parserRegistry().registerSuggestionProvider("currencies") {_, _ ->
+            CompletableFuture.completedFuture(currencyImpl.getCurrenciesNames()!!.map { Suggestion.suggestion(it) })
+        }
         commandManager.parserRegistry().registerSuggestionProvider("economies") {_, _ ->
             CompletableFuture.completedFuture(Economies.entries.map { Suggestion.suggestion(it.name) })
         }

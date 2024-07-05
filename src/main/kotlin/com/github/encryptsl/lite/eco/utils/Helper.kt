@@ -11,10 +11,8 @@ import com.github.encryptsl.lite.eco.common.extensions.toValidDecimal
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
-import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import java.math.BigDecimal
-import java.util.*
 
 class Helper(private val liteEco: LiteEco) {
     fun validateAmount(amountStr: String, commandSender: CommandSender, checkLevel: CheckLevel = CheckLevel.FULL): BigDecimal? {
@@ -46,7 +44,7 @@ class Helper(private val liteEco: LiteEco) {
         return liteEco.api.getTopBalance(currency).toList().positionIndexed { index, pair ->
             liteEco.locale.translation("messages.balance.top_format", TagResolver.resolver(
                 Placeholder.parsed("position", index.toString()),
-                Placeholder.parsed("player", Bukkit.getOfflinePlayer(UUID.fromString(pair.first)).name.toString()),
+                Placeholder.parsed("player", pair.first),
                 Placeholder.parsed("money", liteEco.api.fullFormatting(pair.second))
             ))
         }

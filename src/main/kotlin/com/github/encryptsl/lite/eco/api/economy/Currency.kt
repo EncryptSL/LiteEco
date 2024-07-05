@@ -35,10 +35,19 @@ class Currency(private val liteEco: LiteEco) {
         return liteEco.config.getBoolean("economy.currencies.$getKey.balance_limit_check")
     }
 
+    fun getCurrencyNameExist(currency: String): Boolean {
+        return !getCurrenciesNames()?.firstOrNull { el -> el.equals(currency, true) }.isNullOrEmpty()
+    }
+
     fun getCurrenciesNames(): List<String>?
         = getCurrenciesKeys()?.map {
             liteEco.config.getString("economy.currencies.$it.currency_name").toString()
         }
+
+    fun getKeyOfCurrency(currency: String): String {
+        val key = getCurrenciesKeys()?.firstOrNull { el -> el == currency } ?: return "dollar"
+        return key
+    }
 
     private fun getCurrenciesKeys(): MutableSet<String>? {
         return liteEco.config.getConfigurationSection("economy.currencies")?.getKeys(false)

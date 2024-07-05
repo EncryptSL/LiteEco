@@ -20,6 +20,9 @@ class EconomyMoneyWithdrawListener(private val liteEco: LiteEco) : Listener {
         val money: BigDecimal = event.money
         val silent: Boolean = event.silent
 
+        if (!liteEco.currencyImpl.getCurrencyNameExist(currency))
+            return sender.sendMessage(liteEco.locale.translation("messages.error.currencies_not_exist", Placeholder.parsed("currency", currency)))
+
         if (!liteEco.api.has(target, currency, money))
             return sender.sendMessage(liteEco.locale.translation("messages.error.insufficient_funds"))
 
