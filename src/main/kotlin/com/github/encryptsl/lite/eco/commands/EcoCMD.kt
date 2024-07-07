@@ -155,7 +155,7 @@ class EcoCMD(private val liteEco: LiteEco) {
             liteEco.locale.translation("messages.admin.monolog_format", TagResolver.resolver(
                 Placeholder.parsed("level", it.level),
                 Placeholder.parsed("timestamp", convertInstant(it.timestamp)),
-                Placeholder.parsed("log", it.log)
+                Placeholder.parsed("log", it.log),
             ))
         }
         val pagination = ComponentPaginator(log) { itemsPerPage = 10 }.apply { page(page) }

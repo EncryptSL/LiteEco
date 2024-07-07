@@ -35,11 +35,12 @@ class EconomyGlobalDepositListener(private val liteEco: LiteEco) : Listener {
         }
 
         liteEco.increaseTransactions(offlinePlayers.size)
-        liteEco.loggerModel.info(liteEco.locale.getMessage("messages.monolog.admin.global.deposit")
-            .replace("<sender>", sender.name)
-            .replace("<accounts", offlinePlayers.size.toString())
-            .replace("<money>", liteEco.api.fullFormatting(money))
-        )
+        liteEco.loggerModel.info(liteEco.locale.plainTextTranslation("messages.monolog.admin.global.deposit", TagResolver.resolver(
+            Placeholder.parsed("sender", sender.name),
+            Placeholder.parsed("accounts", offlinePlayers.size.toString()),
+            Placeholder.parsed("money", liteEco.api.fullFormatting(money)),
+            Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
+        )))
 
         sender.sendMessage(
             liteEco.locale.translation("messages.global.add_money", Placeholder.parsed("money", liteEco.api.fullFormatting(money))
@@ -50,7 +51,7 @@ class EconomyGlobalDepositListener(private val liteEco: LiteEco) : Listener {
                 TagResolver.resolver(
                     Placeholder.parsed("sender", sender.name),
                     Placeholder.parsed("money", liteEco.api.fullFormatting(money)),
-                    Placeholder.parsed("currency", liteEco.currencyImpl.getCurrencyName(currency))
+                    Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
                 )
             ))
         }

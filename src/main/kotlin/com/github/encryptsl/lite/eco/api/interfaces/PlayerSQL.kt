@@ -11,6 +11,7 @@ interface PlayerSQL {
     fun deletePlayerAccount(uuid: UUID, currency: String)
     fun getExistPlayerAccount(uuid: UUID, currency: String): CompletableFuture<Boolean>
     fun getTopBalance(currency: String): MutableMap<String, BigDecimal>
+    fun getUUIDNameMap(currency: String): MutableMap<UUID, String>
     fun getPlayersIds(currency: String): CompletableFuture<MutableCollection<UUID>>
     fun depositMoney(uuid: UUID, currency: String, money: BigDecimal)
     fun withdrawMoney(uuid: UUID, currency: String, money: BigDecimal)

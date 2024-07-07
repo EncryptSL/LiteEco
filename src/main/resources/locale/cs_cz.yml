@@ -9,35 +9,35 @@ messages:
 
   # Self-transaction messages
   self:
-    add_money: "<prefix> <white>Přidal jsi si <green><money></green> <gold><currency></gold>."
-    withdraw_money: "<prefix> <white>Odebral jsi si <green><money></green> <gold><currency></gold>."
-    set_money: "<prefix> <white>Nastavil jsi si <green><money></green> <gold><currency></gold>."
+    add_money: "<prefix> <white>Přidal jsi si <green><money></green> <currency>."
+    withdraw_money: "<prefix> <white>Odebral jsi si <green><money></green> <gold><currency>."
+    set_money: "<prefix> <white>Nastavil jsi si <green><money></green> <currency>."
 
   # Transaction messages for target
   target:
-    add_money: "<prefix> <#13AFFE><target></#13AFFE> <white>vám poslal <green><money></green> <gold><currency></gold>."
+    add_money: "<prefix> <#13AFFE><target></#13AFFE> <white>vám poslal <green><money></green> <currency>."
     add_money_silent: "<gray>+ <green><money>"
-    withdraw_money: "<prefix> <#13AFFE><target></#13AFFE> <white>vám odebral <green><money></green> <gold><currency></gold>."
+    withdraw_money: "<prefix> <#13AFFE><target></#13AFFE> <white>vám odebral <green><money></green> <currency>."
     withdraw_money_silent: "<gray>- <red><money>"
-    set: "<prefix> <gold><sender></gold> <white>vám nastavil <green><money></green> <gold><currency></gold>."
+    set: "<prefix> <gold><sender></gold> <white>vám nastavil <green><money></green> <currency>."
 
   # Transaction messages for sender
   sender:
-    add_money: "<prefix> <white>Poslal jsi <#13AFFE><target></#13AFFE> <green><money></green> <gold><currency></gold>."
-    withdraw_money: "<prefix> <white>Odebral jsi <#13AFFE><target></#13AFFE> <green><money></green> <gold><currency></gold>."
-    set_money: "<prefix> <white>Nastavil jsi <#13AFFE><target></#13AFFE> <green><money></green> <gold><currency></gold>."
+    add_money: "<prefix> <white>Poslal jsi <#13AFFE><target></#13AFFE> <green><money></green> <currency>."
+    withdraw_money: "<prefix> <white>Odebral jsi <#13AFFE><target></#13AFFE> <green><money></green> <currency>."
+    set_money: "<prefix> <white>Nastavil jsi <#13AFFE><target></#13AFFE> <green><money></green> <currency>."
 
   # Global actions messages (sent to the sender who made the global action)
   global:
-    add_money: "<prefix> <white>Přidal jsi všem <green><money></green> <gold><currency></gold>."
-    withdraw_money: "<prefix> <white>Odstranil jsi všem <green><money></green> <gold><currency></gold>."
-    set_money: "<prefix> <white>Nastavil jsi všem <green><money></green> <gold><currency></gold>."
+    add_money: "<prefix> <white>Přidal jsi všem <green><money></green> <currency>."
+    withdraw_money: "<prefix> <white>Odstranil jsi všem <green><money></green> <currency>."
+    set_money: "<prefix> <white>Nastavil jsi všem <green><money></green> <currency>."
 
   # Broadcast messages (sent to all players after a global action)
   broadcast:
-    add_money: "<prefix> <#13AFFE><target></#13AFFE> <white>přidal všem <green><money></green> <gold><currency></gold>."
-    withdraw_money: "<prefix> <#13AFFE><target></#13AFFE> <white>odstranil jsi všem <green><money></green> <gold><currency></gold>."
-    set_money: "<prefix> <#13AFFE><target></#13AFFE> <white>nastavil všem <green><money></green> <gold><currency></gold>."
+    add_money: "<prefix> <#13AFFE><target></#13AFFE> <white>přidal všem <green><money></green> <currency>."
+    withdraw_money: "<prefix> <#13AFFE><target></#13AFFE> <white>odstranil jsi všem <green><money></green> <currency>."
+    set_money: "<prefix> <#13AFFE><target></#13AFFE> <white>nastavil všem <green><money></green> <currency>."
 
   # Error messages
   error:
@@ -62,15 +62,15 @@ messages:
   monolog:
     admin:
       normal:
-        deposit: "Admin <sender> přidal hráči <target> : <money>"
-        set: "Admin <sender> nastavil hráči <target> : <money>"
-        withdraw: "Admin <sender> odebral od <target> : <money>"
+        deposit: "Admin <sender> přidal hráči <target> : <money> <currency>"
+        set: "Admin <sender> nastavil hráči <target> : <money> <currency>"
+        withdraw: "Admin <sender> odebral od <target> : <money> <currency>"
       global:
-        deposit: "Admin <sender> přidal všem <accounts>x účtům : <money>"
-        set: "Admin <sender> nastavil všem <accounts>x účtům : <money>"
-        withdraw: "Admin <sender> odebral všem <accounts>x účtům : <money>"
+        deposit: "Admin <sender> přidal všem <accounts>x účtům : <money> <currency>"
+        set: "Admin <sender> nastavil všem <accounts>x účtům : <money> <currency>"
+        withdraw: "Admin <sender> odebral všem <accounts>x účtům : <money> <currency>"
     player:
-      pay: "Hráč <sender> zaplatil hráči <target> : <money>"
+      pay: "Hráč <sender> zaplatil hráči <target> : <money> <currency>"
 
   # Admin commands
   admin:

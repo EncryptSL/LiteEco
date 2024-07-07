@@ -62,15 +62,15 @@ messages:
   monolog:
     admin:
       normal:
-        deposit: "Admin <sender> einzahlung an <target> : <money>"
-        set: "Admin <sender> eingestellt auf <target> : <money>"
-        withdraw: "Admin <sender> abheben von <target> : <money>"
+        deposit: "Admin <sender> einzahlung an <target> : <money> <currency>"
+        set: "Admin <sender> eingestellt auf <target> : <money> <currency>"
+        withdraw: "Admin <sender> abheben von <target> : <money> <currency>"
       global:
-        deposit: "Admin <sender> einzahlung auf <accounts>x konten : <money>"
-        set: "Admin <sender> eingestellt auf <accounts>x konten : <money>"
-        withdraw: "Admin <sender> hebt von <accounts>x konten ab: <money>"
+        deposit: "Admin <sender> einzahlung auf <accounts>x konten : <money> <currency>"
+        set: "Admin <sender> eingestellt auf <accounts>x konten : <money> <currency>"
+        withdraw: "Admin <sender> hebt von <accounts>x konten ab: <money> <currency>"
     player:
-      pay: "Spieler <sender> zahlt an <target> : <money>"
+      pay: "Spieler <sender> zahlt an <target> : <money> <currency>"
 
   # Admin commands
   admin:

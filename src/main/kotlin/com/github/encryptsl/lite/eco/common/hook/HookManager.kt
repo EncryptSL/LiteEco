@@ -18,11 +18,14 @@ class HookManager(private val liteEco: LiteEco) {
      * Method for disable plugin if is detected unsupported plugin.
      * @param pluginName - String name of plugin is CaseSensitive.
      */
-    fun blockPlugin(pluginName: String) {
-        if (liteEco.pluginManager.isPluginEnabled(pluginName)) {
-            liteEco.logger.severe("Please don't use $pluginName, because there can be conflict.")
-            liteEco.pluginManager.disablePlugin(liteEco)
+    fun blockPlugin(vararg plugins: String) {
+        for (plugin in plugins) {
+            if (liteEco.pluginManager.isPluginEnabled(plugin)) {
+                liteEco.logger.severe("Please don't use $plugin, because there can be conflict.")
+                liteEco.pluginManager.disablePlugin(liteEco)
+            }
         }
+        liteEco.logger.info("Blocked plugins are now ${plugins.size}")
     }
 
     /**

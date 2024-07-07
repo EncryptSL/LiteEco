@@ -34,19 +34,20 @@ class PlayerEconomyPayListener(private val liteEco: LiteEco) : Listener {
             sender.sendMessage(liteEco.locale.translation("messages.sender.add_money", TagResolver.resolver(
                 Placeholder.parsed("target", user.userName),
                 Placeholder.parsed("money", liteEco.api.fullFormatting(money)),
-                Placeholder.parsed("currency", liteEco.currencyImpl.getCurrencyName(currency))
+                Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
             )))
         }.thenApply {
             liteEco.api.transfer(sender, target, currency, money)
-            liteEco.loggerModel.info(liteEco.locale.getMessage("messages.monolog.player.pay")
-                .replace("<sender>", sender.name)
-                .replace("<target>", target.name.toString())
-                .replace("<money>", liteEco.api.fullFormatting(money))
-            )
+            liteEco.loggerModel.info(liteEco.locale.plainTextTranslation("messages.monolog.player.pay", TagResolver.resolver(
+                Placeholder.parsed("sender", sender.name),
+                Placeholder.parsed("target", target.name.toString()),
+                Placeholder.parsed("money", liteEco.api.fullFormatting(money)),
+                Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
+            )))
             liteEco.increaseTransactions(1)
         }.exceptionally {
-            return@exceptionally sender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist",
-                Placeholder.parsed("account", target.name.toString())))
+            val error = liteEco.locale.translation("messages.error.account_not_exist", Placeholder.parsed("account", target.name.toString()))
+            return@exceptionally sender.sendMessage(error)
         }
 
         if (target.isOnline) {
@@ -55,7 +56,7 @@ class PlayerEconomyPayListener(private val liteEco: LiteEco) : Listener {
                 TagResolver.resolver(
                     Placeholder.parsed("sender", sender.name),
                     Placeholder.parsed("money", liteEco.api.fullFormatting(money)),
-                    Placeholder.parsed("currency", liteEco.currencyImpl.getCurrencyName(currency))
+                    Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
                 )
             ))
         }

@@ -4,6 +4,7 @@ import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.objects.ModernText
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
@@ -21,6 +22,21 @@ class Locales(private val liteEco: LiteEco, private val langVersion: String) {
     fun translation(translationKey: String, tagResolver: TagResolver): Component {
 
         return ModernText.miniModernText(getMessage(translationKey), tagResolver)
+    }
+
+    fun plainTextTranslation(component: Component): String {
+
+        return PlainTextComponentSerializer.plainText().serialize(component)
+    }
+
+    fun plainTextTranslation(translationKey: String): String {
+
+        return PlainTextComponentSerializer.plainText().serialize(ModernText.miniModernText(getMessage(translationKey)))
+    }
+
+    fun plainTextTranslation(translationKey: String, tagResolver: TagResolver): String {
+
+        return PlainTextComponentSerializer.plainText().serialize(ModernText.miniModernText(getMessage(translationKey), tagResolver))
     }
 
     fun getMessage(value: String): String {

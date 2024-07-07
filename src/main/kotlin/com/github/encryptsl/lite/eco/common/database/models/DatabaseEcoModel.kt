@@ -85,6 +85,13 @@ class DatabaseEcoModel : PlayerSQL {
         }.toMutableMap()
     }
 
+    override fun getUUIDNameMap(currency: String): MutableMap<UUID, String> = loggedTransaction {
+        val table = Account(currency)
+        table.selectAll().associate {
+            it[table.uuid] to it[table.username]
+        }.toMutableMap()
+    }
+
     override fun getPlayersIds(currency: String): CompletableFuture<MutableCollection<UUID>> {
         val future = CompletableFuture<MutableCollection<UUID>>()
         try {

@@ -11,6 +11,7 @@ import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import java.math.BigDecimal
+import java.util.*
 import java.util.concurrent.CompletableFuture
 
 class LiteEcoEconomyImpl : LiteEconomyAPI {
@@ -118,6 +119,10 @@ class LiteEcoEconomyImpl : LiteEconomyAPI {
             .mapValues { getBalance(Bukkit.getOfflinePlayer(it.key), currency) }
             .toList()
             .sortedByDescending { (_, e) -> e }.toMap()
+    }
+
+    override fun getUUIDNameMap(currency: String): MutableMap<UUID, String> {
+        return databaseEcoModel.getUUIDNameMap(currency)
     }
 
     override fun compacted(amount: BigDecimal): String {

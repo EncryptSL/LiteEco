@@ -29,11 +29,12 @@ class EconomyMoneyWithdrawListener(private val liteEco: LiteEco) : Listener {
         liteEco.api.getUserByUUID(target, currency).thenApply {
             liteEco.increaseTransactions(1)
             liteEco.api.withDrawMoney(target, currency, money)
-            liteEco.loggerModel.info(liteEco.locale.getMessage("messages.monolog.admin.normal.withdraw")
-                .replace("<sender>", sender.name)
-                .replace("<target>", target.name.toString())
-                .replace("<money>", liteEco.api.fullFormatting(money))
-            )
+            liteEco.loggerModel.info(liteEco.locale.plainTextTranslation("messages.monolog.admin.normal.withdraw", TagResolver.resolver(
+                Placeholder.parsed("sender", sender.name),
+                Placeholder.parsed("target", target.name.toString()),
+                Placeholder.parsed("money", liteEco.api.fullFormatting(money)),
+                Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
+            )))
         }.exceptionally {
            sender.sendMessage(
                 liteEco.locale.translation("messages.error.account_not_exist", Placeholder.parsed("account", target.name.toString())))
@@ -42,20 +43,20 @@ class EconomyMoneyWithdrawListener(private val liteEco: LiteEco) : Listener {
         if (sender.name == target.name)
             return sender.sendMessage(liteEco.locale.translation("messages.self.withdraw_money", TagResolver.resolver(
                 Placeholder.parsed("money", liteEco.api.fullFormatting(money)),
-                Placeholder.parsed("currency", liteEco.currencyImpl.getCurrencyName(currency))
+                Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
             )))
 
         sender.sendMessage(liteEco.locale.translation("messages.sender.withdraw_money", TagResolver.resolver(
             Placeholder.parsed("target", target.name.toString()),
             Placeholder.parsed("money", liteEco.api.fullFormatting(money)),
-            Placeholder.parsed("currency", liteEco.currencyImpl.getCurrencyName(currency))
+            Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
         )))
 
         if (target.isOnline && liteEco.config.getBoolean("messages.target.notify_withdraw")) {
             if (silent) {
                 target.player?.sendMessage(
                     liteEco.locale.translation("messages.target.withdraw_money_silent",
-                    Placeholder.parsed("money", liteEco.api.fullFormatting(money))
+                        Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
                 ))
                 return
             }
@@ -65,7 +66,7 @@ class EconomyMoneyWithdrawListener(private val liteEco: LiteEco) : Listener {
                 TagResolver.resolver(
                     Placeholder.parsed("sender", sender.name),
                     Placeholder.parsed("money", liteEco.api.fullFormatting(money)),
-                    Placeholder.parsed("currency", liteEco.currencyImpl.getCurrencyName(currency))
+                    Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
                 )
             ))
         }

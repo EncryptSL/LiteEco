@@ -46,7 +46,7 @@ class Helper(private val liteEco: LiteEco) {
                 Placeholder.parsed("position", index.toString()),
                 Placeholder.parsed("player", pair.first),
                 Placeholder.parsed("money", liteEco.api.fullFormatting(pair.second)),
-                Placeholder.parsed("currency", liteEco.currencyImpl.getCurrencyName(currency))
+                Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, pair.second))
             ))
         }
     }
@@ -55,7 +55,7 @@ class Helper(private val liteEco: LiteEco) {
         return TagResolver.resolver(
             Placeholder.parsed("target", user.userName),
             Placeholder.parsed("money", liteEco.api.fullFormatting(user.money)),
-            Placeholder.parsed("currency", liteEco.currencyImpl.getCurrencyName(currency))
+            Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, user.money))
         )
     }
 }

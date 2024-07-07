@@ -47,17 +47,17 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
     override fun createAccount(uuid: UUID?, p1: String?): Boolean {
         if (uuid == null) { return false }
 
-        return liteEco.api.createAccount(Bukkit.getOfflinePlayer(uuid), "", liteEco.config.getDouble("economy.starting_balance").toBigDecimal())
+        return liteEco.api.createAccount(Bukkit.getOfflinePlayer(uuid), startAmount = liteEco.currencyImpl.defaultStartBalance())
     }
 
     override fun createAccount(uuid: UUID?, p1: String?, p2: String?): Boolean {
         if (uuid == null) return false
 
-        return liteEco.api.createAccount(Bukkit.getOfflinePlayer(uuid), "", liteEco.config.getDouble("economy.starting_balance").toBigDecimal())
+        return liteEco.api.createAccount(Bukkit.getOfflinePlayer(uuid), startAmount = liteEco.currencyImpl.defaultStartBalance())
     }
 
     override fun getUUIDNameMap(): MutableMap<UUID, String> {
-        return emptyMap<UUID, String>().toMutableMap()
+        return liteEco.api.getUUIDNameMap()
     }
 
     override fun getAccountName(uuid: UUID): Optional<String> {

@@ -4,6 +4,7 @@ import com.github.encryptsl.lite.eco.common.database.entity.User
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import java.math.BigDecimal
+import java.util.UUID
 import java.util.concurrent.CompletableFuture
 
 interface LiteEconomyAPI {
@@ -147,6 +148,13 @@ interface LiteEconomyAPI {
      * @return MutableMap
      */
     fun getTopBalance(currency: String = "dollars"): Map<String, BigDecimal>
+
+    /**
+     * Get top player accounts
+     * @param currency name of currency
+     * @return MutableMap
+     */
+    fun getUUIDNameMap(currency: String = "dollars"): MutableMap<UUID, String>
 
     /**
      * Compacted money value

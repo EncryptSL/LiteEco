@@ -18,6 +18,8 @@ economy:
     # Key of currencies is name of table please don't change this value if you don't want to lose data.
     dollars:
       currency_name: dollars
+      currency_plural_name: dollars
+      currency_singular_name: dollar
       # Currency Symbol
       currency_symbol: $
       # This amount is granted to players who don't have an existing account in the database.
@@ -34,6 +36,8 @@ economy:
     # Key of currencies is name of table please don't change this value if you don't want to lose data.
     # credits:
         # currency_name: credits
+        # currency_plural_name: credits
+        # currency_singular_name: credit
         # # Symbol of currency
         # currency_symbol: €
         # # This amount is granted to players who don't have an existing account in the database.

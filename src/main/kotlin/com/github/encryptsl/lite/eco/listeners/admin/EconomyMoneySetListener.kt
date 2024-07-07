@@ -29,11 +29,12 @@ class EconomyMoneySetListener(private val liteEco: LiteEco) : Listener {
             liteEco.increaseTransactions(1)
 
             liteEco.api.setMoney(target, currency, money)
-            liteEco.loggerModel.info(liteEco.locale.getMessage("messages.monolog.admin.normal.set")
-                .replace("<sender>", sender.name)
-                .replace("<target>", target.name.toString())
-                .replace("<money>", liteEco.api.fullFormatting(money))
-            )
+            liteEco.loggerModel.info(liteEco.locale.plainTextTranslation("messages.monolog.admin.normal.set", TagResolver.resolver(
+                Placeholder.parsed("sender", sender.name),
+                Placeholder.parsed("target", target.name.toString()),
+                Placeholder.parsed("money", liteEco.api.fullFormatting(money)),
+                Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
+            )))
         }.exceptionally {
             sender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist", Placeholder.parsed("account", target.name.toString())))
         }
@@ -41,14 +42,14 @@ class EconomyMoneySetListener(private val liteEco: LiteEco) : Listener {
         if (sender.name == target.name)
             return sender.sendMessage(liteEco.locale.translation("messages.self.set_money", TagResolver.resolver(
                 Placeholder.parsed("money", liteEco.api.fullFormatting(money)),
-                Placeholder.parsed("currency", liteEco.currencyImpl.getCurrencyName(currency))
+                Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
             )))
 
         sender.sendMessage(
             liteEco.locale.translation("messages.sender.set_money", TagResolver.resolver(
                 Placeholder.parsed("target", target.name.toString()),
                 Placeholder.parsed("money", liteEco.api.fullFormatting(money)),
-                Placeholder.parsed("currency", liteEco.currencyImpl.getCurrencyName(currency))
+                Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
             ))
         )
 
@@ -58,7 +59,7 @@ class EconomyMoneySetListener(private val liteEco: LiteEco) : Listener {
                 TagResolver.resolver(
                     Placeholder.parsed("sender", sender.name),
                     Placeholder.parsed("money", liteEco.api.fullFormatting(money)),
-                    Placeholder.parsed("currency", liteEco.currencyImpl.getCurrencyName(currency))
+                    Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
                 )
             ))
         }

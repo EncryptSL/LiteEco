@@ -30,16 +30,17 @@ class EconomyGlobalSetListener(private val liteEco: LiteEco) : Listener {
         }
 
         liteEco.increaseTransactions(offlinePlayers.size)
-        liteEco.loggerModel.info(liteEco.locale.getMessage("messages.monolog.admin.global.set")
-            .replace("<sender>", sender.name)
-            .replace("<accounts>", offlinePlayers.size.toString())
-            .replace("<money>", liteEco.api.fullFormatting(money))
-        )
+        liteEco.loggerModel.info(liteEco.locale.plainTextTranslation("messages.monolog.admin.global.set", TagResolver.resolver(
+            Placeholder.parsed("sender", sender.name),
+            Placeholder.parsed("accounts", offlinePlayers.size.toString()),
+            Placeholder.parsed("money", liteEco.api.fullFormatting(money)),
+            Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
+        )))
 
         sender.sendMessage(
             liteEco.locale.translation("messages.global.set_money", TagResolver.resolver(
                 Placeholder.parsed("money", liteEco.api.fullFormatting(money)),
-                Placeholder.parsed("currency", liteEco.currencyImpl.getCurrencyName(currency))
+                Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
             )
         ))
 
@@ -47,7 +48,7 @@ class EconomyGlobalSetListener(private val liteEco: LiteEco) : Listener {
             Bukkit.broadcast(liteEco.locale.translation("messages.broadcast.set_money", TagResolver.resolver(
                 Placeholder.parsed("sender", sender.name),
                 Placeholder.parsed("money", liteEco.api.fullFormatting(money)),
-                Placeholder.parsed("currency", liteEco.currencyImpl.getCurrencyName(currency))
+                Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
             )))
     }
 }

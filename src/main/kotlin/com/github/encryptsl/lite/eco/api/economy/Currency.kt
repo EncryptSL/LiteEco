@@ -6,13 +6,26 @@ import java.util.*
 
 class Currency(private val liteEco: LiteEco) {
 
-    fun defaultCurrency(): String = getKeyOfCurrency("dollars")
+    fun defaultCurrency(): String = getKeyOfCurrency(getCurrenciesKeys().first())
 
     fun defaultStartBalance(): BigDecimal
-        = liteEco.config.getDouble("economy.currencies.dollars.starting_balance", 30.00).toBigDecimal()
+        = liteEco.config.getDouble("economy.currencies.${defaultCurrency()}.starting_balance", 30.00).toBigDecimal()
 
     private fun defaultCurrencySymbol(): String
-        = liteEco.config.getString("economy.currencies.dollars.currency_symbol").toString()
+        = liteEco.config.getString("economy.currencies.${defaultCurrency()}.currency_symbol").toString()
+
+
+    fun getCurrencyName(currency: String): String {
+        return Optional.ofNullable(getCurrenciesNames().find { el -> el.contains(currency) }).orElse("dollars")
+    }
+
+    fun getCurrencyPlural(currency: String): String {
+        return liteEco.config.getString("economy.currencies.$currency.currency_plural_name").toString()
+    }
+
+    fun getCurrencySingular(currency: String): String {
+        return liteEco.config.getString("economy.currencies.$currency.currency_singular_name").toString()
+    }
 
     fun getCurrencySymbol(currency: String): String {
         return liteEco.config.getString("economy.currencies.$currency.currency_symbol").toString()
@@ -34,10 +47,6 @@ class Currency(private val liteEco: LiteEco) {
         return getCurrenciesKeys().contains(currency)
     }
 
-    fun getCurrencyName(currency: String): String {
-        return Optional.ofNullable(getCurrenciesNames().find { el -> el.contains(currency) }).orElse("dollars")
-    }
-
     private fun getCurrenciesNames(): List<String> = getCurrenciesKeys().map {
         liteEco.config.getString("economy.currencies.$it.currency_name").toString()
     }
@@ -48,6 +57,10 @@ class Currency(private val liteEco: LiteEco) {
 
     fun getCurrenciesKeys(): MutableSet<String> {
         return liteEco.config.getConfigurationSection("economy.currencies")?.getKeys(false) ?: mutableSetOf()
+    }
+
+    fun currencyModularNameConvert(currency: String, value: BigDecimal): String {
+       return if (value == BigDecimal.valueOf(1)) getCurrencySingular(currency) else getCurrencyPlural(currency)
     }
 
 }

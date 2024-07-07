@@ -62,13 +62,13 @@ messages:
   monolog:
     admin:
       normal:
-        deposit: "Administrator <sender> wpłacił <target> : <money>"
-        set: "Administrator <sender> ustawił <target> : <money>"
-        withdraw: "Administrator <sender> wypłacił <target> : <money>"
+        deposit: "Administrator <sender> wpłacił <target> : <money> <currency>"
+        set: "Administrator <sender> ustawił <target> : <money> <currency>"
+        withdraw: "Administrator <sender> wypłacił <target> : <money> <currency>"
       global:
-        deposit: "Administrator <sender> wpłacił dla <accounts>x kont : <money> pieniędzy"
-        set: "Administrator <sender> ustawił dla <accounts>x kont : <money> pieniędzy"
-        withdraw: "Administrator <sender> wypłącił z <accounts>x kont : <money> pieniędzy"
+        deposit: "Administrator <sender> wpłacił dla <accounts>x kont : <money> pieniędzy <currency>"
+        set: "Administrator <sender> ustawił dla <accounts>x kont : <money> pieniędzy <currency>"
+        withdraw: "Administrator <sender> wypłącił z <accounts>x kont : <money> pieniędzy <currency>"
     player:
       pay: "Gracz <sender> wysłał <target> : <money> pieniędzy"
 
