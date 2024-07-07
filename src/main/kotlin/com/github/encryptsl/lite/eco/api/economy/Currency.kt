@@ -2,22 +2,13 @@ package com.github.encryptsl.lite.eco.api.economy
 
 import com.github.encryptsl.lite.eco.LiteEco
 import java.math.BigDecimal
-import java.util.*
 
 class Currency(private val liteEco: LiteEco) {
 
-    fun defaultCurrency(): String = getKeyOfCurrency(getCurrenciesKeys().first())
+    fun defaultCurrency(): String = getCurrenciesKeys().first()
 
     fun defaultStartBalance(): BigDecimal
         = liteEco.config.getDouble("economy.currencies.${defaultCurrency()}.starting_balance", 30.00).toBigDecimal()
-
-    private fun defaultCurrencySymbol(): String
-        = liteEco.config.getString("economy.currencies.${defaultCurrency()}.currency_symbol").toString()
-
-
-    fun getCurrencyName(currency: String): String {
-        return Optional.ofNullable(getCurrenciesNames().find { el -> el.contains(currency) }).orElse("dollars")
-    }
 
     fun getCurrencyPlural(currency: String): String {
         return liteEco.config.getString("economy.currencies.$currency.currency_plural_name").toString()
@@ -27,8 +18,8 @@ class Currency(private val liteEco: LiteEco) {
         return liteEco.config.getString("economy.currencies.$currency.currency_singular_name").toString()
     }
 
-    fun getCurrencySymbol(currency: String): String {
-        return liteEco.config.getString("economy.currencies.$currency.currency_symbol").toString()
+    fun getCurrencyFormat(currency: String): String {
+        return liteEco.config.getString("economy.currencies.$currency.currency_format").toString()
     }
 
     fun getCurrencyStartBalance(currency: String): BigDecimal {
@@ -43,6 +34,9 @@ class Currency(private val liteEco: LiteEco) {
         return liteEco.config.getBoolean("economy.currencies.$currency.balance_limit_check")
     }
 
+    fun isCurrencyDisplayCompactEnabled(currency: String): Boolean
+        = liteEco.config.getBoolean("economy.currencies.$currency.compact_display")
+
     fun getCurrencyNameExist(currency: String): Boolean {
         return getCurrenciesKeys().contains(currency)
     }
@@ -52,7 +46,7 @@ class Currency(private val liteEco: LiteEco) {
     }
 
     fun getKeyOfCurrency(currency: String): String {
-        return getCurrenciesKeys().firstOrNull { el -> el.contains(currency) } ?: "dollars"
+        return getCurrenciesKeys().singleOrNull { it.contains(currency) } ?: defaultCurrency()
     }
 
     fun getCurrenciesKeys(): MutableSet<String> {
@@ -60,7 +54,14 @@ class Currency(private val liteEco: LiteEco) {
     }
 
     fun currencyModularNameConvert(currency: String, value: BigDecimal): String {
-       return if (value == BigDecimal.valueOf(1)) getCurrencySingular(currency) else getCurrencyPlural(currency)
+        return when(value) {
+            BigDecimal.valueOf(0.00) -> getCurrencyPlural(currency)
+            BigDecimal.valueOf(0) -> getCurrencyPlural(currency)
+            BigDecimal.valueOf(1.00) -> getCurrencySingular(currency)
+            BigDecimal.valueOf(1) -> getCurrencySingular(currency)
+            else -> getCurrencyPlural(currency)
+        }
+
     }
 
 }

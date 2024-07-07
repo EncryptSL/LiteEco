@@ -32,7 +32,7 @@ class EconomyMoneyWithdrawListener(private val liteEco: LiteEco) : Listener {
             liteEco.loggerModel.info(liteEco.locale.plainTextTranslation("messages.monolog.admin.normal.withdraw", TagResolver.resolver(
                 Placeholder.parsed("sender", sender.name),
                 Placeholder.parsed("target", target.name.toString()),
-                Placeholder.parsed("money", liteEco.api.fullFormatting(money)),
+                Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
                 Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
             )))
         }.exceptionally {
@@ -42,13 +42,13 @@ class EconomyMoneyWithdrawListener(private val liteEco: LiteEco) : Listener {
 
         if (sender.name == target.name)
             return sender.sendMessage(liteEco.locale.translation("messages.self.withdraw_money", TagResolver.resolver(
-                Placeholder.parsed("money", liteEco.api.fullFormatting(money)),
+                Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
                 Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
             )))
 
         sender.sendMessage(liteEco.locale.translation("messages.sender.withdraw_money", TagResolver.resolver(
             Placeholder.parsed("target", target.name.toString()),
-            Placeholder.parsed("money", liteEco.api.fullFormatting(money)),
+            Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
             Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
         )))
 
@@ -65,7 +65,7 @@ class EconomyMoneyWithdrawListener(private val liteEco: LiteEco) : Listener {
                 liteEco.locale.translation("messages.target.withdraw_money",
                 TagResolver.resolver(
                     Placeholder.parsed("sender", sender.name),
-                    Placeholder.parsed("money", liteEco.api.fullFormatting(money)),
+                    Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
                     Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
                 )
             ))

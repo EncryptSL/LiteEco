@@ -20,8 +20,8 @@ economy:
       currency_name: dollars
       currency_plural_name: dollars
       currency_singular_name: dollar
-      # Currency Symbol
-      currency_symbol: $
+      # Currency Format
+      currency_format: '$ <money>'
       # This amount is granted to players who don't have an existing account in the database.
       starting_balance: 30
       # This amount is checked when player is above allowed limit
@@ -38,8 +38,8 @@ economy:
         # currency_name: credits
         # currency_plural_name: credits
         # currency_singular_name: credit
-        # # Symbol of currency
-        # currency_symbol: €
+        # Currency Format
+        # currency_format: '€ <money>'
         # # This amount is granted to players who don't have an existing account in the database.
         # starting_balance: 30
         # # This amount is checked when player is above allowed limit

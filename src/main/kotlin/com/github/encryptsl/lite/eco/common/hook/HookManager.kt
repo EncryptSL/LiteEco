@@ -5,18 +5,16 @@ import com.github.encryptsl.lite.eco.common.hook.bettereconomy.BetterEconomyHook
 import com.github.encryptsl.lite.eco.common.hook.miniplaceholder.EconomyMiniPlaceholder
 import com.github.encryptsl.lite.eco.common.hook.placeholderapi.EconomyPlaceholderAPI
 import com.github.encryptsl.lite.eco.common.hook.treasury.TreasuryEconomyAPI
-import com.github.encryptsl.lite.eco.common.hook.vault.AdaptiveEconomyVaultAPI
 import com.github.encryptsl.lite.eco.common.hook.vault.unlocked.AdaptiveEconomyVaultUnlockedAPI
 import me.lokka30.treasury.api.common.service.ServiceRegistry
 import me.lokka30.treasury.api.economy.EconomyProvider
-import net.milkbowl.vault.economy.Economy
 import org.bukkit.plugin.ServicePriority
 
 class HookManager(private val liteEco: LiteEco) {
 
     /**
      * Method for disable plugin if is detected unsupported plugin.
-     * @param pluginName - String name of plugin is CaseSensitive.
+     * @param plugins
      */
     fun blockPlugin(vararg plugins: String) {
         for (plugin in plugins) {
@@ -62,7 +60,7 @@ class HookManager(private val liteEco: LiteEco) {
 
     fun hookVault() {
         if (isPluginInstalled("Vault")) {
-            liteEco.server.servicesManager.register(Economy::class.java, AdaptiveEconomyVaultAPI(liteEco), liteEco, ServicePriority.Highest)
+            //liteEco.server.servicesManager.register(Economy::class.java, AdaptiveEconomyVaultAPI(liteEco), liteEco, ServicePriority.Highest)
             liteEco.server.servicesManager.register(net.milkbowl.vault2.economy.Economy::class.java, AdaptiveEconomyVaultUnlockedAPI(liteEco), liteEco, ServicePriority.Highest)
             liteEco.logger.info("Vault is registered, LiteEco now working like a provider !")
         } else {

@@ -3,10 +3,12 @@ package com.github.encryptsl.lite.eco.api.economy
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.PlayerAccount
 import com.github.encryptsl.lite.eco.api.interfaces.LiteEconomyAPI
+import com.github.encryptsl.lite.eco.api.objects.ModernText
 import com.github.encryptsl.lite.eco.common.database.entity.User
 import com.github.encryptsl.lite.eco.common.database.models.DatabaseEcoModel
 import com.github.encryptsl.lite.eco.common.extensions.compactFormat
 import com.github.encryptsl.lite.eco.common.extensions.moneyFormat
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
@@ -133,7 +135,7 @@ class LiteEcoEconomyImpl : LiteEconomyAPI {
         )
     }
 
-    override fun formatted(amount: BigDecimal, currency: String): String {
+    override fun formatted(amount: BigDecimal): String {
         return amount.moneyFormat(
             LiteEco.instance.config.getString("formatting.currency_pattern").toString(),
             LiteEco.instance.config.getString("formatting.currency_locale").toString()
@@ -141,11 +143,13 @@ class LiteEcoEconomyImpl : LiteEconomyAPI {
     }
 
     override fun fullFormatting(amount: BigDecimal, currency: String): String {
-        val value = if (LiteEco.instance.config.getBoolean("economy.currencies.${LiteEco.instance.currencyImpl.getKeyOfCurrency(currency)}.compact_display")) {
-            compacted(amount)
-        } else {
-            formatted(amount)
+
+        val value = when(LiteEco.instance.currencyImpl.isCurrencyDisplayCompactEnabled(currency)) {
+            true -> compacted(amount)
+            false -> formatted(amount)
         }
-        return LiteEco.instance.currencyImpl.getCurrencySymbol(currency) + value
+        return LiteEco.instance.locale.plainTextTranslation(ModernText.miniModernText(
+            LiteEco.instance.currencyImpl.getCurrencyFormat(currency), Placeholder.parsed("money", value))
+        )
     }
 }

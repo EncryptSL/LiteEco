@@ -33,7 +33,7 @@ class PlayerEconomyPayListener(private val liteEco: LiteEco) : Listener {
         liteEco.api.getUserByUUID(target).thenAccept { user ->
             sender.sendMessage(liteEco.locale.translation("messages.sender.add_money", TagResolver.resolver(
                 Placeholder.parsed("target", user.userName),
-                Placeholder.parsed("money", liteEco.api.fullFormatting(money)),
+                Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
                 Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
             )))
         }.thenApply {
@@ -41,7 +41,7 @@ class PlayerEconomyPayListener(private val liteEco: LiteEco) : Listener {
             liteEco.loggerModel.info(liteEco.locale.plainTextTranslation("messages.monolog.player.pay", TagResolver.resolver(
                 Placeholder.parsed("sender", sender.name),
                 Placeholder.parsed("target", target.name.toString()),
-                Placeholder.parsed("money", liteEco.api.fullFormatting(money)),
+                Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
                 Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
             )))
             liteEco.increaseTransactions(1)
@@ -55,7 +55,7 @@ class PlayerEconomyPayListener(private val liteEco: LiteEco) : Listener {
                 liteEco.locale.translation("messages.target.add_money",
                 TagResolver.resolver(
                     Placeholder.parsed("sender", sender.name),
-                    Placeholder.parsed("money", liteEco.api.fullFormatting(money)),
+                    Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
                     Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
                 )
             ))

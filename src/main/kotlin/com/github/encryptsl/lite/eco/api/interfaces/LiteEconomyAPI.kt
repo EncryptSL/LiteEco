@@ -166,10 +166,9 @@ interface LiteEconomyAPI {
     /**
      * Formatted money value
      * @param amount is formatted to readable value
-     * @param currency name of currency
      * @return String
      */
-    fun formatted(amount: BigDecimal, currency: String = "dollars"): String
+    fun formatted(amount: BigDecimal): String
 
     /**
      * Formatting currency value

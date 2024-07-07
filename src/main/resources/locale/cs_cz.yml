@@ -19,7 +19,7 @@ messages:
     add_money_silent: "<gray>+ <green><money>"
     withdraw_money: "<prefix> <#13AFFE><target></#13AFFE> <white>vám odebral <green><money></green> <currency>."
     withdraw_money_silent: "<gray>- <red><money>"
-    set: "<prefix> <gold><sender></gold> <white>vám nastavil <green><money></green> <currency>."
+    set_money: "<prefix> <gold><sender></gold> <white>vám nastavil <green><money></green> <currency>."
 
   # Transaction messages for sender
   sender:

@@ -95,23 +95,23 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
         return liteEco.api.getBalance(Bukkit.getOfflinePlayer(uuid), currency)
     }
 
-    override fun has(pluginName: String, uuid: UUID?, value: BigDecimal?): Boolean {
+    override fun has(pluginName: String?, uuid: UUID?, value: BigDecimal?): Boolean {
         if (uuid == null || value == null) return false
 
         return liteEco.api.has(Bukkit.getOfflinePlayer(uuid), liteEco.currencyImpl.defaultCurrency() , value)
     }
 
-    override fun has(pluginName: String, uuid: UUID?, worldName: String?, value: BigDecimal?): Boolean {
+    override fun has(pluginName: String?, uuid: UUID?, worldName: String?, value: BigDecimal?): Boolean {
         return has(pluginName, uuid, value)
     }
 
-    override fun has(pluginName: String, uuid: UUID?, worldName: String?, currency: String?, value: BigDecimal?): Boolean {
+    override fun has(pluginName: String?, uuid: UUID?, worldName: String?, currency: String?, value: BigDecimal?): Boolean {
         if (uuid == null || currency == null || value == null) return false
 
         return liteEco.api.has(Bukkit.getOfflinePlayer(uuid), currency , value)
     }
 
-    override fun withdraw(pluginName: String, uuid: UUID?, amount: BigDecimal?): EconomyResponse {
+    override fun withdraw(pluginName: String?, uuid: UUID?, amount: BigDecimal?): EconomyResponse {
         if (amount == null) {
             return EconomyResponse(amount, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, null)
         }
@@ -130,7 +130,7 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
         }
     }
 
-    override fun withdraw(pluginName: String, uuid: UUID?, worldName: String?, amount: BigDecimal?): EconomyResponse {
+    override fun withdraw(pluginName: String?, uuid: UUID?, worldName: String?, amount: BigDecimal?): EconomyResponse {
         if (worldName != null) {
             return EconomyResponse(amount, getBalance(pluginName, uuid), EconomyResponse.ResponseType.FAILURE, MULTI_WORLD_CURRENCIES_NOT_SUPPORTED_MESSAGE)
         }
@@ -138,7 +138,7 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
         return withdraw(pluginName, uuid, amount)
     }
 
-    override fun withdraw(pluginName: String, uuid: UUID?, worldName: String?, currency: String?, amount: BigDecimal?): EconomyResponse {
+    override fun withdraw(pluginName: String?, uuid: UUID?, worldName: String?, currency: String?, amount: BigDecimal?): EconomyResponse {
         if (worldName != null) {
             return EconomyResponse(amount, getBalance(pluginName, uuid), EconomyResponse.ResponseType.FAILURE, MULTI_WORLD_CURRENCIES_NOT_SUPPORTED_MESSAGE)
         }
@@ -165,7 +165,7 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
         return withdraw(pluginName, uuid, amount)
     }
 
-    override fun deposit(pluginName: String, uuid: UUID?, amount: BigDecimal): EconomyResponse {
+    override fun deposit(pluginName: String?, uuid: UUID?, amount: BigDecimal): EconomyResponse {
         if (uuid == null || amount.isApproachingZero()) {
             return EconomyResponse(amount, getBalance(pluginName, uuid), EconomyResponse.ResponseType.FAILURE, null)
         }
@@ -180,7 +180,7 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
         }
     }
 
-    override fun deposit(pluginName: String, uuid: UUID?, worldName: String?, amount: BigDecimal): EconomyResponse {
+    override fun deposit(pluginName: String?, uuid: UUID?, worldName: String?, amount: BigDecimal): EconomyResponse {
         if (worldName != null) {
             return EconomyResponse(amount, getBalance(pluginName, uuid), EconomyResponse.ResponseType.FAILURE, MULTI_WORLD_CURRENCIES_NOT_SUPPORTED_MESSAGE)
         }
@@ -188,7 +188,7 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
         return deposit(pluginName, uuid, amount)
     }
 
-    override fun deposit(pluginName: String, uuid: UUID?, worldName: String?, currency: String?, amount: BigDecimal): EconomyResponse {
+    override fun deposit(pluginName: String?, uuid: UUID?, worldName: String?, currency: String?, amount: BigDecimal): EconomyResponse {
         if (worldName != null) {
             return EconomyResponse(amount, getBalance(pluginName, uuid), EconomyResponse.ResponseType.FAILURE, MULTI_WORLD_CURRENCIES_NOT_SUPPORTED_MESSAGE)
         }
