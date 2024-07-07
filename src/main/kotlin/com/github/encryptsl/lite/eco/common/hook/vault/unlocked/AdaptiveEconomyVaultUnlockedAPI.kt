@@ -34,20 +34,14 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
 
     override fun hasCurrency(currencyName: String): Boolean = false
 
-    override fun getDefaultCurrency(): String {
-        return liteEco.currencyImpl.defaultCurrency()
-    }
+    override fun getDefaultCurrency(): String = liteEco.currencyImpl.defaultCurrency()
 
-    override fun defaultCurrencyNamePlural(): String {
-        return liteEco.currencyImpl.defaultCurrencyPluralName()
-    }
+    override fun defaultCurrencyNamePlural(): String = ""
 
-    override fun defaultCurrencyNameSingular(): String {
-        return liteEco.currencyImpl.defaultCurrencySingularName()
-    }
+    override fun defaultCurrencyNameSingular(): String = ""
 
     override fun currencies(): MutableCollection<String> {
-        return liteEco.currencyImpl.getCurrenciesNames()?.toMutableList() ?: mutableListOf()
+        return liteEco.currencyImpl.getCurrenciesKeys().toMutableList()
     }
 
     override fun createAccount(uuid: UUID?, p1: String?): Boolean {

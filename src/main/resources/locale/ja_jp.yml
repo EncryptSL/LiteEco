@@ -2,42 +2,42 @@ messages:
   # Balance messages
   balance:
     format: "<prefix> <white>現在の所持金: <green><money></green>"
-    format_target: "<prefix> <gold><player></gold> <white>の所持金は <green><money></green>"
-    top_format: "<yellow><position># <gold><player></gold> <gray>- <green><money></green>"
+    format_target: "<prefix> <gold><player></gold> <white>の所持金は <green><money></green> <currency>"
+    top_format: "<yellow><position># <gold><player></gold> <gray>- <green><money></green> <currency>"
     top_header: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>所持金ランキング</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray> <red><page>/<max_page>"
     top_footer: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>所持金ランキング</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray>"
 
   # Self-transaction messages
   self:
-    add_money: "<prefix> <white>プレイヤーの所持金を <green><money></green> 増加させました。"
-    withdraw_money: "<prefix> <white>プレイヤーの所持金を <green><money></green> 減少させました。"
-    set_money: "<prefix> <white>プレイヤーの所持金を <green><money></green> に設定しました。"
+    add_money: "<prefix> <white>プレイヤーの所持金を <green><money></green> <currency> 増加させました。"
+    withdraw_money: "<prefix> <white>プレイヤーの所持金を <green><money></green> <currency> 減少させました。"
+    set_money: "<prefix> <white>プレイヤーの所持金を <green><money></green> <currency> に設定しました。"
 
   # Transaction messages for target
   target:
-    add_money: "<prefix> <gold><sender></gold> <white>から <green><money></green> 送金されました。"
+    add_money: "<prefix> <gold><sender></gold> <white>から <green><money></green> <currency> 送金されました。"
     add_money_silent: "<gray>+ <green><money>"
-    withdraw_money: "<prefix> <gold><sender></gold> <white>があなたの所持金から <green><money></green> 引き出しました。"
+    withdraw_money: "<prefix> <gold><sender></gold> <white>があなたの所持金から <green><money></green> <currency> 引き出しました。"
     withdraw_money_silent: "<gray>- <red><money>"
-    set_money: "<prefix> <gold><sender></gold> <white>があなたの所持金を <green><money></green> に設定しました。"
+    set_money: "<prefix> <gold><sender></gold> <white>があなたの所持金を <green><money></green> <currency> に設定しました。"
 
   # Transaction messages for sender
   sender:
-    add_money: "<prefix> <gold><target></gold> <white>へ <green><money></green> 送金しました。"
-    withdraw_money: "<prefix> <gold><target></gold> <white>から <green><money></green> 引き出しました。"
-    set_money: "<prefix> <gold><target></gold> <white>の所持金を <green><money></green> に設定しました。"
+    add_money: "<prefix> <gold><target></gold> <white>へ <green><money></green> <currency> 送金しました。"
+    withdraw_money: "<prefix> <gold><target></gold> <white>から <green><money></green> <currency> 引き出しました。"
+    set_money: "<prefix> <gold><target></gold> <white>の所持金を <green><money></green> <currency> に設定しました。"
 
   # Global actions messages (sent to the sender who made the global action)
   global:
-    add_money: "<prefix> <white>全プレイヤーの所持金を <green><money></green> 増加させました。"
-    withdraw_money: "<prefix> <white>全プレイヤーの所持金から <green><money></green> 引き出しました。"
-    set_money: "<prefix> <white>全プレイヤーの所持金を <green><money></green> に設定しました。"
+    add_money: "<prefix> <white>全プレイヤーの所持金を <green><money></green> <currency> 増加させました。"
+    withdraw_money: "<prefix> <white>全プレイヤーの所持金から <green><money></green> <currency> 引き出しました。"
+    set_money: "<prefix> <white>全プレイヤーの所持金を <green><money></green> <currency> に設定しました。"
 
   # Broadcast messages (sent to all players after a global action)
   broadcast:
-    add_money: "<prefix> <gold><sender></gold> <white>が全プレイヤーの所持金に <green><money></green> 増加させました。"
-    withdraw_money: "<prefix> <gold><sender></gold> <white>が全プレイヤーの所持金から <green><money></green> 引き出しました。"
-    set_money: "<prefix> <gold><sender></gold> <white>が全プレイヤーの所持金を <green><money></green> に設定しました。"
+    add_money: "<prefix> <gold><sender></gold> <white>が全プレイヤーの所持金に <green><money></green> <currency> 増加させました。"
+    withdraw_money: "<prefix> <gold><sender></gold> <white>が全プレイヤーの所持金から <green><money></green> <currency> 引き出しました。"
+    set_money: "<prefix> <gold><sender></gold> <white>が全プレイヤーの所持金を <green><money></green> <currency> に設定しました。"
 
   # Error messages
   error:

@@ -19,7 +19,7 @@ class PlayerEconomyPayListener(private val liteEco: LiteEco) : Listener {
         val currency: String = event.currency
 
         if (!liteEco.currencyImpl.getCurrencyNameExist(currency))
-            return sender.sendMessage(liteEco.locale.translation("messages.error.currencies_not_exist", Placeholder.parsed("currency", currency)))
+            return sender.sendMessage(liteEco.locale.translation("messages.error.currency_not_exist", Placeholder.parsed("currency", currency)))
 
         if (!liteEco.api.has(sender, currency, money))
             return sender.sendMessage(liteEco.locale.translation("messages.error.insufficient_funds"))
@@ -31,9 +31,11 @@ class PlayerEconomyPayListener(private val liteEco: LiteEco) : Listener {
             ))
 
         liteEco.api.getUserByUUID(target).thenAccept { user ->
-            sender.sendMessage(
-                liteEco.locale.translation("messages.sender.add_money",
-                    TagResolver.resolver(Placeholder.parsed("target", user.userName), Placeholder.parsed("money", liteEco.api.fullFormatting(money)))))
+            sender.sendMessage(liteEco.locale.translation("messages.sender.add_money", TagResolver.resolver(
+                Placeholder.parsed("target", user.userName),
+                Placeholder.parsed("money", liteEco.api.fullFormatting(money)),
+                Placeholder.parsed("currency", liteEco.currencyImpl.getCurrencyName(currency))
+            )))
         }.thenApply {
             liteEco.api.transfer(sender, target, currency, money)
             liteEco.loggerModel.info(liteEco.locale.getMessage("messages.monolog.player.pay")
@@ -52,7 +54,8 @@ class PlayerEconomyPayListener(private val liteEco: LiteEco) : Listener {
                 liteEco.locale.translation("messages.target.add_money",
                 TagResolver.resolver(
                     Placeholder.parsed("sender", sender.name),
-                    Placeholder.parsed("money", liteEco.api.fullFormatting(money))
+                    Placeholder.parsed("money", liteEco.api.fullFormatting(money)),
+                    Placeholder.parsed("currency", liteEco.currencyImpl.getCurrencyName(currency))
                 )
             ))
         }

@@ -31,7 +31,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
     fun onBalanceProxy(
         commandSender: CommandSender,
         @Argument(value = "player", suggestions = "players") offlinePlayer: OfflinePlayer?,
-        @Argument(value = "currency", suggestions = "currencies") @Default("dollar") currency: String
+        @Argument(value = "currency", suggestions = "currencies") @Default("dollars") currency: String?
     ) {
         onBalance(commandSender, offlinePlayer, currency)
     }
@@ -41,14 +41,19 @@ class MoneyCMD(private val liteEco: LiteEco) {
     fun onBalance(
         commandSender: CommandSender,
         @Argument(value = "player", suggestions = "players") offlinePlayer: OfflinePlayer?,
-        @Argument(value = "currency", suggestions = "currencies") @Default("dollar") currency: String
+        @Argument(value = "currency", suggestions = "currencies") @Default("dollars") currency: String?
     ) {
+        val c = currency ?: liteEco.currencyImpl.defaultCurrency()
+
+        if (!liteEco.currencyImpl.getCurrencyNameExist(c))
+            return commandSender.sendMessage(liteEco.locale.translation("messages.error.currency_not_exist", Placeholder.parsed("currency", c)))
+
         if (commandSender is Player) {
             val cSender = offlinePlayer ?: commandSender
-            liteEco.api.getUserByUUID(cSender, currency).thenApply { user ->
+            liteEco.api.getUserByUUID(cSender, c).thenApply { user ->
                 val formatMessage = when(offlinePlayer) {
-                    null -> liteEco.locale.translation("messages.balance.format", helper.getComponentBal(user))
-                    else -> liteEco.locale.translation("messages.balance.format_target", helper.getComponentBal(user))
+                    null -> liteEco.locale.translation("messages.balance.format", helper.getComponentBal(user, c))
+                    else -> liteEco.locale.translation("messages.balance.format_target", helper.getComponentBal(user, c))
                 }
                 commandSender.sendMessage(formatMessage)
             }.exceptionally {
@@ -59,9 +64,9 @@ class MoneyCMD(private val liteEco: LiteEco) {
         }
 
         if (offlinePlayer != null) {
-            liteEco.api.getUserByUUID(offlinePlayer, currency).thenApply { user ->
+            liteEco.api.getUserByUUID(offlinePlayer, c).thenApply { user ->
                 commandSender.sendMessage(
-                    liteEco.locale.translation("messages.balance.format_target", helper.getComponentBal(user))
+                    liteEco.locale.translation("messages.balance.format_target", helper.getComponentBal(user, c))
                 )
             }.exceptionally {
                 commandSender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist",
@@ -80,8 +85,10 @@ class MoneyCMD(private val liteEco: LiteEco) {
     fun onTopBalance(
         commandSender: CommandSender,
         @Argument(value = "page") @Range(min = "1", max="") @Default("1") page: Int,
-        @Argument("currency", suggestions = "currencies") @Default("dollar") currency: String
+        @Argument("currency", suggestions = "currencies") @Default("dollars") currency: String
     ) {
+        if (!liteEco.currencyImpl.getCurrencyNameExist(currency))
+            return commandSender.sendMessage(liteEco.locale.translation("messages.error.currency_not_exist", Placeholder.parsed("currency", currency)))
 
         val topPlayers = helper.getTopBalancesFormatted(currency)
 
@@ -111,7 +118,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
         sender: Player,
         @Argument(value = "player", suggestions = "players") offlinePlayer: OfflinePlayer,
         @Argument(value = "amount") @Range(min = "1.00", max = "") amountStr: String,
-        @Argument(value = "currency", suggestions = "currencies") @Default("dollar") currency: String
+        @Argument(value = "currency", suggestions = "currencies") @Default("dollars") currency: String
     ) {
         if (sender.uniqueId == offlinePlayer.uniqueId)
             return sender.sendMessage(liteEco.locale.translation("messages.error.self_pay"))

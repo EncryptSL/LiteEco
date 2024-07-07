@@ -1,43 +1,43 @@
 messages:
   # Balance messages
   balance:
-    format: "<prefix> <white>Status of balance is <green><money></green> [!]"
-    format_target: "<prefix> <white>Status of <gold><target></gold> balance is <green><money></green> [!]"
+    format: "<prefix> <white>Your balance of <currency> currency is <green><money></green>. [!]"
+    format_target: "<prefix> <white>Balance of <#13AFFE><target></#13AFFE> <gold><currency><gold> currency is <green><money></green>. [!]"
     top_format: "<yellow><position># <gold><player></gold> <gray>- <green><money></green>"
     top_header: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>BALTOP</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray> <red><page>/<max_page>"
     top_footer: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>BALTOP</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray>"
 
   # Self-transaction messages
   self:
-    add_money: "<prefix> <white>You added <green><money></green> to your money account."
-    withdraw_money: "<prefix> <white>You removed <green><money></green> from your money account."
-    set_money: "<prefix> <white>You set <green><money></green> money for your account."
+    add_money: "<prefix> <white>You added <green><money></green> to your <currency> account."
+    withdraw_money: "<prefix> <white>You removed <green><money></green> from your <currency> account."
+    set_money: "<prefix> <white>You set <green><money></green> <currency> for your account."
 
   # Transaction messages for target
   target:
-    add_money: "<prefix> <gold><sender></gold> <white>sent you <green><money></green> money."
+    add_money: "<prefix> <gold><sender></gold> <white>sent you <green><money></green> <currency>."
     add_money_silent: "<gray>+ <green><money>"
-    withdraw_money: "<prefix> <gold><sender></gold> <white>removed <green><money></green> money from your account."
+    withdraw_money: "<prefix> <gold><sender></gold> <white>removed <green><money></green> <currency> from your account."
     withdraw_money_silent: "<gray>- <red><money>"
-    set_money: "<prefix> <gold><sender></gold> <white>set the balance of your account to <green><money></green> money."
+    set_money: "<prefix> <gold><sender></gold> <white>set the balance of your account to <green><money></green> <currency>."
 
   # Transaction messages for sender
   sender:
-    add_money: "<prefix> <white>You sent <green><money></green> money to <gold><target></gold>."
-    withdraw_money: "<prefix> <white>You removed <green><money></green> money from <gold><target></gold>."
-    set_money: "<prefix> <white>You set <green><money></green> money for <gold><target></gold>."
+    add_money: "<prefix> <white>You sent <green><money></green> <currency> to <gold><target></gold>."
+    withdraw_money: "<prefix> <white>You removed <green><money></green> <currency> from <gold><target></gold>."
+    set_money: "<prefix> <white>You set <green><money></green> <currency> for <gold><target></gold>."
 
   # Global actions messages (sent to the sender who made the global action)
   global:
-    add_money: "<prefix> <white>You added <green><money></green> money for all players."
-    withdraw_money: "<prefix> <white>You withdrew <green><money></green> money from all players."
-    set_money: "<prefix> <white>You set <green><money></green> money for all players."
+    add_money: "<prefix> <white>You added <green><money></green> <currency> for all players."
+    withdraw_money: "<prefix> <white>You withdrew <green><money></green> <currency> from all players."
+    set_money: "<prefix> <white>You set <green><money></green> <currency> for all players."
 
   # Broadcast messages (sent to all players after a global action)
   broadcast:
-    add_money: "<prefix> <gold><sender></gold> <white>added <green><money></green> money for all players."
-    withdraw_money: "<prefix> <gold><sender></gold> <white>withdrew <green><money></green> money from all players."
-    set_money: "<prefix> <gold><sender></gold> <white>set <green><money></green> money for all players."
+    add_money: "<prefix> <gold><sender></gold> <white>added <green><money></green> <currency> for all players."
+    withdraw_money: "<prefix> <gold><sender></gold> <white>withdrew <green><money></green> <currency> from all players."
+    set_money: "<prefix> <gold><sender></gold> <white>set <green><money></green> <currency> for all players."
 
   # Error messages
   error:
@@ -93,24 +93,24 @@ messages:
     - " "
     - "<white>[+] <gray>/money help <white>-<#CFE7F0> Shows commands list of plugin"
     - "<white>[+] <gray>/money top <#b37dc7>[page] <white>-<#CFE7F0> Show richest players"
-    - "<white>[+] <gray>/money bal <yellow>[username] <white>-<#CFE7F0> Show balance of your account or another player"
-    - "<white>[+] <gray>/money pay <yellow>[username] <#3EE84D><amount> <white>-<#CFE7F0> Send money to another player."
+    - "<white>[+] <gray>/money bal <yellow>[username] <#3EE84D>[currency] <white>-<#CFE7F0> Show balance of your account or another player"
+    - "<white>[+] <gray>/money pay <yellow>[username] <#3EE84D>[currency] <#3EE84D><amount> <white>-<#CFE7F0> Send money to another player."
     - " "
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
 
   admin-help:
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix>  <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
     - " "
-    - "<red>[★] <gray>/eco add <yellow>[username] <#3EE84D><amount> <white>-<#F39E9E> Add money to another player."
-    - "<red>[★] <gray>/eco set <yellow>[username] <#3EE84D><amount> <white>-<#F39E9E> Set money amount of another player."
-    - "<red>[★] <gray>/eco withdraw <yellow>[username] <#3EE84D><amount> <white>-<#F39E9E> Remove money from another player."
-    - "<red>[★] <gray>/eco global add <#3EE84D><amount> <white>-<#F39E9E> Add money to all players."
-    - "<red>[★] <gray>/eco global set <#3EE84D><amount> <white>-<#F39E9E> Set money amount of all players."
-    - "<red>[★] <gray>/eco global withdraw <#3EE84D><amount> <white>-<#F39E9E> Remove money from all players."
+    - "<red>[★] <gray>/eco add <yellow>[username] <#3EE84D><amount> <#3EE84D>[currency] <white>-<#F39E9E> Add money to another player."
+    - "<red>[★] <gray>/eco set <yellow>[username] <#3EE84D><amount> <#3EE84D>[currency] <white>-<#F39E9E> Set money amount of another player."
+    - "<red>[★] <gray>/eco withdraw <yellow>[username] <#3EE84D><amount> <#3EE84D>[currency] <white>-<#F39E9E> Remove money from another player."
+    - "<red>[★] <gray>/eco global add <#3EE84D><amount> <#3EE84D>[currency] <white>-<#F39E9E> Add money to all players."
+    - "<red>[★] <gray>/eco global set <#3EE84D><amount> <#3EE84D>[currency] <white>-<#F39E9E> Set money amount of all players."
+    - "<red>[★] <gray>/eco global withdraw <#3EE84D><amount> <#3EE84D>[currency] <white>-<#F39E9E> Remove money from all players."
     - "<red>[★] <gray>/eco lang <#b37dc7>[lang] <white>-<#F39E9E> Switch message translation."
-    - "<red>[★] <gray>/eco purge <#b37dc7><argument> <white>-<#F39E9E> Purge data."
-    - "<red>[★] <gray>/eco migration <#b37dc7><argument> <white>-<#F39E9E> Migration of database to another format."
-    - "<red>[★] <gray>/eco convert <#b37dc7><argument> <white>-<#F39E9E> Convert from other Economy plugin to LiteEco."
+    - "<red>[★] <gray>/eco purge <#b37dc7><argument> <#3EE84D>[currency] <white>-<#F39E9E> Purge data."
+    - "<red>[★] <gray>/eco migration <#b37dc7><argument> <#3EE84D>[currency] <white>-<#F39E9E> Migration of database to another format."
+    - "<red>[★] <gray>/eco convert <#b37dc7><argument> <#3EE84D>[currency] <white>-<#F39E9E> Convert from other Economy plugin to LiteEco."
     - "<red>[★] <gray>/eco reload <white>-<#F39E9E> Reload configuration."
     - " "
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"

@@ -17,12 +17,12 @@ class AccountManageListener(private val liteEco: LiteEco) : Listener {
 
         when (event.operationType) {
             OperationType.CREATE_ACCOUNT -> {
-                for (currency in currencies.getCurrenciesNames()!!) {
+                for (currency in currencies.getCurrenciesKeys()) {
                     liteEco.api.createAccount(player, currency, liteEco.currencyImpl.getCurrencyStartBalance(currency))
                 }
             }
             OperationType.CACHING_ACCOUNT -> {
-                for (currency in currencies.getCurrenciesNames()!!) {
+                for (currency in currencies.getCurrenciesKeys()) {
                     liteEco.databaseEcoModel.getUserByUUID(player.uniqueId, currency)
                         .thenAccept { liteEco.api.cacheAccount(player, currency, it.money) }
                 }

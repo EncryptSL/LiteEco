@@ -1,43 +1,43 @@
 messages:
   # Balance messages
   balance:
-    format: "<prefix> <white>Tu saldo es de <green><money></green> [!]"
-    format_target: "<prefix> <white>El saldo de <gold><target></gold> es de <green><money></green> [!]"
-    top_format: "<yellow><position># <gold><player></gold> <gray>- <green><money></green>"
+    format: "<prefix> <white>Tu saldo es de <green><money></green> es <currency> [!]"
+    format_target: "<prefix> <white>El saldo de <gold><target></gold> es de <green><money></green> es <currency> [!]"
+    top_format: "<yellow><position># <gold><player></gold> <gray>- <green><money></green> <currency>"
     top_header: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>TOP ECONOMIA<gray>]</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray> <red><page>/<max_page>"
     top_footer: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>TOP ECONOMIA</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray>"
 
   # Self-transaction messages
   self:
-    add_money: "<prefix> <white>Añadiste <green><money></green> a tu cuenta."
-    withdraw_money: "<prefix> <white>Quitaste <green><money></green> de tu cuenta."
-    set_money: "<prefix> <white>Estableciste <green><money></green> en tu cuenta."
+    add_money: "<prefix> <white>Añadiste <green><money></green> a tu <currency>."
+    withdraw_money: "<prefix> <white>Quitaste <green><money></green> de tu <currency>."
+    set_money: "<prefix> <white>Estableciste <green><money></green> en tu <currency>."
 
   # Transaction messages for target
   target:
-    add_money: "<prefix> <white>Recibiste <green><money></green> de <gold><sender></gold>."
+    add_money: "<prefix> <white>Recibiste <green><money></green> <currency> de <gold><sender></gold>."
     add_money_silent: "<gray>+ <green><money>"
-    withdraw_money: "<prefix> <gold><sender></gold> <white>te quito <green><money></green> de tu cuenta."
+    withdraw_money: "<prefix> <gold><sender></gold> <white>te quito <green><money></green> de tu <currency>."
     withdraw_money_silent: "<gray>- <red><money>"
-    set_money: "<prefix> <gold><sender></gold> <white>establecio tu cuenta a <green><money></green>."
+    set_money: "<prefix> <gold><sender></gold> <white>establecio tu <currency> a <green><money></green>."
 
   # Transaction messages for sender
   sender:
-    add_money: "<prefix> <white>Enviaste <green><money></green> a <gold><target></gold>."
-    withdraw_money: "<prefix> <white>Quitaste <green><money></green> de <gold><target></gold>."
-    set_money: "<prefix> <white>Estableciste <green><money></green> en la cuenta <gold><target></gold>."
+    add_money: "<prefix> <white>Enviaste <green><money></green> <currency> a <gold><target></gold>."
+    withdraw_money: "<prefix> <white>Quitaste <green><money></green> <currency> de <gold><target></gold>."
+    set_money: "<prefix> <white>Estableciste <green><money></green> <currency> en la cuenta <gold><target></gold>."
 
   # Global actions messages (sent to the sender who made the global action)
   global:
-    add_money: "<prefix> <white>Añadiste <green><money></green> a todos los jugadores."
-    withdraw_money: "<prefix> <white>Quitaste <green><money></green> de todos los jugadores."
-    set_money: "<prefix> <white>Estableciste <green><money></green> en todas las cuentas."
+    add_money: "<prefix> <white>Añadiste <green><money></green> a todos los <currency>."
+    withdraw_money: "<prefix> <white>Quitaste <green><money></green> de todos los <currency>."
+    set_money: "<prefix> <white>Estableciste <green><money></green> en todas las <currency>."
 
   # Broadcast messages (sent to all players after a global action)
   broadcast:
-    add_money: "<prefix> <gold><sender></gold> <white>añadio <green><money></green> a todos los jugadores."
-    withdraw_money: "<prefix> <gold><sender></gold> <white>quito <green><money></green> a todos los jugadores."
-    set_money: "<prefix> <gold><sender></gold> <white>establecio a <green><money></green> en todas las cuentas."
+    add_money: "<prefix> <gold><sender></gold> <white>añadio <green><money></green> a todos los <currency>."
+    withdraw_money: "<prefix> <gold><sender></gold> <white>quito <green><money></green> a todos los <currency>."
+    set_money: "<prefix> <gold><sender></gold> <white>establecio a <green><money></green> en todas las <currency>."
 
   # Error messages
   error:

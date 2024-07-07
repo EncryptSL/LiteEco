@@ -18,7 +18,7 @@ class EconomyGlobalSetListener(private val liteEco: LiteEco) : Listener {
         val offlinePlayers = Bukkit.getOfflinePlayers()
 
         if (!liteEco.currencyImpl.getCurrencyNameExist(currency))
-            return sender.sendMessage(liteEco.locale.translation("messages.error.currencies_not_exist", Placeholder.parsed("currency", currency)))
+            return sender.sendMessage(liteEco.locale.translation("messages.error.currency_not_exist", Placeholder.parsed("currency", currency)))
 
         if (liteEco.api.getCheckBalanceLimit(money) && !sender.hasPermission("lite.eco.admin.bypass.limit"))
             return sender.sendMessage(liteEco.locale.translation("messages.error.amount_above_limit"))
@@ -37,15 +37,17 @@ class EconomyGlobalSetListener(private val liteEco: LiteEco) : Listener {
         )
 
         sender.sendMessage(
-            liteEco.locale.translation("messages.global.set_money", Placeholder.parsed("money", liteEco.api.fullFormatting(money))
+            liteEco.locale.translation("messages.global.set_money", TagResolver.resolver(
+                Placeholder.parsed("money", liteEco.api.fullFormatting(money)),
+                Placeholder.parsed("currency", liteEco.currencyImpl.getCurrencyName(currency))
+            )
         ))
 
         if (liteEco.config.getBoolean("messages.global.notify_set"))
-            Bukkit.broadcast(
-                liteEco.locale.translation("messages.broadcast.set_money",
-                    TagResolver.resolver(
-                        Placeholder.parsed("sender", sender.name),
-                        Placeholder.parsed("money", liteEco.api.fullFormatting(money))
-                    )))
+            Bukkit.broadcast(liteEco.locale.translation("messages.broadcast.set_money", TagResolver.resolver(
+                Placeholder.parsed("sender", sender.name),
+                Placeholder.parsed("money", liteEco.api.fullFormatting(money)),
+                Placeholder.parsed("currency", liteEco.currencyImpl.getCurrencyName(currency))
+            )))
     }
 }

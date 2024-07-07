@@ -6,6 +6,7 @@ import io.github.miniplaceholders.kotlin.expansion
 import net.kyori.adventure.text.Component
 import org.bukkit.OfflinePlayer
 import java.math.BigDecimal
+import java.util.Optional
 
 
 class EconomyMiniPlaceholder(private val liteEco: LiteEco) {
@@ -24,27 +25,45 @@ class EconomyMiniPlaceholder(private val liteEco: LiteEco) {
                 val player: OfflinePlayer = p as OfflinePlayer
                 return@audiencePlaceholder Component.text(liteEco.api.fullFormatting(liteEco.api.getBalance(player))).asInsertingTag()
             }
-            globalPlaceholder("top_rank_player") { _, _ ->
-                return@globalPlaceholder Component.text(nameByRank(1)).asInsertingTag()
+            globalPlaceholder("top_rank_player") { i, _ ->
+                val argument = i.popOr("You need provide currency").value().split("_")
+                val currency = Optional.ofNullable(extractPlaceholderIdentifierName(0, argument)).orElse(liteEco.currencyImpl.defaultCurrency())
+                return@globalPlaceholder Component.text(nameByRank(1, currency)).asInsertingTag()
             }
             globalPlaceholder("top_formatted") { i, _ ->
-                return@globalPlaceholder Component.text(liteEco.api.fullFormatting(balanceByRank(i.popOr("You need provide position.").value().toInt()))).asInsertingTag()
+                val argument = i.popOr("You need provide context").value().split("_")
+                val rank = extractPlaceholderIdentifierName(0, argument).toInt()
+                val currency = Optional.ofNullable(extractPlaceholderIdentifierName(1, argument)).orElse(liteEco.currencyImpl.defaultCurrency())
+                return@globalPlaceholder Component.text(liteEco.api.fullFormatting(balanceByRank(rank, currency))).asInsertingTag()
             }
             globalPlaceholder("top_compacted") { i, _ ->
-                return@globalPlaceholder Component.text(liteEco.api.compacted(balanceByRank(i.popOr("You need provide position.").value().toInt()))).asInsertingTag()
+                val argument = i.popOr("You need provide context").value().split("_")
+                val rank = extractPlaceholderIdentifierName(0, argument).toInt()
+                val currency = Optional.ofNullable(extractPlaceholderIdentifierName(1, argument)).orElse(liteEco.currencyImpl.defaultCurrency())
+                return@globalPlaceholder Component.text(liteEco.api.compacted(balanceByRank(rank, currency))).asInsertingTag()
             }
             globalPlaceholder("top_balance") { i, _ ->
-                return@globalPlaceholder Component.text(balanceByRank(i.popOr("You need provide position.").value().toInt()).toPlainString()).asInsertingTag()
+                val argument = i.popOr("You need provide context").value().split("_")
+                val rank = extractPlaceholderIdentifierName(0, argument).toInt()
+                val currency = Optional.ofNullable(extractPlaceholderIdentifierName(1, argument)).orElse(liteEco.currencyImpl.defaultCurrency())
+                return@globalPlaceholder Component.text(balanceByRank(rank, currency).toPlainString()).asInsertingTag()
             }
             globalPlaceholder("top_player") { i, _ ->
-                return@globalPlaceholder Component.text(nameByRank(i.popOr("You need provide position.").value().toInt())).asInsertingTag()
+                val argument = i.popOr("You need provide context").value().split("_")
+                val rank = extractPlaceholderIdentifierName(0, argument).toInt()
+                val currency = Optional.ofNullable(extractPlaceholderIdentifierName(1, argument)).orElse(liteEco.currencyImpl.defaultCurrency())
+                return@globalPlaceholder Component.text(nameByRank(rank, currency)).asInsertingTag()
             }
         }
         expansion.register()
     }
 
-    private fun nameByRank(rank: Int): String {
-        val topBalance = topBalance()
+    private fun extractPlaceholderIdentifierName(position: Int, list: List<String>): String {
+        return list[position]
+    }
+
+    private fun nameByRank(rank: Int, currency: String): String {
+        val topBalance = topBalance(currency)
         return if (rank in 1..topBalance.size) {
             topBalance.keys.elementAt(rank - 1)
         } else {
@@ -52,8 +71,8 @@ class EconomyMiniPlaceholder(private val liteEco: LiteEco) {
         }
     }
 
-    private fun balanceByRank(rank: Int): BigDecimal {
-        val topBalance = topBalance()
+    private fun balanceByRank(rank: Int, currency: String): BigDecimal {
+        val topBalance = topBalance(currency)
         return if (rank in 1..topBalance.size) {
             topBalance.values.elementAt(rank - 1)
         } else {
@@ -61,8 +80,8 @@ class EconomyMiniPlaceholder(private val liteEco: LiteEco) {
         }
     }
 
-    private fun topBalance(): Map<String, BigDecimal> {
-        return liteEco.api.getTopBalance()
+    private fun topBalance(currency: String): Map<String, BigDecimal> {
+        return liteEco.api.getTopBalance(currency)
     }
 
 }

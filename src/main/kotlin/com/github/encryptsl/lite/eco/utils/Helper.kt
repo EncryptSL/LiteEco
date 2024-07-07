@@ -45,15 +45,17 @@ class Helper(private val liteEco: LiteEco) {
             liteEco.locale.translation("messages.balance.top_format", TagResolver.resolver(
                 Placeholder.parsed("position", index.toString()),
                 Placeholder.parsed("player", pair.first),
-                Placeholder.parsed("money", liteEco.api.fullFormatting(pair.second))
+                Placeholder.parsed("money", liteEco.api.fullFormatting(pair.second)),
+                Placeholder.parsed("currency", liteEco.currencyImpl.getCurrencyName(currency))
             ))
         }
     }
 
-    fun getComponentBal(user: User): TagResolver {
+    fun getComponentBal(user: User, currency: String): TagResolver {
         return TagResolver.resolver(
             Placeholder.parsed("target", user.userName),
-            Placeholder.parsed("money", liteEco.api.fullFormatting(user.money))
+            Placeholder.parsed("money", liteEco.api.fullFormatting(user.money)),
+            Placeholder.parsed("currency", liteEco.currencyImpl.getCurrencyName(currency))
         )
     }
 }

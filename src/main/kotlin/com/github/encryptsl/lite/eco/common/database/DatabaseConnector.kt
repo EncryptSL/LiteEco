@@ -19,12 +19,11 @@ class DatabaseConnector(private val liteEco: LiteEco) : DatabaseConnectorProvide
 
         Database.connect(config)
 
-        val currencyIterator = liteEco.config.getConfigurationSection("economy.currencies")?.getKeys(false)?.iterator()
+        val currencyIterator = liteEco.currencyImpl.getCurrenciesKeys().iterator()
 
-        while (currencyIterator?.hasNext() == true) {
-            val currency = liteEco.config.getString("economy.currencies.${currencyIterator.next()}.currency_name", "dollar").toString()
+        while (currencyIterator.hasNext()) {
             loggedTransaction {
-                SchemaUtils.create(Account(currency), MonologTable)
+                SchemaUtils.create(Account(currencyIterator.next()), MonologTable)
             }
         }
     }

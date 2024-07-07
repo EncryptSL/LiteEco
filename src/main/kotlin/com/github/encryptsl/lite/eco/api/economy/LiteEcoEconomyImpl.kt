@@ -141,6 +141,6 @@ class LiteEcoEconomyImpl : LiteEconomyAPI {
         } else {
             formatted(amount)
         }
-        return value
+        return LiteEco.instance.currencyImpl.getCurrencySymbol(currency) + value
     }
 }

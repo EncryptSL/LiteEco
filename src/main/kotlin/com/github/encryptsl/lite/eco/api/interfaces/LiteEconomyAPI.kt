@@ -16,7 +16,7 @@ interface LiteEconomyAPI {
      * @see Boolean
      * @see OfflinePlayer
      */
-    fun createAccount(player: OfflinePlayer, currency: String = "dollar", startAmount: BigDecimal): Boolean
+    fun createAccount(player: OfflinePlayer, currency: String = "dollars", startAmount: BigDecimal): Boolean
 
     /**
      * Cache player account during login
@@ -27,7 +27,7 @@ interface LiteEconomyAPI {
      * @see OfflinePlayer
      * @see com.github.encryptsl.lite.eco.common.database.models.DatabaseEcoModel.getUserByUUID(uuid)
      */
-    fun cacheAccount(player: OfflinePlayer, currency: String = "dollar", amount: BigDecimal)
+    fun cacheAccount(player: OfflinePlayer, currency: String = "dollars", amount: BigDecimal)
 
     /**
      * Delete player account from database
@@ -36,7 +36,7 @@ interface LiteEconomyAPI {
      * @return Boolean
      * @see OfflinePlayer
      */
-    fun deleteAccount(player: OfflinePlayer, currency: String = "dollar"): Boolean
+    fun deleteAccount(player: OfflinePlayer, currency: String = "dollars"): Boolean
 
     /**
      * Boolean for check if player have account in database
@@ -45,7 +45,7 @@ interface LiteEconomyAPI {
      * @return Boolean
      * @see OfflinePlayer
      */
-    fun hasAccount(player: OfflinePlayer, currency: String = "dollar"): CompletableFuture<Boolean>
+    fun hasAccount(player: OfflinePlayer, currency: String = "dollars"): CompletableFuture<Boolean>
 
     /**
      * Boolean for check if player have enough money
@@ -54,7 +54,7 @@ interface LiteEconomyAPI {
      * @return Boolean
      * @see OfflinePlayer
      */
-    fun has(player: OfflinePlayer, currency: String = "dollar", amount: BigDecimal): Boolean
+    fun has(player: OfflinePlayer, currency: String = "dollars", amount: BigDecimal): Boolean
 
     /**
      * Get user account
@@ -63,7 +63,7 @@ interface LiteEconomyAPI {
      * @return User
      * @see OfflinePlayer
      */
-    fun getUserByUUID(player: OfflinePlayer, currency: String = "dollar"): CompletableFuture<User>
+    fun getUserByUUID(player: OfflinePlayer, currency: String = "dollars"): CompletableFuture<User>
 
     /**
      * Get balance of player account
@@ -72,7 +72,7 @@ interface LiteEconomyAPI {
      * @return Double
      * @see OfflinePlayer
      */
-    fun getBalance(player: OfflinePlayer, currency: String = "dollar"): BigDecimal
+    fun getBalance(player: OfflinePlayer, currency: String = "dollars"): BigDecimal
 
     /**
      * Get check limit of player balance.
@@ -81,7 +81,7 @@ interface LiteEconomyAPI {
      * @return Boolean
      * @see OfflinePlayer
      */
-    fun getCheckBalanceLimit(amount: BigDecimal, currency: String = "dollar"): Boolean
+    fun getCheckBalanceLimit(amount: BigDecimal, currency: String = "dollars"): Boolean
 
     /**
      * Get check limit of player balance.
@@ -90,7 +90,7 @@ interface LiteEconomyAPI {
      * @return Boolean
      * @see OfflinePlayer
      */
-    fun getCheckBalanceLimit(player: OfflinePlayer, currency: String = "dollar", amount: BigDecimal): Boolean
+    fun getCheckBalanceLimit(player: OfflinePlayer, currency: String = "dollars", amount: BigDecimal): Boolean
 
     /**
      * Deposit money to player account
@@ -99,7 +99,7 @@ interface LiteEconomyAPI {
      * @param amount is amount added to player account
      * @see OfflinePlayer
      */
-    fun depositMoney(player: OfflinePlayer, currency: String = "dollar", amount: BigDecimal)
+    fun depositMoney(player: OfflinePlayer, currency: String = "dollars", amount: BigDecimal)
 
     /**
      * Withdraw money from player account
@@ -108,7 +108,7 @@ interface LiteEconomyAPI {
      * @param amount is amount removed from player account
      * @see OfflinePlayer
      */
-    fun withDrawMoney(player: OfflinePlayer, currency: String = "dollar", amount: BigDecimal)
+    fun withDrawMoney(player: OfflinePlayer, currency: String = "dollars", amount: BigDecimal)
 
     /**
      * Transfer of money from player account to another player account.
@@ -118,7 +118,7 @@ interface LiteEconomyAPI {
      * @see Player
      * @see OfflinePlayer
      */
-    fun transfer(fromPlayer: Player, target: OfflinePlayer, currency: String = "dollar", amount: BigDecimal)
+    fun transfer(fromPlayer: Player, target: OfflinePlayer, currency: String = "dollars", amount: BigDecimal)
 
     /**
      * Set fixed money to player account
@@ -127,14 +127,14 @@ interface LiteEconomyAPI {
      * @param amount is amount fixed value
      * @see OfflinePlayer
      */
-    fun setMoney(player: OfflinePlayer, currency: String = "dollar", amount: BigDecimal)
+    fun setMoney(player: OfflinePlayer, currency: String = "dollars", amount: BigDecimal)
 
     /**
      * Synchronize cache with database
      * @param offlinePlayer is OfflinePlayer
      * @see OfflinePlayer
      */
-    fun syncAccount(offlinePlayer: OfflinePlayer, currency: String = "dollar")
+    fun syncAccount(offlinePlayer: OfflinePlayer, currency: String = "dollars")
 
     /**
      * Synchronize all saved data in cache with database
@@ -146,7 +146,7 @@ interface LiteEconomyAPI {
      * @param currency name of currency
      * @return MutableMap
      */
-    fun getTopBalance(currency: String = "dollar"): Map<String, BigDecimal>
+    fun getTopBalance(currency: String = "dollars"): Map<String, BigDecimal>
 
     /**
      * Compacted money value
@@ -161,7 +161,7 @@ interface LiteEconomyAPI {
      * @param currency name of currency
      * @return String
      */
-    fun formatted(amount: BigDecimal, currency: String = "dollar"): String
+    fun formatted(amount: BigDecimal, currency: String = "dollars"): String
 
     /**
      * Formatting currency value
@@ -169,6 +169,6 @@ interface LiteEconomyAPI {
      * @param currency name of currency
      * @return String
      */
-    fun fullFormatting(amount: BigDecimal, currency: String = "dollar"): String
+    fun fullFormatting(amount: BigDecimal, currency: String = "dollars"): String
 
 }

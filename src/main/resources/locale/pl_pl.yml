@@ -1,9 +1,9 @@
 messages:
   # Balance messages
   balance:
-    format: "<prefix> <white>Stan konta <green><money></green> [!]"
-    format_target: "<prefix> <white>Stan konta <gold><target></gold>, <green><money></green> [!]"
-    top_format: "<yellow><position># <gold><player></gold> <gray>- <green><money></green>"
+    format: "<prefix> <white>Stan konta <green><money></green> <currency> [!]"
+    format_target: "<prefix> <white>Stan konta <gold><target></gold>, <green><money></green> <currency> [!]"
+    top_format: "<yellow><position># <gold><player></gold> <gray>- <green><money></green> <currency>"
     top_header: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>TOP PIENIĘDZY</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray> <red><page>/<max_page>"
     top_footer: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>TOP PIENIĘDZY</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray>"
 
@@ -15,29 +15,29 @@ messages:
 
   # Transaction messages for target
   target:
-    add_money: "<prefix> <gold><sender></gold> <white>wysłał Ci <green><money></green> pieniędzy."
+    add_money: "<prefix> <gold><sender></gold> <white>wysłał Ci <green><money></green> <currency>."
     add_money_silent: "<gray>+ <green><money>"
-    withdraw_money: "<prefix> <gold><sender></gold> <white>usunął <green><money></green> pieniędzy z twojego konta."
+    withdraw_money: "<prefix> <gold><sender></gold> <white>usunął <green><money></green> <currency> z twojego konta."
     withdraw_money_silent: "<gray>- <red><money>"
-    set_money: "<prefix> <gold><sender></gold> <white>ustawił wartość twojego konta na <green><money></green> pieniędzy."
+    set_money: "<prefix> <gold><sender></gold> <white>ustawił wartość twojego konta na <green><money></green> <currency>."
 
   # Transaction messages for sender
   sender:
-    add_money: "<prefix> <white>Wysłałeś <green><money></green> pieniędzy do <gold><target></gold>."
-    withdraw_money: "<prefix> <white>Usunąłeś <green><money></green> pieniędzy z konta <gold><target></gold>."
-    set_money: "<prefix> <white>Ustawiłeś <green><money></green> pieniędzy dla <gold><target></gold>."
+    add_money: "<prefix> <white>Wysłałeś <green><money></green> <currency> do <gold><target></gold>."
+    withdraw_money: "<prefix> <white>Usunąłeś <green><money></green> <currency> z konta <gold><target></gold>."
+    set_money: "<prefix> <white>Ustawiłeś <green><money></green> <currency> dla <gold><target></gold>."
 
   # Global actions messages (sent to the sender who made the global action)
   global:
-    add_money: "<prefix> <white>Dodałeś <green><money></green> pieniędzy dla wszystkich graczy."
-    withdraw_money: "<prefix> <white>Wypłaciłeś <green><money></green> pieniędzy od wszystkich graczy."
-    set_money: "<prefix> <white>Ustawiłeś <green><money></green> pieniędzy dla wszystkich graczy."
+    add_money: "<prefix> <white>Dodałeś <green><money></green> <currency> dla wszystkich graczy."
+    withdraw_money: "<prefix> <white>Wypłaciłeś <green><money></green> <currency> od wszystkich graczy."
+    set_money: "<prefix> <white>Ustawiłeś <green><money></green> <currency> dla wszystkich graczy."
 
   # Broadcast messages (sent to all players after a global action)
   broadcast:
-    add_money: "<prefix> <gold><sender></gold> <white>dodał <green><money></green> pieniędzy dla wszystkich graczy."
-    withdraw_money: "<prefix> <gold><sender></gold> <white>wypłacił <green><money></green> pieniędzy od wszystkich graczy."
-    set_money: "<prefix> <gold><sender></gold> <white>ustawił <green><money></green> pieniędzy dla wszystkich graczy."
+    add_money: "<prefix> <gold><sender></gold> <white>dodał <green><money></green> <currency> dla wszystkich graczy."
+    withdraw_money: "<prefix> <gold><sender></gold> <white>wypłacił <green><money></green> <currency> od wszystkich graczy."
+    set_money: "<prefix> <gold><sender></gold> <white>ustawił <green><money></green> <currency> dla wszystkich graczy."
 
   # Error messages
   error:

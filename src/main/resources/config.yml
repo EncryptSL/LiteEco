@@ -4,7 +4,7 @@ plugin:
   # https://github.com/EncryptSL/LiteEco/blob/main/src/main/kotlin/encryptsl/cekuj/net/api/enums/LangKey.kt
   translation: EN_US
   # Plugin prefix
-  prefix: "<#64646F>[<#F9AD47>LiteEco<#64646F>]</#64646F>"
+  prefix: "<dark_gray>[<green>Eco<dark_gray>] <dark_green>»</dark_gray>"
   # Enable or disable Metrics
   metrics: true
   # Settings for modifiable players suggestion.
@@ -15,14 +15,11 @@ plugin:
 economy:
   currencies:
     # Don't change this currency because this is implemented for vault....
-    default:
-      # Name of currency is used in database for table, please don't change name of default currency....
-      # Name of currency generating every start of server new table if not exist.
-      currency_name: dollar
-      # Name of plural currency
-      currency_plural_name: Dollars
-      # Name of single currency
-      currency_singular_name: Dollar
+    # Key of currencies is name of table please don't change this value if you don't want to lose data.
+    dollars:
+      currency_name: dollars
+      # Currency Symbol
+      currency_symbol: $
       # This amount is granted to players who don't have an existing account in the database.
       starting_balance: 30
       # This amount is checked when player is above allowed limit
@@ -33,9 +30,12 @@ economy:
       compact_display: false
 
     # Example of other currencies
+    # Don't change this currency because this is implemented for vault....
+    # Key of currencies is name of table please don't change this value if you don't want to lose data.
     # credits:
-        # currency_plural_name: Credits
-        # currency_singular_name: Credit
+        # currency_name: credits
+        # # Symbol of currency
+        # currency_symbol: €
         # # This amount is granted to players who don't have an existing account in the database.
         # starting_balance: 30
         # # This amount is checked when player is above allowed limit

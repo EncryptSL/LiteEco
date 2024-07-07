@@ -21,7 +21,7 @@ class EconomyMoneyDepositListener(private val liteEco: LiteEco) : Listener {
         val silent: Boolean = event.silent
 
         if (!liteEco.currencyImpl.getCurrencyNameExist(currency))
-            return sender.sendMessage(liteEco.locale.translation("messages.error.currencies_not_exist", Placeholder.parsed("currency", currency)))
+            return sender.sendMessage(liteEco.locale.translation("messages.error.currency_not_exist", Placeholder.parsed("currency", currency)))
 
         if (liteEco.api.getCheckBalanceLimit(money) && !sender.hasPermission("lite.eco.admin.bypass.limit"))
             return sender.sendMessage(liteEco.locale.translation("messages.error.amount_above_limit"))
@@ -46,13 +46,17 @@ class EconomyMoneyDepositListener(private val liteEco: LiteEco) : Listener {
 
         if (sender.name == target.name) {
             return sender.sendMessage(
-                liteEco.locale.translation("messages.self.add_money", Placeholder.parsed("money", liteEco.api.fullFormatting(money)))
-            )
+                liteEco.locale.translation("messages.self.add_money", TagResolver.resolver(
+                    Placeholder.parsed("money", liteEco.api.fullFormatting(money)),
+                    Placeholder.parsed("currency", liteEco.currencyImpl.getCurrencyName(currency))
+                )
+            ))
         }
 
         sender.sendMessage(liteEco.locale.translation("messages.sender.add_money",
             TagResolver.resolver(
-                Placeholder.parsed("target", target.name.toString()), Placeholder.parsed("money", liteEco.api.fullFormatting(money))
+                Placeholder.parsed("target", target.name.toString()), Placeholder.parsed("money", liteEco.api.fullFormatting(money)),
+                Placeholder.parsed("currency", liteEco.currencyImpl.getCurrencyName(currency))
             )
         ))
 
@@ -68,7 +72,8 @@ class EconomyMoneyDepositListener(private val liteEco: LiteEco) : Listener {
                 liteEco.locale.translation("messages.target.add_money",
                 TagResolver.resolver(
                     Placeholder.parsed("sender", sender.name),
-                    Placeholder.parsed("money", liteEco.api.fullFormatting(money))
+                    Placeholder.parsed("money", liteEco.api.fullFormatting(money)),
+                    Placeholder.parsed("currency", liteEco.currencyImpl.getCurrencyName(currency))
                 )
             ))
         }
