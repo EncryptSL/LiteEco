@@ -5,9 +5,11 @@ import com.github.encryptsl.lite.eco.common.hook.bettereconomy.BetterEconomyHook
 import com.github.encryptsl.lite.eco.common.hook.miniplaceholder.EconomyMiniPlaceholder
 import com.github.encryptsl.lite.eco.common.hook.placeholderapi.EconomyPlaceholderAPI
 import com.github.encryptsl.lite.eco.common.hook.treasury.TreasuryEconomyAPI
+import com.github.encryptsl.lite.eco.common.hook.vault.AdaptiveEconomyVaultAPI
 import com.github.encryptsl.lite.eco.common.hook.vault.unlocked.AdaptiveEconomyVaultUnlockedAPI
 import me.lokka30.treasury.api.common.service.ServiceRegistry
 import me.lokka30.treasury.api.economy.EconomyProvider
+import net.milkbowl.vault.economy.Economy
 import org.bukkit.plugin.ServicePriority
 
 class HookManager(private val liteEco: LiteEco) {
@@ -60,13 +62,18 @@ class HookManager(private val liteEco: LiteEco) {
 
     fun hookVault() {
         if (isPluginInstalled("Vault")) {
-            //liteEco.server.servicesManager.register(Economy::class.java, AdaptiveEconomyVaultAPI(liteEco), liteEco, ServicePriority.Highest)
-            liteEco.server.servicesManager.register(net.milkbowl.vault2.economy.Economy::class.java, AdaptiveEconomyVaultUnlockedAPI(liteEco), liteEco, ServicePriority.Highest)
-            liteEco.logger.info("Vault is registered, LiteEco now working like a provider !")
+            try {
+                liteEco.server.servicesManager.register(net.milkbowl.vault2.economy.Economy::class.java, AdaptiveEconomyVaultUnlockedAPI(liteEco), liteEco, ServicePriority.Highest)
+                liteEco.logger.info("VaultUnlocked is registered, LiteEco now using v2 modern economy provider !")
+            } catch (e : Exception) {
+                liteEco.server.servicesManager.register(Economy::class.java, AdaptiveEconomyVaultAPI(liteEco), liteEco, ServicePriority.Highest)
+                liteEco.logger.info("Vault is registered, LiteEco using old v1 implementation of vault api. !")
+                liteEco.logger.info("For multi currencies support please download VaultUnlocked. !")
+            }
         } else {
-            liteEco.logger.warning("Warning plugin Vault not found !")
-            liteEco.logger.warning("For better experience please download Vault.")
-            liteEco.logger.warning("Keep in mind without Vault, LiteEco can't use API from Vault.")
+            liteEco.logger.warning("Warning plugin Vault or VaultUnlocked not found !")
+            liteEco.logger.warning("For better experience please download Vault or VaultUnlocked.")
+            liteEco.logger.warning("Keep in mind without Vault, LiteEco can't use API from VaultAPI.")
         }
     }
 

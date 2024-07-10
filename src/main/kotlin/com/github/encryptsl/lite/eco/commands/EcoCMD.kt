@@ -240,10 +240,10 @@ class EcoCMD(private val liteEco: LiteEco) {
         @Argument(value = "currency", suggestions = "currencies") @Default("dollars") currency: String
     ) {
         val migrationTool = MigrationTool(liteEco)
-        val output = liteEco.api.getTopBalance().toList().positionIndexed { index, k -> MigrationTool.MigrationData(index, Bukkit.getOfflinePlayer(k.first).name.toString(), k.first, k.second) }
+        val output = liteEco.api.getTopBalance(currency).toList().positionIndexed { index, k -> MigrationTool.MigrationData(index, Bukkit.getOfflinePlayer(k.first).name.toString(), k.first, k.second) }
 
         val result = when(migrationKey) {
-            MigrationKey.CSV -> migrationTool.migrateToCSV(output, "economy_migration")
+            MigrationKey.CSV -> migrationTool.migrateToCSV(output, "economy_migration", currency)
             MigrationKey.SQL -> migrationTool.migrateToSQL(output, "economy_migration", currency)
         }
 
@@ -256,7 +256,8 @@ class EcoCMD(private val liteEco: LiteEco) {
         commandSender.sendMessage(
             liteEco.locale.translation(messageKey,
             TagResolver.resolver(
-                Placeholder.parsed("type", migrationKey.name)
+                Placeholder.parsed("type", migrationKey.name),
+                Placeholder.parsed("currency", currency)
             )
         ))
     }

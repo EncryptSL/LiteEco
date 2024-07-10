@@ -11,10 +11,10 @@ import java.time.format.DateTimeFormatter
 
 class MigrationTool(private val liteEco: LiteEco) {
 
-    enum class MigrationKey { CSV, SQL, }
+    enum class MigrationKey { CSV, SQL }
 
-    fun migrateToCSV(data: List<MigrationData>, fileName: String): Boolean {
-        val file = File("${liteEco.dataFolder}/migration/", "${fileName}_${dateTime()}.csv")
+    fun migrateToCSV(data: List<MigrationData>, fileName: String, currency: String = "dollars"): Boolean {
+        val file = File("${liteEco.dataFolder}/migration/", "${fileName}_${currency}_${dateTime()}.csv")
 
         return try {
             file.parentFile.mkdirs()
@@ -32,13 +32,13 @@ class MigrationTool(private val liteEco: LiteEco) {
         }
     }
 
-    fun migrateToSQL(data: List<MigrationData>, fileName: String, currency: String = "dollar"): Boolean {
-        val file = File("${liteEco.dataFolder}/migration/", "${fileName}_${dateTime()}.sql")
+    fun migrateToSQL(data: List<MigrationData>, fileName: String, currency: String = "dollars"): Boolean {
+        val file = File("${liteEco.dataFolder}/migration/", "${fileName}_${currency}_${dateTime()}.sql")
 
         return try {
             file.parentFile.mkdirs()
             PrintWriter(FileWriter(file)).use { writer ->
-                writer.println("DROP TABLE IF EXISTS lite_eco;")
+                writer.println("DROP TABLE IF EXISTS lite_eco_$currency;")
                 writer.println("CREATE TABLE lite_eco_$currency (id INT, username, uuid VARCHAR(36), money BigDecimal);")
                 val insertStatements = data.joinToString {
                     "\n(${it.id}, '${it.username}', '${it.uuid}', ${it.money})"
