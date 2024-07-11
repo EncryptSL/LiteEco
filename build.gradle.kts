@@ -41,7 +41,6 @@ dependencies {
     compileOnly("org.jetbrains.exposed:exposed-core:0.52.0")
     compileOnly("org.jetbrains.exposed:exposed-jdbc:0.52.0")
     compileOnly("org.jetbrains.exposed:exposed-kotlin-datetime:0.52.0")
-    compileOnly("com.crossoid:kotlin-native-bigdecimal:1.0")
     compileOnly("com.squareup.okhttp3:okhttp:4.12.0")
     compileOnly("me.hsgamer:bettereconomy:3.1")
     compileOnly("net.milkbowl.vault:VaultUnlockedAPI:2.2")
