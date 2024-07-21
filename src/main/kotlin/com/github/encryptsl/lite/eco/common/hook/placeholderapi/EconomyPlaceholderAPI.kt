@@ -79,7 +79,7 @@ class EconomyPlaceholderAPI(private val liteEco: LiteEco, private val extVersion
     }
 
     private fun extractPlaceholderIdentifierName(position: Int, args: List<String>): String {
-        return Optional.ofNullable(extractPlaceholderIdentifierName(position, args))
+        return Optional.ofNullable(args.getOrNull(position))
             .orElse(liteEco.currencyImpl.defaultCurrency())
     }
 
