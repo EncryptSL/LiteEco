@@ -36,42 +36,41 @@ class EconomyPlaceholderAPI(private val liteEco: LiteEco, private val extVersion
                 when {
                     identifier.startsWith("balance_") -> {
                         if (identifier.startsWith("balance_formatted_")) {
-                            val currency = Optional.ofNullable(extractPlaceholderIdentifierName(2,args))
-                                .orElse(liteEco.currencyImpl.defaultCurrency())
+                            val currency = extractPlaceholderIdentifierName(2, args)
                             return liteEco.api.fullFormatting(liteEco.api.getBalance(player, currency), currency)
                         }
 
                         if (identifier.startsWith("balance_compacted_")) {
-                            val currency = Optional.ofNullable(extractPlaceholderIdentifierName(2,args))
-                                .orElse(liteEco.currencyImpl.defaultCurrency())
+                            val currency = extractPlaceholderIdentifierName(2, args)
                             return liteEco.api.compacted(liteEco.api.getBalance(player, currency))
-
                         }
-                        val currency = Optional.ofNullable(extractPlaceholderIdentifierName(1, args))
-                            .orElse(liteEco.currencyImpl.defaultCurrency())
+                        val currency = extractPlaceholderIdentifierName(1, args)
 
                         return liteEco.api.getBalance(player, currency).toString()
                     }
                     identifier.startsWith("top_rank_player_") -> {
-                        val currency = Optional.ofNullable(extractPlaceholderIdentifierName(3,args))
-                            .orElse(liteEco.currencyImpl.defaultCurrency())
+                        val currency = extractPlaceholderIdentifierName(3, args)
                         return nameByRank(1, currency)
                     }
                 }
                 return rank?.let {
                     when {
-                        identifier.startsWith("top_formatted_") ->
-                            liteEco.api.fullFormatting(balanceByRank(rank, Optional.ofNullable(extractPlaceholderIdentifierName(3,args))
-                                .orElse(liteEco.currencyImpl.defaultCurrency())))
-                        identifier.startsWith("top_compacted_") ->
-                            liteEco.api.compacted(balanceByRank(rank, Optional.ofNullable(extractPlaceholderIdentifierName(3,args))
-                                .orElse(liteEco.currencyImpl.defaultCurrency())))
-                        identifier.startsWith("top_balance_") ->
-                            balanceByRank(rank, Optional.ofNullable(extractPlaceholderIdentifierName(3,args))
-                                .orElse(liteEco.currencyImpl.defaultCurrency())).toString()
-                        identifier.startsWith("top_player_") ->
-                            nameByRank(rank, Optional.ofNullable(extractPlaceholderIdentifierName(3,args))
-                                .orElse(liteEco.currencyImpl.defaultCurrency()))
+                        identifier.startsWith("top_formatted_") -> {
+                            val currency = extractPlaceholderIdentifierName(3, args)
+                            return liteEco.api.fullFormatting(balanceByRank(rank, currency), currency)
+                        }
+                        identifier.startsWith("top_compacted_") -> {
+                            val currency = extractPlaceholderIdentifierName(3, args)
+                            return liteEco.api.compacted(balanceByRank(rank, currency))
+                        }
+                        identifier.startsWith("top_balance_") -> {
+                            val currency = extractPlaceholderIdentifierName(3, args)
+                            return balanceByRank(rank, currency).toString()
+                        }
+                        identifier.startsWith("top_player_") -> {
+                            val currency = extractPlaceholderIdentifierName(3, args)
+                            return nameByRank(rank, currency)
+                        }
                         else -> null
                     }
                 }
@@ -79,8 +78,9 @@ class EconomyPlaceholderAPI(private val liteEco: LiteEco, private val extVersion
         }
     }
 
-    private fun extractPlaceholderIdentifierName(position: Int, list: List<String>): String? {
-        return list.getOrNull(position)
+    private fun extractPlaceholderIdentifierName(position: Int, args: List<String>): String {
+        return Optional.ofNullable(extractPlaceholderIdentifierName(position, args))
+            .orElse(liteEco.currencyImpl.defaultCurrency())
     }
 
     private fun nameByRank(rank: Int, currency: String): String {
