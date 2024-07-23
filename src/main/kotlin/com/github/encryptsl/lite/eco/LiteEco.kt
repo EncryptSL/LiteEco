@@ -64,12 +64,11 @@ class LiteEco : JavaPlugin() {
             .createConfig("config.yml", CONFIG_VERSION)
         locale
             .loadCurrentTranslation()
-        DatabaseConnector(this)
-            .initConnect(
-                config.getString("database.connection.jdbc_url") ?: "jdbc:sqlite:plugins/LiteEco/database.db",
-                config.getString("database.connection.username") ?: "root",
-                config.getString("database.connection.password") ?: "admin"
-            )
+        DatabaseConnector(this).initConnect(
+            config.getString("database.connection.jdbc_url") ?: "jdbc:sqlite:plugins/LiteEco/database.db",
+            config.getString("database.connection.username") ?: "root",
+            config.getString("database.connection.password") ?: "admin"
+        )
     }
 
     override fun onEnable() {

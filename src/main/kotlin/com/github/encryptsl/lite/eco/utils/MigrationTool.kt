@@ -1,6 +1,7 @@
 package com.github.encryptsl.lite.eco.utils
 
 import com.github.encryptsl.lite.eco.LiteEco
+import com.github.encryptsl.lite.eco.common.database.models.legacy.LegacyDatabaseEcoModel
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
@@ -11,7 +12,7 @@ import java.time.format.DateTimeFormatter
 
 class MigrationTool(private val liteEco: LiteEco) {
 
-    enum class MigrationKey { CSV, SQL }
+    enum class MigrationKey { CSV, SQL, LEGACY_TABLE }
 
     fun migrateToCSV(data: List<MigrationData>, fileName: String, currency: String = "dollars"): Boolean {
         val file = File("${liteEco.dataFolder}/migration/", "${fileName}_${currency}_${dateTime()}.csv")
@@ -39,7 +40,7 @@ class MigrationTool(private val liteEco: LiteEco) {
             file.parentFile.mkdirs()
             PrintWriter(FileWriter(file)).use { writer ->
                 writer.println("DROP TABLE IF EXISTS lite_eco_$currency;")
-                writer.println("CREATE TABLE lite_eco_$currency (id INT, username, uuid VARCHAR(36), money BigDecimal);")
+                writer.println("CREATE TABLE lite_eco_$currency (id INT, username, uuid VARCHAR(36), money DECIMAL(19,8));")
                 val insertStatements = data.joinToString {
                     "\n(${it.id}, '${it.username}', '${it.uuid}', ${it.money})"
                 }
@@ -51,6 +52,11 @@ class MigrationTool(private val liteEco: LiteEco) {
             e.printStackTrace()
             false
         }
+    }
+
+    fun migrateLegacyTable(currency: String): Boolean {
+        val legacyDatabaseEcoModel = LegacyDatabaseEcoModel(liteEco)
+        return legacyDatabaseEcoModel.convertOldBalance(currency)
     }
 
     private fun dateTime(): String {

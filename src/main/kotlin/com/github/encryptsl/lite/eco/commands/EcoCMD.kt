@@ -239,27 +239,39 @@ class EcoCMD(private val liteEco: LiteEco) {
         @Argument(value = "argument", suggestions = "migrationKeys") migrationKey: MigrationKey,
         @Argument(value = "currency", suggestions = "currencies") @Default("dollars") currency: String
     ) {
-        val migrationTool = MigrationTool(liteEco)
-        val output = liteEco.api.getTopBalance(currency).toList().positionIndexed { index, k -> MigrationTool.MigrationData(index, Bukkit.getOfflinePlayer(k.first).name.toString(), k.first, k.second) }
+        try {
+            val migrationTool = MigrationTool(liteEco)
+            val output = liteEco.api.getTopBalance(currency.lowercase()).toList().positionIndexed { index, k ->
+                MigrationTool.MigrationData(
+                    index,
+                    Bukkit.getOfflinePlayer(k.first).name.toString(),
+                    Bukkit.getOfflinePlayer(k.first).uniqueId.toString(),
+                    k.second
+                )
+            }
 
-        val result = when(migrationKey) {
-            MigrationKey.CSV -> migrationTool.migrateToCSV(output, "economy_migration", currency)
-            MigrationKey.SQL -> migrationTool.migrateToSQL(output, "economy_migration", currency)
+            val result = when(migrationKey) {
+                MigrationKey.CSV -> migrationTool.migrateToCSV(output, "economy_migration", currency.lowercase())
+                MigrationKey.SQL -> migrationTool.migrateToSQL(output, "economy_migration", currency.lowercase())
+                MigrationKey.LEGACY_TABLE -> migrationTool.migrateLegacyTable(currency.lowercase())
+            }
+
+            val messageKey = if (result) {
+                "messages.admin.migration_success"
+            } else {
+                "messages.error.migration_failed"
+            }
+
+            commandSender.sendMessage(
+                liteEco.locale.translation(messageKey,
+                    TagResolver.resolver(
+                        Placeholder.parsed("type", migrationKey.name),
+                        Placeholder.parsed("currency", currency)
+                    )
+                ))
+        } catch (e : Exception) {
+            liteEco.logger.severe(e.message ?: e.localizedMessage)
         }
-
-        val messageKey = if (result) {
-            "messages.admin.migration_success"
-        } else {
-            "messages.error.migration_failed"
-        }
-
-        commandSender.sendMessage(
-            liteEco.locale.translation(messageKey,
-            TagResolver.resolver(
-                Placeholder.parsed("type", migrationKey.name),
-                Placeholder.parsed("currency", currency)
-            )
-        ))
     }
 
     @Command("eco convert <economy> [currency]")
