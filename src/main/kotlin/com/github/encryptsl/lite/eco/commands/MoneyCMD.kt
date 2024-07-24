@@ -99,16 +99,14 @@ class MoneyCMD(private val liteEco: LiteEco) {
                 Placeholder.parsed("max_page", pagination.maxPages.toString()))
             )
 
+        commandSender.sendMessage(liteEco.locale.translation("messages.balance.top_header", TagResolver.resolver(
+            Placeholder.parsed("page", pagination.currentPage().toString()),
+            Placeholder.parsed("max_page", pagination.maxPages.toString())
+        )))
         for (content in pagination.display()) {
-            commandSender.sendMessage(
-                liteEco.locale.translation("messages.balance.top_header", TagResolver.resolver(
-                    Placeholder.parsed("page", pagination.currentPage().toString()),
-                    Placeholder.parsed("max_page", pagination.maxPages.toString())
-                )).appendNewline()
-                    .append(content)
-                    .appendNewline()
-                    .append(liteEco.locale.translation("messages.balance.top_footer")))
+            commandSender.sendMessage(content)
         }
+        commandSender.sendMessage(liteEco.locale.translation("messages.balance.top_footer"))
     }
 
     @ProxiedBy("pay")
