@@ -11,10 +11,11 @@ import org.jetbrains.exposed.sql.*
 class DatabaseConnector(private val liteEco: LiteEco) : DatabaseConnectorProvider {
     override fun initConnect(jdbcHost: String, user: String, pass: String) {
         val config = HikariDataSource().apply {
-            maximumPoolSize = 10
             jdbcUrl = jdbcHost
             username = user
             password = pass
+            poolName = liteEco.javaClass.simpleName
+            maximumPoolSize = 10
         }
 
         Database.connect(config)
