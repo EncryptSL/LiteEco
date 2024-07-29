@@ -173,7 +173,7 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
         val player = Bukkit.getOfflinePlayer(uuid)
 
         return if (has(pluginName, player.uniqueId, amount)) {
-            liteEco.api.withDrawMoney(player, liteEco.currencyImpl.defaultCurrency(), amount)
+            liteEco.api.depositMoney(player, liteEco.currencyImpl.defaultCurrency(), amount)
             EconomyResponse(amount, getBalance(pluginName, player.uniqueId), EconomyResponse.ResponseType.SUCCESS, null)
         } else {
             EconomyResponse(amount, getBalance(pluginName, player.uniqueId), EconomyResponse.ResponseType.FAILURE, null)
@@ -201,7 +201,7 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
             val player = Bukkit.getOfflinePlayer(uuid)
 
             return if (has(pluginName, player.uniqueId, amount)) {
-                liteEco.api.withDrawMoney(player, currency, amount)
+                liteEco.api.depositMoney(player, currency, amount)
                 EconomyResponse(amount, getBalance(pluginName, player.uniqueId, null, currency), EconomyResponse.ResponseType.SUCCESS, null)
             } else {
                 EconomyResponse(amount, getBalance(pluginName, player.uniqueId, null, currency), EconomyResponse.ResponseType.FAILURE, null)
