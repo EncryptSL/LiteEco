@@ -63,6 +63,7 @@ class HookManager(private val liteEco: LiteEco) {
     fun hookVault() {
         if (isPluginInstalled("Vault")) {
             try {
+                liteEco.server.servicesManager.register(Economy::class.java, AdaptiveEconomyVaultAPI(liteEco), liteEco, ServicePriority.Highest)
                 liteEco.server.servicesManager.register(net.milkbowl.vault2.economy.Economy::class.java, AdaptiveEconomyVaultUnlockedAPI(liteEco), liteEco, ServicePriority.Highest)
                 liteEco.logger.info("VaultUnlocked is registered, LiteEco now using v2 modern economy provider !")
             } catch (e : Exception) {

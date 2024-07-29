@@ -12,16 +12,13 @@ object PlayerAccount : AccountAPI {
 
     private val databaseEcoModel: DatabaseEcoModel by lazy { DatabaseEcoModel() }
     private val cache: HashMap<UUID, HashMap<String, BigDecimal>> = HashMap()
-    private val wallet: HashMap<String, BigDecimal> = HashMap()
 
 
     override fun cacheAccount(uuid: UUID, currency: String, value: BigDecimal) {
         if (!isAccountCached(uuid)) {
-            wallet[currency] = value
-            cache[uuid] = wallet
+            cache[uuid] = getHashMapCurrency().apply { this[currency] = value }
         } else {
-            wallet[currency] = value
-            cache[uuid] = wallet
+            cache[uuid]?.computeIfPresent(currency) { _, _ -> value }
         }
     }
 
@@ -77,4 +74,9 @@ object PlayerAccount : AccountAPI {
     override fun isPlayerOnline(uuid: UUID): Boolean {
         return Bukkit.getPlayer(uuid) != null
     }
+
+    private fun getHashMapCurrency(): HashMap<String, BigDecimal> {
+        return HashMap()
+    }
+
 }
