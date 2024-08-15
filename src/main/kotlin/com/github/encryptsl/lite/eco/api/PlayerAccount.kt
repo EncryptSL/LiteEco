@@ -50,12 +50,9 @@ object PlayerAccount : AccountAPI {
     override fun syncAccounts() {
         try {
             if (cache.isEmpty()) return
-            for (entry in cache.entries) {
-                for (value in entry.value) {
-                    syncAccount(entry.key, value.key, value.value)
-                }
+            for (entry in cache) {
+                syncAccount(entry.key)
             }
-            cache.clear()
         } catch (e : Exception) {
             LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
         }

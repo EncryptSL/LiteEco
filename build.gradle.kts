@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    kotlin("jvm") version "2.0.0" apply true
+    kotlin("jvm") version "2.0.10" apply true
     id("io.github.goooler.shadow") version "8.1.8"
     id("maven-publish")
 }
@@ -31,16 +31,16 @@ kotlin {
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:${providers.gradleProperty("server_version").get()}")
-    compileOnly(kotlin("stdlib", "2.0.0"))
+    compileOnly(kotlin("stdlib", "2.0.10"))
     compileOnly("me.lokka30:treasury-api:2.0.0")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
         exclude("org.bukkit", "bukkit")
     }
     compileOnly("com.zaxxer:HikariCP:5.1.0")
     compileOnly("me.clip:placeholderapi:2.11.5")
-    compileOnly("org.jetbrains.exposed:exposed-core:0.52.0")
-    compileOnly("org.jetbrains.exposed:exposed-jdbc:0.52.0")
-    compileOnly("org.jetbrains.exposed:exposed-kotlin-datetime:0.52.0")
+    compileOnly("org.jetbrains.exposed:exposed-core:0.53.0")
+    compileOnly("org.jetbrains.exposed:exposed-jdbc:0.53.0")
+    compileOnly("org.jetbrains.exposed:exposed-kotlin-datetime:0.53.0")
     compileOnly("com.squareup.okhttp3:okhttp:4.12.0")
     compileOnly("me.hsgamer:bettereconomy:3.1")
     compileOnly("net.milkbowl.vault:VaultUnlockedAPI:2.2")

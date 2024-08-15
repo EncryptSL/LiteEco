@@ -14,6 +14,8 @@ import org.bukkit.plugin.ServicePriority
 
 class HookManager(private val liteEco: LiteEco) {
 
+    private val serviceManager = liteEco.server.servicesManager
+
     /**
      * Method for disable plugin if is detected unsupported plugin.
      * @param plugins
@@ -62,12 +64,11 @@ class HookManager(private val liteEco: LiteEco) {
 
     fun hookVault() {
         if (isPluginInstalled("Vault")) {
+            serviceManager.register(Economy::class.java, AdaptiveEconomyVaultAPI(liteEco), liteEco, ServicePriority.Highest)
             try {
-                liteEco.server.servicesManager.register(Economy::class.java, AdaptiveEconomyVaultAPI(liteEco), liteEco, ServicePriority.Highest)
-                liteEco.server.servicesManager.register(net.milkbowl.vault2.economy.Economy::class.java, AdaptiveEconomyVaultUnlockedAPI(liteEco), liteEco, ServicePriority.Highest)
+                serviceManager.register(net.milkbowl.vault2.economy.Economy::class.java, AdaptiveEconomyVaultUnlockedAPI(liteEco), liteEco, ServicePriority.Highest)
                 liteEco.logger.info("VaultUnlocked is registered, LiteEco now using v2 modern economy provider !")
-            } catch (e : Exception) {
-                liteEco.server.servicesManager.register(Economy::class.java, AdaptiveEconomyVaultAPI(liteEco), liteEco, ServicePriority.Highest)
+            } catch (e : NoClassDefFoundError) {
                 liteEco.logger.info("Vault is registered, LiteEco using old v1 implementation of vault api. !")
                 liteEco.logger.info("For multi currencies support please download VaultUnlocked. !")
             }
