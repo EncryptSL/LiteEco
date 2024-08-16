@@ -40,11 +40,11 @@ class MigrationTool(private val liteEco: LiteEco) {
             file.parentFile.mkdirs()
             PrintWriter(FileWriter(file)).use { writer ->
                 writer.println("DROP TABLE IF EXISTS lite_eco_$currency;")
-                writer.println("CREATE TABLE lite_eco_$currency (id INT, username, uuid VARCHAR(36), money DECIMAL(19,8));")
-                val insertStatements = data.joinToString {
-                    "\n(${it.id}, '${it.username}', '${it.uuid}', ${it.money})"
+                writer.println("CREATE TABLE lite_eco_$currency (id INT(11), username VARCHAR(36), uuid BINARY(16), money DECIMAL(18,9));")
+                val insertStatements = data.toList().joinToString {
+                    "\n(${it.id}, '${it.username}', ${it.uuid}, ${it.money})"
                 }
-                writer.println("INSERT INTO lite_eco (id, username, uuid, money) VALUES $insertStatements;")
+                writer.println("INSERT INTO lite_eco_$currency (id, username, uuid, money) VALUES $insertStatements;")
             }
             true
         } catch (e: IOException) {

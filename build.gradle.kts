@@ -61,8 +61,8 @@ dependencies {
     testImplementation(kotlin("test", "2.0.0"))
     testImplementation("com.zaxxer:HikariCP:5.1.0")
     testImplementation("org.xerial:sqlite-jdbc:3.42.0.0")
-    testImplementation("org.jetbrains.exposed:exposed-core:0.50.1")
-    testImplementation("org.jetbrains.exposed:exposed-jdbc:0.50.1")
+    testImplementation("org.jetbrains.exposed:exposed-core:0.53.0")
+    testImplementation("org.jetbrains.exposed:exposed-jdbc:0.53.0")
 }
 
 sourceSets {
