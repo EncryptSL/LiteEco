@@ -42,9 +42,10 @@ class MigrationTool(private val liteEco: LiteEco) {
                 writer.println("DROP TABLE IF EXISTS lite_eco_$currency;")
                 writer.println("CREATE TABLE lite_eco_$currency (id INT(11), username VARCHAR(36), uuid BINARY(16), money DECIMAL(18,9));")
                 val insertStatements = data.toList().joinToString {
-                    "\n(${it.id}, '${it.username}', ${it.uuid}, ${it.money})"
+                    "\n(${it.id}, '${it.username}', 0x${it.uuid.replace("-", "")}, ${it.money})"
                 }
                 writer.println("INSERT INTO lite_eco_$currency (id, username, uuid, money) VALUES $insertStatements;")
+                writer.println("ALTER TABLE `lite_eco_$currency` ADD PRIMARY KEY(`id`);")
             }
             true
         } catch (e: IOException) {
