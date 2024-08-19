@@ -37,7 +37,7 @@ class SQLFileExporter(private val plugin: Plugin, private val fileName: String, 
             PrintWriter(FileWriter(file)).use { writer ->
                 writer.println("CREATE TABLE lite_eco_$currency (id INT(11), username VARCHAR(36), uuid BINARY(16), money DECIMAL(18,9));")
                 val insertStatements = balances.joinToString {
-                    "\n(${it.id}, '${it.username}', X${it.uuid.toString().replace("-", "")}, ${it.money})"
+                    "\n(${it.id}, '${it.username}', X'${it.uuid.toString().replace("-", "")}', ${it.money})"
                 }
                 writer.println("INSERT INTO lite_eco_$currency (id, username, uuid, money) VALUES $insertStatements;")
             }
