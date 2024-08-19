@@ -43,9 +43,9 @@ class ConvertLegacyToNew {
                 writer.println("DROP TABLE IF EXISTS lite_eco_$currency;")
                 writer.println("CREATE TABLE lite_eco_$currency (id INT(11), username VARCHAR(36), uuid BINARY(16), money DECIMAL(18,9));")
                 val insertStatements = data.toList().joinToString {
-                    "\n(${it.second.id}, '${it.second.username}', 0x${it.first.toString().replace("-", "")}, ${it.second.money})"
+                    "\n('${it.second.username}', 0x${it.first.toString().replace("-", "")}, ${it.second.money})"
                 }
-                writer.println("INSERT INTO lite_eco_$currency (id, username, uuid, money) VALUES $insertStatements;")
+                writer.println("INSERT INTO lite_eco_$currency (username, uuid, money) VALUES $insertStatements;")
                 writer.println("ALTER TABLE `lite_eco_$currency` ADD PRIMARY KEY(`id`);")
             }
             true
