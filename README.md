@@ -26,6 +26,7 @@ With an intuitive command interface designed for both console and in-game usage,
 - **Seamless Integration with VaultAPI:** :heavy_check_mark:
 
   - LiteEco effortlessly works with [VaultAPI][Vault] for smooth and reliable economy transactions.
+  - LiteEco works with [VaultUnlocked][VaultUnlocked] for multicurrency support. **Since 1.4.8 and newer versions...**
 
 - **Convenient PlaceholderAPI Integration:** :heavy_check_mark:
 
