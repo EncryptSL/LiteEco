@@ -5,6 +5,7 @@ import com.github.encryptsl.lite.eco.api.ComponentPaginator
 import com.github.encryptsl.lite.eco.api.enums.CheckLevel
 import com.github.encryptsl.lite.eco.api.enums.PurgeKey
 import com.github.encryptsl.lite.eco.api.events.admin.*
+import com.github.encryptsl.lite.eco.api.migrator.entity.PlayerBalances
 import com.github.encryptsl.lite.eco.api.objects.ModernText
 import com.github.encryptsl.lite.eco.common.config.Locales
 import com.github.encryptsl.lite.eco.common.extensions.convertInstant
@@ -242,18 +243,14 @@ class EcoCMD(private val liteEco: LiteEco) {
         try {
             val migrationTool = MigrationTool(liteEco)
             val output = liteEco.api.getTopBalance(currency.lowercase()).toList().positionIndexed { index, k ->
-                MigrationTool.MigrationData(
-                    index,
-                    Bukkit.getOfflinePlayer(k.first).name.toString(),
-                    Bukkit.getOfflinePlayer(k.first).uniqueId.toString(),
-                    k.second
-                )
+                PlayerBalances.PlayerBalance(index, Bukkit.getOfflinePlayer(k.first).uniqueId, Bukkit.getOfflinePlayer(k.first).name.toString(), k.second)
             }
 
             val result = when(migrationKey) {
-                MigrationKey.CSV -> migrationTool.migrateToCSV(output, "economy_migration", currency.lowercase())
-                MigrationKey.SQL -> migrationTool.migrateToSQL(output, "economy_migration", currency.lowercase())
-                MigrationKey.LEGACY_TABLE -> migrationTool.migrateLegacyTable(currency.lowercase())
+                MigrationKey.CSV -> migrationTool.getCSVFileExporter("economy_migration", currency.lowercase()).exportToCsvFile(output)
+                MigrationKey.SQL -> migrationTool.getSQLFileExporter("economy_migration", currency.lowercase()).exportToSQLFile(output)
+                MigrationKey.LEGACY_TABLE -> migrationTool.getLegacyTableExporter(currency.lowercase()).exportToLiteEcoDollarsTable()
+                MigrationKey.SQL_LITE_FILE -> migrationTool.getSQLFileExporter("economy_migration_sql_lite", currency.lowercase()).exportToSQLFileLite(output)
             }
 
             val messageKey = if (result) {
@@ -262,13 +259,12 @@ class EcoCMD(private val liteEco: LiteEco) {
                 "messages.error.migration_failed"
             }
 
-            commandSender.sendMessage(
-                liteEco.locale.translation(messageKey,
-                    TagResolver.resolver(
-                        Placeholder.parsed("type", migrationKey.name),
-                        Placeholder.parsed("currency", currency)
-                    )
-                ))
+            commandSender.sendMessage(liteEco.locale.translation(messageKey,
+                TagResolver.resolver(
+                    Placeholder.parsed("type", migrationKey.name),
+                    Placeholder.parsed("currency", currency)
+                )
+            ))
         } catch (e : Exception) {
             liteEco.logger.severe(e.message ?: e.localizedMessage)
         }
