@@ -13,7 +13,7 @@ plugin:
   offline-suggestion-players: true
 
 economy:
-  currencies:
+  currencies: # Since 1.4.8 to newer versions
     # Don't change this currency because this is implemented for vault....
     # Key of currencies is name of table please don't change this value if you don't want to lose data.
     dollars:
