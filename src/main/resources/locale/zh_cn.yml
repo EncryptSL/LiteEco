@@ -1,0 +1,118 @@
+messages:
+  # 余额消息
+  balance:
+    format: "<prefix> <white>你拥有 <green><money></green> <currency> . [!]"
+    format_target: "<prefix> <white>玩家 <#13AFFE><target></#13AFFE> 拥有 <green><money></green> <gold><currency><gold>. [!]"
+    top_format: "<yellow><position># <gold><player></gold> <gray>- <green><money></green>"
+    top_header: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>排行榜</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray> <red><page>/<max_page>"
+    top_footer: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>排行榜</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray>"
+
+  # 转账消息
+  self:
+    add_money: "<prefix> <white>你向自己的账户中添加了 <green><money></green> <currency>."
+    withdraw_money: "<prefix> <white>你从自己的账户中取出了 <green><money></green> <currency>."
+    set_money: "<prefix> <white>你将自己的账户 <currency> 余额设置为了 <green><money></green>."
+
+  # 被操作方交易信息
+  target:
+    add_money: "<prefix> <gold><sender></gold> <white>支付了 <green><money></green> <currency>."
+    add_money_silent: "<gray>+ <green><money>"
+    withdraw_money: "<prefix> <gold><sender></gold> <white>从你的账户中支出了 <green><money></green> <currency>."
+    withdraw_money_silent: "<gray>- <red><money>"
+    set_money: "<prefix> <gold><sender></gold> <white>将你的账户 <currency> 余额设置为了 <green><money></green> ."
+
+  # 操作方交易信息
+  sender:
+    add_money: "<prefix> <white>你给予了玩家 <gold><target></gold> <green><money></green> <currency>."
+    withdraw_money: "<prefix> <white>你拿走了玩家 <gold><target></gold> <green><money></green> <currency>."
+    set_money: "<prefix> <white>你将玩家 <gold><target></gold> 的 <currency> 数量设置为了 <green><money></green>."
+
+  # 全局操作消息 (发送给操作者)
+  global:
+    add_money: "<prefix> <white>你给予了所有玩家 <green><money></green> <currency>."
+    withdraw_money: "<prefix> <white>你从所有玩家账户中取出了 <green><money></green> <currency>."
+    set_money: "<prefix> <white>你将所有玩家的 <currency> 数量设置为了 <green><money></green>."
+
+  # 公告消息 (发送给被操作者)
+  broadcast:
+    add_money: "<prefix> <gold><sender></gold> <white>向所有玩家发放了 <green><money></green> <currency>."
+    withdraw_money: "<prefix> <gold><sender></gold> <white>向所有玩家收取了 <green><money></green> <currency>."
+    set_money: "<prefix> <gold><sender></gold> <white>将所有玩家的 <currency> 数量设置为了 <green><money></green>."
+
+  # 错误消息
+  error:
+    account_not_exist: "<prefix> <red>账号 <account> 不存在 [!]"
+    account_now_exist: "<prefix> <red>账号 <account> 已存在 [!]"
+    currency_not_exist: "<prefix> <red>货币 <currency> 不存在!"
+    format_amount: "<prefix> <red>数量无效. 请使用小数或缩写 (如 1K) [!]"
+    insufficient_funds: "<prefix> <red>余额不足! [!]"
+    maximum_page: "<red>最大页码为 <max_page>"
+    negative_amount: "<prefix> <red>请勿输入负数. [!]"
+    migration_argument: "<prefix> <red>参数 <参数> 无效或尚不可用."
+    migration_failed: "<prefix> <red>迁移过程遇到问题. 请检查控制台获取信息."
+    purge_argument: "<prefix> <red>参数 <参数> 无效或尚不可用."
+    purge_monolog_fail: "<prefix> <red>无法删除日志, 表为空 [!]"
+    player_is_null: "<prefix> <red>请输入有效的玩家名称 [!]"
+    self_pay: "<prefix> <red>你不能付款给自己 [!]"
+    convert_fail: "<prefix> <red>转化过程出现问题, 请查看控制台 [!]"
+    amount_above_limit: "<prefix> <red>交易数量超出服务器允许上限!"
+    balance_above_limit: "<prefix> <red>账号 <account> 持有的货币数量超出服务器允许上限!"
+
+  # 记录至表 lite_eco_monolog 的文本内容.
+  monolog:
+    admin:
+      normal:
+        deposit: "管理员 <sender> 向 <target> 存入: <money> <currency>"
+        set: "管理员 <sender> 对 <target> 设置: <money> <currency>"
+        withdraw: "管理员 <sender> 从 <target> 取出: <money> <currency>"
+      global:
+        deposit: "管理员 <sender> 向 <accounts> 个账户存入: <money> <currency>"
+        set: "管理员 <sender> 对 <accounts> 个账户设置: <money> <currency>"
+        withdraw: "管理员 <sender> 从 <accounts> 个账户取出: <money> <currency>"
+    player:
+      pay: "玩家 <sender> 支付给 <target>: <money> <currency>"
+
+  # 管理员命令
+  admin:
+    monolog_format: "<hover:show_text:'<dark_green>日期与时间: <green><timestamp>'><blue>[<level>] <gray><log></hover>"
+
+    create_account: "<prefix> <green>账号 <account> 已被创建 [!]"
+    config_reload: "<prefix> <green>配置成功重载 [!]"
+    translation_switch: "<prefix> <green>显示语言已切换为 <locale>."
+    translation_missing: "<prefix> <red><key> 对应文本确实. 请联系插件开发者."
+    purge_accounts: "<prefix> <green>所有玩家账户已被清理."
+    purge_null_accounts: "<prefix> <green>所有存在非法值的账户已被清理."
+    purge_default_accounts: "<prefix> <green>所有存在默认值的账户已被清理."
+    purge_monolog_success: "<prefix> <green>所有交易日志已被清理 [!]"
+    delete_account: "<prefix> <green>玩家 <account> 的账户已被删除!"
+    migration_success: "<prefix> <green>迁移 <type> 成功 [!]"
+    convert_success: "<prefix> <green>转化来自 <economy> 的 <converted> 个账户, 共计 <balances> 经济单位至 LiteEco 的操作已成功完成 [!]"
+
+  help:
+    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
+    - " "
+    - "<white>[+] <gray>/money help <white>-<#CFE7F0> 显示帮助列表"
+    - "<white>[+] <gray>/money top <#b37dc7>[页码] <white>-<#CFE7F0> 显示财富排行榜"
+    - "<white>[+] <gray>/money bal <yellow>[玩家名称] <#3EE84D>[货币类型] <white>-<#CFE7F0> 查询自己或其他玩家的余额"
+    - "<white>[+] <gray>/money pay <yellow>[玩家名称] <#3EE84D>[货币类型] <#3EE84D><数量> <white>-<#CFE7F0> 向其他玩家支付."
+    - " "
+    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
+
+  admin-help:
+    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix>  <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
+    - " "
+    - "<red>[★] <gray>/eco add <yellow>[玩家名称] <#3EE84D><数量> <#3EE84D>[货币类型] <white>-<#F39E9E> 增加指定玩家账户中的货币."
+    - "<red>[★] <gray>/eco set <yellow>[玩家名称] <#3EE84D><数量> <#3EE84D>[货币类型] <white>-<#F39E9E> 设置指定玩家账户中的货币."
+    - "<red>[★] <gray>/eco withdraw <yellow>[玩家名称] <#3EE84D><数量> <#3EE84D>[货币类型] <white>-<#F39E9E> 从指定玩家账户中取走货币."
+    - "<red>[★] <gray>/eco global add <#3EE84D><数量> <#3EE84D>[货币类型] <white>-<#F39E9E> 向所有玩家发放货币."
+    - "<red>[★] <gray>/eco global set <#3EE84D><数量> <#3EE84D>[货币类型] <white>-<#F39E9E> 设置所有玩家的货币数量."
+    - "<red>[★] <gray>/eco global withdraw <#3EE84D><数量> <#3EE84D>[货币类型] <white>-<#F39E9E> 向所有玩家收取货币."
+    - "<red>[★] <gray>/eco lang <#b37dc7>[语言] <white>-<#F39E9E> 切换语言."
+    - "<red>[★] <gray>/eco purge <#b37dc7><参数> <#3EE84D>[货币类型] <white>-<#F39E9E> 清除数据."
+    - "<red>[★] <gray>/eco migration <#b37dc7><参数> <#3EE84D>[货币类型] <white>-<#F39E9E> 迁移数据库至另一格式."
+    - "<red>[★] <gray>/eco convert <#b37dc7><参数> <#3EE84D>[货币类型] <white>-<#F39E9E> 从其他插件迁移至 LiteEco."
+    - "<red>[★] <gray>/eco reload <white>-<#F39E9E> 重载配置文件."
+    - " "
+    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
+
+version: 2.0.3
