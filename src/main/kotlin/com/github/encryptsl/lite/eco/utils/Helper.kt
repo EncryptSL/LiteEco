@@ -8,6 +8,8 @@ import com.github.encryptsl.lite.eco.common.extensions.isApproachingZero
 import com.github.encryptsl.lite.eco.common.extensions.isNegative
 import com.github.encryptsl.lite.eco.common.extensions.positionIndexed
 import com.github.encryptsl.lite.eco.common.extensions.toValidDecimal
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
@@ -40,14 +42,16 @@ class Helper(private val liteEco: LiteEco) {
         return log.join()
     }
 
-    fun getTopBalancesFormatted(currency: String): List<Component> {
-        return liteEco.api.getTopBalance(currency).toList().positionIndexed { index, pair ->
-            liteEco.locale.translation("messages.balance.top_format", TagResolver.resolver(
-                Placeholder.parsed("position", index.toString()),
-                Placeholder.parsed("player", pair.first),
-                Placeholder.parsed("money", liteEco.api.fullFormatting(pair.second, currency)),
-                Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, pair.second))
-            ))
+    suspend fun getTopBalancesFormatted(currency: String): List<Component> {
+        return withContext(Dispatchers.IO) {
+            liteEco.api.getTopBalance(currency).toList().positionIndexed { index, pair ->
+                liteEco.locale.translation("messages.balance.top_format", TagResolver.resolver(
+                    Placeholder.parsed("position", index.toString()),
+                    Placeholder.parsed("player", pair.first),
+                    Placeholder.parsed("money", liteEco.api.fullFormatting(pair.second, currency)),
+                    Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, pair.second))
+                ))
+            }
         }
     }
 
