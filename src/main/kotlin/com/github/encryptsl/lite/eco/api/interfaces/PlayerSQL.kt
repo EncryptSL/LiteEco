@@ -8,9 +8,10 @@ import java.util.concurrent.CompletableFuture
 interface PlayerSQL {
     fun createPlayerAccount(username: String, uuid: UUID, currency: String, money: BigDecimal)
     fun getUserByUUID(uuid: UUID, currency: String): CompletableFuture<User>
+    fun setPlayerNames(currency: String)
     fun deletePlayerAccount(uuid: UUID, currency: String)
     fun getExistPlayerAccount(uuid: UUID, currency: String): CompletableFuture<Boolean>
-    fun getTopBalance(currency: String): MutableMap<String, BigDecimal>
+    fun getTopBalance(currency: String): MutableMap<String, User>
     fun getUUIDNameMap(currency: String): MutableMap<UUID, String>
     fun getPlayersIds(currency: String): CompletableFuture<MutableCollection<UUID>>
     fun depositMoney(uuid: UUID, currency: String, money: BigDecimal)
