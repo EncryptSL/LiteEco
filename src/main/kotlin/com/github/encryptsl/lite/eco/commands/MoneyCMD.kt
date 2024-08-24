@@ -5,6 +5,7 @@ import com.github.encryptsl.lite.eco.api.ComponentPaginator
 import com.github.encryptsl.lite.eco.api.events.PlayerEconomyPayEvent
 import com.github.encryptsl.lite.eco.api.objects.ModernText
 import com.github.encryptsl.lite.eco.utils.Helper
+import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.OfflinePlayer
@@ -90,23 +91,31 @@ class MoneyCMD(private val liteEco: LiteEco) {
         if (!liteEco.currencyImpl.getCurrencyNameExist(currency))
             return commandSender.sendMessage(liteEco.locale.translation("messages.error.currency_not_exist", Placeholder.parsed("currency", currency)))
 
-        val topPlayers = helper.getTopBalancesFormatted(currency)
+        try {
+            runBlocking {
+                val topPlayers = helper.getTopBalancesFormatted(currency)
 
-        val pagination = ComponentPaginator(topPlayers) { itemsPerPage = 10 }.apply { page(page) }
+                val pagination = ComponentPaginator(topPlayers) { itemsPerPage = 10 }.apply { page(page) }
 
-        if (pagination.isAboveMaxPage(page))
-            return commandSender.sendMessage(liteEco.locale.translation("messages.error.maximum_page",
-                Placeholder.parsed("max_page", pagination.maxPages.toString()))
-            )
+                if (pagination.isAboveMaxPage(page))
+                    return@runBlocking commandSender.sendMessage(liteEco.locale.translation("messages.error.maximum_page",
+                        Placeholder.parsed("max_page", pagination.maxPages.toString()))
+                    )
 
-        commandSender.sendMessage(liteEco.locale.translation("messages.balance.top_header", TagResolver.resolver(
-            Placeholder.parsed("page", pagination.currentPage().toString()),
-            Placeholder.parsed("max_page", pagination.maxPages.toString())
-        )))
-        for (content in pagination.display()) {
-            commandSender.sendMessage(content)
+                val tagResolver = TagResolver.resolver(
+                    Placeholder.parsed("page", pagination.currentPage().toString()),
+                    Placeholder.parsed("max_page", pagination.maxPages.toString())
+                )
+                commandSender.sendMessage(liteEco.locale.translation("messages.balance.top_header", tagResolver))
+                for (content in pagination.display()) {
+                    commandSender.sendMessage(content)
+                }
+                commandSender.sendMessage(liteEco.locale.translation("messages.balance.top_footer", tagResolver))
+            }
+        } catch (e : Exception) {
+            liteEco.logger.severe(e.message ?: e.localizedMessage)
+            e.fillInStackTrace()
         }
-        commandSender.sendMessage(liteEco.locale.translation("messages.balance.top_footer"))
     }
 
     @ProxiedBy("pay")
