@@ -63,8 +63,24 @@ class LiteEcoEconomyImpl : LiteEconomyAPI {
         return future
     }
 
+    override fun getUserByUUID(uuid: UUID, currency: String): CompletableFuture<User> {
+        val future = CompletableFuture<User>()
+
+        if (PlayerAccount.isPlayerOnline(uuid) || PlayerAccount.isAccountCached(uuid)) {
+            future.completeAsync { User(uuid.toString(), uuid, PlayerAccount.getBalance(uuid, currency)) }
+        } else {
+            return databaseEcoModel.getUserByUUID(uuid, currency)
+        }
+
+        return future
+    }
+
     override fun getBalance(player: OfflinePlayer, currency: String): BigDecimal {
         return getUserByUUID(player, currency).join().money
+    }
+
+    override fun getBalance(uuid: UUID, currency: String): BigDecimal {
+        return getUserByUUID(uuid, currency).join().money
     }
 
     override fun getCheckBalanceLimit(amount: BigDecimal, currency: String): Boolean {
@@ -116,12 +132,13 @@ class LiteEcoEconomyImpl : LiteEconomyAPI {
     }
 
     override fun getTopBalance(currency: String): Map<String, BigDecimal> {
-        val databaseStoredBalance = databaseEcoModel.getTopBalance(currency).filterKeys { e -> Bukkit.getOfflinePlayer(e).hasPlayedBefore() }
-        return databaseStoredBalance
-            .mapValues { getBalance(Bukkit.getOfflinePlayer(it.key), currency) }
-            .toList()
-            .sortedByDescending { (_, e) -> e }.toMap()
+        val database = databaseEcoModel.getTopBalance(currency)
+            .mapValues { e -> if (PlayerAccount.isAccountCached(e.value.uuid)) PlayerAccount.getBalance(e.value.uuid, currency) else e.value.money}
+            .filterKeys { e -> !e.equals("NULL", true)  }.toList()
+
+        return database.sortedByDescending { (_, e) -> e }.toMap()
     }
+
 
     override fun getUUIDNameMap(currency: String): MutableMap<UUID, String> {
         return databaseEcoModel.getUUIDNameMap(currency)

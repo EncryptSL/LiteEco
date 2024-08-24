@@ -67,6 +67,15 @@ interface LiteEconomyAPI {
     fun getUserByUUID(player: OfflinePlayer, currency: String = "dollars"): CompletableFuture<User>
 
     /**
+     * Get user account
+     * @param uuid is UUID
+     * @param currency name of currency
+     * @return User
+     * @see OfflinePlayer
+     */
+    fun getUserByUUID(uuid: UUID, currency: String = "dollars"): CompletableFuture<User>
+
+    /**
      * Get balance of player account
      * @param player is OfflinePlayer
      * @param currency name of currency
@@ -74,6 +83,15 @@ interface LiteEconomyAPI {
      * @see OfflinePlayer
      */
     fun getBalance(player: OfflinePlayer, currency: String = "dollars"): BigDecimal
+
+    /**
+     * Get balance of player account
+     * @param uuid is UUID
+     * @param currency name of currency
+     * @return Double
+     * @see OfflinePlayer
+     */
+    fun getBalance(uuid: UUID, currency: String = "dollars"): BigDecimal
 
     /**
      * Get check limit of player balance.
