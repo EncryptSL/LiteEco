@@ -23,8 +23,9 @@ class DatabaseConnector(private val liteEco: LiteEco) : DatabaseConnectorProvide
         val currencyIterator = liteEco.currencyImpl.getCurrenciesKeys().iterator()
 
         while (currencyIterator.hasNext()) {
+            val currency = currencyIterator.next()
             loggedTransaction {
-                SchemaUtils.create(Account(currencyIterator.next()), MonologTable)
+                SchemaUtils.create(Account(currency), MonologTable)
             }
         }
     }
