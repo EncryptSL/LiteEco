@@ -4,8 +4,8 @@ messages:
     format: "<prefix> <white>你拥有 <green><money></green> <currency> . [!]"
     format_target: "<prefix> <white>玩家 <#13AFFE><target></#13AFFE> 拥有 <green><money></green> <gold><currency><gold>. [!]"
     top_format: "<yellow><position># <gold><player></gold> <gray>- <green><money></green>"
-    top_header: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>排行榜</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray> <red><page>/<max_page>"
-    top_footer: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>排行榜</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray>"
+    top_header: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>排行榜</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray>"
+    top_footer: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47><red><page>/<max_page></#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray>"
 
   # 转账消息
   self:
