@@ -16,9 +16,9 @@ import com.github.encryptsl.lite.eco.utils.ConvertEconomy.Economies
 import com.github.encryptsl.lite.eco.utils.Helper
 import com.github.encryptsl.lite.eco.utils.MigrationTool
 import com.github.encryptsl.lite.eco.utils.MigrationTool.MigrationKey
+import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
-import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import org.incendo.cloud.annotation.specifier.Range
@@ -241,30 +241,37 @@ class EcoCMD(private val liteEco: LiteEco) {
         @Argument(value = "currency", suggestions = "currencies") @Default("dollars") currency: String
     ) {
         try {
-            val migrationTool = MigrationTool(liteEco)
-            val output = liteEco.api.getTopBalance(currency.lowercase()).toList().positionIndexed { index, k ->
-                PlayerBalances.PlayerBalance(index, Bukkit.getOfflinePlayer(k.first).uniqueId, Bukkit.getOfflinePlayer(k.first).name.toString(), k.second)
-            }
+            runBlocking {
+                val timer = measureTimeMillis {
+                    val migrationTool = MigrationTool(liteEco)
 
-            val result = when(migrationKey) {
-                MigrationKey.CSV -> migrationTool.getCSVFileExporter("economy_migration", currency.lowercase()).exportToCsvFile(output)
-                MigrationKey.SQL -> migrationTool.getSQLFileExporter("economy_migration", currency.lowercase()).exportToSQLFile(output)
-                MigrationKey.LEGACY_TABLE -> migrationTool.getLegacyTableExporter(currency.lowercase()).exportToLiteEcoDollarsTable()
-                MigrationKey.SQL_LITE_FILE -> migrationTool.getSQLFileExporter("economy_migration_sql_lite", currency.lowercase()).exportToSQLFileLite(output)
-            }
+                    // This is better method to not crash server because data is exported from database and from game cache if is player connected and cached.
+                    val output = liteEco.api.getUUIDNameMap(currency.lowercase()).toList().positionIndexed { index, pair ->
+                        PlayerBalances.PlayerBalance(index, pair.first, pair.second, liteEco.api.getBalance(pair.first))
+                    }
 
-            val messageKey = if (result) {
-                "messages.admin.migration_success"
-            } else {
-                "messages.error.migration_failed"
-            }
+                    val result = when(migrationKey) {
+                        MigrationKey.CSV -> migrationTool.getCSVFileExporter("economy_migration", currency.lowercase()).exportToCsvFile(output)
+                        MigrationKey.SQL -> migrationTool.getSQLFileExporter("economy_migration", currency.lowercase()).exportToSQLFile(output)
+                        MigrationKey.LEGACY_TABLE -> migrationTool.getLegacyTableExporter(currency.lowercase()).exportToLiteEcoDollarsTable()
+                        MigrationKey.SQL_LITE_FILE -> migrationTool.getSQLFileExporter("economy_migration_sql_lite", currency.lowercase()).exportToSQLFileLite(output)
+                    }
 
-            commandSender.sendMessage(liteEco.locale.translation(messageKey,
-                TagResolver.resolver(
-                    Placeholder.parsed("type", migrationKey.name),
-                    Placeholder.parsed("currency", currency)
-                )
-            ))
+                    val messageKey = if (result) {
+                        "messages.admin.migration_success"
+                    } else {
+                        "messages.error.migration_failed"
+                    }
+
+                    commandSender.sendMessage(liteEco.locale.translation(messageKey,
+                        TagResolver.resolver(
+                            Placeholder.parsed("type", migrationKey.name),
+                            Placeholder.parsed("currency", currency)
+                        )
+                    ))
+                }
+                liteEco.logger.info("Exporting of ${migrationKey.name} elapsed $timer ms")
+            }
         } catch (e : Exception) {
             liteEco.logger.severe(e.message ?: e.localizedMessage)
         }
@@ -330,7 +337,7 @@ class EcoCMD(private val liteEco: LiteEco) {
         val data = liteEco.databaseEcoModel.getTopBalance(currency)
 
         commandSender.sendMessage("Accounts list " + data.entries.map { k -> k.key })
-        commandSender.sendMessage("Accounts balances " + data.entries.sumOf { it.value })
+        commandSender.sendMessage("Accounts balances " + data.entries.sumOf { it.value.money })
         commandSender.sendMessage("Accounts in database " + data.size.toString())
     }
 

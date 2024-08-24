@@ -4,6 +4,8 @@ import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.migrator.entity.PlayerBalances
 import com.github.encryptsl.lite.eco.common.database.tables.Account
 import com.github.encryptsl.lite.eco.common.database.tables.legacy.LegacyAccountTable
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -35,23 +37,25 @@ class LegacyDatabaseEcoModel(
         return playersBalances
     }
 
-    fun exportToLiteEcoDollarsTable() : Boolean {
-        return try {
+    suspend fun exportToLiteEcoDollarsTable() : Boolean {
+        return withContext(Dispatchers.IO) {
             transaction {
-                val table = Account(currency)
-                SchemaUtils.create(table)
-                getPlayerBalances().forEach { (t, u) ->
-                    table.insert {
-                        it[uuid] = t
-                        it[username] = u.username ?: "null"
-                        it[money] = u.money
+                try {
+                    val table = Account(currency)
+                    SchemaUtils.create(table)
+                    for (eco in getPlayerBalances()) {
+                        table.insert {
+                            it[uuid] = eco.key
+                            it[username] = eco.value.username ?: "null"
+                            it[money] = eco.value.money
+                        }
                     }
+                    return@transaction true
+                } catch (e : ExposedSQLException) {
+                    liteEco.loggerModel.error(e.sqlState)
+                    return@transaction false
                 }
             }
-            true
-        } catch (e : ExposedSQLException) {
-            liteEco.loggerModel.error(e.message ?: e.localizedMessage)
-            false
         }
     }
 }
