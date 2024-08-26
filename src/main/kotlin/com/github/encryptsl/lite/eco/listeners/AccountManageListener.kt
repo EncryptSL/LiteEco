@@ -23,7 +23,6 @@ class AccountManageListener(private val liteEco: LiteEco) : Listener {
                 for (currency in liteEco.currencyImpl.getCurrenciesKeys()) {
                     liteEco.databaseEcoModel.getUserByUUID(player.uniqueId, currency).thenApply {
                         liteEco.databaseEcoModel.updatePlayerName(it.uuid, player.name.toString(), currency)
-
                         return@thenApply it
                     }.thenAccept {
                         liteEco.api.cacheAccount(player, currency, it.money)

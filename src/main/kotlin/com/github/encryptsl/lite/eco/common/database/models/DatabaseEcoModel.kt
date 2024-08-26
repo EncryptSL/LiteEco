@@ -38,6 +38,7 @@ class DatabaseEcoModel : PlayerSQL {
             try {
                 val table = Account(currency)
                 table.update ({ table.uuid eq uuid }) {
+                    it[table.username] = username
                 }
             } catch (e : ExposedSQLException) {
                 LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
