@@ -33,6 +33,18 @@ class DatabaseEcoModel : PlayerSQL {
         }
     }
 
+    override fun updatePlayerName(uuid: UUID, username: String, currency: String) {
+        loggedTransaction {
+            try {
+                val table = Account(currency)
+                table.update ({ table.uuid eq uuid }) {
+                }
+            } catch (e : ExposedSQLException) {
+                LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
+            }
+        }
+    }
+
     override fun getUserByUUID(uuid: UUID, currency: String): CompletableFuture<User> {
         val future = CompletableFuture<User>()
         loggedTransaction {
@@ -51,22 +63,6 @@ class DatabaseEcoModel : PlayerSQL {
         }
 
         return future
-    }
-
-    override fun setPlayerNames(currency: String) {
-        val offlinePlayers = Bukkit.getOfflinePlayers()
-        for (player in offlinePlayers) {
-            loggedTransaction {
-                try {
-                    val table = Account(currency)
-                    table.update({ table.uuid eq player.uniqueId }) {
-                        it[username] = player.name.toString()
-                    }
-                } catch (e : ExposedSQLException) {
-                    LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
-                }
-            }
-        }
     }
 
     override fun deletePlayerAccount(uuid: UUID, currency: String) {
