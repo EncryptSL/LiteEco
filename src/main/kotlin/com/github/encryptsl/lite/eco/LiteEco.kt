@@ -120,7 +120,7 @@ class LiteEco : JavaPlugin() {
     }
 
     private fun registerListeners() {
-        val listeners = arrayListOf(
+        val listeners = arrayOf(
             AccountManageListener(this),
             PlayerEconomyPayListener(this),
             EconomyGlobalDepositListener(this),
