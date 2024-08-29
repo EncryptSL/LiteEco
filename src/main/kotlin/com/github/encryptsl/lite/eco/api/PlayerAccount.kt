@@ -6,17 +6,16 @@ import com.github.encryptsl.lite.eco.common.database.models.DatabaseEcoModel
 import org.bukkit.Bukkit
 import java.math.BigDecimal
 import java.util.*
-import kotlin.collections.HashMap
 
 object PlayerAccount : AccountAPI {
 
     private val databaseEcoModel: DatabaseEcoModel by lazy { DatabaseEcoModel() }
-    private val cache: HashMap<UUID, HashMap<String, BigDecimal>> = HashMap()
+    private val cache = mutableMapOf<UUID, MutableMap<String, BigDecimal>>()
 
 
     override fun cacheAccount(uuid: UUID, currency: String, value: BigDecimal) {
-        if (!isAccountCached(uuid)) {
-            cache[uuid] = getHashMapCurrency().apply { this[currency] = value }
+        if (!isAccountCached(uuid, currency)) {
+            cache.computeIfAbsent(uuid) { mutableMapOf() } [currency] = value
         } else {
             cache[uuid]?.computeIfPresent(currency) { _, _ -> value }
         }
@@ -64,16 +63,11 @@ object PlayerAccount : AccountAPI {
         cache.remove(player)
     }
 
-    override fun isAccountCached(uuid: UUID): Boolean {
-        return cache.containsKey(uuid)
+    override fun isAccountCached(uuid: UUID, currency: String): Boolean {
+        return cache.containsKey(uuid) && cache.get(uuid)?.containsKey(currency) == true
     }
 
     override fun isPlayerOnline(uuid: UUID): Boolean {
         return Bukkit.getPlayer(uuid) != null
     }
-
-    private fun getHashMapCurrency(): HashMap<String, BigDecimal> {
-        return HashMap()
-    }
-
 }
