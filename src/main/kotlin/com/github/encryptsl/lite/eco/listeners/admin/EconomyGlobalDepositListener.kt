@@ -26,8 +26,8 @@ class EconomyGlobalDepositListener(private val liteEco: LiteEco) : Listener {
 
         //TODO: I don't know now how solve issue with not checking balance, only one way is add other same function with checking permission.
         for (p in offlinePlayers) {
-            if (liteEco.api.getCheckBalanceLimit(p, currency, money)) continue
-            liteEco.api.hasAccount(p, currency).thenAccept { el ->
+            if (liteEco.api.getCheckBalanceLimit(p.uniqueId, currency, money)) continue
+            liteEco.api.hasAccount(p.uniqueId, currency).thenAccept { el ->
                 if (el == true) {
                     liteEco.api.depositMoney(p, currency, money)
                 }

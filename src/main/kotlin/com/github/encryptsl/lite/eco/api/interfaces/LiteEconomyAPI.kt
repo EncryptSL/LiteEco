@@ -31,6 +31,17 @@ interface LiteEconomyAPI {
     fun cacheAccount(player: OfflinePlayer, currency: String = "dollars", amount: BigDecimal)
 
     /**
+     * Cache player account during login
+     * @param uuid is UUID
+     * @param currency name of currency
+     * @param amount is value of player account from database.
+     * @return Boolean
+     * @see OfflinePlayer
+     * @see com.github.encryptsl.lite.eco.common.database.models.DatabaseEcoModel.getUserByUUID(uuid)
+     */
+    fun cacheAccount(uuid: UUID, currency: String = "dollars", amount: BigDecimal)
+
+    /**
      * Delete player account from database
      * @param player is OfflinePlayer
      * @param currency name of currency
@@ -40,13 +51,31 @@ interface LiteEconomyAPI {
     fun deleteAccount(player: OfflinePlayer, currency: String = "dollars"): Boolean
 
     /**
+     * Delete player account from database
+     * @param uuid is UUID
+     * @param currency name of currency
+     * @return Boolean
+     * @see OfflinePlayer
+     */
+    fun deleteAccount(uuid: UUID, currency: String = "dollars"): Boolean
+
+    /**
      * Boolean for check if player have account in database
-     * @param player is {@link OfflinePlayer}
+     * @param player is OfflinePlayer
      * @param currency name of currency
      * @return Boolean
      * @see OfflinePlayer
      */
     fun hasAccount(player: OfflinePlayer, currency: String = "dollars"): CompletableFuture<Boolean>
+
+    /**
+     * Boolean for check if player have account in database
+     * @param uuid is UUID
+     * @param currency name of currency
+     * @return Boolean
+     * @see UUID
+     */
+    fun hasAccount(uuid: UUID, currency: String = "dollars"): CompletableFuture<Boolean>
 
     /**
      * Boolean for check if player have enough money
@@ -56,6 +85,15 @@ interface LiteEconomyAPI {
      * @see OfflinePlayer
      */
     fun has(player: OfflinePlayer, currency: String = "dollars", amount: BigDecimal): Boolean
+
+    /**
+     * Boolean for check if player have enough money
+     * @param uuid is UUID
+     * @param currency name of currency
+     * @return Boolean
+     * @see UUID
+     */
+    fun has(uuid: UUID, currency: String = "dollars", amount: BigDecimal): Boolean
 
     /**
      * Get user account
@@ -112,6 +150,15 @@ interface LiteEconomyAPI {
     fun getCheckBalanceLimit(player: OfflinePlayer, currency: String = "dollars", amount: BigDecimal): Boolean
 
     /**
+     * Get check limit of player balance.
+     * @param uuid is UUID
+     * @param currency name of currency
+     * @return Boolean
+     * @see UUID
+     */
+    fun getCheckBalanceLimit(uuid: UUID, currency: String = "dollars", amount: BigDecimal): Boolean
+
+    /**
      * Deposit money to player account
      * @param player is OfflinePlayer
      * @param currency name of currency
@@ -121,6 +168,15 @@ interface LiteEconomyAPI {
     fun depositMoney(player: OfflinePlayer, currency: String = "dollars", amount: BigDecimal)
 
     /**
+     * Deposit money to player account
+     * @param uuid is UUID
+     * @param currency name of currency
+     * @param amount is amount added to player account
+     * @see UUID
+     */
+    fun depositMoney(uuid: UUID, currency: String = "dollars", amount: BigDecimal)
+
+    /**
      * Withdraw money from player account
      * @param player is OfflinePlayer
      * @param currency name of currency
@@ -128,6 +184,15 @@ interface LiteEconomyAPI {
      * @see OfflinePlayer
      */
     fun withDrawMoney(player: OfflinePlayer, currency: String = "dollars", amount: BigDecimal)
+
+    /**
+     * Withdraw money from player account
+     * @param uuid is UUID
+     * @param currency name of currency
+     * @param amount is amount removed from player account
+     * @see UUID
+     */
+    fun withDrawMoney(uuid: UUID, currency: String = "dollars", amount: BigDecimal)
 
     /**
      * Transfer of money from player account to another player account.
@@ -140,6 +205,16 @@ interface LiteEconomyAPI {
     fun transfer(fromPlayer: Player, target: OfflinePlayer, currency: String = "dollars", amount: BigDecimal)
 
     /**
+     * Transfer of money from player account to another player account.
+     * @param fromUUID is sender
+     * @param target is receiver.
+     * @param currency name of currency
+     * @see Player
+     * @see UUID
+     */
+    fun transfer(fromUUID: UUID, target: UUID, currency: String = "dollars", amount: BigDecimal)
+
+    /**
      * Set fixed money to player account
      * @param player is OfflinePlayer
      * @param currency name of currency
@@ -149,11 +224,27 @@ interface LiteEconomyAPI {
     fun setMoney(player: OfflinePlayer, currency: String = "dollars", amount: BigDecimal)
 
     /**
+     * Set fixed money to player account
+     * @param uuid is UUID
+     * @param currency name of currency
+     * @param amount is amount fixed value
+     * @see UUID
+     */
+    fun setMoney(uuid: UUID, currency: String = "dollars", amount: BigDecimal)
+
+    /**
      * Synchronize cache with database
      * @param offlinePlayer is OfflinePlayer
      * @see OfflinePlayer
      */
     fun syncAccount(offlinePlayer: OfflinePlayer, currency: String = "dollars")
+
+    /**
+     * Synchronize cache with database
+     * @param uuid is UUID
+     * @see UUID
+     */
+    fun syncAccount(uuid: UUID, currency: String = "dollars")
 
     /**
      * Synchronize all saved data in cache with database

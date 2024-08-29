@@ -26,15 +26,15 @@ class EconomyMoneyDepositListener(private val liteEco: LiteEco) : Listener {
         if (liteEco.api.getCheckBalanceLimit(money) && !sender.hasPermission("lite.eco.admin.bypass.limit"))
             return sender.sendMessage(liteEco.locale.translation("messages.error.amount_above_limit"))
 
-        if (liteEco.api.getCheckBalanceLimit(target, currency, money) || !sender.hasPermission("lite.eco.admin.bypass.limit"))
+        if (liteEco.api.getCheckBalanceLimit(target.uniqueId, currency, money) || !sender.hasPermission("lite.eco.admin.bypass.limit"))
             return sender.sendMessage(
                 liteEco.locale.translation("messages.error.balance_above_limit",
                     Placeholder.parsed("account", target.name.toString())
                 ))
 
-        liteEco.api.getUserByUUID(target, currency).thenApply {
+        liteEco.api.getUserByUUID(target.uniqueId, currency).thenApply {
             liteEco.increaseTransactions(1)
-            liteEco.api.depositMoney(target, currency, money)
+            liteEco.api.depositMoney(target.uniqueId, currency, money)
             liteEco.loggerModel.info(liteEco.locale.plainTextTranslation("messages.monolog.admin.normal.deposit", TagResolver.resolver(
                 Placeholder.parsed("sender", sender.name),
                 Placeholder.parsed("target", target.name.toString()),

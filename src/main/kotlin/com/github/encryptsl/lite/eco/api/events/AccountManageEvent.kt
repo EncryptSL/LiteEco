@@ -1,13 +1,13 @@
 package com.github.encryptsl.lite.eco.api.events
 
 import com.github.encryptsl.lite.eco.api.enums.OperationType
-import org.bukkit.OfflinePlayer
 import org.bukkit.event.Cancellable
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
+import java.util.UUID
 
 @Suppress("UNUSED")
-class AccountManageEvent(val offlinePlayer: OfflinePlayer, val operationType: OperationType) : Event(), Cancellable {
+class AccountManageEvent(val uuid: UUID, val operationType: OperationType) : Event(), Cancellable {
 
     private var isCancelled: Boolean = false
 

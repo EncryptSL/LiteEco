@@ -13,6 +13,6 @@ class PlayerJoinListener(private val liteEco: LiteEco) : Listener {
     @EventHandler
     fun onJoin(event: PlayerJoinEvent) {
         val player: Player = event.player
-        liteEco.pluginManager.callEvent(AccountManageEvent(player, OperationType.CACHING_ACCOUNT))
+        liteEco.pluginManager.callEvent(AccountManageEvent(player.uniqueId, OperationType.CACHING_ACCOUNT))
     }
 }

@@ -12,7 +12,7 @@ class PlayerQuitListener(private val liteEco: LiteEco) : Listener {
     @EventHandler
     fun onQuit(event: PlayerQuitEvent) {
         val player = event.player
-        liteEco.pluginManager.callEvent(AccountManageEvent(player, OperationType.SYNC_ACCOUNT))
+        liteEco.pluginManager.callEvent(AccountManageEvent(player.uniqueId, OperationType.SYNC_ACCOUNT))
     }
 
 }

@@ -25,10 +25,10 @@ class EconomyMoneySetListener(private val liteEco: LiteEco) : Listener {
         if (liteEco.api.getCheckBalanceLimit(money) && !sender.hasPermission("lite.eco.admin.bypass.limit"))
             return sender.sendMessage(liteEco.locale.translation("messages.error.amount_above_limit"))
 
-        liteEco.api.getUserByUUID(target).thenApply {
+        liteEco.api.getUserByUUID(target.uniqueId).thenApply {
             liteEco.increaseTransactions(1)
 
-            liteEco.api.setMoney(target, currency, money)
+            liteEco.api.setMoney(target.uniqueId, currency, money)
             liteEco.loggerModel.info(liteEco.locale.plainTextTranslation("messages.monolog.admin.normal.set", TagResolver.resolver(
                 Placeholder.parsed("sender", sender.name),
                 Placeholder.parsed("target", target.name.toString()),

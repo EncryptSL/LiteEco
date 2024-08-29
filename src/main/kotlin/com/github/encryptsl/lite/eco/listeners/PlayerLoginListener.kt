@@ -14,7 +14,7 @@ class PlayerLoginListener(
     @EventHandler
     fun onLoginEvent(event: PlayerLoginEvent) {
         val player = event.player
-        liteEco.pluginManager.callEvent(AccountManageEvent(player, OperationType.CREATE_ACCOUNT))
+        liteEco.pluginManager.callEvent(AccountManageEvent(player.uniqueId, OperationType.CREATE_ACCOUNT))
     }
 
 }

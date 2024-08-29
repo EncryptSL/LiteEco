@@ -21,8 +21,8 @@ class EconomyGlobalWithdrawListener(private val liteEco: LiteEco) : Listener {
             return sender.sendMessage(liteEco.locale.translation("messages.error.currency_not_exist", Placeholder.parsed("currency", currency)))
 
         for (p in offlinePlayers) {
-            liteEco.api.hasAccount(p, currency).thenAccept { el ->
-                if (el == true) liteEco.api.withDrawMoney(p, currency, money)
+            liteEco.api.hasAccount(p.uniqueId, currency).thenAccept { el ->
+                if (el == true) liteEco.api.withDrawMoney(p.uniqueId, currency, money)
             }
         }
 

@@ -24,8 +24,8 @@ class EconomyGlobalSetListener(private val liteEco: LiteEco) : Listener {
             return sender.sendMessage(liteEco.locale.translation("messages.error.amount_above_limit"))
 
         for (p in offlinePlayers) {
-            liteEco.api.hasAccount(p, currency).thenAccept { el ->
-                if (el == true) liteEco.api.setMoney(p, currency, money)
+            liteEco.api.hasAccount(p.uniqueId, currency).thenAccept { el ->
+                if (el == true) liteEco.api.setMoney(p.uniqueId, currency, money)
             }
         }
 

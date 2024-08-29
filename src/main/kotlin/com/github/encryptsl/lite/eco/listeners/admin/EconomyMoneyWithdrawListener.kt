@@ -23,10 +23,10 @@ class EconomyMoneyWithdrawListener(private val liteEco: LiteEco) : Listener {
         if (!liteEco.currencyImpl.getCurrencyNameExist(currency))
             return sender.sendMessage(liteEco.locale.translation("messages.error.currency_not_exist", Placeholder.parsed("currency", currency)))
 
-        if (!liteEco.api.has(target, currency, money))
+        if (!liteEco.api.has(target.uniqueId, currency, money))
             return sender.sendMessage(liteEco.locale.translation("messages.error.insufficient_funds"))
 
-        liteEco.api.getUserByUUID(target, currency).thenApply {
+        liteEco.api.getUserByUUID(target.uniqueId, currency).thenApply {
             liteEco.increaseTransactions(1)
             liteEco.api.withDrawMoney(target, currency, money)
             liteEco.loggerModel.info(liteEco.locale.plainTextTranslation("messages.monolog.admin.normal.withdraw", TagResolver.resolver(

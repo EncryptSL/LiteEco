@@ -51,7 +51,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
 
         if (commandSender is Player) {
             val cSender = offlinePlayer ?: commandSender
-            liteEco.api.getUserByUUID(cSender, c).thenApply { user ->
+            liteEco.api.getUserByUUID(cSender.uniqueId, c).thenApply { user ->
                 val formatMessage = when(offlinePlayer) {
                     null -> liteEco.locale.translation("messages.balance.format", helper.getComponentBal(user, c))
                     else -> liteEco.locale.translation("messages.balance.format_target", helper.getComponentBal(user, c))
@@ -65,7 +65,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
         }
 
         if (offlinePlayer != null) {
-            liteEco.api.getUserByUUID(offlinePlayer, c).thenApply { user ->
+            liteEco.api.getUserByUUID(offlinePlayer.uniqueId, c).thenApply { user ->
                 commandSender.sendMessage(
                     liteEco.locale.translation("messages.balance.format_target", helper.getComponentBal(user, c))
                 )
