@@ -17,9 +17,6 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
 
     override fun getName(): String = liteEco.name
 
-
-    override fun hasBankSupport(): Boolean = false
-
     override fun hasMultiCurrencySupport(): Boolean = false
 
     override fun fractionalDigits(): Int = -1
@@ -79,6 +76,22 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
 
     override fun renameAccount(p0: UUID?, p1: String?): Boolean { return false }
 
+    override fun accountSupportsCurrency(plugin: String?, uuid: UUID?, currency: String?): Boolean {
+        if (uuid == null || currency == null) return false
+
+        return liteEco.api.hasAccount(uuid, currency).thenApply {
+            return@thenApply true
+        }.exceptionally {
+            return@exceptionally false
+        }.join()
+    }
+
+    override fun accountSupportsCurrency(plugin: String?, accountID: UUID?, currency: String?, world: String?): Boolean {
+        if (accountID == null || currency == null) return false
+
+        return accountSupportsCurrency(null, accountID, currency)
+    }
+
     override fun getBalance(pluginName: String?, uuid: UUID?): BigDecimal {
         if (uuid == null) return BigDecimal.ZERO
 
@@ -113,11 +126,11 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
 
     override fun withdraw(pluginName: String?, uuid: UUID?, amount: BigDecimal?): EconomyResponse {
         if (amount == null) {
-            return EconomyResponse(amount, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, null)
+            return EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, null)
         }
 
         if (uuid == null || amount.isApproachingZero()) {
-            return EconomyResponse(amount, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, null)
+            return EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, null)
         }
 
         return if (has(pluginName, uuid, amount)) {
@@ -143,7 +156,7 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
 
         if (currency != null) {
             if (amount == null) {
-                return EconomyResponse(amount, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, null)
+                return EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, null)
             }
 
             if (uuid == null || amount.isApproachingZero()) {

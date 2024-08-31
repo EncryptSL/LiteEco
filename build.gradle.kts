@@ -43,7 +43,7 @@ dependencies {
     compileOnly("org.jetbrains.exposed:exposed-kotlin-datetime:0.53.0")
     compileOnly("com.squareup.okhttp3:okhttp:4.12.0")
     compileOnly("me.hsgamer:bettereconomy:3.1")
-    compileOnly("net.milkbowl.vault:VaultUnlockedAPI:2.2")
+    compileOnly("net.milkbowl.vault:VaultUnlockedAPI:2.5")
 
     implementation("org.bstats:bstats-bukkit:3.0.1")
     implementation("org.incendo:cloud-paper:2.0.0-SNAPSHOT")
