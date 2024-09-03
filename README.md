@@ -99,6 +99,8 @@ Join thousands of satisfied server owners and administrators who have improved t
 [PAPI]: https://github.com/PlaceholderAPI/PlaceholderAPI
 [PAPI List]: https://github.com/PlaceholderAPI/PlaceholderAPI/wiki/Placeholders
 [Vault]: https://github.com/MilkBowl/VaultAPI
+[VaultUnlocked]: https://github.com/TheNewEconomy/VaultUnlocked
+[Treasury]: https://github.com/ArcanePlugins/Treasury
 
 [//]: # (Contributors)
 
