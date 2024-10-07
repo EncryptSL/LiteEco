@@ -25,7 +25,7 @@ class EconomyMoneySetListener(private val liteEco: LiteEco) : Listener {
         if (liteEco.api.getCheckBalanceLimit(money) && !sender.hasPermission("lite.eco.admin.bypass.limit"))
             return sender.sendMessage(liteEco.locale.translation("messages.error.amount_above_limit"))
 
-        liteEco.api.getUserByUUID(target.uniqueId).thenApply {
+        liteEco.api.getUserByUUID(target.uniqueId).thenAccept {
             liteEco.increaseTransactions(1)
 
             liteEco.api.setMoney(target.uniqueId, currency, money)
@@ -37,6 +37,7 @@ class EconomyMoneySetListener(private val liteEco: LiteEco) : Listener {
             )))
         }.exceptionally {
             sender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist", Placeholder.parsed("account", target.name.toString())))
+            return@exceptionally null
         }
 
         if (sender.name == target.name)

@@ -26,7 +26,7 @@ class EconomyMoneyWithdrawListener(private val liteEco: LiteEco) : Listener {
         if (!liteEco.api.has(target.uniqueId, currency, money))
             return sender.sendMessage(liteEco.locale.translation("messages.error.insufficient_funds"))
 
-        liteEco.api.getUserByUUID(target.uniqueId, currency).thenApply {
+        liteEco.api.getUserByUUID(target.uniqueId, currency).thenAccept {
             liteEco.increaseTransactions(1)
             liteEco.api.withDrawMoney(target, currency, money)
             liteEco.loggerModel.info(liteEco.locale.plainTextTranslation("messages.monolog.admin.normal.withdraw", TagResolver.resolver(
@@ -36,8 +36,10 @@ class EconomyMoneyWithdrawListener(private val liteEco: LiteEco) : Listener {
                 Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
             )))
         }.exceptionally {
-           sender.sendMessage(
-                liteEco.locale.translation("messages.error.account_not_exist", Placeholder.parsed("account", target.name.toString())))
+            sender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist",
+                Placeholder.parsed("account", target.name.toString())
+            ))
+            return@exceptionally null
         }
 
         if (sender.name == target.name)

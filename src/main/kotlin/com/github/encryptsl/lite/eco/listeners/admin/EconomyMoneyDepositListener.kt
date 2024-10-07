@@ -32,7 +32,7 @@ class EconomyMoneyDepositListener(private val liteEco: LiteEco) : Listener {
                     Placeholder.parsed("account", target.name.toString())
                 ))
 
-        liteEco.api.getUserByUUID(target.uniqueId, currency).thenApply {
+        liteEco.api.getUserByUUID(target.uniqueId, currency).thenAccept {
             liteEco.increaseTransactions(1)
             liteEco.api.depositMoney(target.uniqueId, currency, money)
             liteEco.loggerModel.info(liteEco.locale.plainTextTranslation("messages.monolog.admin.normal.deposit", TagResolver.resolver(
@@ -42,7 +42,8 @@ class EconomyMoneyDepositListener(private val liteEco: LiteEco) : Listener {
                 Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
             )))
         }.exceptionally {
-            return@exceptionally sender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist", Placeholder.parsed("account", target.name.toString())))
+            sender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist", Placeholder.parsed("account", target.name.toString())))
+            return@exceptionally null
         }
 
         if (sender.name == target.name) {

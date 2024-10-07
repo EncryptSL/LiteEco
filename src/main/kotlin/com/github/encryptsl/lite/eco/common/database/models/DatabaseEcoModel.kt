@@ -47,19 +47,17 @@ class DatabaseEcoModel : PlayerSQL {
     }
 
     override fun getUserByUUID(uuid: UUID, currency: String): CompletableFuture<User> {
-        val future = CompletableFuture<User>()
-        loggedTransaction {
-            try {
-                val table = Account(currency)
-                val row = table.select(table.uuid, table.username, table.money).where(table.uuid eq uuid).singleOrNull()
-                if (row == null) {
-                    future.completeExceptionally(Exception("User not Found"))
-                } else {
-                    future.completeAsync { User(row[table.username], row[table.uuid], row[table.money]) }
+        val future: CompletableFuture<User> = CompletableFuture.supplyAsync {
+            loggedTransaction {
+                try {
+                    val table = Account(currency)
+                    val row = table.select(table.uuid, table.username, table.money).where(table.uuid eq uuid).single()
+                    User(row[table.username], row[table.uuid], row[table.money])
+                } catch (e : ExposedSQLException) {
+                    LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
+
+                    throw Exception("Something is wrong with fetching user, ${e.message ?: e.localizedMessage}")
                 }
-            } catch (e : ExposedSQLException) {
-                future.completeExceptionally(Exception("Something is wrong with fetching user, ${e.message ?: e.localizedMessage}"))
-                LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
             }
         }
 
@@ -78,14 +76,15 @@ class DatabaseEcoModel : PlayerSQL {
     }
 
     override fun getExistPlayerAccount(uuid: UUID, currency: String): CompletableFuture<Boolean> {
-        val future = CompletableFuture<Boolean>()
-        loggedTransaction {
-            try {
-                val table = Account(currency)
-                future.completeAsync { !table.select(table.uuid).where(table.uuid eq uuid).empty() }
-            } catch (e : ExposedSQLException) {
-                future.completeAsync { false }
-                LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
+        val future: CompletableFuture<Boolean> = CompletableFuture.supplyAsync {
+            loggedTransaction {
+                try {
+                    val table = Account(currency)
+                    !table.select(table.uuid).where(table.uuid eq uuid).empty()
+                } catch (e : ExposedSQLException) {
+                    LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
+                    false
+                }
             }
         }
         return future
@@ -107,14 +106,15 @@ class DatabaseEcoModel : PlayerSQL {
     }
 
     override fun getPlayersIds(currency: String): CompletableFuture<MutableCollection<UUID>> {
-        val future = CompletableFuture<MutableCollection<UUID>>()
-        loggedTransaction {
-            try {
-                val table = Account(currency)
-                future.completeAsync { table.selectAll().map {it[table.uuid] }.toMutableList() }
-            } catch (e : ExposedSQLException) {
-                future.completeAsync { mutableListOf() }
-                LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
+        val future: CompletableFuture<MutableCollection<UUID>> = CompletableFuture.supplyAsync {
+            loggedTransaction {
+                try {
+                    val table = Account(currency)
+                    table.selectAll().map {it[table.uuid] }.toMutableList()
+                } catch (e : ExposedSQLException) {
+                    LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
+                    mutableListOf()
+                }
             }
         }
         return future

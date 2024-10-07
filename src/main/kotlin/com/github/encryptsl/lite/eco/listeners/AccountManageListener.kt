@@ -21,9 +21,11 @@ class AccountManageListener(private val liteEco: LiteEco) : Listener {
             }
             OperationType.CACHING_ACCOUNT -> {
                 for (currency in liteEco.currencyImpl.getCurrenciesKeys()) {
-                    liteEco.databaseEcoModel.getUserByUUID(uuid, currency).thenAccept {
+                    val future = liteEco.databaseEcoModel.getUserByUUID(uuid, currency).thenAccept {
                         liteEco.api.cacheAccount(uuid, currency, it.money)
                     }
+                    liteEco.logger.info("Account $uuid was cached into memory !")
+                    future.join()
                 }
             }
             OperationType.SYNC_ACCOUNT -> liteEco.api.syncAccount(uuid)

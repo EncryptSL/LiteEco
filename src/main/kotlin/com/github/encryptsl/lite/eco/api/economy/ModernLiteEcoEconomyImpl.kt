@@ -15,15 +15,11 @@ import java.util.concurrent.CompletableFuture
 class ModernLiteEcoEconomyImpl : DeprecatedLiteEcoEconomyImpl() {
 
     override fun getUserByUUID(uuid: UUID, currency: String): CompletableFuture<User> {
-        val future = CompletableFuture<User>()
-
-        if (PlayerAccount.isPlayerOnline(uuid) || PlayerAccount.isAccountCached(uuid, currency)) {
-            future.completeAsync { User(Bukkit.getPlayer(uuid)?.name.toString(), uuid, PlayerAccount.getBalance(uuid, currency)) }
+        return if (PlayerAccount.isPlayerOnline(uuid) || PlayerAccount.isAccountCached(uuid, currency)) {
+            CompletableFuture.supplyAsync { User(Bukkit.getPlayer(uuid)?.name.toString(), uuid, PlayerAccount.getBalance(uuid, currency)) }
         } else {
-            return LiteEco.instance.databaseEcoModel.getUserByUUID(uuid, currency)
+            LiteEco.instance.databaseEcoModel.getUserByUUID(uuid, currency)
         }
-
-        return future
     }
 
     override fun deleteAccount(uuid: UUID, currency: String): Boolean {

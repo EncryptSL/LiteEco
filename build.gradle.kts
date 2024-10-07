@@ -36,7 +36,7 @@ dependencies {
     compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
         exclude("org.bukkit", "bukkit")
     }
-    compileOnly("com.zaxxer:HikariCP:5.1.0")
+    compileOnly("com.zaxxer:HikariCP:6.0.0")
     compileOnly("me.clip:placeholderapi:2.11.5")
     compileOnly("org.jetbrains.exposed:exposed-core:0.54.0")
     compileOnly("org.jetbrains.exposed:exposed-jdbc:0.54.0")
