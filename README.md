@@ -8,7 +8,7 @@
 
 by [EncryptSL][EncryptSL] and [LcyDev][LcyDev].
 
-## [Wiki][Wiki] &bullet; [FAQ][FAQ] &bullet; [Releases](https://github.com/EncryptSL/LiteEco/releases)
+## [Wiki][Wiki] &bullet; [FAQ][WK:FAQ] &bullet; [Releases](https://github.com/EncryptSL/LiteEco/releases)
 </div>
 
 * * *
@@ -30,7 +30,7 @@ With an intuitive command interface designed for both console and in-game usage,
 
 - **Convenient PlaceholderAPI Integration:** :heavy_check_mark:
 
-  - Enhance your server with [custom placeholders][Placeholders] for displaying economy-related information.
+  - Enhance your server with [custom placeholders][WK:Placeholders] for displaying economy-related information.
 
 <div align=center>
 
@@ -38,7 +38,7 @@ With an intuitive command interface designed for both console and in-game usage,
 
 Want to learn more about LiteEco and its capabilities? 
 
-Check out our comprehensive documentation [**here**](https://github.com/EncryptSL/LiteEco/tree/main/.docs).
+Check out our comprehensive documentation [**here**][Wiki].
 
 ## Easy to Use:
 
@@ -46,7 +46,7 @@ LiteEco is designed to be user-friendly, making it simple for server owners and 
 
 ## Get Started:
 
-Ready to take your Minecraft server's economy to the next level? Download LiteEco now and [get started][Quickstart]!
+Ready to take your Minecraft server's economy to the next level? Download LiteEco now and [get started][WK:Quickstart]!
 
 [![Ko-Fi]](https://ko-fi.com/encryptsl)
 
@@ -85,20 +85,26 @@ Join thousands of satisfied server owners and administrators who have improved t
 [//]: # (Wiki)
 
 [Wiki]: https://github.com/EncryptSL/LiteEco/wiki
-[FAQ]: https://github.com/EncryptSL/LiteEco/wiki/Frequently-Asked-Questions
-[Quickstart]: https://github.com/EncryptSL/LiteEco/wiki/Quickstart
-[Credits]: https://github.com/EncryptSL/LiteEco/wiki/Credits
-[Setup]: https://github.com/EncryptSL/LiteEco/wiki/Setup
-[Permissions]: https://github.com/EncryptSL/LiteEco/wiki/Permissions
-[Placeholders]: https://github.com/EncryptSL/LiteEco/wiki/Placeholders
-[Translations]: https://github.com/EncryptSL/LiteEco/wiki/Translations
-[Contributing]: https://github.com/EncryptSL/LiteEco/wiki/Contributing
+
+[WK:FAQ]: https://github.com/EncryptSL/LiteEco/wiki/Frequently-Asked-Questions
+[WK:Quickstart]: https://github.com/EncryptSL/LiteEco/wiki/Quickstart
+[WK:Credits]: https://github.com/EncryptSL/LiteEco/wiki/Credits
+
+[WK:Setup]: https://github.com/EncryptSL/LiteEco/wiki/Setup
+[WK:Contributing]: https://github.com/EncryptSL/LiteEco/wiki/Contributing
+
+[WK:Migrations]: https://github.com/EncryptSL/LiteEco/wiki/Migrations
+[WK:Permissions]: https://github.com/EncryptSL/LiteEco/wiki/Permissions
+[WK:Placeholders]: https://github.com/EncryptSL/LiteEco/wiki/Placeholders
+[WK:Translations]: https://github.com/EncryptSL/LiteEco/wiki/Translations
 
 [//]: # (Third-parties)
 
 [PAPI]: https://github.com/PlaceholderAPI/PlaceholderAPI
 [PAPI List]: https://github.com/PlaceholderAPI/PlaceholderAPI/wiki/Placeholders
 [Vault]: https://github.com/MilkBowl/VaultAPI
+[VaultUnlocked]: https://github.com/TheNewEconomy/VaultUnlocked
+[Treasury]: https://github.com/ArcanePlugins/Treasury
 
 [//]: # (Contributors)
 
