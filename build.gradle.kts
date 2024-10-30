@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     kotlin("jvm") version "2.0.20" apply true
-    id("com.gradleup.shadow") version "8.3.0"
+    id("com.gradleup.shadow") version "8.3.4"
     id("maven-publish")
 }
 
@@ -38,9 +38,9 @@ dependencies {
     }
     compileOnly("com.zaxxer:HikariCP:6.0.0")
     compileOnly("me.clip:placeholderapi:2.11.5")
-    compileOnly("org.jetbrains.exposed:exposed-core:0.54.0")
-    compileOnly("org.jetbrains.exposed:exposed-jdbc:0.54.0")
-    compileOnly("org.jetbrains.exposed:exposed-kotlin-datetime:0.54.0")
+    compileOnly("org.jetbrains.exposed:exposed-core:0.55.0")
+    compileOnly("org.jetbrains.exposed:exposed-jdbc:0.55.0")
+    compileOnly("org.jetbrains.exposed:exposed-kotlin-datetime:0.55.0")
     compileOnly("com.squareup.okhttp3:okhttp:4.12.0")
     compileOnly("me.hsgamer:bettereconomy:3.1")
     compileOnly("net.milkbowl.vault:VaultUnlockedAPI:2.5")
@@ -61,8 +61,8 @@ dependencies {
     testImplementation(kotlin("test", "2.0.20"))
     testImplementation("com.zaxxer:HikariCP:5.1.0")
     testImplementation("org.xerial:sqlite-jdbc:3.42.0.0")
-    testImplementation("org.jetbrains.exposed:exposed-core:0.53.0")
-    testImplementation("org.jetbrains.exposed:exposed-jdbc:0.53.0")
+    testImplementation("org.jetbrains.exposed:exposed-core:0.55.0")
+    testImplementation("org.jetbrains.exposed:exposed-jdbc:0.55.0")
 }
 
 sourceSets {
