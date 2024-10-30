@@ -52,6 +52,10 @@ class EconomyPlaceholderAPI(private val liteEco: LiteEco, private val extVersion
                         val currency = extractPlaceholderIdentifierName(3, args)
                         return nameByRank(1, currency)
                     }
+                    identifier.startsWith("total_balance_") -> {
+                        val currency = extractPlaceholderIdentifierName(2, args)
+                        return totalBalanceOfServerByCurrency(currency)
+                    }
                 }
                 return rank?.let {
                     when {
@@ -100,6 +104,10 @@ class EconomyPlaceholderAPI(private val liteEco: LiteEco, private val extVersion
         } else {
             BigDecimal.ZERO
         }
+    }
+
+    private fun totalBalanceOfServerByCurrency(currency: String): String {
+        return topBalance(currency).values.sumOf { it }.toString()
     }
 
     private fun topBalance(currency: String): Map<String, BigDecimal> {
