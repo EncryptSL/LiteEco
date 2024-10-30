@@ -142,18 +142,10 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
     }
 
     override fun withdraw(pluginName: String?, uuid: UUID?, worldName: String?, amount: BigDecimal?): EconomyResponse {
-        if (worldName != null) {
-            return EconomyResponse(amount, getBalance(pluginName, uuid), EconomyResponse.ResponseType.FAILURE, MULTI_WORLD_CURRENCIES_NOT_SUPPORTED_MESSAGE)
-        }
-
         return withdraw(pluginName, uuid, amount)
     }
 
     override fun withdraw(pluginName: String?, uuid: UUID?, worldName: String?, currency: String?, amount: BigDecimal?): EconomyResponse {
-        if (worldName != null) {
-            return EconomyResponse(amount, getBalance(pluginName, uuid), EconomyResponse.ResponseType.FAILURE, MULTI_WORLD_CURRENCIES_NOT_SUPPORTED_MESSAGE)
-        }
-
         if (currency != null) {
             if (amount == null) {
                 return EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, null)
