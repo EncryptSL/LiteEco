@@ -19,23 +19,31 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
 
     override fun hasMultiCurrencySupport(): Boolean = false
 
-    override fun fractionalDigits(): Int = -1
+    override fun fractionalDigits(pluginName: String?): Int = -1
 
+    @Deprecated("")
     override fun format(value: BigDecimal): String {
         return liteEco.api.formatted(value)
     }
 
+    @Deprecated("")
     override fun format(value: BigDecimal, p1: String?): String {
         return liteEco.api.formatted(value)
     }
 
+    override fun format(pluginName: String?, amount: BigDecimal): String = liteEco.api.formatted(amount)
+
+    override fun format(pluginName: String?, amount: BigDecimal, currency: String): String = liteEco.api.formatted(amount)
+
     override fun hasCurrency(currencyName: String): Boolean = false
 
-    override fun getDefaultCurrency(): String = liteEco.currencyImpl.defaultCurrency()
+    override fun getDefaultCurrency(pluginName: String?): String {
+        return liteEco.currencyImpl.defaultCurrency()
+    }
 
-    override fun defaultCurrencyNamePlural(): String = ""
+    override fun defaultCurrencyNamePlural(pluginName: String?): String = ""
 
-    override fun defaultCurrencyNameSingular(): String = ""
+    override fun defaultCurrencyNameSingular(pluginName: String?): String = ""
 
     override fun currencies(): MutableCollection<String> {
         return liteEco.currencyImpl.getCurrenciesKeys().toMutableList()
@@ -52,6 +60,8 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
 
         return liteEco.api.createAccount(Bukkit.getOfflinePlayer(uuid), startAmount = liteEco.currencyImpl.defaultStartBalance())
     }
+
+    override fun deleteAccount(plugin: String, accountID: UUID): Boolean = false
 
     override fun getUUIDNameMap(): MutableMap<UUID, String> {
         return liteEco.api.getUUIDNameMap()
@@ -74,7 +84,9 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
         return hasAccount(uuid)
     }
 
-    override fun renameAccount(p0: UUID?, p1: String?): Boolean { return false }
+    override fun renameAccount(p0: UUID?, p1: String?): Boolean = false
+
+    override fun renameAccount(plugin: String?, accountID: UUID?, name: String?): Boolean = false
 
     override fun accountSupportsCurrency(plugin: String?, uuid: UUID?, currency: String?): Boolean {
         if (uuid == null || currency == null) return false
