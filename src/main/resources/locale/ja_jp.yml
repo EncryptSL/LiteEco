@@ -30,7 +30,7 @@ messages:
   # Global actions messages (sent to the sender who made the global action)
   global:
     add_money: "<prefix> <white>全プレイヤーの所持金を <green><money></green> <currency> 増加させました。"
-    withdraw_money: "<prefix> <white>全プレイヤーの所持金から <green><money></green> <currency> 引き出しました。"
+    withdraw_money: "<prefix> <white>全プレイヤーの所持金から <green><money></green> <currency> 減少させました。"
     set_money: "<prefix> <white>全プレイヤーの所持金を <green><money></green> <currency> に設定しました。"
 
   # Broadcast messages (sent to all players after a global action)
@@ -42,35 +42,35 @@ messages:
   # Error messages
   error:
     account_not_exist: "<prefix> <red>そのプレイヤーは存在しません。(プレイヤー名: <account>)"
-    account_now_exist: "<prefix> <red>Account <account> now exists [!]"
-    currency_not_exist: "<prefix> <red>These currency <currency> not exist !"
+    account_now_exist: "<prefix> <red>そのアカウントは存在しています! (プレイヤー名: <account>)"
+    currency_not_exist: "<prefix> <red>その通貨単位は存在しません! (通貨単位名: <currency>)"
     format_amount: "<prefix> <red>無効な金額です。小数点を使用するか、コンパクトな表記（例：1K）を利用してください。" # TEMP #
     insufficient_funds: "<prefix> <red>お金が足りていません。"
     maximum_page: "<red>ページ数の上限は <max_page>"
     negative_amount: "<prefix> <red>マイナスの金額は入力できません。"
     migration_argument: "<prefix> <red>この<argument>は適切ではないか、サーバーの移行の準備が完了していない可能性があります。"
-    migration_failed: "<prefix> <red>マイグレーション中に問題が発生しました。詳細についてはコンソールをご確認ください。" # TEMP #
+    migration_failed: "<prefix> <red>マイグレーション中に問題が発生しました。詳細はコンソールをご確認ください。"
     purge_argument: "<prefix> <red>この<argument>は適切ではないか、サーバーの削除の準備が完了していない可能性があります。"
-    purge_monolog_fail: "<prefix> <red>You can't delete logs, because table is empty [!]"
+    purge_monolog_fail: "<prefix> <red>テーブルが空のため、ログを削除することはできません [!]"
     player_is_null: "<prefix> <red>プレイヤー名を入力してください。"
     self_pay: "<prefix> <red>自分自身にお金を送金することはできません。"
-    convert_fail: "<prefix> <red>Something broke during convert look into console [!]"
-    amount_above_limit: "<prefix> <red>Amount is above, allowed limit of server !"
-    balance_above_limit: "<prefix> <red>Balance of account <account> is above, allowed limit of server !"
+    convert_fail: "<prefix> <red>変換に失敗しました。詳細はコンソールをご確認ください。 [!]"
+    amount_above_limit: "<prefix> <red>金額がサーバーの上限を超えています!"
+    balance_above_limit: "<prefix> <red><account>の所持金額はサーバーの上限を超えています!"
 
   # Monolog messages logged to table lite_eco_monolog.
   monolog:
     admin:
       normal:
-        deposit: "Admin <sender> deposit to <target> : <money> <currency>"
-        set: "Admin <sender> set to <target> : <money> <currency>"
-        withdraw: "Admin <sender> withdraw from <target> : <money> <currency>"
+        deposit: "管理者 <sender> が <target>の所持金を <money> <currency> 増加させました。"
+        set: "管理者 <sender> が <target>の所持金を <money> <currency> に設定しました。"
+        withdraw: "管理者 <sender> が <target>の所持金から <money> <currency> 引き出しました。"
       global:
-        deposit: "Admin <sender> deposit to <accounts>x accounts : <money> <currency>"
-        set: "Admin <sender> set to <accounts>x accounts : <money> <currency>"
-        withdraw: "Admin <sender> withdraw from <accounts>x accounts : <money> <currency>"
+        deposit: "管理者 <sender> が <accounts>個のアカウントの所持金に <money> <currency> 増加させました。"
+        set: "管理者 <sender> が <accounts>個のアカウントの所持金を <money> <currency> に設定しました。"
+        withdraw: "管理者 <sender> が <accounts>個のアカウントの所持金から <money> <currency> 減少させました。"
     player:
-      pay: "Player <sender> pay to <target> : <money> <currency>"
+      pay: "プレイヤー <sender> が <target> に <money> <currency> 送金しました。"
 
   # Admin commands
   admin:
@@ -86,7 +86,7 @@ messages:
     purge_monolog_success: "<prefix> <green>All logs about economy activities was purged [!]"
     delete_account: "<prefix> <green>Account of player <account> was deleted !"
     migration_success: "<prefix> <green><type>からのマイグレーションが完了しました。"
-    convert_success: "<prefix> <green>Convert of <converted>x accounts and <balances> balances from <economy> to LiteEco was successful !"
+    convert_success: "<prefix> <green><economy>からLiteEcoへの、<converted>個のアカウントの移行と、合計 <balances>分の通貨の移行を完了しました。"
 
   help:
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
