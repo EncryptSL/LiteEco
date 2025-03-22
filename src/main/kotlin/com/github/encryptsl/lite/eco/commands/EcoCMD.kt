@@ -336,9 +336,9 @@ class EcoCMD(private val liteEco: LiteEco) {
     ) {
         val data = liteEco.databaseEcoModel.getTopBalance(currency)
 
-        commandSender.sendMessage("Accounts list " + data.entries.map { k -> k.key })
-        commandSender.sendMessage("Accounts balances " + data.entries.sumOf { it.value.money })
-        commandSender.sendMessage("Accounts in database " + data.size.toString())
+        commandSender.sendMessage("Accounts list ${data.entries.map { k -> k.key }}")
+        commandSender.sendMessage("Accounts balances ${data.entries.sumOf { it.value.money }}")
+        commandSender.sendMessage("Accounts in database ${data.size}")
     }
 
     @Command("eco reload")
