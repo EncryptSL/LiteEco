@@ -1,7 +1,7 @@
 messages:
   # Balance messages
   balance:
-    format: "<prefix> <white>Stan konta <green><money></green> <currency> [!]"
+    format: "<prefix> <white>Stan konta <green><money></green> <gold><currency></gold> [!]"
     format_target: "<prefix> <white>Stan konta <gold><target></gold>, <green><money></green> <currency> [!]"
     top_format: "<yellow><position># <gold><player></gold> <gray>- <green><money></green> <currency>"
     top_header: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>TOP PIENIĘDZY</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray>"

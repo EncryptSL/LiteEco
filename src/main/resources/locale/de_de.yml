@@ -1,7 +1,7 @@
 messages:
   # Balance messages
   balance:
-    format: "<prefix> <white>Dein Kontostand ist <green><money></green> <currency> [!]"
+    format: "<prefix> <white>Dein Kontostand ist <green><money></green> <gold><currency></gold> [!]"
     format_target: "<prefix> <white>Kontostand von <gold><target></gold> ist <green><money></green> <currency> [!]"
     top_format: "<yellow><position># <gold><player></gold> <gray>- <green><money></green>"
     top_header: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>BALTOP</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray> <red><page>/<max_page>"

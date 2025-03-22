@@ -2,8 +2,8 @@ messages:
   # Balance messages
   balance:
     format: "<prefix> <white>Tu saldo es de <green><money></green> es <currency> [!]"
-    format_target: "<prefix> <white>El saldo de <gold><target></gold> es de <green><money></green> es <currency> [!]"
-    top_format: "<yellow><position># <gold><player></gold> <gray>- <green><money></green> <currency>"
+    format_target: "<prefix> <white>El saldo de <gold><target></gold> es de <green><money></green> es <gold><currency></gold> [!]"
+    top_format: "<yellow><position># <gold><player></gold> <gray>- <green><money></green>"
     top_header: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>TOP ECONOMIA<gray>]</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray>"
     top_footer: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47><red><page>/<max_page></#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray>"
 

@@ -1,9 +1,9 @@
 messages:
   # Balance messages
   balance:
-    format: "<prefix> <white>現在の所持金: <green><money></green>"
-    format_target: "<prefix> <gold><player></gold> <white>の所持金は <green><money></green> <currency>"
-    top_format: "<yellow><position># <gold><player></gold> <gray>- <green><money></green> <currency>"
+    format: "<prefix> <white>現在の所持金: <green><money></green> <gold><currency></gold>"
+    format_target: "<prefix> <gold><player></gold> <white>の所持金は <green><money></green> <gold><currency></gold>"
+    top_format: "<yellow><position># <gold><player></gold> <gray>- <green><money></green>"
     top_header: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>所持金ランキング</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray>"
     top_footer: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47><red><page>/<max_page></#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray>"
 
