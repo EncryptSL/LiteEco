@@ -21,7 +21,7 @@ class ConvertEconomy(private val liteEco: LiteEco) {
                 val essentialsXConfig = YamlConfiguration.loadConfiguration(playerFile)
                 val balance = essentialsXConfig.getString("money") ?: BigDecimal.valueOf(0.00).toPlainString()
                 if (liteEco.api.createAccount(p, currency, balance.toBigDecimal())) {
-                    balances = balance.toBigDecimal()
+                    balances += balance.toBigDecimal()
                     converted += 1
                 }
             }
@@ -32,9 +32,9 @@ class ConvertEconomy(private val liteEco: LiteEco) {
         try {
             val betterEconomy = BetterEconomyHook()
             for (p in Bukkit.getOfflinePlayers()) {
-                val balance = betterEconomy.getBalance(p.uniqueId).toBigDecimal()
+                val balance = BigDecimal.valueOf(betterEconomy.getBalance(p.uniqueId))
                 if (liteEco.api.createAccount(p, currency, balance)) {
-                    balances = balance
+                    balances += balance
                     converted += 1
                 }
             }
