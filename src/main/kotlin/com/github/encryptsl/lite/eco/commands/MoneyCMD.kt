@@ -5,7 +5,6 @@ import com.github.encryptsl.lite.eco.api.ComponentPaginator
 import com.github.encryptsl.lite.eco.api.events.PlayerEconomyPayEvent
 import com.github.encryptsl.lite.eco.api.objects.ModernText
 import com.github.encryptsl.lite.eco.utils.Helper
-import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.OfflinePlayer
@@ -18,6 +17,11 @@ import org.incendo.cloud.annotations.*
 @CommandDescription("Provided plugin by LiteEco")
 class MoneyCMD(private val liteEco: LiteEco) {
     private val helper: Helper = Helper(liteEco)
+
+    @Command("money")
+    fun onRootCommand(commandSender: CommandSender) {
+        onHelp(commandSender)
+    }
 
     @Command("money help")
     @Permission("lite.eco.help")
@@ -96,13 +100,13 @@ class MoneyCMD(private val liteEco: LiteEco) {
             return commandSender.sendMessage(liteEco.locale.translation("messages.error.currency_not_exist", Placeholder.parsed("currency", currency)))
 
         try {
-            runBlocking {
+            liteEco.server.asyncScheduler.runNow(liteEco, {
                 val topPlayers = helper.getTopBalancesFormatted(currency)
 
                 val pagination = ComponentPaginator(topPlayers) { itemsPerPage = 10 }.apply { page(page) }
 
                 if (pagination.isAboveMaxPage(page))
-                    return@runBlocking commandSender.sendMessage(liteEco.locale.translation("messages.error.maximum_page",
+                    return@runNow commandSender.sendMessage(liteEco.locale.translation("messages.error.maximum_page",
                         Placeholder.parsed("max_page", pagination.maxPages.toString()))
                     )
 
@@ -115,7 +119,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
                     commandSender.sendMessage(content)
                 }
                 commandSender.sendMessage(liteEco.locale.translation("messages.balance.top_footer", tagResolver))
-            }
+            })
         } catch (e : Exception) {
             liteEco.logger.severe(e.message ?: e.localizedMessage)
             e.fillInStackTrace()
