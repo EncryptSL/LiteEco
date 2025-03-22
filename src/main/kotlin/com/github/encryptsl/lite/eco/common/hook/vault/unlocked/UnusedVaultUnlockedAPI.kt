@@ -12,7 +12,27 @@ abstract class UnusedVaultUnlockedAPI : Economy {
         private const val PERMISSIONS_NOT_SUPPORTED_MESSAGE = "LiteEco does not support permissions operation!"
     }
 
-    override fun createSharedAccount(p0: String?, p1: UUID?, p2: String?, p3: UUID?): Boolean {
+    @Deprecated("Deprecated in Java", ReplaceWith("createAccount(accountID: UUID, name: String, player: Boolean)"))
+    override fun createAccount(accountID: UUID, name: String): Boolean {
+        return false
+    }
+
+    @Deprecated("Deprecated in Java", ReplaceWith("createAccount(accountID: UUID, name: String, worldName: String, player: Boolean)"))
+    override fun createAccount(accountID: UUID, name: String, worldName: String): Boolean {
+        return false
+    }
+
+    @Deprecated("Deprecated in Java", ReplaceWith("format(pluginName, amount)"))
+    override fun format(amount: BigDecimal): String {
+        return format("", amount)
+    }
+
+    @Deprecated("Deprecated in Java", ReplaceWith("format(pluginName, amount, currency)"))
+    override fun format(amount: BigDecimal, currency: String): String {
+        return format("pluginName", amount, currency)
+    }
+
+    override fun createSharedAccount(pluginName: String, accountID: UUID, name: String, owner: UUID): Boolean {
         return EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.NOT_IMPLEMENTED, SHARED_ACCOUNTS_NOT_SUPPORTED_MESSAGE).transactionSuccess()
     }
 
@@ -20,41 +40,40 @@ abstract class UnusedVaultUnlockedAPI : Economy {
         return EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.NOT_IMPLEMENTED, SHARED_ACCOUNTS_NOT_SUPPORTED_MESSAGE).transactionSuccess()
     }
 
-    override fun isAccountOwner(p0: String?, p1: UUID?, p2: UUID?): Boolean {
+    override fun isAccountOwner(pluginName: String, accountID: UUID, uuid: UUID): Boolean {
         return EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.NOT_IMPLEMENTED, SHARED_ACCOUNTS_NOT_SUPPORTED_MESSAGE).transactionSuccess()
     }
 
-    override fun setOwner(p0: String?, p1: UUID?, p2: UUID?): Boolean {
+    override fun setOwner(pluginName: String, accountID: UUID, uuid: UUID): Boolean {
         return EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.NOT_IMPLEMENTED, SHARED_ACCOUNTS_NOT_SUPPORTED_MESSAGE).transactionSuccess()
     }
 
-    override fun isAccountMember(p0: String?, p1: UUID?, p2: UUID?): Boolean {
+    override fun isAccountMember(pluginName: String, accountID: UUID, uuid: UUID): Boolean {
         return EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.NOT_IMPLEMENTED, SHARED_ACCOUNTS_NOT_SUPPORTED_MESSAGE).transactionSuccess()
     }
 
-    override fun addAccountMember(p0: String?, p1: UUID?, p2: UUID?): Boolean {
+    override fun addAccountMember(pluginName: String, accountID: UUID, uuid: UUID): Boolean {
         return EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.NOT_IMPLEMENTED, SHARED_ACCOUNTS_NOT_SUPPORTED_MESSAGE).transactionSuccess()
     }
 
-    override fun addAccountMember(p0: String?, p1: UUID?, p2: UUID?, vararg p3: AccountPermission?): Boolean {
+    override fun addAccountMember(pluginName: String, accountID: UUID, uuid: UUID, vararg initialPermissions: AccountPermission): Boolean {
         return EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.NOT_IMPLEMENTED, SHARED_ACCOUNTS_NOT_SUPPORTED_MESSAGE).transactionSuccess()
     }
 
-    override fun removeAccountMember(p0: String?, p1: UUID?, p2: UUID?): Boolean {
+    override fun removeAccountMember(pluginName: String, accountID: UUID, uuid: UUID): Boolean {
         return EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.NOT_IMPLEMENTED, SHARED_ACCOUNTS_NOT_SUPPORTED_MESSAGE).transactionSuccess()
     }
 
-
-    override fun hasAccountPermission(p0: String?, p1: UUID?, p2: UUID?, p3: AccountPermission?): Boolean {
+    override fun hasAccountPermission(pluginName: String, accountID: UUID, uuid: UUID, permission: AccountPermission): Boolean {
         return EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.NOT_IMPLEMENTED, PERMISSIONS_NOT_SUPPORTED_MESSAGE).transactionSuccess()
     }
 
     override fun updateAccountPermission(
-        p0: String?,
-        p1: UUID?,
-        p2: UUID?,
-        p3: AccountPermission?,
-        p4: Boolean
+        pluginName: String,
+        accountID: UUID,
+        uuid: UUID,
+        permission: AccountPermission,
+        value: Boolean
     ): Boolean {
         return EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.NOT_IMPLEMENTED, PERMISSIONS_NOT_SUPPORTED_MESSAGE).transactionSuccess()
     }

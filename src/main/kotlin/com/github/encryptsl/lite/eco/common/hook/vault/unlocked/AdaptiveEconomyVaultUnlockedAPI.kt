@@ -11,6 +11,11 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
 
     companion object {
         private const val MULTI_WORLD_CURRENCIES_NOT_SUPPORTED_MESSAGE = "LiteEco does not support multi world currencies, actions !"
+        private const val AMOUNT_APPROACHING_ZERO = "LiteEco negative amounts are not allowed."
+        private const val SUCCESS_WITHDRAW = "LiteEco withdraw was success."
+        private const val FAIL_WITHDRAW = "LiteEco something happened in withdraw process."
+        private const val SUCCESS_DEPOSIT = "LiteEco deposited amount was success."
+        private const val FAIL_DEPOSIT = "LiteEco something happened in deposit process."
     }
 
     override fun isEnabled(): Boolean = liteEco.isEnabled
@@ -19,46 +24,39 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
 
     override fun hasMultiCurrencySupport(): Boolean = false
 
-    override fun fractionalDigits(pluginName: String?): Int = -1
+    override fun fractionalDigits(pluginName: String): Int = -1
 
-    @Deprecated("")
-    override fun format(value: BigDecimal): String {
-        return liteEco.api.formatted(value)
+    override fun format(pluginName: String, amount: BigDecimal): String {
+        return liteEco.api.formatted(amount)
     }
 
-    @Deprecated("")
-    override fun format(value: BigDecimal, p1: String?): String {
-        return liteEco.api.formatted(value)
-    }
-
-    override fun format(pluginName: String?, amount: BigDecimal): String = liteEco.api.formatted(amount)
-
-    override fun format(pluginName: String?, amount: BigDecimal, currency: String): String = liteEco.api.formatted(amount)
+    override fun format(pluginName: String, amount: BigDecimal, currency: String): String = liteEco.api.formatted(amount)
 
     override fun hasCurrency(currencyName: String): Boolean = false
 
-    override fun getDefaultCurrency(pluginName: String?): String {
-        return liteEco.currencyImpl.defaultCurrency()
-    }
+    override fun getDefaultCurrency(pluginName: String): String = liteEco.currencyImpl.defaultCurrency()
 
-    override fun defaultCurrencyNamePlural(pluginName: String?): String = ""
+    override fun defaultCurrencyNamePlural(pluginName: String): String = ""
 
-    override fun defaultCurrencyNameSingular(pluginName: String?): String = ""
+    override fun defaultCurrencyNameSingular(pluginName: String): String = ""
 
     override fun currencies(): MutableCollection<String> {
         return liteEco.currencyImpl.getCurrenciesKeys().toMutableList()
     }
 
-    override fun createAccount(uuid: UUID?, p1: String?): Boolean {
-        if (uuid == null) { return false }
-
-        return liteEco.api.createAccount(Bukkit.getOfflinePlayer(uuid), startAmount = liteEco.currencyImpl.defaultStartBalance())
+    override fun createAccount(accountID: UUID, name: String, player: Boolean): Boolean {
+        if (!player) {
+            return false
+        }
+        return liteEco.api.createAccount(Bukkit.getOfflinePlayer(accountID), startAmount = liteEco.currencyImpl.defaultStartBalance())
     }
 
-    override fun createAccount(uuid: UUID?, p1: String?, p2: String?): Boolean {
-        if (uuid == null) return false
+    override fun createAccount(accountID: UUID, name: String, worldName: String, player: Boolean): Boolean {
+        if (!player) {
+            return false
+        }
 
-        return liteEco.api.createAccount(Bukkit.getOfflinePlayer(uuid), startAmount = liteEco.currencyImpl.defaultStartBalance())
+        return liteEco.api.createAccount(Bukkit.getOfflinePlayer(accountID), startAmount = liteEco.currencyImpl.defaultStartBalance())
     }
 
     override fun deleteAccount(plugin: String, accountID: UUID): Boolean = false
@@ -80,143 +78,138 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
         }.get()
     }
 
-    override fun hasAccount(uuid: UUID, p1: String?): Boolean {
-        return hasAccount(uuid)
-    }
+    override fun hasAccount(accountID: UUID, worldName: String): Boolean = hasAccount(accountID)
 
-    override fun renameAccount(p0: UUID?, p1: String?): Boolean = false
+    override fun renameAccount(accountID: UUID, name: String): Boolean = false
 
-    override fun renameAccount(plugin: String?, accountID: UUID?, name: String?): Boolean = false
+    override fun renameAccount(plugin: String, accountID: UUID, name: String): Boolean = false
 
-    override fun accountSupportsCurrency(plugin: String?, uuid: UUID?, currency: String?): Boolean {
-        if (uuid == null || currency == null) return false
-
-        return liteEco.api.hasAccount(uuid, currency).thenApply {
+    override fun accountSupportsCurrency(plugin: String, accountID: UUID, currency: String): Boolean {
+        return liteEco.api.hasAccount(accountID, currency).thenApply {
             return@thenApply true
         }.exceptionally {
             return@exceptionally false
         }.join()
     }
 
-    override fun accountSupportsCurrency(plugin: String?, accountID: UUID?, currency: String?, world: String?): Boolean {
-        if (accountID == null || currency == null) return false
-
-        return accountSupportsCurrency(null, accountID, currency)
+    override fun accountSupportsCurrency(plugin: String, accountID: UUID, currency: String, world: String): Boolean {
+        return accountSupportsCurrency(plugin, accountID, currency)
     }
 
-    override fun getBalance(pluginName: String?, uuid: UUID?): BigDecimal {
-        if (uuid == null) return BigDecimal.ZERO
-
-        return liteEco.api.getBalance(uuid, liteEco.currencyImpl.defaultCurrency())
+    override fun balance(pluginName: String, accountID: UUID): BigDecimal {
+        return liteEco.api.getBalance(accountID, liteEco.currencyImpl.defaultCurrency())
     }
 
-    override fun getBalance(pluginName: String?, uuid: UUID?, worldName: String?): BigDecimal {
-        return getBalance(null, uuid)
+    override fun balance(pluginName: String, accountID: UUID, world: String): BigDecimal {
+        return balance(pluginName, accountID)
     }
 
-    override fun getBalance(pluginName: String?, uuid: UUID?, p2: String?, currency: String?): BigDecimal {
-        if (uuid == null || currency == null) return BigDecimal.ZERO
-
-        return liteEco.api.getBalance(uuid, currency)
+    override fun balance(pluginName: String, accountID: UUID, world: String, currency: String): BigDecimal {
+        return balance(pluginName, accountID)
     }
 
-    override fun has(pluginName: String?, uuid: UUID?, value: BigDecimal?): Boolean {
-        if (uuid == null || value == null) return false
-
-        return liteEco.api.has(uuid, liteEco.currencyImpl.defaultCurrency() , value)
+    @Deprecated("Deprecated in Java", ReplaceWith("balance(pluginName, accountID)"))
+    override fun getBalance(pluginName: String, accountID: UUID): BigDecimal {
+        return balance(pluginName, accountID)
     }
 
-    override fun has(pluginName: String?, uuid: UUID?, worldName: String?, value: BigDecimal?): Boolean {
-        return has(pluginName, uuid, value)
+    @Deprecated("Deprecated in Java", ReplaceWith("balance(pluginName, accountID)"))
+    override fun getBalance(pluginName: String, accountID: UUID, world: String): BigDecimal {
+        return balance(pluginName, accountID)
     }
 
-    override fun has(pluginName: String?, uuid: UUID?, worldName: String?, currency: String?, value: BigDecimal?): Boolean {
-        if (uuid == null || currency == null || value == null) return false
-
-        return liteEco.api.has(uuid, currency , value)
+    @Deprecated("Deprecated in Java", ReplaceWith("balance(pluginName, accountID, world, currency)"))
+    override fun getBalance(pluginName: String, accountID: UUID, world: String, currency: String): BigDecimal {
+        return balance(pluginName, accountID, world, currency)
     }
 
-    override fun withdraw(pluginName: String?, uuid: UUID?, amount: BigDecimal?): EconomyResponse {
-        if (amount == null) {
-            return EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, null)
+    override fun has(pluginName: String, accountID: UUID, amount: BigDecimal): Boolean {
+        return liteEco.api.has(accountID, liteEco.currencyImpl.defaultCurrency() , amount)
+    }
+
+    override fun has(pluginName: String, accountID: UUID, worldName: String, amount: BigDecimal): Boolean {
+        return has(pluginName, accountID, amount)
+    }
+
+    override fun has(
+        pluginName: String,
+        accountID: UUID,
+        worldName: String,
+        currency: String,
+        amount: BigDecimal
+    ): Boolean {
+        return has(pluginName, accountID, amount)
+    }
+
+    override fun withdraw(pluginName: String, accountID: UUID, amount: BigDecimal): EconomyResponse {
+        if (amount.isApproachingZero()) {
+            return EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, AMOUNT_APPROACHING_ZERO)
         }
 
-        if (uuid == null || amount.isApproachingZero()) {
-            return EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, null)
-        }
-
-        return if (has(pluginName, uuid, amount)) {
-            liteEco.api.withDrawMoney(uuid, liteEco.currencyImpl.defaultCurrency(), amount)
-            EconomyResponse(amount, getBalance(null, uuid), EconomyResponse.ResponseType.SUCCESS, null)
+        return if (has(pluginName, accountID, amount)) {
+            liteEco.api.withDrawMoney(accountID, liteEco.currencyImpl.defaultCurrency(), amount)
+            EconomyResponse(amount, balance(pluginName, accountID), EconomyResponse.ResponseType.SUCCESS, SUCCESS_WITHDRAW)
         } else {
-            EconomyResponse(amount, getBalance(null, uuid), EconomyResponse.ResponseType.SUCCESS, null)
+            EconomyResponse(amount, balance(pluginName, accountID), EconomyResponse.ResponseType.FAILURE, FAIL_WITHDRAW)
         }
     }
 
-    override fun withdraw(pluginName: String?, uuid: UUID?, worldName: String?, amount: BigDecimal?): EconomyResponse {
-        return withdraw(pluginName, uuid, amount)
-    }
+    override fun withdraw(
+        pluginName: String,
+        accountID: UUID,
+        worldName: String,
+        currency: String,
+        amount: BigDecimal
+    ): EconomyResponse {
 
-    override fun withdraw(pluginName: String?, uuid: UUID?, worldName: String?, currency: String?, amount: BigDecimal?): EconomyResponse {
-        if (currency != null) {
-            if (amount == null) {
-                return EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, null)
-            }
-
-            if (uuid == null || amount.isApproachingZero()) {
-                return EconomyResponse(amount, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, null)
-            }
-
-            return if (has(pluginName, uuid, amount)) {
-                liteEco.api.withDrawMoney(uuid, currency, amount)
-                EconomyResponse(amount, getBalance(pluginName, uuid, null, currency), EconomyResponse.ResponseType.SUCCESS, null)
-            } else {
-                EconomyResponse(amount, getBalance(pluginName, uuid, null, currency), EconomyResponse.ResponseType.SUCCESS, null)
-            }
+        if (amount.isApproachingZero()) {
+            return EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, AMOUNT_APPROACHING_ZERO)
         }
 
-        return withdraw(pluginName, uuid, amount)
-    }
-
-    override fun deposit(pluginName: String?, uuid: UUID?, amount: BigDecimal): EconomyResponse {
-        if (uuid == null || amount.isApproachingZero()) {
-            return EconomyResponse(amount, getBalance(pluginName, uuid), EconomyResponse.ResponseType.FAILURE, null)
-        }
-
-        return if (has(pluginName, uuid, amount)) {
-            liteEco.api.depositMoney(uuid, liteEco.currencyImpl.defaultCurrency(), amount)
-            EconomyResponse(amount, getBalance(pluginName, uuid), EconomyResponse.ResponseType.SUCCESS, null)
+        return if (has(pluginName, accountID, amount)) {
+            liteEco.api.withDrawMoney(accountID, liteEco.currencyImpl.defaultCurrency(), amount)
+            EconomyResponse(amount, balance(pluginName, accountID), EconomyResponse.ResponseType.SUCCESS, SUCCESS_WITHDRAW)
         } else {
-            EconomyResponse(amount, getBalance(pluginName, uuid), EconomyResponse.ResponseType.FAILURE, null)
+            EconomyResponse(amount, balance(pluginName, accountID), EconomyResponse.ResponseType.FAILURE, FAIL_WITHDRAW)
         }
     }
 
-    override fun deposit(pluginName: String?, uuid: UUID?, worldName: String?, amount: BigDecimal): EconomyResponse {
-        if (worldName != null) {
-            return EconomyResponse(amount, getBalance(pluginName, uuid), EconomyResponse.ResponseType.FAILURE, MULTI_WORLD_CURRENCIES_NOT_SUPPORTED_MESSAGE)
-        }
-
-        return deposit(pluginName, uuid, amount)
+    override fun withdraw(pluginName: String, accountID: UUID, worldName: String, amount: BigDecimal): EconomyResponse {
+        return withdraw(pluginName, accountID, amount)
     }
 
-    override fun deposit(pluginName: String?, uuid: UUID?, worldName: String?, currency: String?, amount: BigDecimal): EconomyResponse {
-        if (worldName != null) {
-            return EconomyResponse(amount, getBalance(pluginName, uuid), EconomyResponse.ResponseType.FAILURE, MULTI_WORLD_CURRENCIES_NOT_SUPPORTED_MESSAGE)
+    override fun deposit(pluginName: String, accountID: UUID, amount: BigDecimal): EconomyResponse {
+        if (amount.isApproachingZero()) {
+            return EconomyResponse(amount, balance(pluginName, accountID), EconomyResponse.ResponseType.FAILURE, AMOUNT_APPROACHING_ZERO)
+        }
+        return if (has(pluginName, accountID, amount)) {
+            liteEco.api.depositMoney(accountID, liteEco.currencyImpl.defaultCurrency(), amount)
+            EconomyResponse(amount, balance(pluginName, accountID), EconomyResponse.ResponseType.SUCCESS, SUCCESS_DEPOSIT)
+        } else {
+            EconomyResponse(amount, balance(pluginName, accountID), EconomyResponse.ResponseType.FAILURE, FAIL_DEPOSIT)
+        }
+    }
+
+    override fun deposit(pluginName: String, accountID: UUID, worldName: String, amount: BigDecimal): EconomyResponse {
+        return deposit(pluginName, accountID, amount)
+    }
+
+    override fun deposit(
+        pluginName: String,
+        accountID: UUID,
+        worldName: String,
+        currency: String,
+        amount: BigDecimal
+    ): EconomyResponse {
+        if (amount.isApproachingZero()) {
+            return EconomyResponse(amount, balance(pluginName, accountID), EconomyResponse.ResponseType.FAILURE, AMOUNT_APPROACHING_ZERO)
         }
 
-        if (currency != null) {
-            if (uuid == null || amount.isApproachingZero()) {
-                return EconomyResponse(amount, getBalance(pluginName, uuid, null, currency), EconomyResponse.ResponseType.FAILURE, null)
-            }
-
-            return if (has(pluginName, uuid, amount)) {
-                liteEco.api.depositMoney(uuid, currency, amount)
-                EconomyResponse(amount, getBalance(pluginName, uuid, null, currency), EconomyResponse.ResponseType.SUCCESS, null)
-            } else {
-                EconomyResponse(amount, getBalance(pluginName, uuid, null, currency), EconomyResponse.ResponseType.FAILURE, null)
-            }
+        return if (has(pluginName, accountID, amount)) {
+            liteEco.api.depositMoney(accountID, currency, amount)
+            EconomyResponse(amount, balance(pluginName, accountID), EconomyResponse.ResponseType.SUCCESS, SUCCESS_DEPOSIT)
+        } else {
+            EconomyResponse(amount, balance(pluginName, accountID), EconomyResponse.ResponseType.FAILURE, FAIL_DEPOSIT)
         }
-
-        return deposit(pluginName, uuid, amount)
     }
 }
