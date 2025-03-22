@@ -61,6 +61,9 @@ formatting:
   # Locale symbol format
   currency_locale: en-US
 
+  placeholders:
+    empty-name: "EMPTY"
+
 # These settings toggle messages.
 messages:
   global:
