@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    kotlin("jvm") version "2.0.20" apply true
+    kotlin("jvm") version "2.1.20" apply true
     id("com.gradleup.shadow") version "8.3.4"
     id("maven-publish")
 }
@@ -31,19 +31,19 @@ kotlin {
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:${providers.gradleProperty("server_version").get()}")
-    compileOnly(kotlin("stdlib", "2.0.20"))
+    compileOnly(kotlin("stdlib", "2.1.20"))
     compileOnly("me.lokka30:treasury-api:2.0.0")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
         exclude("org.bukkit", "bukkit")
     }
-    compileOnly("com.zaxxer:HikariCP:6.0.0")
+    compileOnly("com.zaxxer:HikariCP:6.2.1")
     compileOnly("me.clip:placeholderapi:2.11.5")
-    compileOnly("org.jetbrains.exposed:exposed-core:0.55.0")
-    compileOnly("org.jetbrains.exposed:exposed-jdbc:0.55.0")
-    compileOnly("org.jetbrains.exposed:exposed-kotlin-datetime:0.55.0")
+    compileOnly("org.jetbrains.exposed:exposed-core:0.60.0")
+    compileOnly("org.jetbrains.exposed:exposed-jdbc:0.60.0")
+    compileOnly("org.jetbrains.exposed:exposed-kotlin-datetime:0.60.0")
     compileOnly("com.squareup.okhttp3:okhttp:4.12.0")
     compileOnly("me.hsgamer:bettereconomy:3.1")
-    compileOnly("net.milkbowl.vault:VaultUnlockedAPI:2.7")
+    compileOnly("net.milkbowl.vault:VaultUnlockedAPI:2.9")
 
     implementation("org.bstats:bstats-bukkit:3.0.1")
     implementation("org.incendo:cloud-paper:2.0.0-SNAPSHOT")
@@ -56,13 +56,13 @@ dependencies {
         exclude("net.kyori", "adventure-text-minimessage")
         exclude("net.kyori", "adventure-text-serializer-plain")
     }
-    implementation("io.github.miniplaceholders:miniplaceholders-kotlin-ext:2.2.3")
+    implementation("io.github.miniplaceholders:miniplaceholders-kotlin-ext:2.3.0")
 
-    testImplementation(kotlin("test", "2.0.20"))
-    testImplementation("com.zaxxer:HikariCP:5.1.0")
-    testImplementation("org.xerial:sqlite-jdbc:3.42.0.0")
-    testImplementation("org.jetbrains.exposed:exposed-core:0.55.0")
-    testImplementation("org.jetbrains.exposed:exposed-jdbc:0.55.0")
+    testImplementation(kotlin("test", "2.1.20"))
+    testImplementation("com.zaxxer:HikariCP:6.2.1")
+    testImplementation("org.xerial:sqlite-jdbc:3.49.1.0")
+    testImplementation("org.jetbrains.exposed:exposed-core:0.60.0")
+    testImplementation("org.jetbrains.exposed:exposed-jdbc:0.60.0")
 }
 
 sourceSets {
