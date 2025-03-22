@@ -16,7 +16,7 @@ class ConfigAPI(private val liteEco: LiteEco) : ConfigAPIProvider {
     override fun create(fileName: String) : ConfigAPI {
         val file = File(liteEco.dataFolder, fileName)
         if (!file.exists()) {
-            liteEco.saveResource(fileName, false)
+            saveResource(fileName, false)
         } else {
             liteEco.logger.info("Resource $fileName exists [!]")
         }
