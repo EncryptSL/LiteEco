@@ -93,7 +93,7 @@ class EconomyPlaceholderAPI(private val liteEco: LiteEco, private val extVersion
             val name = topBalance.keys.elementAt(rank - 1)
             Optional.ofNullable(name).orElse("UNKNOWN")
         } else {
-            "EMPTY"
+            liteEco.config.getString("formatting.placeholders.empty-name", "EMPTY").toString()
         }
     }
 
