@@ -17,6 +17,7 @@ import com.github.encryptsl.lite.eco.listeners.*
 import com.github.encryptsl.lite.eco.listeners.admin.*
 import com.github.encryptsl.lite.eco.utils.ConvertEconomy.Economies
 import com.github.encryptsl.lite.eco.utils.MigrationTool
+import com.tchristofferson.configupdater.ConfigUpdater
 import org.bstats.bukkit.Metrics
 import org.bstats.charts.SingleLineChart
 import org.bukkit.Bukkit
@@ -30,6 +31,7 @@ import org.incendo.cloud.execution.ExecutionCoordinator
 import org.incendo.cloud.minecraft.extras.MinecraftExceptionHandler
 import org.incendo.cloud.paper.LegacyPaperCommandManager
 import org.incendo.cloud.suggestion.Suggestion
+import java.io.File
 import java.util.concurrent.CompletableFuture
 import kotlin.system.measureTimeMillis
 
@@ -55,6 +57,7 @@ class LiteEco : JavaPlugin() {
 
     private val configAPI: ConfigAPI by lazy { ConfigAPI(this) }
     private val hookManager: HookManager by lazy { HookManager(this) }
+    private val configFile = File(dataFolder, "config.yml")
 
     override fun onLoad() {
         instance = this
@@ -79,6 +82,12 @@ class LiteEco : JavaPlugin() {
             checkUpdates()
             registerCommands()
             registerListeners()
+        }
+        try {
+            ConfigUpdater.update(this, "config.yml", configFile, "plugin", "economy", "database")
+            logger.info("Config was updated on current version !")
+        } catch (e : Exception) {
+            logger.severe(e.message ?: e.localizedMessage)
         }
         logger.info("Plugin enabled in time $timeTaken ms")
     }

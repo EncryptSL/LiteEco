@@ -44,6 +44,7 @@ dependencies {
     compileOnly("com.squareup.okhttp3:okhttp:4.12.0")
     compileOnly("me.hsgamer:bettereconomy:3.1")
     compileOnly("net.milkbowl.vault:VaultUnlockedAPI:2.9")
+    compileOnly("com.tchristofferson:ConfigUpdater:2.2-SNAPSHOT")
 
     implementation("org.bstats:bstats-bukkit:3.0.1")
     implementation("org.incendo:cloud-paper:2.0.0-SNAPSHOT")

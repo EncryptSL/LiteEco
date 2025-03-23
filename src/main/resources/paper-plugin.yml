@@ -2,7 +2,7 @@
 name: ${name}
 main: com.github.encryptsl.lite.eco.LiteEco
 version: ${version}
-api-version: '1.19'
+api-version: '1.20'
 loader: com.github.encryptsl.lite.eco.LiteEcoLoader
 has-open-classloader: false
 
