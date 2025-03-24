@@ -4,7 +4,6 @@ import com.github.encryptsl.lite.eco.LiteEco
 import io.github.miniplaceholders.kotlin.asInsertingTag
 import io.github.miniplaceholders.kotlin.expansion
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.OfflinePlayer
 import java.math.BigDecimal
 import java.util.*
@@ -17,11 +16,17 @@ class EconomyMiniPlaceholder(private val liteEco: LiteEco) {
             audiencePlaceholder("balance") { p, s, _ ->
                 val player: OfflinePlayer = p as OfflinePlayer
                 val currency = if (s.hasNext()) s.pop().value() else liteEco.currencyImpl.defaultCurrency()
+                if (!liteEco.currencyImpl.getCurrencyNameExist(currency))
+                    return@audiencePlaceholder null
+
                 return@audiencePlaceholder Component.text(liteEco.api.getBalance(player, currency).toPlainString()).asInsertingTag()
             }
             audiencePlaceholder("balance_formatted") { p, s, _ ->
                 val player: OfflinePlayer = p as OfflinePlayer
                 val currency = if (s.hasNext()) s.pop().value() else liteEco.currencyImpl.defaultCurrency()
+                if (!liteEco.currencyImpl.getCurrencyNameExist(currency))
+                    return@audiencePlaceholder null
+
                 return@audiencePlaceholder Component.text(liteEco.api.fullFormatting(liteEco.api.getBalance(player, currency))).asInsertingTag()
             }
             audiencePlaceholder("balance_compacted") { p, s, _ ->
@@ -30,25 +35,34 @@ class EconomyMiniPlaceholder(private val liteEco: LiteEco) {
                 return@audiencePlaceholder Component.text(liteEco.api.fullFormatting(liteEco.api.getBalance(player, currency))).asInsertingTag()
             }
             globalPlaceholder("top_rank_player") { i, _ ->
-                val argument = i.popOr("You need provide currency").value().split("_")
-                val currency = Optional.ofNullable(extractPlaceholderIdentifierName(0, argument)).orElse(liteEco.currencyImpl.defaultCurrency())
+                val currency = if (i.hasNext()) i.pop().value() else liteEco.currencyImpl.defaultCurrency()
+                if (!liteEco.currencyImpl.getCurrencyNameExist(currency))
+                    return@globalPlaceholder null
+
                 return@globalPlaceholder Component.text(nameByRank(1, currency)).asInsertingTag()
             }
-            globalPlaceholder("top_formatted") { i, _ ->
+            globalPlaceholder("total_balance") { i, _ ->
+                val currency = if (i.hasNext()) i.pop().value() else liteEco.currencyImpl.defaultCurrency()
+                if (!liteEco.currencyImpl.getCurrencyNameExist(currency))
+                    return@globalPlaceholder null
+
+                return@globalPlaceholder Component.text(totalBalanceOfServerByCurrency(currency)).asInsertingTag()
+            }
+            globalPlaceholder("top_balance_formatted") { i, _ ->
                 val argument = i.popOr("You need provide context").value().split("_")
                 val rank = extractPlaceholderIdentifierName(0, argument).toInt()
                 val currency = Optional.ofNullable(extractPlaceholderIdentifierName(1, argument)).orElse(liteEco.currencyImpl.defaultCurrency())
                 if (!liteEco.currencyImpl.getCurrencyNameExist(currency))
-                    return@globalPlaceholder liteEco.locale.translation("messages.error.currency_not_exist", Placeholder.parsed("currency", currency)).asInsertingTag()
+                    return@globalPlaceholder null
 
                 return@globalPlaceholder Component.text(liteEco.api.fullFormatting(balanceByRank(rank, currency))).asInsertingTag()
             }
-            globalPlaceholder("top_compacted") { i, _ ->
+            globalPlaceholder("top_balance_compacted") { i, _ ->
                 val argument = i.popOr("You need provide context").value().split("_")
                 val rank = extractPlaceholderIdentifierName(0, argument).toInt()
                 val currency = Optional.ofNullable(extractPlaceholderIdentifierName(1, argument)).orElse(liteEco.currencyImpl.defaultCurrency())
                 if (!liteEco.currencyImpl.getCurrencyNameExist(currency))
-                    return@globalPlaceholder liteEco.locale.translation("messages.error.currency_not_exist", Placeholder.parsed("currency", currency)).asInsertingTag()
+                    return@globalPlaceholder null
 
                 return@globalPlaceholder Component.text(liteEco.api.compacted(balanceByRank(rank, currency))).asInsertingTag()
             }
@@ -57,7 +71,7 @@ class EconomyMiniPlaceholder(private val liteEco: LiteEco) {
                 val rank = extractPlaceholderIdentifierName(0, argument).toInt()
                 val currency = Optional.ofNullable(extractPlaceholderIdentifierName(1, argument)).orElse(liteEco.currencyImpl.defaultCurrency())
                 if (!liteEco.currencyImpl.getCurrencyNameExist(currency))
-                    return@globalPlaceholder liteEco.locale.translation("messages.error.currency_not_exist", Placeholder.parsed("currency", currency)).asInsertingTag()
+                    return@globalPlaceholder null
 
                 return@globalPlaceholder Component.text(balanceByRank(rank, currency).toPlainString()).asInsertingTag()
             }
@@ -66,7 +80,7 @@ class EconomyMiniPlaceholder(private val liteEco: LiteEco) {
                 val rank = extractPlaceholderIdentifierName(0, argument).toInt()
                 val currency = Optional.ofNullable(extractPlaceholderIdentifierName(1, argument)).orElse(liteEco.currencyImpl.defaultCurrency())
                 if (!liteEco.currencyImpl.getCurrencyNameExist(currency))
-                    return@globalPlaceholder liteEco.locale.translation("messages.error.currency_not_exist", Placeholder.parsed("currency", currency)).asInsertingTag()
+                    return@globalPlaceholder null
 
                 return@globalPlaceholder Component.text(nameByRank(rank, currency)).asInsertingTag()
             }
@@ -94,6 +108,10 @@ class EconomyMiniPlaceholder(private val liteEco: LiteEco) {
         } else {
             BigDecimal.ZERO
         }
+    }
+
+    private fun totalBalanceOfServerByCurrency(currency: String): String {
+        return topBalance(currency).values.sumOf { it }.toString()
     }
 
     private fun topBalance(currency: String): Map<String, BigDecimal> {
