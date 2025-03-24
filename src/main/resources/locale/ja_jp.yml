@@ -89,17 +89,17 @@ messages:
     convert_success: "<prefix> <green>Convert of <converted>x accounts and <balances> balances from <economy> to LiteEco was successful !"
 
   help:
-    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
+    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> LiteEco <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
     - " "
     - "<white>[+] <gray>/money help <white>-<#CFE7F0> このプラグインのコマンドのヘルプを表示します。"
     - "<white>[+] <gray>/money top <#b37dc7>[ページ番号] <white>-<#CFE7F0> 所持金ランキングを表示します。"
     - "<white>[+] <gray>/money bal <yellow>[ユーザー名] <white>-<#CFE7F0> ユーザーの所持金を取得します。"
     - "<white>[+] <gray>/money pay <yellow>[ユーザー名] <#3EE84D><金額> <white>-<#CFE7F0> 他のプレイヤーへ送金します。"
     - " "
-    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
+    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> LiteEco <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
 
   admin-help:
-    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
+    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> LiteEco <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
     - " "
     - "<red>[★] <gray>/eco add <yellow>[ユーザー名] <金額> <white>-<#F39E9E> 他のプレイヤーの所持金を増加させます。"
     - "<red>[★] <gray>/eco set <yellow>[ユーザー名] <金額> <white>-<#F39E9E> 他のプレイヤーの所持金を設定します。"
@@ -113,6 +113,6 @@ messages:
     - "<red>[★] <gray>/eco convert <#b37dc7><argument> <white>-<#F39E9E> 他のエコノミープラグインからライトエコに変換。"
     - "<red>[★] <gray>/eco reload <white>-<#F39E9E> 設定を再読み込みします。"
     - " "
-    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
+    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> LiteEco <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
 
 version: 2.0.3

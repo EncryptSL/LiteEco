@@ -89,17 +89,17 @@ messages:
     convert_success: "<prefix> <green>Konvertierung von <converted>x Accounts und <balances> Kontoständen von <economy> zu LiteEco war erfolgreich!"
 
   help:
-    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
+    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> LiteEco <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
     - " "
     - "<white>[+] <gray>/money help <white>-<#CFE7F0> Zeigt alle Befehle dieses Plugins"
     - "<white>[+] <gray>/money top <#b37dc7>[page] <#3EE84D>[currency] <white>-<#CFE7F0> Zeigt die reichsten Spieler"
     - "<white>[+] <gray>/money bal <yellow>[username] <#3EE84D>[currency] <white>-<#CFE7F0> Zeigt deinen Kontostand oder den eines anderen Spielers"
     - "<white>[+] <gray>/money pay <yellow>[username] <#3EE84D><amount> <#3EE84D>[currency] <white>-<#CFE7F0> Überweist einem anderen Spieler Geld."
     - " "
-    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
+    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> LiteEco <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
 
   admin-help:
-    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix>  <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
+    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> LiteEco  <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
     - " "
     - "<red>[★] <gray>/eco add <yellow>[username] <#3EE84D><amount> <#3EE84D>[currency] <white>-<#F39E9E> Fügt einem anderen Spieler Geld hinzu."
     - "<red>[★] <gray>/eco set <yellow>[username] <#3EE84D><amount> <#3EE84D>[currency] <white>-<#F39E9E> Setzt den Kontostand eines anderen Spielers."
@@ -113,6 +113,6 @@ messages:
     - "<red>[★] <gray>/eco convert <#b37dc7><argument> <#3EE84D>[currency] <white>-<#F39E9E> Konvertieren Sie von einem anderen Economy-Plugin zu LiteEco."
     - "<red>[★] <gray>/eco reload <white>-<#F39E9E> Lädt die Konfiguration neu."
     - " "
-    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
+    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> LiteEco <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
 
 version: 2.0.3

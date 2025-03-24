@@ -89,17 +89,17 @@ messages:
     convert_success: "<prefix> <green>Conversão de <converted>x contas e <balances> saldos de <economy> para LiteEco foi um sucesso [!]"
 
   help:
-    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
+    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> LiteEco <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
     - " "
     - "<white>[+] <gray>/money help <white>-<#CFE7F0> Mostra lista de comandos do plugin"
     - "<white>[+] <gray>/money top <#b37dc7>[página] <white>-<#CFE7F0> Mostra os players mais ricos"
     - "<white>[+] <gray>/money bal <yellow>[usuário] <#3EE84D>[moeda] <white>-<#CFE7F0> Mostra o saldo da sua conta ou de outro jogador"
     - "<white>[+] <gray>/money pay <yellow>[usuário] <#3EE84D>[moeda] <#3EE84D><amount> <white>-<#CFE7F0> Envia dinheiro para outro jogador."
     - " "
-    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
+    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> LiteEco <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
 
   admin-help:
-    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix>  <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
+    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> LiteEco  <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
     - " "
     - "<red>[★] <gray>/eco add <yellow>[usuário] <#3EE84D><amount> <#3EE84D>[moeda] <white>-<#F39E9E> Adiciona dinheiro a outros jogadores."
     - "<red>[★] <gray>/eco set <yellow>[usuário] <#3EE84D><amount> <#3EE84D>[moeda] <white>-<#F39E9E> Defina o saldo de outro jogador."
@@ -113,6 +113,6 @@ messages:
     - "<red>[★] <gray>/eco convert <#b37dc7><argument> <#3EE84D>[moeda] <white>-<#F39E9E> Converta de outra economia para LiteEco."
     - "<red>[★] <gray>/eco reload <white>-<#F39E9E> Recarregar as configurações."
     - " "
-    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
+    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> LiteEco <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
 
 version: 2.0.3

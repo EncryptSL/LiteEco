@@ -89,17 +89,17 @@ messages:
     convert_success: "<prefix> <green>转化来自 <economy> 的 <converted> 个账户, 共计 <balances> 经济单位至 LiteEco 的操作已成功完成 [!]"
 
   help:
-    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
+    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> LiteEco <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
     - " "
     - "<white>[+] <gray>/money help <white>-<#CFE7F0> 显示帮助列表"
     - "<white>[+] <gray>/money top <#b37dc7>[页码] <white>-<#CFE7F0> 显示财富排行榜"
     - "<white>[+] <gray>/money bal <yellow>[玩家名称] <#3EE84D>[货币类型] <white>-<#CFE7F0> 查询自己或其他玩家的余额"
     - "<white>[+] <gray>/money pay <yellow>[玩家名称] <#3EE84D>[货币类型] <#3EE84D><数量> <white>-<#CFE7F0> 向其他玩家支付."
     - " "
-    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
+    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> LiteEco <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
 
   admin-help:
-    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix>  <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
+    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> LiteEco  <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
     - " "
     - "<red>[★] <gray>/eco add <yellow>[玩家名称] <#3EE84D><数量> <#3EE84D>[货币类型] <white>-<#F39E9E> 增加指定玩家账户中的货币."
     - "<red>[★] <gray>/eco set <yellow>[玩家名称] <#3EE84D><数量> <#3EE84D>[货币类型] <white>-<#F39E9E> 设置指定玩家账户中的货币."
@@ -113,6 +113,6 @@ messages:
     - "<red>[★] <gray>/eco convert <#b37dc7><参数> <#3EE84D>[货币类型] <white>-<#F39E9E> 从其他插件迁移至 LiteEco."
     - "<red>[★] <gray>/eco reload <white>-<#F39E9E> 重载配置文件."
     - " "
-    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> <prefix> <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
+    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> LiteEco <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
 
 version: 2.0.3
