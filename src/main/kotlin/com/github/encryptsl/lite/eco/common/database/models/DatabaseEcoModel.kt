@@ -3,8 +3,6 @@ package com.github.encryptsl.lite.eco.common.database.models
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.interfaces.PlayerSQL
 import com.github.encryptsl.lite.eco.common.database.entity.User
-import com.github.encryptsl.lite.eco.common.database.exceptions.DatabaseAccessException
-import com.github.encryptsl.lite.eco.common.database.exceptions.UserNotFoundException
 import com.github.encryptsl.lite.eco.common.database.tables.Account
 import com.github.encryptsl.lite.eco.common.extensions.loggedTransaction
 import org.bukkit.Bukkit
