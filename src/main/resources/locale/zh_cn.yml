@@ -44,6 +44,7 @@ messages:
     account_not_exist: "<prefix> <red>账号 <account> 不存在 [!]"
     account_now_exist: "<prefix> <red>账号 <account> 已存在 [!]"
     currency_not_exist: "<prefix> <red>货币 <currency> 不存在!"
+    missing_currency_permission: "<prefix> <red>You do not have permission to use this currency [!]"
     format_amount: "<prefix> <red>数量无效. 请使用小数或缩写 (如 1K) [!]"
     insufficient_funds: "<prefix> <red>余额不足! [!]"
     maximum_page: "<red>最大页码为 <max_page>"

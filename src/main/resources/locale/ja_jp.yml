@@ -44,6 +44,7 @@ messages:
     account_not_exist: "<prefix> <red>そのプレイヤーは存在しません。(プレイヤー名: <account>)"
     account_now_exist: "<prefix> <red>Account <account> now exists [!]"
     currency_not_exist: "<prefix> <red>These currency <currency> not exist !"
+    missing_currency_permission: "<prefix> <red>You do not have permission to use this currency [!]"
     format_amount: "<prefix> <red>無効な金額です。小数点を使用するか、コンパクトな表記（例：1K）を利用してください。" # TEMP #
     insufficient_funds: "<prefix> <red>お金が足りていません。"
     maximum_page: "<red>ページ数の上限は <max_page>"

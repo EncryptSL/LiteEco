@@ -44,6 +44,7 @@ messages:
     account_not_exist: "<prefix> <red>A conta <account> não existe [!]"
     account_now_exist: "<prefix> <red>A conta <account> agora existe [!]"
     currency_not_exist: "<prefix> <red>Esta moeda <currency> não existe !"
+    missing_currency_permission: "<prefix> <red>You do not have permission to use this currency [!]"
     format_amount: "<prefix> <red>Quantidade inválida. Use números ou representações compactas (exemplo: 1K) [!]"
     insufficient_funds: "<prefix> <red>Saldo insuficiente! [!]"
     maximum_page: "<red>O limite de páginas é <max_page>"
