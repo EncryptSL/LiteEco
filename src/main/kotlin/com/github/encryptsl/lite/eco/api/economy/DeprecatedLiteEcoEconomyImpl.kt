@@ -7,17 +7,21 @@ import com.github.encryptsl.lite.eco.common.database.entity.User
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import java.math.BigDecimal
+import java.util.Optional
 import java.util.concurrent.CompletableFuture
 
 abstract class DeprecatedLiteEcoEconomyImpl : LiteEconomyAPI {
 
     override fun createAccount(player: OfflinePlayer, currency: String, startAmount: BigDecimal): Boolean {
         return getUserByUUID(player, currency).thenApply {
+            if (it.isPresent) it.get() else null
+        }.thenApply {
+            if (it == null) {
+                LiteEco.instance.databaseEcoModel.createPlayerAccount(player.name.toString(), player.uniqueId, currency, startAmount)
+                return@thenApply true
+            }
             LiteEco.instance.databaseEcoModel.updatePlayerName(player.uniqueId, player.name.toString(), currency)
             return@thenApply false
-        }.exceptionally {
-            LiteEco.instance.databaseEcoModel.createPlayerAccount(player.name.toString(), player.uniqueId, currency, startAmount)
-            return@exceptionally true
         }.join()
     }
 
@@ -43,11 +47,11 @@ abstract class DeprecatedLiteEcoEconomyImpl : LiteEconomyAPI {
         return amount <= getBalance(player, currency)
     }
 
-    override fun getUserByUUID(player: OfflinePlayer, currency: String): CompletableFuture<User> {
-        val future = CompletableFuture<User>()
+    override fun getUserByUUID(player: OfflinePlayer, currency: String): CompletableFuture<Optional<User>> {
+        val future = CompletableFuture<Optional<User>>()
 
         if (PlayerAccount.isPlayerOnline(player.uniqueId) || PlayerAccount.isAccountCached(player.uniqueId, currency)) {
-            future.completeAsync { User(player.name.toString(), player.uniqueId, PlayerAccount.getBalance(player.uniqueId, currency)) }
+            future.completeAsync { Optional.of(User(player.name.toString(), player.uniqueId, PlayerAccount.getBalance(player.uniqueId, currency))) }
         } else {
             return LiteEco.instance.databaseEcoModel.getUserByUUID(player.uniqueId, currency)
         }
@@ -56,14 +60,14 @@ abstract class DeprecatedLiteEcoEconomyImpl : LiteEconomyAPI {
     }
 
     override fun getBalance(player: OfflinePlayer, currency: String): BigDecimal {
-        return getUserByUUID(player, currency).join().money
+        return getUserByUUID(player, currency).join().get().money
     }
 
     override fun getCheckBalanceLimit(amount: BigDecimal, currency: String): Boolean {
         return (amount > LiteEco.instance.currencyImpl.getCurrencyLimit(currency)) && LiteEco.instance.currencyImpl.getCurrencyLimitEnabled(currency)
     }
 
-    override fun getCheckBalanceLimit(player: OfflinePlayer, currency: String, amount: BigDecimal): Boolean {
+    override fun getCheckBalanceLimit(player: OfflinePlayer, currentBalance: BigDecimal, currency: String, amount: BigDecimal): Boolean {
         return ((getBalance(player, currency).plus(amount) > LiteEco.instance.currencyImpl.getCurrencyLimit(currency)) && LiteEco.instance.currencyImpl.getCurrencyLimitEnabled(currency))
     }
 

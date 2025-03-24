@@ -8,7 +8,7 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
-import java.util.Optional
+import java.util.*
 
 class Locales(private val liteEco: LiteEco, private val langVersion: String) {
     enum class LangKey { CS_CZ, EN_US, ES_ES, JA_JP, DE_DE, PL_PL, ZH_CN }

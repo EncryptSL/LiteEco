@@ -3,6 +3,8 @@ package com.github.encryptsl.lite.eco.common.database.models
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.interfaces.PlayerSQL
 import com.github.encryptsl.lite.eco.common.database.entity.User
+import com.github.encryptsl.lite.eco.common.database.exceptions.DatabaseAccessException
+import com.github.encryptsl.lite.eco.common.database.exceptions.UserNotFoundException
 import com.github.encryptsl.lite.eco.common.database.tables.Account
 import com.github.encryptsl.lite.eco.common.extensions.loggedTransaction
 import org.bukkit.Bukkit
@@ -46,17 +48,22 @@ class DatabaseEcoModel : PlayerSQL {
         }
     }
 
-    override fun getUserByUUID(uuid: UUID, currency: String): CompletableFuture<User> {
-        val future: CompletableFuture<User> = CompletableFuture.supplyAsync {
+    override fun getUserByUUID(uuid: UUID, currency: String): CompletableFuture<Optional<User>> {
+        val future: CompletableFuture<Optional<User>> = CompletableFuture.supplyAsync {
             loggedTransaction {
                 try {
                     val table = Account(currency)
                     val row = table.select(table.uuid, table.username, table.money).where(table.uuid eq uuid).single()
-                    User(row[table.username], row[table.uuid], row[table.money])
-                } catch (e : ExposedSQLException) {
+                    Optional.of(User(row[table.username], row[table.uuid], row[table.money]))
+                } catch (e: ExposedSQLException) {
                     LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
-
-                    throw Exception("Something is wrong with fetching user, ${e.message ?: e.localizedMessage}")
+                    Optional.empty()
+                } catch (e: NoSuchElementException) {
+                    LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
+                    Optional.empty()
+                } catch (e: Exception) {
+                    LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
+                    Optional.empty()
                 }
             }
         }

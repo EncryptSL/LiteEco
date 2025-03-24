@@ -11,12 +11,13 @@ import org.bukkit.Bukkit
 import java.math.BigDecimal
 import java.util.*
 import java.util.concurrent.CompletableFuture
+import kotlin.jvm.optionals.getOrNull
 
 class ModernLiteEcoEconomyImpl : DeprecatedLiteEcoEconomyImpl() {
 
-    override fun getUserByUUID(uuid: UUID, currency: String): CompletableFuture<User> {
+    override fun getUserByUUID(uuid: UUID, currency: String): CompletableFuture<Optional<User>> {
         return if (PlayerAccount.isPlayerOnline(uuid) || PlayerAccount.isAccountCached(uuid, currency)) {
-            CompletableFuture.supplyAsync { User(Bukkit.getPlayer(uuid)?.name.toString(), uuid, PlayerAccount.getBalance(uuid, currency)) }
+            CompletableFuture.supplyAsync { Optional.of(User(Bukkit.getPlayer(uuid)?.name.toString(), uuid, PlayerAccount.getBalance(uuid, currency))) }
         } else {
             LiteEco.instance.databaseEcoModel.getUserByUUID(uuid, currency)
         }
@@ -65,11 +66,12 @@ class ModernLiteEcoEconomyImpl : DeprecatedLiteEcoEconomyImpl() {
     }
 
     override fun getBalance(uuid: UUID, currency: String): BigDecimal {
-        return getUserByUUID(uuid, currency).join().money
+        val user = getUserByUUID(uuid, currency).join()
+        return if (user.isPresent) user.get().money else BigDecimal.ZERO
     }
 
-    override fun getCheckBalanceLimit(uuid: UUID, currency: String, amount: BigDecimal): Boolean {
-        return ((getBalance(uuid, currency).plus(amount) > LiteEco.instance.currencyImpl.getCurrencyLimit(currency)) && LiteEco.instance.currencyImpl.getCurrencyLimitEnabled(currency))
+    override fun getCheckBalanceLimit(uuid: UUID, currentBalance: BigDecimal, currency: String, amount: BigDecimal): Boolean {
+        return ((currentBalance.plus(amount) > LiteEco.instance.currencyImpl.getCurrencyLimit(currency)) && LiteEco.instance.currencyImpl.getCurrencyLimitEnabled(currency))
     }
 
     override fun transfer(fromUUID: UUID, target: UUID, currency: String, amount: BigDecimal) {

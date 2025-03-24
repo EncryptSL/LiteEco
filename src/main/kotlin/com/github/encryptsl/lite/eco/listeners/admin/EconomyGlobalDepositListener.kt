@@ -21,15 +21,19 @@ class EconomyGlobalDepositListener(private val liteEco: LiteEco) : Listener {
         if (!liteEco.currencyImpl.getCurrencyNameExist(currency))
             return sender.sendMessage(liteEco.locale.translation("messages.error.currency_not_exist", Placeholder.parsed("currency", currency)))
 
+        if (liteEco.api.getUUIDNameMap(currency).isEmpty())
+            return sender.sendMessage(liteEco.locale.translation("messages.error.database_exception", Placeholder.parsed("exception", "Collection is empty !")))
+
         if (liteEco.api.getCheckBalanceLimit(money) && !sender.hasPermission("lite.eco.admin.bypass.limit"))
             return sender.sendMessage(liteEco.locale.translation("messages.error.amount_above_limit"))
 
         //TODO: I don't know now how solve issue with not checking balance, only one way is add other same function with checking permission.
         for (p in offlinePlayers) {
-            if (liteEco.api.getCheckBalanceLimit(p.uniqueId, currency, money)) continue
             liteEco.api.hasAccount(p.uniqueId, currency).thenAccept { el ->
-                if (el == true) {
-                    liteEco.api.depositMoney(p, currency, money)
+                if (liteEco.api.getCheckBalanceLimit(p.uniqueId, liteEco.api.getBalance(p.uniqueId), currency, money)) {
+                    if (el == true) {
+                        liteEco.api.depositMoney(p, currency, money)
+                    }
                 }
             }
         }
@@ -43,7 +47,10 @@ class EconomyGlobalDepositListener(private val liteEco: LiteEco) : Listener {
         )))
 
         sender.sendMessage(
-            liteEco.locale.translation("messages.global.add_money", Placeholder.parsed("money", liteEco.api.fullFormatting(money))
+            liteEco.locale.translation("messages.global.add_money", TagResolver.resolver(
+                Placeholder.parsed("money", liteEco.api.fullFormatting(money)),
+                Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
+            )
         ))
         if (liteEco.config.getBoolean("messages.global.notify_add")) {
             Bukkit.broadcast(

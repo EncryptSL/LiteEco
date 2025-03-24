@@ -53,7 +53,7 @@ abstract class TreasuryAccount(private val uuid: UUID) : Account {
                     if (isApproachingZero) {
                         throw IllegalArgumentException(AMOUNT_IS_NEGATIVE_OR_ZERO)
                     }
-                    if(LiteEco.instance.api.getCheckBalanceLimit(player, LiteEco.instance.currencyImpl.defaultCurrency(), money)) {
+                    if(LiteEco.instance.api.getCheckBalanceLimit(player, LiteEco.instance.api.getBalance(player, LiteEco.instance.currencyImpl.defaultCurrency()), LiteEco.instance.currencyImpl.defaultCurrency(), money)) {
                         throw IllegalArgumentException(AMOUNT_REACH_LIMIT_OF_BALANCE)
                     }
 

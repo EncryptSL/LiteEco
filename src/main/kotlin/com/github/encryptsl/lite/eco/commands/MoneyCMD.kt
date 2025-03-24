@@ -57,30 +57,30 @@ class MoneyCMD(private val liteEco: LiteEco) {
         if (commandSender is Player) {
             val cSender = offlinePlayer ?: commandSender
             liteEco.api.getUserByUUID(cSender.uniqueId, c).thenAccept { user ->
-                val formatMessage = when(offlinePlayer) {
-                    null -> liteEco.locale.translation("messages.balance.format", helper.getComponentBal(user, c))
-                    else -> liteEco.locale.translation("messages.balance.format_target", helper.getComponentBal(user, c))
+                if (user.isPresent) {
+                    val formatMessage = when(offlinePlayer) {
+                        null -> liteEco.locale.translation("messages.balance.format", helper.getComponentBal(user.get(), c))
+                        else -> liteEco.locale.translation("messages.balance.format_target", helper.getComponentBal(user.get(), c))
+                    }
+                    commandSender.sendMessage(formatMessage)
+                } else {
+                    commandSender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist",
+                        Placeholder.parsed("account", cSender.name.toString())))
                 }
-                commandSender.sendMessage(formatMessage)
-            }.exceptionally {
-                commandSender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist",
-                    Placeholder.parsed("account", cSender.name.toString())))
-
-                return@exceptionally null
             }
             return
         }
 
         if (offlinePlayer != null) {
             liteEco.api.getUserByUUID(offlinePlayer.uniqueId, c).thenAccept { user ->
-                commandSender.sendMessage(
-                    liteEco.locale.translation("messages.balance.format_target", helper.getComponentBal(user, c))
-                )
-            }.exceptionally {
-                commandSender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist",
-                    Placeholder.parsed("account", offlinePlayer.name.toString())))
-
-                return@exceptionally null
+                if (user.isPresent) {
+                    commandSender.sendMessage(
+                        liteEco.locale.translation("messages.balance.format_target", helper.getComponentBal(user.get(), c))
+                    )
+                } else {
+                    commandSender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist",
+                        Placeholder.parsed("account", offlinePlayer.name.toString())))
+                }
             }
             return
         }
@@ -136,6 +136,9 @@ class MoneyCMD(private val liteEco: LiteEco) {
         @Argument(value = "amount") @Range(min = "1.00", max = "") amountStr: String,
         @Argument(value = "currency", suggestions = "currencies") @Default("dollars") currency: String
     ) {
+        //if (!sender.hasPermission("lite.eco.pay.${currency}"))
+        //    return sender.sendMessage(liteEco.locale.translation("messages.error.missing_currency_permission"))
+
         if (sender.uniqueId == offlinePlayer.uniqueId)
             return sender.sendMessage(liteEco.locale.translation("messages.error.self_pay"))
 

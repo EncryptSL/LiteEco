@@ -22,7 +22,9 @@ class AccountManageListener(private val liteEco: LiteEco) : Listener {
             OperationType.CACHING_ACCOUNT -> {
                 for (currency in liteEco.currencyImpl.getCurrenciesKeys()) {
                     val future = liteEco.databaseEcoModel.getUserByUUID(uuid, currency).thenAccept {
-                        liteEco.api.cacheAccount(uuid, currency, it.money)
+                        if (it.isPresent) {
+                            liteEco.api.cacheAccount(uuid, currency, it.get().money)
+                        }
                     }
                     future.join()
                 }

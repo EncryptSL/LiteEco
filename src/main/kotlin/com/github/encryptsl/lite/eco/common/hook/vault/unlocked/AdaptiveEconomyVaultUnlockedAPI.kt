@@ -66,8 +66,8 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
     }
 
     override fun getAccountName(uuid: UUID): Optional<String> {
-        val username = liteEco.api.getUserByUUID(uuid, liteEco.currencyImpl.defaultCurrency()).join().userName
-        return Optional.of(username)
+        val user = liteEco.api.getUserByUUID(uuid, liteEco.currencyImpl.defaultCurrency())
+        return Optional.of(user.join().get().userName)
     }
 
     override fun hasAccount(uuid: UUID): Boolean {

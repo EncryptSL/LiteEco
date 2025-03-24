@@ -4,6 +4,7 @@ import com.github.encryptsl.lite.eco.common.database.entity.User
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import java.math.BigDecimal
+import java.util.Optional
 import java.util.UUID
 import java.util.concurrent.CompletableFuture
 
@@ -102,7 +103,7 @@ interface LiteEconomyAPI {
      * @return User
      * @see OfflinePlayer
      */
-    fun getUserByUUID(player: OfflinePlayer, currency: String = "dollars"): CompletableFuture<User>
+    fun getUserByUUID(player: OfflinePlayer, currency: String = "dollars"): CompletableFuture<Optional<User>>
 
     /**
      * Get user account
@@ -111,7 +112,7 @@ interface LiteEconomyAPI {
      * @return User
      * @see OfflinePlayer
      */
-    fun getUserByUUID(uuid: UUID, currency: String = "dollars"): CompletableFuture<User>
+    fun getUserByUUID(uuid: UUID, currency: String = "dollars"): CompletableFuture<Optional<User>>
 
     /**
      * Get balance of player account
@@ -143,20 +144,22 @@ interface LiteEconomyAPI {
     /**
      * Get check limit of player balance.
      * @param player is OfflinePlayer
+     * @param currentBalance is Current Balance of Player
      * @param currency name of currency
      * @return Boolean
      * @see OfflinePlayer
      */
-    fun getCheckBalanceLimit(player: OfflinePlayer, currency: String = "dollars", amount: BigDecimal): Boolean
+    fun getCheckBalanceLimit(player: OfflinePlayer, currentBalance: BigDecimal, currency: String = "dollars", amount: BigDecimal): Boolean
 
     /**
      * Get check limit of player balance.
      * @param uuid is UUID
+     * @param currentBalance is Current Balance of Player
      * @param currency name of currency
      * @return Boolean
      * @see UUID
      */
-    fun getCheckBalanceLimit(uuid: UUID, currency: String = "dollars", amount: BigDecimal): Boolean
+    fun getCheckBalanceLimit(uuid: UUID, currentBalance: BigDecimal, currency: String = "dollars", amount: BigDecimal): Boolean
 
     /**
      * Deposit money to player account
