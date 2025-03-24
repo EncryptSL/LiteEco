@@ -35,9 +35,9 @@ messages:
 
   # Broadcast messages (sent to all players after a global action)
   broadcast:
-    add_money: "<prefix> <#13AFFE><target></#13AFFE> <white>přidal všem <green><money></green> <currency>."
-    withdraw_money: "<prefix> <#13AFFE><target></#13AFFE> <white>odstranil jsi všem <green><money></green> <currency>."
-    set_money: "<prefix> <#13AFFE><target></#13AFFE> <white>nastavil všem <green><money></green> <currency>."
+    add_money: "<prefix> <#13AFFE><sender></#13AFFE> <white>přidal všem <green><money></green> <currency>."
+    withdraw_money: "<prefix> <#13AFFE><sender></#13AFFE> <white>odstranil jsi všem <green><money></green> <currency>."
+    set_money: "<prefix> <#13AFFE><sender></#13AFFE> <white>nastavil všem <green><money></green> <currency>."
 
   # Error messages
   error:
@@ -55,8 +55,9 @@ messages:
     player_is_null: "<prefix> <red>Jméno hráče musí být vyplněno [!]"
     self_pay: "<prefix> <red>Nemůžeš sám sobě poslat peníze [!]"
     convert_fail: "<prefix> <red>Něco se pokazilo během konvertování, podívej se do konzole [!]"
-    amount_above_limit: "<prefix> <red>Částka přesahuje, povolený limit serverem !"
-    balance_above_limit: "<prefix> <red>Stav účtu <account> přesahuje, povolený limit serverem !"
+    amount_above_limit: "<prefix> <red>Částka přesahuje, povolený limit serverem [!]"
+    balance_above_limit: "<prefix> <red>Stav účtu <account> přesahuje, povolený limit serverem [!]"
+    database_exception: "<prefix> <red>Něco se stalo <exception> [!]"
 
   # Monolog messages logged to table lite_eco_monolog.
   monolog:
