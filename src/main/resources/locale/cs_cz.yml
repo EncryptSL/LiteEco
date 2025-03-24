@@ -57,7 +57,7 @@ messages:
     convert_fail: "<prefix> <red>Něco se pokazilo během konvertování, podívej se do konzole [!]"
     amount_above_limit: "<prefix> <red>Částka přesahuje, povolený limit serverem [!]"
     balance_above_limit: "<prefix> <red>Stav účtu <account> přesahuje, povolený limit serverem [!]"
-    database_exception: "<prefix> <red>Něco se stalo <exception> [!]"
+    database_exception: "<prefix> <red>Při práci s databází se stalo něco neočekávaného: <exception> [!]"
 
   # Monolog messages logged to table lite_eco_monolog.
   monolog:

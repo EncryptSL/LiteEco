@@ -57,6 +57,7 @@ messages:
     convert_fail: "<prefix> <red>Wystąpił błąd podczas konwertowania, sprawdź konsolę [!]"
     amount_above_limit: "<prefix> <red>Kwota przekracza limit serwera !"
     balance_above_limit: "<prefix> <red>Stan konta <account> przekracza limit serwera !"
+    database_exception: "<prefix> <red>Something unexpected happened while working with the database: <exception> [!]"
 
   # Monolog messages logged to table lite_eco_monolog.
   monolog:

@@ -57,6 +57,7 @@ messages:
     convert_fail: "<prefix> <red>转化过程出现问题, 请查看控制台 [!]"
     amount_above_limit: "<prefix> <red>交易数量超出服务器允许上限!"
     balance_above_limit: "<prefix> <red>账号 <account> 持有的货币数量超出服务器允许上限!"
+    database_exception: "<prefix> <red>Something unexpected happened while working with the database: <exception> [!]"
 
   # 记录至表 lite_eco_monolog 的文本内容.
   monolog:
