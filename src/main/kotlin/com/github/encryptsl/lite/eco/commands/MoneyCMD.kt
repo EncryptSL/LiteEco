@@ -19,6 +19,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
     private val helper: Helper = Helper(liteEco)
 
     @Command("money")
+    @Permission("lite.eco.money")
     fun onRootCommand(commandSender: CommandSender) {
         onHelp(commandSender)
     }
