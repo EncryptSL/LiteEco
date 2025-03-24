@@ -35,8 +35,10 @@ permissions:
       lite.eco.help: true
       lite.eco.money: true
       lite.eco.balance: true
+      lite.eco.balance.dollars: true
       lite.eco.top: true
       lite.eco.pay: true
+      lite.eco.pay.dollars: true
 
   lite.eco.admin:
     default: op
@@ -62,3 +64,5 @@ permissions:
       lite.eco.admin.debug.create.accounts: true
       lite.eco.admin.reload: true
       lite.eco.admin.bypass.limit: true
+      lite.eco.admin.pay.*: true
+      lite.eco.admin.balance.*: true
