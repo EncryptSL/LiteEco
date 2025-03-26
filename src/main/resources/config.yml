@@ -79,7 +79,16 @@ messages:
 database:
   # For SQLite, the path to the SQLite database file: jdbc:sqlite:plugins/LiteEco/database.db
   # For MySQL, the JDBC connection URL in the format: jdbc:mysql://your_host:port/name_of_database
+  # For MariaDB, the JDBC connection URL in the format: jdbc:mariadb://your_host:port/name_of_database
+
+  # Drivers:
+  #
+  # MariaDB - org.mariadb.jdbc.Driver (https://youtrack.jetbrains.com/issue/EXPOSED-170)
+  # MySQL - com.mysql.cj.jdbc.Driver Don't use if you have MariaDB version 11.X and newer.
+  # SQL - org.sqlite.JDBC
   connection:
+    # Settings for DriverClassName
+    driverClassName: "org.sqlite.JDBC"
     # Settings for JDBC_HOST
     jdbc_url: "jdbc:sqlite:plugins/LiteEco/database.db"
     # The username of the user to connect to your database (MySQL only).

@@ -54,6 +54,7 @@ class LiteEco : JavaPlugin() {
     val databaseEcoModel: DatabaseEcoModel by lazy { DatabaseEcoModel() }
     val loggerModel: DatabaseMonologModel by lazy { DatabaseMonologModel(this) }
     val currencyImpl: Currency by lazy { Currency(this) }
+    val databaseConnector: DatabaseConnector by lazy { DatabaseConnector(this) }
 
     private val configAPI: ConfigAPI by lazy { ConfigAPI(this) }
     private val hookManager: HookManager by lazy { HookManager(this) }
@@ -67,11 +68,7 @@ class LiteEco : JavaPlugin() {
             .createConfig("config.yml", CONFIG_VERSION)
         locale
             .loadCurrentTranslation()
-        DatabaseConnector(this).initConnect(
-            config.getString("database.connection.jdbc_url") ?: "jdbc:sqlite:plugins/LiteEco/database.db",
-            config.getString("database.connection.username") ?: "root",
-            config.getString("database.connection.password") ?: "admin"
-        )
+        databaseConnector.load()
     }
 
     override fun onEnable() {
@@ -84,7 +81,7 @@ class LiteEco : JavaPlugin() {
             registerListeners()
         }
         try {
-            ConfigUpdater.update(this, "config.yml", configFile, "plugin", "economy", "database")
+            ConfigUpdater.update(this, "config.yml", configFile, "plugin", "economy")
             logger.info("Config was updated on current version !")
         } catch (e : Exception) {
             logger.severe(e.message ?: e.localizedMessage)
