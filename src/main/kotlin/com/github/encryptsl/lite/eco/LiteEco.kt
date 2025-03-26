@@ -191,8 +191,10 @@ class LiteEco : JavaPlugin() {
         commandManager.parserRegistry().registerSuggestionProvider("players") { _, _ ->
             modifiableSuggestionPlayerSuggestion()
         }
-        commandManager.parserRegistry().registerSuggestionProvider("currencies") {_, _ ->
-            CompletableFuture.completedFuture(currencyImpl.getCurrenciesKeys().map { Suggestion.suggestion(it) })
+        commandManager.parserRegistry().registerSuggestionProvider("currencies") { commandSender, _ ->
+            CompletableFuture.completedFuture(currencyImpl.getCurrenciesKeys().filter {
+                commandSender.hasPermission("lite.eco.balance.$it") || commandSender.hasPermission("lite.eco.balance.*")
+            }.map { Suggestion.suggestion(it) })
         }
         commandManager.parserRegistry().registerSuggestionProvider("economies") {_, _ ->
             CompletableFuture.completedFuture(Economies.entries.map { Suggestion.suggestion(it.name) })

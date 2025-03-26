@@ -39,7 +39,8 @@ class MoneyCMD(private val liteEco: LiteEco) {
         @Argument(value = "player", suggestions = "players") offlinePlayer: OfflinePlayer?,
         @Argument(value = "currency", suggestions = "currencies") @Default("dollars") currency: String?
     ) {
-        onBalance(commandSender, offlinePlayer, currency)
+        val c = currency ?: liteEco.currencyImpl.defaultCurrency()
+        onBalance(commandSender, offlinePlayer, c)
     }
 
     @Command("money bal [player] [currency]")
@@ -54,7 +55,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
         if (!liteEco.currencyImpl.getCurrencyNameExist(c))
             return commandSender.sendMessage(liteEco.locale.translation("messages.error.currency_not_exist", Placeholder.parsed("currency", c)))
 
-        if (!commandSender.hasPermission("lite.eco.balance.$currency") && !commandSender.hasPermission("lite.eco.admin.balance.*"))
+        if (!commandSender.hasPermission("lite.eco.balance.$currency") && !commandSender.hasPermission("lite.eco.balance.*"))
             return commandSender.sendMessage(liteEco.locale.translation("messages.error.missing_currency_permission"))
 
         if (commandSender is Player) {
@@ -139,7 +140,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
         @Argument(value = "amount") @Range(min = "1.00", max = "") amountStr: String,
         @Argument(value = "currency", suggestions = "currencies") @Default("dollars") currency: String
     ) {
-        if (!sender.hasPermission("lite.eco.pay.$currency") || !sender.hasPermission("lite.eco.admin.pay.*"))
+        if (!sender.hasPermission("lite.eco.pay.$currency") && !sender.hasPermission("lite.eco.pay.*"))
             return sender.sendMessage(liteEco.locale.translation("messages.error.missing_currency_permission"))
 
         if (sender.uniqueId == offlinePlayer.uniqueId)
