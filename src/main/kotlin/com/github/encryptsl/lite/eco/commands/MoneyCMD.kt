@@ -54,7 +54,7 @@ class MoneyCMD(private val liteEco: LiteEco) {
         if (!liteEco.currencyImpl.getCurrencyNameExist(c))
             return commandSender.sendMessage(liteEco.locale.translation("messages.error.currency_not_exist", Placeholder.parsed("currency", c)))
 
-        if (!commandSender.hasPermission("lite.eco.balance.$currency") || !commandSender.hasPermission("lite.eco.admin.balance.*"))
+        if (!commandSender.hasPermission("lite.eco.balance.$currency") && !commandSender.hasPermission("lite.eco.admin.balance.*"))
             return commandSender.sendMessage(liteEco.locale.translation("messages.error.missing_currency_permission"))
 
         if (commandSender is Player) {
