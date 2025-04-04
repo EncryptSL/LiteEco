@@ -1,6 +1,7 @@
 package com.github.encryptsl.lite.eco.listeners.admin
 
 import com.github.encryptsl.lite.eco.LiteEco
+import com.github.encryptsl.lite.eco.api.economy.EconomyOperations
 import com.github.encryptsl.lite.eco.api.events.admin.EconomyGlobalSetEvent
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
@@ -27,18 +28,16 @@ class EconomyGlobalSetListener(private val liteEco: LiteEco) : Listener {
             return sender.sendMessage(liteEco.locale.translation("messages.error.amount_above_limit"))
 
         for (p in offlinePlayers) {
-            liteEco.api.hasAccount(p.uniqueId, currency).thenAccept { el ->
-                if (el == true) liteEco.api.setMoney(p.uniqueId, currency, money)
+            liteEco.api.getUserByUUID(p.uniqueId, currency).thenAccept {
+                if (it.isPresent && liteEco.currencyImpl.getCurrencyLimit(currency) < money) {
+                    val user = it.get()
+                    liteEco.loggerModel.logging(EconomyOperations.SET, sender.name, it.get().userName, currency, user.money, money)
+                    liteEco.api.setMoney(p.uniqueId, currency, money)
+                }
             }
         }
 
         liteEco.increaseTransactions(offlinePlayers.size)
-        liteEco.loggerModel.info(liteEco.locale.plainTextTranslation("messages.monolog.admin.global.set", TagResolver.resolver(
-            Placeholder.parsed("sender", sender.name),
-            Placeholder.parsed("accounts", offlinePlayers.size.toString()),
-            Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
-            Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
-        )))
 
         sender.sendMessage(
             liteEco.locale.translation("messages.global.set_money", TagResolver.resolver(

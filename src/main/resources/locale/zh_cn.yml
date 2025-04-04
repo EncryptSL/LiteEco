@@ -60,24 +60,12 @@ messages:
     balance_above_limit: "<prefix> <red>账号 <account> 持有的货币数量超出服务器允许上限!"
     database_exception: "<prefix> <red>与数据库交互时出现问题: <exception> [!]"
 
-  # 记录至表 lite_eco_monolog 的文本内容.
+  # Monolog message formatting
   monolog:
-    admin:
-      normal:
-        deposit: "管理员 <sender> 向 <target> 存入: <money> <currency>"
-        set: "管理员 <sender> 对 <target> 设置: <money> <currency>"
-        withdraw: "管理员 <sender> 从 <target> 取出: <money> <currency>"
-      global:
-        deposit: "管理员 <sender> 向 <accounts> 个账户存入: <money> <currency>"
-        set: "管理员 <sender> 对 <accounts> 个账户设置: <money> <currency>"
-        withdraw: "管理员 <sender> 从 <accounts> 个账户取出: <money> <currency>"
-    player:
-      pay: "玩家 <sender> 支付给 <target>: <money> <currency>"
+    formatting: "<blue>[<white><hover:show_text:'<timestamp>'><action></hover></white>]</blue> <sender> to <target> <green><st><hover:show_text:'<red>Old balance'><previous_balance></hover></st> <hover:show_text:'<green>New balance'><new_balance></hover></green>"
 
   # 管理员命令
   admin:
-    monolog_format: "<hover:show_text:'<dark_green>日期与时间: <green><timestamp>'><blue>[<level>] <gray><log></hover>"
-
     create_account: "<prefix> <green>账号 <account> 已被创建 [!]"
     config_reload: "<prefix> <green>配置成功重载 [!]"
     translation_switch: "<prefix> <green>显示语言已切换为 <locale>."

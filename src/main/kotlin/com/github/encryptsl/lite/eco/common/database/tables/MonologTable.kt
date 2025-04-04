@@ -7,8 +7,12 @@ import java.util.logging.Level
 
 object MonologTable : Table("lite_eco_monolog") {
     private val id = integer( "id").autoIncrement()
-    val level = varchar("level", 8).default(Level.INFO.name)
-    val log = text("log")
+    val action = varchar("action", 8)
+    val sender = varchar("sender", 36)
+    val target = varchar("target", 36)
+    val currency = varchar("currency", 16)
+    val previousBalance = decimal("previous_balance", 18, 9)
+    val newBalance = decimal("new_balance", 18, 9)
     val timestamp = timestamp("timestamp").default(Clock.System.now())
 
     override val primaryKey: PrimaryKey = PrimaryKey(id)

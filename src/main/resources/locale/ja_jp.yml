@@ -60,24 +60,12 @@ messages:
     balance_above_limit: "<prefix> <red>Balance of account <account> is above, allowed limit of server !"
     database_exception: "<prefix> <red>Something unexpected happened while working with the database: <exception> [!]"
 
-  # Monolog messages logged to table lite_eco_monolog.
+  # Monolog message formatting
   monolog:
-    admin:
-      normal:
-        deposit: "Admin <sender> deposit to <target> : <money> <currency>"
-        set: "Admin <sender> set to <target> : <money> <currency>"
-        withdraw: "Admin <sender> withdraw from <target> : <money> <currency>"
-      global:
-        deposit: "Admin <sender> deposit to <accounts>x accounts : <money> <currency>"
-        set: "Admin <sender> set to <accounts>x accounts : <money> <currency>"
-        withdraw: "Admin <sender> withdraw from <accounts>x accounts : <money> <currency>"
-    player:
-      pay: "Player <sender> pay to <target> : <money> <currency>"
+    formatting: "<blue>[<white><hover:show_text:'<timestamp>'><action></hover></white>]</blue> <sender> to <target> <green><st><hover:show_text:'<red>Old balance'><previous_balance></hover></st> <hover:show_text:'<green>New balance'><new_balance></hover></green>"
 
   # Admin commands
   admin:
-    monolog_format: "<hover:show_text:'<dark_green>日時: <green><timestamp>'><blue>[<level>] <gray><log></hover>"
-
     create_account: "<prefix> <green>Account <account> was created [!]"
     config_reload: "<prefix> <green>コンフィグは正常に読み込まれました。"
     translation_switch: "<prefix> <green>言語の切り替えが完了しました。(言語: <locale>)"

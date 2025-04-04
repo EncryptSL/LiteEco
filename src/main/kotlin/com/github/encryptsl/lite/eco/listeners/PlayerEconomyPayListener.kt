@@ -1,6 +1,7 @@
 package com.github.encryptsl.lite.eco.listeners
 
 import com.github.encryptsl.lite.eco.LiteEco
+import com.github.encryptsl.lite.eco.api.economy.EconomyOperations
 import com.github.encryptsl.lite.eco.api.events.PlayerEconomyPayEvent
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
@@ -24,16 +25,15 @@ class PlayerEconomyPayListener(private val liteEco: LiteEco) : Listener {
         if (!liteEco.api.has(sender.uniqueId, currency, money))
             return sender.sendMessage(liteEco.locale.translation("messages.error.insufficient_funds"))
 
-        liteEco.api.getUserByUUID(target.uniqueId).thenApply {
-            if (it.isPresent) it.get() else null
-        }.thenAccept {
-            if (it == null) {
+        liteEco.api.getUserByUUID(target.uniqueId).thenAccept {
+            if (!it.isPresent) {
                 sender.sendMessage(
                     liteEco.locale.translation("messages.error.account_not_exist", Placeholder.parsed("account", target.name.toString()))
                 )
                 return@thenAccept
             }
-            if (liteEco.api.getCheckBalanceLimit(target.uniqueId, it.money, currency, money)) {
+            val user = it.get()
+            if (liteEco.api.getCheckBalanceLimit(target.uniqueId, user.money, currency, money)) {
                 sender.sendMessage(liteEco.locale.translation("messages.error.balance_above_limit",
                     Placeholder.parsed("account", target.name.toString())
                 ))
@@ -41,18 +41,14 @@ class PlayerEconomyPayListener(private val liteEco: LiteEco) : Listener {
             }
 
             sender.sendMessage(liteEco.locale.translation("messages.sender.add_money", TagResolver.resolver(
-                Placeholder.parsed("target", it.userName),
+                Placeholder.parsed("target", user.userName),
                 Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
                 Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
             )))
 
+            liteEco.loggerModel.logging(EconomyOperations.TRANSFER, sender.name, target.name.toString(), currency, user.money, user.money.plus(money))
+
             liteEco.api.transfer(sender.uniqueId, target.uniqueId, currency, money)
-            liteEco.loggerModel.info(liteEco.locale.plainTextTranslation("messages.monolog.player.pay", TagResolver.resolver(
-                Placeholder.parsed("sender", sender.name),
-                Placeholder.parsed("target", target.name.toString()),
-                Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
-                Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
-            )))
             liteEco.increaseTransactions(1)
 
             if (target.isOnline) {

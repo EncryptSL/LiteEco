@@ -60,24 +60,12 @@ messages:
     balance_above_limit: "<prefix> <red>Saldo da conta <account> é acima do permitido pelo servidor !"
     database_exception: "<prefix> <red>Something unexpected happened while working with the database: <exception> [!]"
 
-  # Monolog messages logged to table lite_eco_monolog.
+  # Monolog message formatting
   monolog:
-    admin:
-      normal:
-        deposit: "Admin <sender> depositou para <target> : <money> <currency>"
-        set: "Admin <sender> definiu para <target> : <money> <currency>"
-        withdraw: "Admin <sender> removeu de <target> : <money> <currency>"
-      global:
-        deposit: "Admin <sender> depositou para <accounts>x contas : <money> <currency>"
-        set: "Admin <sender> definiu para <accounts>x contas : <money> <currency>"
-        withdraw: "Admin <sender> removeu de <accounts>x contas : <money> <currency>"
-    player:
-      pay: "Jogador <sender> pagou para <target> : <money> <currency>"
+    formatting: "<blue>[<white><hover:show_text:'<timestamp>'><action></hover></white>]</blue> <sender> to <target> <green><st><hover:show_text:'<red>Old balance'><previous_balance></hover></st> <hover:show_text:'<green>New balance'><new_balance></hover></green>"
 
   # Admin commands
   admin:
-    monolog_format: "<hover:show_text:'<dark_green>Data e hora: <green><timestamp>'><blue>[<level>] <gray><log></hover>"
-
     create_account: "<prefix> <green>Conta <account> foi criada [!]"
     config_reload: "<prefix> <green>Configs recarregadas com sucesso [!]"
     translation_switch: "<prefix> <green>Tradução mudou para <locale>."

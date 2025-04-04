@@ -140,7 +140,7 @@ class EcoCMD(private val liteEco: LiteEco) {
         @Argument("player", suggestions = "players") offlinePlayer: OfflinePlayer,
         @Argument(value = "currency", suggestions = "currencies") @Default("dollars") currency: String
     ) {
-        val message = if (liteEco.api.deleteAccount(offlinePlayer, currency)) {
+        val message = if (liteEco.api.deleteAccount(offlinePlayer.uniqueId, currency)) {
             "messages.admin.delete_account"
         } else {
             "messages.error.account_not_exist"
@@ -152,13 +152,7 @@ class EcoCMD(private val liteEco: LiteEco) {
     @Permission("lite.eco.admin.monolog")
     fun onLogView(commandSender: CommandSender, @Argument("page") @Default(value = "1") page: Int, @Argument("player") player: String?) {
 
-        val log = helper.validateLog(player).map {
-            liteEco.locale.translation("messages.admin.monolog_format", TagResolver.resolver(
-                Placeholder.parsed("level", it.level),
-                Placeholder.parsed("timestamp", convertInstant(it.timestamp)),
-                Placeholder.parsed("log", it.log),
-            ))
-        }
+        val log = helper.validateLog()
         val pagination = ComponentPaginator(log) { itemsPerPage = 10 }.apply { page(page) }
 
         if (pagination.isAboveMaxPage(page))
@@ -214,18 +208,12 @@ class EcoCMD(private val liteEco: LiteEco) {
                 commandSender.sendMessage(liteEco.locale.translation("messages.admin.purge_default_accounts"))
             }
             PurgeKey.MONO_LOG -> {
-                liteEco.loggerModel.getLog().thenApply { el ->
-                    if (el.isEmpty()) {
-                        throw Exception("You can't remove monolog because is empty.")
-                    }
-                    return@thenApply el
-                }.thenApply { el ->
-                    liteEco.loggerModel.clearLogs()
-                    commandSender.sendMessage(liteEco.locale.translation("messages.admin.purge_monolog_success", Placeholder.parsed("deleted", el.size.toString())))
-                }.exceptionally { el ->
-                    commandSender.sendMessage(liteEco.locale.translation("messages.error.purge_monolog_fail"))
-                    liteEco.logger.severe(el.message ?: el.localizedMessage)
+                val monolog = liteEco.loggerModel.getLog()
+                if (monolog.isEmpty()) {
+                    return commandSender.sendMessage(liteEco.locale.translation("messages.error.purge_monolog_fail"))
                 }
+                liteEco.loggerModel.clearLogs()
+                commandSender.sendMessage(liteEco.locale.translation("messages.admin.purge_monolog_success", Placeholder.parsed("deleted", monolog.size.toString())))
             }
             else -> {
                 commandSender.sendMessage(liteEco.locale.translation("messages.error.purge_argument"))

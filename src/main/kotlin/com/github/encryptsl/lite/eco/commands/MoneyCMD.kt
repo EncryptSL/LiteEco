@@ -55,36 +55,36 @@ class MoneyCMD(private val liteEco: LiteEco) {
         if (!liteEco.currencyImpl.getCurrencyNameExist(c))
             return commandSender.sendMessage(liteEco.locale.translation("messages.error.currency_not_exist", Placeholder.parsed("currency", c)))
 
-        if (!commandSender.hasPermission("lite.eco.balance.$currency") && !commandSender.hasPermission("lite.eco.balance.*"))
+        if (!commandSender.hasPermission("lite.eco.balance.$c") && !commandSender.hasPermission("lite.eco.balance.*"))
             return commandSender.sendMessage(liteEco.locale.translation("messages.error.missing_currency_permission"))
 
         if (commandSender is Player) {
             val cSender = offlinePlayer ?: commandSender
-            liteEco.api.getUserByUUID(cSender.uniqueId, c).thenAccept { user ->
-                if (user.isPresent) {
+            liteEco.api.getUserByUUID(cSender.uniqueId, c).thenAccept { value ->
+                value.ifPresentOrElse({
                     val formatMessage = when(offlinePlayer) {
-                        null -> liteEco.locale.translation("messages.balance.format", helper.getComponentBal(user.get(), c))
-                        else -> liteEco.locale.translation("messages.balance.format_target", helper.getComponentBal(user.get(), c))
+                        null -> liteEco.locale.translation("messages.balance.format", helper.getComponentBal(it, c))
+                        else -> liteEco.locale.translation("messages.balance.format_target", helper.getComponentBal(it, c))
                     }
                     commandSender.sendMessage(formatMessage)
-                } else {
+                }, {
                     commandSender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist",
                         Placeholder.parsed("account", cSender.name.toString())))
-                }
+                })
             }
             return
         }
 
         if (offlinePlayer != null) {
             liteEco.api.getUserByUUID(offlinePlayer.uniqueId, c).thenAccept { user ->
-                if (user.isPresent) {
+                user.ifPresentOrElse({
                     commandSender.sendMessage(
-                        liteEco.locale.translation("messages.balance.format_target", helper.getComponentBal(user.get(), c))
+                        liteEco.locale.translation("messages.balance.format_target", helper.getComponentBal(it, c))
                     )
-                } else {
+                }, {
                     commandSender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist",
                         Placeholder.parsed("account", offlinePlayer.name.toString())))
-                }
+                })
             }
             return
         }

@@ -60,24 +60,12 @@ messages:
     balance_above_limit: "<prefix> <red>Stav účtu <account> přesahuje, povolený limit serverem [!]"
     database_exception: "<prefix> <red>Při práci s databází se stalo něco neočekávaného: <exception> [!]"
 
-  # Monolog messages logged to table lite_eco_monolog.
+  # Monolog message formatting
   monolog:
-    admin:
-      normal:
-        deposit: "Admin <sender> přidal hráči <target> : <money> <currency>"
-        set: "Admin <sender> nastavil hráči <target> : <money> <currency>"
-        withdraw: "Admin <sender> odebral od <target> : <money> <currency>"
-      global:
-        deposit: "Admin <sender> přidal všem <accounts>x účtům : <money> <currency>"
-        set: "Admin <sender> nastavil všem <accounts>x účtům : <money> <currency>"
-        withdraw: "Admin <sender> odebral všem <accounts>x účtům : <money> <currency>"
-    player:
-      pay: "Hráč <sender> zaplatil hráči <target> : <money> <currency>"
+    formatting: "<blue>[<white><hover:show_text:'<timestamp>'><action></hover></white>]</blue> <sender> to <target> <green><st><hover:show_text:'<red>Starý zůstatek'><previous_balance></hover></st> <hover:show_text:'<green>Nový zůstatek'><new_balance></hover></green>"
 
   # Admin commands
   admin:
-    monolog_format: "<hover:show_text:'<dark_green>Datum a čas: <green><timestamp>'><blue>[<level>] <gray><log></hover>"
-
     create_account: "<prefix> <green>Účet <account> byl vytvořen [!]"
     config_reload: "<prefix> <green>Config byl znovu načten [!]"
     translation_switch: "<prefix> <green>Překlad byl přepnut na <locale>"

@@ -1,6 +1,7 @@
 package com.github.encryptsl.lite.eco.utils
 
 import com.github.encryptsl.lite.eco.LiteEco
+import com.github.encryptsl.lite.eco.api.economy.EconomyOperations
 import com.github.encryptsl.lite.eco.api.enums.CheckLevel
 import com.github.encryptsl.lite.eco.common.database.entity.EconomyLog
 import com.github.encryptsl.lite.eco.common.database.entity.User
@@ -30,14 +31,10 @@ class Helper(private val liteEco: LiteEco) {
         }
     }
 
-    fun validateLog(player: String?): List<EconomyLog> {
-        val log = liteEco.loggerModel.getLog().thenApply { el ->
-            if (player != null) {
-                return@thenApply el.filter { l -> l.log.contains(player, true) }
-            }
-            return@thenApply el
+    fun validateLog(): List<Component> {
+        return liteEco.loggerModel.getLog().map { el ->
+            liteEco.loggerModel.message("messages.monolog.formatting", EconomyOperations.valueOf(el.action), el.sender, el.target, el.currency, el.previousBalance, el.newBalance, el.timestamp)
         }
-        return log.join()
     }
 
     fun getTopBalancesFormatted(currency: String): List<Component> {

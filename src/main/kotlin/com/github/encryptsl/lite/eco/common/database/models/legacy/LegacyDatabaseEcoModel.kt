@@ -52,7 +52,7 @@ class LegacyDatabaseEcoModel(
                     }
                     return@transaction true
                 } catch (e : ExposedSQLException) {
-                    liteEco.loggerModel.error(e.sqlState)
+                    liteEco.logger.severe(e.sqlState)
                     return@transaction false
                 }
             }

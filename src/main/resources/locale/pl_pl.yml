@@ -60,24 +60,12 @@ messages:
     balance_above_limit: "<prefix> <red>Stan konta <account> przekracza limit serwera !"
     database_exception: "<prefix> <red>Something unexpected happened while working with the database: <exception> [!]"
 
-  # Monolog messages logged to table lite_eco_monolog.
+  # Monolog message formatting
   monolog:
-    admin:
-      normal:
-        deposit: "Administrator <sender> wpłacił <target> : <money> <currency>"
-        set: "Administrator <sender> ustawił <target> : <money> <currency>"
-        withdraw: "Administrator <sender> wypłacił <target> : <money> <currency>"
-      global:
-        deposit: "Administrator <sender> wpłacił dla <accounts>x kont : <money> pieniędzy <currency>"
-        set: "Administrator <sender> ustawił dla <accounts>x kont : <money> pieniędzy <currency>"
-        withdraw: "Administrator <sender> wypłącił z <accounts>x kont : <money> pieniędzy <currency>"
-    player:
-      pay: "Gracz <sender> wysłał <target> : <money> pieniędzy"
+    formatting: "<blue>[<white><hover:show_text:'<timestamp>'><action></hover></white>]</blue> <sender> to <target> <green><st><hover:show_text:'<red>Old balance'><previous_balance></hover></st> <hover:show_text:'<green>New balance'><new_balance></hover></green>"
 
   # Admin commands
   admin:
-    monolog_format: "<hover:show_text:'<dark_green>Data i godzina: <green><timestamp>'><blue>[<level>] <gray><log></hover>"
-
     create_account: "<prefix> <green>Konto <account> zostało stworzone [!]"
     config_reload: "<prefix> <green>Plik konfiguracyjny przeładowany pomyślnie [!]"
     translation_switch: "<prefix> <green>Tłumaczenie zmienione na <locale>."

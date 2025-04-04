@@ -1,6 +1,7 @@
 package com.github.encryptsl.lite.eco.listeners.admin
 
 import com.github.encryptsl.lite.eco.LiteEco
+import com.github.encryptsl.lite.eco.api.economy.EconomyOperations
 import com.github.encryptsl.lite.eco.api.events.admin.EconomyGlobalDepositEvent
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
@@ -29,22 +30,18 @@ class EconomyGlobalDepositListener(private val liteEco: LiteEco) : Listener {
 
         //TODO: I don't know now how solve issue with not checking balance, only one way is add other same function with checking permission.
         for (p in offlinePlayers) {
-            liteEco.api.hasAccount(p.uniqueId, currency).thenAccept { el ->
-                if (liteEco.api.getCheckBalanceLimit(p.uniqueId, liteEco.api.getBalance(p.uniqueId), currency, money)) {
-                    if (el == true) {
-                        liteEco.api.depositMoney(p, currency, money)
+            liteEco.api.getUserByUUID(p.uniqueId, currency).thenAccept {
+                if (it.isPresent) {
+                    val user = it.get()
+                    if (!liteEco.api.getCheckBalanceLimit(user.uuid, user.money, currency, money)) {
+                        liteEco.loggerModel.logging(EconomyOperations.DEPOSIT, sender.name, user.userName, currency, user.money, user.money.plus(money))
+                        liteEco.api.depositMoney(user.uuid, currency, money)
                     }
                 }
             }
         }
 
         liteEco.increaseTransactions(offlinePlayers.size)
-        liteEco.loggerModel.info(liteEco.locale.plainTextTranslation("messages.monolog.admin.global.deposit", TagResolver.resolver(
-            Placeholder.parsed("sender", sender.name),
-            Placeholder.parsed("accounts", offlinePlayers.size.toString()),
-            Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
-            Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
-        )))
 
         sender.sendMessage(
             liteEco.locale.translation("messages.global.add_money", TagResolver.resolver(

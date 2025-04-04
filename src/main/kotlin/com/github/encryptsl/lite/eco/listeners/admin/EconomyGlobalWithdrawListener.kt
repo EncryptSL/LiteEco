@@ -1,6 +1,7 @@
 package com.github.encryptsl.lite.eco.listeners.admin
 
 import com.github.encryptsl.lite.eco.LiteEco
+import com.github.encryptsl.lite.eco.api.economy.EconomyOperations
 import com.github.encryptsl.lite.eco.api.events.admin.EconomyGlobalWithdrawEvent
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
@@ -24,18 +25,16 @@ class EconomyGlobalWithdrawListener(private val liteEco: LiteEco) : Listener {
             return sender.sendMessage(liteEco.locale.translation("messages.error.database_exception", Placeholder.parsed("exception", "Collection is empty !")))
 
         for (p in offlinePlayers) {
-            liteEco.api.hasAccount(p.uniqueId, currency).thenAccept { el ->
-                if (el == true) liteEco.api.withDrawMoney(p.uniqueId, currency, money)
+            liteEco.api.getUserByUUID(p.uniqueId, currency).thenAccept {
+                if (it.isPresent) {
+                    val user = it.get()
+                    liteEco.loggerModel.logging(EconomyOperations.WITHDRAW, sender.name, user.userName, currency, user.money, user.money.minus(money))
+                    liteEco.api.withDrawMoney(user.uuid, currency, money)
+                }
             }
         }
 
         liteEco.increaseTransactions(offlinePlayers.size)
-        liteEco.loggerModel.info(liteEco.locale.plainTextTranslation("messages.monolog.admin.global.withdraw", TagResolver.resolver(
-            Placeholder.parsed("sender", sender.name),
-            Placeholder.parsed("accounts", offlinePlayers.size.toString()),
-            Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
-            Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
-        )))
 
         sender.sendMessage(
             liteEco.locale.translation("messages.global.withdraw_money",

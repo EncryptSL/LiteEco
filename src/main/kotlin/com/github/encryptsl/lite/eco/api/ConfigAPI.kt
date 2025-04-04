@@ -28,17 +28,7 @@ class ConfigAPI(private val liteEco: LiteEco) : ConfigAPIProvider {
         if (!file.exists()) {
             saveResource(configName, false)
             liteEco.logger.info("Configuration $configName was successfully created !")
-        }/* else {
-            val fileVersion = liteEco.config.getString("version")
-            if (fileVersion.isNullOrEmpty() || fileVersion != version) {
-                copyOldConfig(file, configName)
-                liteEco.config.options().parseComments(true)
-                liteEco.config.options().copyDefaults(true)
-                liteEco.saveConfig()
-            } else {
-                liteEco.logger.info("Configuration config.yml is the latest [!]")
-            }
-        }*/
+        }
         return this
     }
 
@@ -48,10 +38,5 @@ class ConfigAPI(private val liteEco: LiteEco) : ConfigAPIProvider {
         } catch (e : Exception) {
             liteEco.logger.severe(e.message ?: e.localizedMessage)
         }
-    }
-
-    private fun copyOldConfig(file: File, configName: String) {
-        Files.copy(file.toPath(), File(liteEco.dataFolder, "old_$configName").toPath(), StandardCopyOption.REPLACE_EXISTING)
-        liteEco.logger.info("Configuration config.yml was outdated and copied into old_config. [!]")
     }
 }

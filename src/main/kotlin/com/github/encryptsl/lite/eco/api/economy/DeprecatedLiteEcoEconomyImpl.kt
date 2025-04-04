@@ -12,19 +12,6 @@ import java.util.concurrent.CompletableFuture
 
 abstract class DeprecatedLiteEcoEconomyImpl : LiteEconomyAPI {
 
-    override fun createAccount(player: OfflinePlayer, currency: String, startAmount: BigDecimal): Boolean {
-        return getUserByUUID(player, currency).thenApply {
-            if (it.isPresent) it.get() else null
-        }.thenApply {
-            if (it == null) {
-                LiteEco.instance.databaseEcoModel.createPlayerAccount(player.name.toString(), player.uniqueId, currency, startAmount)
-                return@thenApply true
-            }
-            LiteEco.instance.databaseEcoModel.updatePlayerName(player.uniqueId, player.name.toString(), currency)
-            return@thenApply false
-        }.join()
-    }
-
     override fun cacheAccount(player: OfflinePlayer, currency: String, amount: BigDecimal) {
         PlayerAccount.cacheAccount(player.uniqueId, currency, amount)
     }

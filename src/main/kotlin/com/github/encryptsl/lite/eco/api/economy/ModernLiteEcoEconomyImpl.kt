@@ -8,11 +8,23 @@ import com.github.encryptsl.lite.eco.common.extensions.compactFormat
 import com.github.encryptsl.lite.eco.common.extensions.moneyFormat
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.Bukkit
+import org.bukkit.OfflinePlayer
 import java.math.BigDecimal
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
 class ModernLiteEcoEconomyImpl : DeprecatedLiteEcoEconomyImpl() {
+
+    override fun createAccount(player: OfflinePlayer, currency: String, startAmount: BigDecimal): Boolean {
+        return getUserByUUID(player, currency).thenApply {
+            if (!it.isPresent) {
+                LiteEco.instance.databaseEcoModel.createPlayerAccount(player.name.toString(), player.uniqueId, currency, startAmount)
+                return@thenApply true
+            }
+            LiteEco.instance.databaseEcoModel.updatePlayerName(player.uniqueId, player.name.toString(), currency)
+            return@thenApply false
+        }.join()
+    }
 
     override fun getUserByUUID(uuid: UUID, currency: String): CompletableFuture<Optional<User>> {
         return if (PlayerAccount.isPlayerOnline(uuid) || PlayerAccount.isAccountCached(uuid, currency)) {
@@ -44,7 +56,7 @@ class ModernLiteEcoEconomyImpl : DeprecatedLiteEcoEconomyImpl() {
         if (PlayerAccount.isPlayerOnline(uuid)) {
             cacheAccount(uuid, currency, getBalance(uuid, currency).plus(amount))
         } else {
-            LiteEco.instance.databaseEcoModel.depositMoney(uuid, currency, amount)
+            CompletableFuture.runAsync { LiteEco.instance.databaseEcoModel.depositMoney(uuid, currency, amount) }
         }
     }
 
@@ -52,7 +64,7 @@ class ModernLiteEcoEconomyImpl : DeprecatedLiteEcoEconomyImpl() {
         if (PlayerAccount.isPlayerOnline(uuid)) {
             cacheAccount(uuid, currency, getBalance(uuid, currency).minus(amount))
         } else {
-            LiteEco.instance.databaseEcoModel.withdrawMoney(uuid, currency, amount)
+            CompletableFuture.runAsync { LiteEco.instance.databaseEcoModel.withdrawMoney(uuid, currency, amount) }
         }
     }
 
@@ -60,7 +72,7 @@ class ModernLiteEcoEconomyImpl : DeprecatedLiteEcoEconomyImpl() {
         if (PlayerAccount.isPlayerOnline(uuid)) {
             cacheAccount(uuid, currency, amount)
         } else {
-            LiteEco.instance.databaseEcoModel.setMoney(uuid, currency, amount)
+            CompletableFuture.runAsync { LiteEco.instance.databaseEcoModel.setMoney(uuid, currency, amount) }
         }
     }
 
