@@ -3,7 +3,6 @@ package com.github.encryptsl.lite.eco.utils
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.economy.EconomyOperations
 import com.github.encryptsl.lite.eco.api.enums.CheckLevel
-import com.github.encryptsl.lite.eco.common.database.entity.EconomyLog
 import com.github.encryptsl.lite.eco.common.database.entity.User
 import com.github.encryptsl.lite.eco.common.extensions.isApproachingZero
 import com.github.encryptsl.lite.eco.common.extensions.isNegative

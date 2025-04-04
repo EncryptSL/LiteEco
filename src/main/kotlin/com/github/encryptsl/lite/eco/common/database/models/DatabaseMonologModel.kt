@@ -2,7 +2,6 @@ package com.github.encryptsl.lite.eco.common.database.models
 
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.economy.EconomyOperations
-import com.github.encryptsl.lite.eco.api.interfaces.AdapterLogger
 import com.github.encryptsl.lite.eco.api.interfaces.TransactionLogger
 import com.github.encryptsl.lite.eco.common.database.entity.EconomyLog
 import com.github.encryptsl.lite.eco.common.database.tables.MonologTable
@@ -18,8 +17,6 @@ import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
 import java.math.BigDecimal
-import java.util.concurrent.CompletableFuture
-import java.util.logging.Level
 
 class DatabaseMonologModel(val plugin: Plugin) : TransactionLogger {
 
