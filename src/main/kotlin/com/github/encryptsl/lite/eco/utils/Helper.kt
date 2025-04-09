@@ -30,8 +30,14 @@ class Helper(private val liteEco: LiteEco) {
         }
     }
 
-    fun validateLog(): List<Component> {
-        return liteEco.loggerModel.getLog().map { el ->
+    fun validateLog(playerName: String?): List<Component> {
+        val log = liteEco.loggerModel.getLog()
+        if (playerName != null) {
+            return log.filter { p -> p.target == playerName }.map { el ->
+                liteEco.loggerModel.message("messages.monolog.formatting", EconomyOperations.valueOf(el.action), el.sender, el.target, el.currency, el.previousBalance, el.newBalance, el.timestamp)
+            }
+        }
+        return log.map { el ->
             liteEco.loggerModel.message("messages.monolog.formatting", EconomyOperations.valueOf(el.action), el.sender, el.target, el.currency, el.previousBalance, el.newBalance, el.timestamp)
         }
     }

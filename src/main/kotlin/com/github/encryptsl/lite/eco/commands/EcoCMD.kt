@@ -151,7 +151,7 @@ class EcoCMD(private val liteEco: LiteEco) {
     @Permission("lite.eco.admin.monolog")
     fun onLogView(commandSender: CommandSender, @Argument("page") @Default(value = "1") page: Int, @Argument("player") player: String?) {
 
-        val log = helper.validateLog()
+        val log = helper.validateLog(player)
         val pagination = ComponentPaginator(log) { itemsPerPage = 10 }.apply { page(page) }
 
         if (pagination.isAboveMaxPage(page))

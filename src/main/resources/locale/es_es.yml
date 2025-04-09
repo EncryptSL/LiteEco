@@ -62,7 +62,7 @@ messages:
 
   # Monolog message formatting
   monolog:
-    formatting: "<blue>[<white><hover:show_text:'<timestamp>'><action></hover></white>]</blue> <sender> to <target> <green><st><hover:show_text:'<red>Old balance'><previous_balance></hover></st> <hover:show_text:'<green>New balance'><new_balance></hover></green>"
+    formatting: "<blue>[<white><hover:show_text:'<timestamp>\nCurrency: <currency>'><action></hover></white>]</blue> <sender> to <target> <green><st><hover:show_text:'<red>Old balance'><previous_balance></hover></st> <hover:show_text:'<green>New balance'><new_balance></hover></green>"
 
   # Admin commands
   admin:

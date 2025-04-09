@@ -62,7 +62,7 @@ messages:
 
   # Monolog message formatting
   monolog:
-    formatting: "<blue>[<white><hover:show_text:'<timestamp>'><action></hover></white>]</blue> <sender> to <target> <green><st><hover:show_text:'<red>Starý zůstatek'><previous_balance></hover></st> <hover:show_text:'<green>Nový zůstatek'><new_balance></hover></green>"
+    formatting: "<blue>[<white><hover:show_text:'<timestamp>\nMěna: <currency>'><action></hover></white>]</blue> <sender> to <target> <green><st><hover:show_text:'<red>Starý zůstatek'><previous_balance></hover></st> <hover:show_text:'<green>Nový zůstatek'><new_balance></hover></green>"
 
   # Admin commands
   admin:
