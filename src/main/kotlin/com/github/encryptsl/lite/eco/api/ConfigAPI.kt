@@ -21,7 +21,7 @@ class ConfigAPI(private val liteEco: LiteEco) : ConfigAPIProvider {
         return this
     }
 
-    override fun createConfig(configName: String, version: String): ConfigAPI {
+    override fun createConfig(configName: String): ConfigAPI {
         val file = File(liteEco.dataFolder, configName)
         if (!file.exists()) {
             saveResource(configName, false)

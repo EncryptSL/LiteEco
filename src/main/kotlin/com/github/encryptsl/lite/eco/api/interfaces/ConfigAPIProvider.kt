@@ -9,5 +9,5 @@ interface ConfigAPIProvider {
      * @param version - Version of revision of config need changed.
      * @return ConfigLoaderAPI
      */
-    fun createConfig(configName: String, version: String): com.github.encryptsl.lite.eco.api.ConfigAPI
+    fun createConfig(configName: String): com.github.encryptsl.lite.eco.api.ConfigAPI
 }
