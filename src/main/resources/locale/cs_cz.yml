@@ -62,8 +62,9 @@ messages:
 
   # Monolog message formatting
   monolog:
-    formatting: "<blue>[<white><hover:show_text:'<timestamp>\nMěna: <currency>'><action></hover></white>]</blue> <sender> to <target> <green><st><hover:show_text:'<red>Starý zůstatek'><previous_balance></hover></st> <hover:show_text:'<green>Nový zůstatek'><new_balance></hover></green>"
-
+    header: "<gray><st>─━━━━━━─</st> <blue>[ <yellow>Historie Transakcí <blue>] <gray><st>─━━━━━━─</st>"
+    footer: "<gray><st>─━━━━━━─</st> <blue>[ <yellow><page>/<max_page> <blue>] <gray><st>─━━━━━━─</st>"
+    formatting: "<blue>[<white><hover:show_text:'<timestamp>'><action></hover></white>]</blue> <sender> pro <target> <green><st><hover:show_text:'<red>Starý zůstatek'><previous_balance></hover></st> <hover:show_text:'<green>Nový zůstatek'><new_balance></hover></green> <gold>[<currency>]</gold>"
   # Admin commands
   admin:
     create_account: "<prefix> <green>Účet <account> byl vytvořen [!]"
@@ -104,5 +105,3 @@ messages:
     - "<red>[★] <gray>/eco reload <white>-<#F39E9E> Znovu načte konfiguraci."
     - " "
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> LiteEco <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
-
-version: 2.0.3

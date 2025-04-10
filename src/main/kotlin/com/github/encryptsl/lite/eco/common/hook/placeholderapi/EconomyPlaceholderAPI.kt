@@ -19,7 +19,7 @@ class EconomyPlaceholderAPI(private val liteEco: LiteEco, private val extVersion
     override fun persist(): Boolean = true
 
     override fun canRegister(): Boolean {
-        return liteEco.server.pluginManager.getPlugin(requiredPlugin)!!.isEnabled
+        return liteEco.server.pluginManager.isPluginEnabled(requiredPlugin)
     }
 
     override fun onRequest(player: OfflinePlayer?, identifier: String): String? {
@@ -54,7 +54,7 @@ class EconomyPlaceholderAPI(private val liteEco: LiteEco, private val extVersion
                     }
                     identifier.startsWith("total_balance_") -> {
                         val currency = extractPlaceholderIdentifierName(2, args)
-                        return totalBalanceOfServerByCurrency(currency)
+                        return liteEco.currencyImpl.getCurrencyFormat(totalBalanceOfServerByCurrency(currency))
                     }
                 }
                 return rank?.let {

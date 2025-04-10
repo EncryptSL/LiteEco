@@ -2,6 +2,7 @@ package com.github.encryptsl.lite.eco.common.config
 
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.objects.ModernText
+import com.tchristofferson.configupdater.ConfigUpdater
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
@@ -10,7 +11,7 @@ import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
 import java.util.*
 
-class Locales(private val liteEco: LiteEco, private val langVersion: String) {
+class Locales(private val liteEco: LiteEco) {
     enum class LangKey { CS_CZ, EN_US, ES_ES, JA_JP, DE_DE, PL_PL, ZH_CN }
 
     private var langYML: FileConfiguration? = null
@@ -27,16 +28,6 @@ class Locales(private val liteEco: LiteEco, private val langVersion: String) {
     fun plainTextTranslation(component: Component): String {
 
         return PlainTextComponentSerializer.plainText().serialize(component)
-    }
-
-    fun plainTextTranslation(translationKey: String): String {
-
-        return PlainTextComponentSerializer.plainText().serialize(ModernText.miniModernText(getMessage(translationKey)))
-    }
-
-    fun plainTextTranslation(translationKey: String, tagResolver: TagResolver): String {
-
-        return PlainTextComponentSerializer.plainText().serialize(ModernText.miniModernText(getMessage(translationKey), tagResolver))
     }
 
     fun getMessage(value: String): String {
@@ -62,10 +53,8 @@ class Locales(private val liteEco: LiteEco, private val langVersion: String) {
                 file.parentFile.mkdirs()
                 liteEco.saveResource("locale/$fileName", false)
             }
-            val existingVersion = YamlConfiguration.loadConfiguration(file).getString("version")
-            copyOutDateLocale(file, fileName, existingVersion)
             reloadLangFile(langKey, fileName)
-
+            ConfigUpdater.update(liteEco, "locale/$fileName", file)
             langYML = YamlConfiguration.loadConfiguration(file)
         } catch (e: Exception) {
             liteEco.logger.warning("Unsupported language, lang file for $langKey doesn't exist [!]")
@@ -79,14 +68,6 @@ class Locales(private val liteEco: LiteEco, private val langVersion: String) {
         liteEco.saveConfig()
         liteEco.reloadConfig()
         liteEco.logger.info("Loaded translation $fileName [!]")
-    }
-
-    private fun copyOutDateLocale(file: File, fileName: String, version: String?) {
-        if (version.isNullOrEmpty() || version != langVersion) {
-            val backupFile = File(liteEco.dataFolder, "locale/old_$fileName")
-            file.copyTo(backupFile, true)
-            liteEco.saveResource("locale/$fileName", true)
-        }
     }
 
     private fun getRequiredLocaleOrFallback(langKey: LangKey, currentLocale: String): String {

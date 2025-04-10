@@ -30,7 +30,7 @@ class ConvertEconomy(private val liteEco: LiteEco) {
 
     fun convertBetterEconomy(currency: String) {
         try {
-            val betterEconomy = BetterEconomyHook()
+            val betterEconomy = BetterEconomyHook(liteEco)
             for (p in Bukkit.getOfflinePlayers()) {
                 val balance = BigDecimal.valueOf(betterEconomy.getBalance(p.uniqueId))
                 if (liteEco.api.createAccount(p, currency, balance)) {

@@ -51,7 +51,7 @@ class DatabaseMonologModel(val plugin: Plugin) : TransactionLogger {
         currency: String,
         previousBalance: BigDecimal,
         newBalance: BigDecimal,
-        instant: Instant
+        instant: Instant,
     ): Component {
         return LiteEco.instance.locale.translation(translation, TagResolver.resolver(
             Placeholder.parsed("action", economyOperations.name),

@@ -1,7 +1,7 @@
 package com.github.encryptsl.lite.eco.common.database.tables
 
-import kotlinx.datetime.Clock
 import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.sql.kotlin.datetime.CurrentTimestamp
 import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
 
 object MonologTable : Table("lite_eco_monolog") {
@@ -12,7 +12,7 @@ object MonologTable : Table("lite_eco_monolog") {
     val currency = varchar("currency", 16)
     val previousBalance = decimal("previous_balance", 18, 9)
     val newBalance = decimal("new_balance", 18, 9)
-    val timestamp = timestamp("timestamp").default(Clock.System.now())
+    val timestamp = timestamp("timestamp").defaultExpression(CurrentTimestamp)
 
     override val primaryKey: PrimaryKey = PrimaryKey(id)
 }

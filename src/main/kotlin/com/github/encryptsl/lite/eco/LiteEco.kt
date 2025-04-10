@@ -37,8 +37,6 @@ import kotlin.system.measureTimeMillis
 
 class LiteEco : JavaPlugin() {
     companion object {
-        const val CONFIG_VERSION = "1.2.6"
-        const val LANG_VERSION = "2.0.3"
         const val PAPI_VERSION = "2.0.5"
 
         lateinit var instance: LiteEco
@@ -50,7 +48,7 @@ class LiteEco : JavaPlugin() {
     private var countTransactions: LinkedHashMap<String, Int> = LinkedHashMap()
 
     val api: ModernLiteEcoEconomyImpl by lazy { ModernLiteEcoEconomyImpl() }
-    val locale: Locales by lazy { Locales(this, LANG_VERSION) }
+    val locale: Locales by lazy { Locales(this) }
     val databaseEcoModel: DatabaseEcoModel by lazy { DatabaseEcoModel() }
     val loggerModel: DatabaseMonologModel by lazy { DatabaseMonologModel(this) }
     val currencyImpl: Currency by lazy { Currency(this) }
@@ -65,7 +63,7 @@ class LiteEco : JavaPlugin() {
 
         configAPI
             .create("database.db")
-            .createConfig("config.yml", CONFIG_VERSION)
+            .createConfig("config.yml")
         locale
             .loadCurrentTranslation()
         databaseConnector.load()
@@ -82,11 +80,12 @@ class LiteEco : JavaPlugin() {
         }
         try {
             ConfigUpdater.update(this, "config.yml", configFile, "plugin", "economy")
-            logger.info("Config was updated on current version !")
+            componentLogger.info(ModernText.miniModernText("<green>Config was updated on current version !"))
         } catch (e : Exception) {
             logger.severe(e.message ?: e.localizedMessage)
         }
-        logger.info("Plugin enabled in time $timeTaken ms")
+        componentLogger.info(ModernText.miniModernText("Contribute to other updates <yellow>https://ko-fi.com/encryptsl"))
+        componentLogger.info(ModernText.miniModernText("<green>Plugin enabled in time $timeTaken ms"))
     }
 
     override fun onDisable() {
@@ -103,11 +102,7 @@ class LiteEco : JavaPlugin() {
     }
 
     private fun hookRegistration() {
-        hookManager.hookPAPI()
-        hookManager.hookMiniPlaceholders()
-        hookManager.hookVault()
-        hookManager.hookBetterEconomy()
-        hookManager.hookTreasury() // Experimental support for this api.
+        hookManager.registerHooks()
     }
 
     private fun setupMetrics() {
@@ -142,14 +137,13 @@ class LiteEco : JavaPlugin() {
         val timeTaken = measureTimeMillis {
             for (listener in listeners) {
                 pluginManager.registerEvents(listener, this)
-                logger.info("Bukkit Listener ${listener.javaClass.simpleName} registered () -> ok")
             }
         }
-        logger.info("Listeners registered (${listeners.size}) in time $timeTaken ms -> ok")
+        componentLogger.info(ModernText.miniModernText("Registering <yellow>(${listeners.size})</yellow> of listeners took <yellow>$timeTaken ms</yellow> -> ok"))
     }
 
     private fun registerCommands() {
-        logger.info("Registering commands with Cloud Command Framework !")
+        componentLogger.info(ModernText.miniModernText("<blue>Registering commands with Cloud Command Framework !"))
 
         val commandManager = createCommandManager()
 
@@ -169,7 +163,7 @@ class LiteEco : JavaPlugin() {
         )
         if (commandManager.hasCapability(CloudBukkitCapabilities.NATIVE_BRIGADIER)) {
             commandManager.registerBrigadier()
-            commandManager.brigadierManager().setNativeNumberSuggestions(false)
+            //commandManager.brigadierManager().setNativeNumberSuggestions(false)
         } else if (commandManager.hasCapability(CloudBukkitCapabilities.ASYNCHRONOUS_COMPLETION)) {
             (commandManager as LegacyPaperCommandManager<*>).registerAsynchronousCompletions()
         }

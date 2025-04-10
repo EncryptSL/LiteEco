@@ -46,7 +46,7 @@ class EconomyMiniPlaceholder(private val liteEco: LiteEco) {
                 if (!liteEco.currencyImpl.getCurrencyNameExist(currency))
                     return@globalPlaceholder null
 
-                return@globalPlaceholder Component.text(totalBalanceOfServerByCurrency(currency)).asInsertingTag()
+                return@globalPlaceholder Component.text(liteEco.currencyImpl.getCurrencyFormat(totalBalanceOfServerByCurrency(currency))).asInsertingTag()
             }
             globalPlaceholder("top_balance_formatted") { i, _ ->
                 val argument = i.popOr("You need provide context").value().split("_")

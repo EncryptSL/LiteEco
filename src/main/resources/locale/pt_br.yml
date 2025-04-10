@@ -62,7 +62,9 @@ messages:
 
   # Monolog message formatting
   monolog:
-    formatting: "<blue>[<white><hover:show_text:'<timestamp>\nCurrency: <currency>'><action></hover></white>]</blue> <sender> to <target> <green><st><hover:show_text:'<red>Old balance'><previous_balance></hover></st> <hover:show_text:'<green>New balance'><new_balance></hover></green>"
+    header: "<gray><st>─━━━━━━─</st> <blue>[ <yellow>Transaction History <blue>] <gray><st>─━━━━━━─</st>"
+    footer: "<gray><st>─━━━━━━─</st> <blue>[ <yellow><page>/<max_page> <blue>] <gray><st>─━━━━━━─</st>"
+    formatting: "<blue>[<white><hover:show_text:'<timestamp>'><action></hover></white>]</blue> <sender> to <target> <green><st><hover:show_text:'<red>Old balance'><previous_balance></hover></st> <hover:show_text:'<green>New balance'><new_balance></hover></green> <gold>[<currency>]</gold>"
 
   # Admin commands
   admin:
@@ -104,5 +106,3 @@ messages:
     - "<red>[★] <gray>/eco reload <white>-<#F39E9E> Recarregar as configurações."
     - " "
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> LiteEco <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
-
-version: 2.0.3

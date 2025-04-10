@@ -159,9 +159,12 @@ class EcoCMD(private val liteEco: LiteEco) {
                 Placeholder.parsed("max_page", pagination.maxPages.toString()))
             )
 
+        val tags = TagResolver.resolver(Placeholder.parsed("page", page.toString()), Placeholder.parsed("max_page", pagination.maxPages.toString()))
+        commandSender.sendMessage(liteEco.locale.translation("messages.monolog.header", tags))
         for (content in pagination.display()) {
             commandSender.sendMessage(content)
         }
+        commandSender.sendMessage(liteEco.locale.translation("messages.monolog.footer", tags))
     }
 
     @Command("eco lang <isoKey>")
@@ -257,10 +260,10 @@ class EcoCMD(private val liteEco: LiteEco) {
                         )
                     ))
                 }
-                liteEco.logger.info("Exporting of ${migrationKey.name} elapsed $timer ms")
+                liteEco.componentLogger.info(ModernText.miniModernText("Exporting of ${migrationKey.name} elapsed $timer ms"))
             }
         } catch (e : Exception) {
-            liteEco.logger.severe(e.message ?: e.localizedMessage)
+            liteEco.componentLogger.error(ModernText.miniModernText(e.message ?: e.localizedMessage))
         }
     }
 
@@ -292,7 +295,7 @@ class EcoCMD(private val liteEco: LiteEco) {
             ))
             convertEconomy.convertRefresh()
         } catch (e : Exception) {
-            liteEco.logger.info(e.message ?: e.localizedMessage)
+            liteEco.componentLogger.error(ModernText.miniModernText(e.message ?: e.localizedMessage))
             commandSender.sendMessage(liteEco.locale.translation("messages.error.convert_fail"))
         }
     }
@@ -333,7 +336,7 @@ class EcoCMD(private val liteEco: LiteEco) {
     fun onReload(commandSender: CommandSender) {
         liteEco.reloadConfig()
         commandSender.sendMessage(liteEco.locale.translation("messages.admin.config_reload"))
-        liteEco.logger.info("Config.yml was reloaded [!]")
+        liteEco.componentLogger.info(ModernText.miniModernText("Config.yml was reloaded [!]"))
         liteEco.saveConfig()
         liteEco.locale.loadCurrentTranslation()
     }

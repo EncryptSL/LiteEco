@@ -12,6 +12,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.incendo.cloud.annotation.specifier.Range
 import org.incendo.cloud.annotations.*
+import java.util.concurrent.CompletableFuture
 
 @Suppress("UNUSED")
 @CommandDescription("Provided plugin by LiteEco")
@@ -105,13 +106,13 @@ class MoneyCMD(private val liteEco: LiteEco) {
             return commandSender.sendMessage(liteEco.locale.translation("messages.error.currency_not_exist", Placeholder.parsed("currency", currency)))
 
         try {
-            liteEco.server.asyncScheduler.runNow(liteEco, {
+            CompletableFuture.runAsync({
                 val topPlayers = helper.getTopBalancesFormatted(currency)
 
                 val pagination = ComponentPaginator(topPlayers) { itemsPerPage = 10 }.apply { page(page) }
 
                 if (pagination.isAboveMaxPage(page))
-                    return@runNow commandSender.sendMessage(liteEco.locale.translation("messages.error.maximum_page",
+                    return@runAsync commandSender.sendMessage(liteEco.locale.translation("messages.error.maximum_page",
                         Placeholder.parsed("max_page", pagination.maxPages.toString()))
                     )
 

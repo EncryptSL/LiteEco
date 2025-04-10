@@ -2,6 +2,7 @@ package com.github.encryptsl.lite.eco.api
 
 import com.google.gson.Gson
 import com.github.encryptsl.lite.eco.LiteEco
+import com.github.encryptsl.lite.eco.api.objects.ModernText
 import okhttp3.Call
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -13,31 +14,35 @@ class UpdateNotifier(private val liteEco: LiteEco, private val id: String, priva
     private val okHttpClient = OkHttpClient()
     private val requestClient = Request.Builder()
 
+    companion object {
+        const val API_LINK = "https://api.spiget.org/v2/resources/%s/versions/latest"
+    }
+
     fun makeUpdateCheck() {
         try {
-            val request: Request = requestClient.url(String.format("https://api.spiget.org/v2/resources/%s/versions/latest", id)).build()
+            val request: Request = requestClient.url(String.format(API_LINK, id)).build()
             val call: Call = okHttpClient.newCall(request)
             call.execute().use { r ->
                 if (!r.isSuccessful) { r.close() }
-                liteEco.logger.info(logUpdate(r))
+                liteEco.componentLogger.info(ModernText.miniModernText(logUpdate(r)))
             }
         } catch (e : Exception) {
-            liteEco.logger.severe(e.message ?: e.localizedMessage)
+            liteEco.componentLogger.error(e.message ?: e.localizedMessage)
         }
     }
 
     private fun logUpdate(response: Response): String {
         if (response.code != 200)
-            throw Exception("Error during check update.. response code ${response.code}")
+            return "<red>Error during check update.. response code, <yellow>${response.code}"
 
-        val latestVersion = Gson().fromJson(response.body?.string(), Version::class.java).name
+        val data = Gson().fromJson(response.body?.string(), Version::class.java)
 
-        return when(latestVersion.equals(pluginVersion, true)) {
-            true -> "You are using current version !"
+        return when(data.name.equals(pluginVersion, true)) {
+            true -> "<green>You are using current version !"
             false -> {
-                "Please download update of plugin LiteEco your version: $pluginVersion > Updated version: $latestVersion"
+                "<green>New version is here <dark_green>[${data.name}]</dark_green> <green>you are using <dark_green>[$pluginVersion]"
             }
         }
     }
-    data class Version(val name: String)
+    data class Version(val name: String, val id: String)
 }
