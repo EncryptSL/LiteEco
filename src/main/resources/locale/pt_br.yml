@@ -83,10 +83,10 @@ messages:
   help:
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> LiteEco <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
     - " "
-    - "<white>[+] <gray>/money help <white>-<#CFE7F0> Mostra lista de comandos do plugin"
-    - "<white>[+] <gray>/money top <#b37dc7>[página] <white>-<#CFE7F0> Mostra os players mais ricos"
-    - "<white>[+] <gray>/money bal <yellow>[usuário] <#3EE84D>[moeda] <white>-<#CFE7F0> Mostra o saldo da sua conta ou de outro jogador"
-    - "<white>[+] <gray>/money pay <yellow>[usuário] <#3EE84D>[moeda] <#3EE84D><amount> <white>-<#CFE7F0> Envia dinheiro para outro jogador."
+    - "<white>[+] <gray><hover:show_text:'<#CFE7F0> Mostra lista de comandos do plugin'>/money help"
+    - "<white>[+] <gray><hover:show_text:'<#CFE7F0> Mostra os players mais ricos'>/money top <#b37dc7>[página]"
+    - "<white>[+] <gray><hover:show_text:'<#CFE7F0> Mostra o saldo da sua conta ou de outro jogador'>/money bal <yellow>[usuário] <#3EE84D>[moeda]"
+    - "<white>[+] <gray><hover:show_text:'<#CFE7F0> Envia dinheiro para outro jogador.'>/money pay <yellow>[usuário] <#3EE84D>[moeda] <#3EE84D><amount>"
     - " "
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> LiteEco <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
 
