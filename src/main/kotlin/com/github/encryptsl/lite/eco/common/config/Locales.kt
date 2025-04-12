@@ -12,7 +12,7 @@ import java.io.File
 import java.util.*
 
 class Locales(private val liteEco: LiteEco) {
-    enum class LangKey { CS_CZ, EN_US, ES_ES, JA_JP, DE_DE, PL_PL, ZH_CN }
+    enum class LangKey { CS_CZ, EN_US, ES_ES, JA_JP, DE_DE, PL_PL, PT_BR, TR_TR, ZH_CN }
 
     private var langYML: FileConfiguration? = null
 
