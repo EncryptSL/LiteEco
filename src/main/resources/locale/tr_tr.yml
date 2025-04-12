@@ -1,0 +1,120 @@
+messages:
+  # Balance messages (Bakiye mesajları)
+  balance:
+    format: "<prefix> <white>Bakiyeniz <currency> para biriminde <green><money></green>. [!]"
+    format_target: "<prefix> <white><target></#13AFFE>'nin <gold><currency></gold> bakiyesi <green><money></green>. [!]"
+    top_format: "<yellow><position># <gold><player></gold> <gray>- <green><money></green>"
+    top_header: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>BALTOP</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray>"
+    top_footer: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47><red><page>/<max_page></#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray>"
+
+  # Self-transaction messages (Kendi işlem mesajları)
+  self:
+    add_money: "<prefix> <white>Hesabınıza <green><money></green> <currency> eklediniz."
+    withdraw_money: "<prefix> <white>Hesabınızdan <green><money></green> <currency> çektiniz."
+    set_money: "<prefix> <white>Hesabınızın <green><money></green> <currency> bakiyesini belirlediniz."
+
+  # Transaction messages for target (Hedef için işlem mesajları)
+  target:
+    add_money: "<prefix> <gold><sender></gold> <white>size <green><money></green> <currency> gönderdi."
+    add_money_silent: "<gray>+ <green><money>"
+    withdraw_money: "<prefix> <gold><sender></gold> <white>hesabınızdan <green><money></green> <currency> çekti."
+    withdraw_money_silent: "<gray>- <red><money>"
+    set_money: "<prefix> <gold><sender></gold> <white>hesabınızın bakiyesini <green><money></green> <currency> olarak belirledi."
+
+  # Transaction messages for sender (Gönderen için işlem mesajları)
+  sender:
+    add_money: "<prefix> <white><gold><target></gold> <green><money></green> <currency> gönderdiniz."
+    withdraw_money: "<prefix> <white><gold><target></gold> <green><money></green> <currency> çektiniz."
+    set_money: "<prefix> <white><gold><target></gold> <green><money></green> <currency> olarak bakiyesini belirlediniz."
+
+  # Global actions messages (Küresel işlemler mesajları)
+  global:
+    add_money: "<prefix> <white>Tüm oyunculara <green><money></green> <currency> eklediniz."
+    withdraw_money: "<prefix> <white>Tüm oyunculardan <green><money></green> <currency> çektiniz."
+    set_money: "<prefix> <white>Tüm oyuncuların <green><money></green> <currency> bakiyesini belirlediniz."
+
+  # Broadcast messages (Küresel mesajlar)
+  broadcast:
+    add_money: "<prefix> <gold><sender></gold> <white>tüm oyunculara <green><money></green> <currency> ekledi."
+    withdraw_money: "<prefix> <gold><sender></gold> <white>tüm oyunculardan <green><money></green> <currency> çekti."
+    set_money: "<prefix> <gold><sender></gold> <white>tüm oyuncuların <green><money></green> <currency> bakiyesini belirledi."
+
+  # Error messages (Hata mesajları)
+  error:
+    account_not_exist: "<prefix> <red><account> hesabı mevcut değil [!]"
+    account_now_exist: "<prefix> <red><account> hesabı şimdi mevcut [!]"
+    currency_not_exist: "<prefix> <red>Bu <currency> para birimi mevcut değil!"
+    missing_currency_permission: "<prefix> <red>Bu para birimini kullanma yetkiniz yok [!]"
+    format_amount: "<prefix> <red>Geçersiz miktar. Lütfen ondalıklı sayılar veya sıkıştırılmış gösterimler kullanın (örneğin 1K) [!]"
+    insufficient_funds: "<prefix> <red>Yetersiz bakiye! [!]"
+    maximum_page: "<red>Sayfalama limitinin <max_page> olduğunu unutmayın."
+    negative_amount: "<prefix> <red>Negatif miktarlar kabul edilmez. [!]"
+    migration_argument: "<prefix> <red>Bu <argument> argümanı geçerli değil ya da üretime hazır değil."
+    migration_failed: "<prefix> <red>Taşıma işlemi sırasında bir sorun oluştu. Detaylar için konsolu kontrol edin."
+    purge_argument: "<prefix> <red>Bu <argument> argümanı geçerli değil ya da üretime hazır değil."
+    purge_monolog_fail: "<prefix> <red>Logları silemezsiniz, çünkü tablo boş [!]"
+    player_is_null: "<prefix> <red>Lütfen bir oyuncu adı girin [!]"
+    self_pay: "<prefix> <red>Kendinize para gönderemezsiniz [!]"
+    convert_fail: "<prefix> <red>Bir hata oluştu, lütfen konsolu kontrol edin [!]"
+    amount_above_limit: "<prefix> <red>Miktar, serverda izin verilen limitin üzerinde!"
+    balance_above_limit: "<prefix> <red><account> hesabının bakiyesi, izin verilen limitin üzerinde!"
+    database_exception: "<prefix> <red>Veritabanı ile çalışırken beklenmedik bir hata oluştu: <exception> [!]"
+
+  # Monolog messages (Monolog mesajları)
+  monolog:
+    admin:
+      normal:
+        deposit: "Admin <sender> <target>'e <money> <currency> yatırdı"
+        set: "Admin <sender> <target>'e <money> <currency> olarak ayarladı"
+        withdraw: "Admin <sender> <target>'ten <money> <currency> çekti"
+      global:
+        deposit: "Admin <sender> <accounts>x hesaplara <money> <currency> yatırdı"
+        set: "Admin <sender> <accounts>x hesaplara <money> <currency> olarak ayarladı"
+        withdraw: "Admin <sender> <accounts>x hesaplardan <money> <currency> çekti"
+    player:
+      pay: "Oyuncu <sender> <target>'e <money> <currency> gönderdi"
+
+  # Admin commands (Yönetici komutları)
+  admin:
+    monolog_format: "<hover:show_text:'<dark_green>Tarih ve saat: <green><timestamp>'><blue>[<level>] <gray><log></hover>"
+
+    create_account: "<prefix> <green><account> hesabı oluşturuldu [!]"
+    config_reload: "<prefix> <green>Konfigürasyon başarıyla yeniden yüklendi [!]"
+    translation_switch: "<prefix> <green>Çeviri <locale>'ye değiştirildi."
+    translation_missing: "<prefix> <red><key> için çeviri eksik. Lütfen plugin geliştiricisi ile iletişime geçin."
+    purge_accounts: "<prefix> <green>Tüm oyuncu hesapları temizlendi."
+    purge_null_accounts: "<prefix> <green>Null değerli tüm oyuncu hesapları temizlendi."
+    purge_default_accounts: "<prefix> <green>Varsayılan değerli tüm oyuncu hesapları temizlendi."
+    purge_monolog_success: "<prefix> <green>Tüm ekonomi faaliyetlerine dair loglar temizlendi [!]"
+    delete_account: "<prefix> <green><account> oyuncusunun hesabı silindi!"
+    migration_success: "<prefix> <green><type> taşıma işlemi başarılı [!]"
+    convert_success: "<prefix> <green><converted>x hesap ve <balances> bakiyeler <economy>'den LiteEco'ya dönüştürüldü [!]"
+
+  # Help messages (Yardım mesajları)
+  help:
+    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> LiteEco <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
+    - " "
+    - "<white>[+] <gray>/money help <white>-<#CFE7F0> Komut listesi"
+    - "<white>[+] <gray>/money top <#b37dc7>[sayfa] <white>-<#CFE7F0> En zengin oyuncular"
+    - "<white>[+] <gray>/money bal <yellow>[kullanıcı] <#3EE84D>[para birimi] <white>-<#CFE7F0> Hesabınızın veya başka bir oyuncunun bakiyesini gösterir"
+    - "<white>[+] <gray>/money pay <yellow>[kullanıcı] <#3EE84D>[para birimi] <#3EE84D><miktar> <white>-<#CFE7F0> Başka bir oyuncuya para gönderir."
+    - " "
+    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> LiteEco <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
+
+  # Admin Help (Yönetici Yardım)
+  admin-help:
+    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> LiteEco  <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
+    - " "
+    - "<red>[★] <gray>/eco add <yellow>[kullanıcı] <#3EE84D><miktar> <#3EE84D>[para birimi] <white>-<#F39E9E> Başka bir oyuncuya para ekler."
+    - "<red>[★] <gray>/eco set <yellow>[kullanıcı] <#3EE84D><miktar> <#3EE84D>[para birimi] <white>-<#F39E9E> Başka bir oyuncunun bakiyesini ayarlar."
+    - "<red>[★] <gray>/eco withdraw <yellow>[kullanıcı] <#3EE84D><miktar> <#3EE84D>[para birimi] <white>-<#F39E9E> Başka bir oyuncudan para çeker."
+    - "<red>[★] <gray>/eco global add <#3EE84D><miktar> <#3EE84D>[para birimi] <white>-<#F39E9E> Tüm oyunculara para ekler."
+    - "<red>[★] <gray>/eco global set <#3EE84D><miktar> <#3EE84D>[para birimi] <white>-<#F39E9E> Tüm oyuncuların bakiyesini ayarlar."
+    - "<red>[★] <gray>/eco global withdraw <#3EE84D><miktar> <#3EE84D>[para birimi] <white>-<#F39E9E> Tüm oyunculardan para çeker."
+    - "<red>[★] <gray>/eco lang <#b37dc7>[dil] <white>-<#F39E9E> Çeviriyi değiştirir."
+    - "<red>[★] <gray>/eco purge <#b37dc7><argument> <#3EE84D>[para birimi] <white>-<#F39E9E> Veritabanı temizleme."
+    - "<red>[★] <gray>/eco migration <#b37dc7><argument> <#3EE84D>[para birimi] <white>-<#F39E9E> Veritabanı taşıma."
+    - "<red>[★] <gray>/eco convert <#b37dc7><argument> <#3EE84D>[para birimi] <white>-<#F39E9E> Başka bir ekonomi plugininden LiteEco'ya dönüştürme."
+    - "<red>[★] <gray>/eco reload <white>-<#F39E9E> Konfigürasyonu yeniden yükler."
+    - " "
+    - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> LiteEco <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
