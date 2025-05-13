@@ -4,150 +4,188 @@ import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.ComponentPaginator
 import com.github.encryptsl.lite.eco.api.events.PlayerEconomyPayEvent
 import com.github.encryptsl.lite.eco.api.objects.ModernText
+import com.github.encryptsl.lite.eco.commands.parsers.CurrencyParser
 import com.github.encryptsl.lite.eco.utils.Helper
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import org.incendo.cloud.annotation.specifier.Range
-import org.incendo.cloud.annotations.*
+import org.incendo.cloud.bukkit.parser.OfflinePlayerParser
+import org.incendo.cloud.component.DefaultValue
+import org.incendo.cloud.description.Description
+import org.incendo.cloud.paper.PaperCommandManager
+import org.incendo.cloud.paper.util.sender.PlayerSource
+import org.incendo.cloud.paper.util.sender.Source
+import org.incendo.cloud.parser.standard.IntegerParser
 import java.util.concurrent.CompletableFuture
 
-@Suppress("UNUSED")
-@CommandDescription("Provided plugin by LiteEco")
-class MoneyCMD(private val liteEco: LiteEco) {
+class MoneyCMD(
+    private val commandManager: PaperCommandManager<Source>,
+    private val liteEco: LiteEco
+) {
+
+    companion object {
+        private const val DESCRIPTION = "Provided plugin by LiteEco"
+    }
+
     private val helper: Helper = Helper(liteEco)
+    private val commandRoot = commandManager.commandBuilder("money")
 
-    @Command("money")
-    @Permission("lite.eco.money")
-    fun onRootCommand(commandSender: CommandSender) {
-        onHelp(commandSender)
-    }
-
-    @Command("money help")
-    @Permission("lite.eco.help")
-    fun onHelp(commandSender: CommandSender) {
-        liteEco.locale.getList("messages.help")?.forEach { s ->
-            commandSender.sendMessage(ModernText.miniModernText(s.toString()))
-        }
-    }
-
-    @Command("bal|balance [player] [currency]")
-    @Permission("lite.eco.balance")
-    fun onBalanceProxy(
-        commandSender: CommandSender,
-        @Argument(value = "player", suggestions = "players") offlinePlayer: OfflinePlayer?,
-        @Argument(value = "currency", suggestions = "currencies") @Default("dollars") currency: String?
-    ) {
-        val c = currency ?: liteEco.currencyImpl.defaultCurrency()
-        onBalance(commandSender, offlinePlayer, c)
-    }
-
-    @Command("money bal [player] [currency]")
-    @Permission("lite.eco.balance")
-    fun onBalance(
-        commandSender: CommandSender,
-        @Argument(value = "player", suggestions = "players") offlinePlayer: OfflinePlayer?,
-        @Argument(value = "currency", suggestions = "currencies") @Default("dollars") currency: String?
-    ) {
-        val c = currency ?: liteEco.currencyImpl.defaultCurrency()
-
-        if (!liteEco.currencyImpl.getCurrencyNameExist(c))
-            return commandSender.sendMessage(liteEco.locale.translation("messages.error.currency_not_exist", Placeholder.parsed("currency", c)))
-
-        if (!commandSender.hasPermission("lite.eco.balance.$c") && !commandSender.hasPermission("lite.eco.balance.*"))
-            return commandSender.sendMessage(liteEco.locale.translation("messages.error.missing_currency_permission"))
-
-        if (commandSender is Player) {
-            val cSender = offlinePlayer ?: commandSender
-            liteEco.api.getUserByUUID(cSender.uniqueId, c).thenAccept { value ->
-                value.ifPresentOrElse({
-                    val formatMessage = when(offlinePlayer) {
-                        null -> liteEco.locale.translation("messages.balance.format", helper.getComponentBal(it, c))
-                        else -> liteEco.locale.translation("messages.balance.format_target", helper.getComponentBal(it, c))
-                    }
-                    commandSender.sendMessage(formatMessage)
-                }, {
-                    commandSender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist",
-                        Placeholder.parsed("account", cSender.name.toString())))
-                })
+    fun playerCommands() {
+        commandManager.command(
+            commandRoot.commandDescription(Description.description(DESCRIPTION))
+            .permission("lite.eco.money")
+            .handler { ctx -> helpMessage(ctx.sender().source()) }
+        )
+        commandManager.command(
+                commandRoot.literal("help")
+                    .commandDescription(Description.description(DESCRIPTION))
+                .permission("lite.eco.help")
+                .handler { ctx -> helpMessage(ctx.sender().source()) }
+        )
+        val balanceCmd = commandRoot.literal("bal", "balance")
+                .commandDescription(Description.description(DESCRIPTION))
+            .permission("lite.eco.balance")
+            .required(
+                "target",
+                OfflinePlayerParser.offlinePlayerParser(),
+                commandManager.parserRegistry().getSuggestionProvider("players").get()
+            )
+            .optional(commandManager
+                .componentBuilder(String::class.java, "currency")
+                .parser(CurrencyParser())
+                .defaultValue(DefaultValue.parsed("dollars"))
+            )
+            .handler { ctx ->
+                val sender: CommandSender = ctx.sender().source()
+                val target: OfflinePlayer = ctx.get("target")
+                val currency: String = ctx.getOrDefault("currency", liteEco.currencyImpl.defaultCurrency())
+                balanceCommand(sender, target, currency)
             }
-            return
-        }
-
-        if (offlinePlayer != null) {
-            liteEco.api.getUserByUUID(offlinePlayer.uniqueId, c).thenAccept { user ->
-                user.ifPresentOrElse({
-                    commandSender.sendMessage(
-                        liteEco.locale.translation("messages.balance.format_target", helper.getComponentBal(it, c))
-                    )
-                }, {
-                    commandSender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist",
-                        Placeholder.parsed("account", offlinePlayer.name.toString())))
-                })
-            }
-            return
-        }
-
-        liteEco.locale.getList("messages.help")
-            ?.forEach { s -> commandSender.sendMessage(ModernText.miniModernText(s.toString())) }
+        commandManager.command(balanceCmd.build())
+        commandManager.command(commandManager.commandBuilder("balance", "bal")
+            .proxies(balanceCmd.build())
+            .build()
+        )
+        val balanceTopCmd = commandRoot.literal("top", "baltop")
+                .commandDescription(Description.description(DESCRIPTION))
+                .proxies(commandManager.commandBuilder("baltop", "balancetop").build())
+                .permission("lite.eco.top")
+                .optional(
+                    "page",
+                    IntegerParser.integerParser(1),
+                    DefaultValue.constant(1)
+                )
+                .optional(commandManager
+                    .componentBuilder(String::class.java, "currency")
+                    .parser(CurrencyParser())
+                    .defaultValue(DefaultValue.parsed("dollars"))
+                )
+                .handler { ctx ->
+                    val sender = ctx.sender().source()
+                    val page: Int = ctx.get("page")
+                    val currency: String = ctx.get("currency")
+                    balanceTopCommand(sender, page, currency)
+                }
+        commandManager.command(balanceTopCmd.build())
+        commandManager.command(commandManager.commandBuilder("balancetop", "baltop")
+            .proxies(balanceTopCmd.build())
+            .build()
+        )
+        val payCmd = commandRoot.literal("pay")
+                .commandDescription(Description.description(DESCRIPTION))
+                .proxies(commandManager.commandBuilder("pay").build())
+                .permission("lite.eco.pay")
+                .senderType(PlayerSource::class.java)
+                .required(
+                    "target",
+                    OfflinePlayerParser.offlinePlayerParser(),
+                    commandManager.parserRegistry().getSuggestionProvider("players").get()
+                )
+                .required("amount", IntegerParser.integerParser())
+                .optional(commandManager
+                    .componentBuilder(String::class.java, "currency")
+                    .parser(CurrencyParser())
+                    .defaultValue(DefaultValue.parsed("dollars"))
+                )
+                .handler { ctx ->
+                    val sender: Player = ctx.sender().source()
+                    val target: OfflinePlayer = ctx.get("target")
+                    val amountStr: Int = ctx.get("amount")
+                    val currency: String = ctx.get("currency")
+                    payCommand(sender, target, amountStr, currency)
+                }
+        commandManager.command(payCmd.build())
+        commandManager.command(commandManager.commandBuilder("pay")
+            .proxies(payCmd.build())
+            .build()
+        )
     }
 
-    @ProxiedBy("baltop")
-    @Command("money top [page] [currency]")
-    @Permission("lite.eco.top")
-    fun onTopBalance(
-        commandSender: CommandSender,
-        @Argument(value = "page") @Range(min = "1", max="") @Default("1") page: Int,
-        @Argument("currency", suggestions = "currencies") @Default("dollars") currency: String
-    ) {
-        if (!liteEco.currencyImpl.getCurrencyNameExist(currency))
-            return commandSender.sendMessage(liteEco.locale.translation("messages.error.currency_not_exist", Placeholder.parsed("currency", currency)))
+    fun helpMessage(sender: CommandSender) {
+        liteEco.locale.getList("messages.help")?.forEach { s -> sender.sendMessage(ModernText.miniModernText(s.toString())) }
+    }
 
+    fun balanceCommand(sender: CommandSender, target: OfflinePlayer, currency: String) {
+        if (!sender.hasPermission("lite.eco.balance.$currency") && !sender.hasPermission("lite.eco.balance.*"))
+            return sender.sendMessage(liteEco.locale.translation("messages.error.missing_currency_permission"))
+
+        liteEco.api.getUserByUUID(target, currency).thenAccept { value ->
+            value.ifPresentOrElse({
+                val formatMessage = if (sender == target)
+                    liteEco.locale.translation("messages.balance.format", helper.getComponentBal(it, currency))
+                else
+                    liteEco.locale.translation("messages.balance.format_target", helper.getComponentBal(it, currency))
+                sender.sendMessage(formatMessage) }, {
+                sender.sendMessage(
+                    liteEco.locale.translation("messages.error.account_not_exist",
+                        Placeholder.parsed("account", target.name.toString()))
+                )
+            })
+        }
+    }
+
+    fun balanceTopCommand(sender: CommandSender, page: Int, currency: String) {
         try {
-            CompletableFuture.runAsync({
+            CompletableFuture.runAsync {
                 val topPlayers = helper.getTopBalancesFormatted(currency)
 
                 val pagination = ComponentPaginator(topPlayers) { itemsPerPage = 10 }.apply { page(page) }
 
                 if (pagination.isAboveMaxPage(page))
-                    return@runAsync commandSender.sendMessage(liteEco.locale.translation("messages.error.maximum_page",
-                        Placeholder.parsed("max_page", pagination.maxPages.toString()))
+                    return@runAsync sender.sendMessage(
+                        liteEco.locale.translation(
+                            "messages.error.maximum_page",
+                            Placeholder.parsed("max_page", pagination.maxPages.toString())
+                        )
                     )
 
                 val tagResolver = TagResolver.resolver(
                     Placeholder.parsed("page", pagination.currentPage().toString()),
                     Placeholder.parsed("max_page", pagination.maxPages.toString())
                 )
-                commandSender.sendMessage(liteEco.locale.translation("messages.balance.top_header", tagResolver))
+                sender.sendMessage(liteEco.locale.translation("messages.balance.top_header", tagResolver))
                 for (content in pagination.display()) {
-                    commandSender.sendMessage(content)
+                    sender.sendMessage(content)
                 }
-                commandSender.sendMessage(liteEco.locale.translation("messages.balance.top_footer", tagResolver))
-            })
+                sender.sendMessage(liteEco.locale.translation("messages.balance.top_footer", tagResolver))
+            }
         } catch (e : Exception) {
             liteEco.logger.severe(e.message ?: e.localizedMessage)
             e.fillInStackTrace()
         }
     }
 
-    @ProxiedBy("pay")
-    @Command("money pay <player> <amount> [currency]")
-    @Permission("lite.eco.pay")
-    fun onPayMoney(
-        sender: Player,
-        @Argument(value = "player", suggestions = "players") offlinePlayer: OfflinePlayer,
-        @Argument(value = "amount") @Range(min = "1.00", max = "") amountStr: String,
-        @Argument(value = "currency", suggestions = "currencies") @Default("dollars") currency: String
-    ) {
+    fun payCommand(sender: Player, target: OfflinePlayer, amountStr: Int, currency: String) {
         if (!sender.hasPermission("lite.eco.pay.$currency") && !sender.hasPermission("lite.eco.pay.*"))
             return sender.sendMessage(liteEco.locale.translation("messages.error.missing_currency_permission"))
 
-        if (sender.uniqueId == offlinePlayer.uniqueId)
+        if (sender.uniqueId == target.uniqueId)
             return sender.sendMessage(liteEco.locale.translation("messages.error.self_pay"))
 
-        val amount = helper.validateAmount(amountStr, sender) ?: return
-        liteEco.pluginManager.callEvent(PlayerEconomyPayEvent(sender, offlinePlayer, currency, amount))
+        val amount = helper.validateAmount(amountStr.toString(), sender) ?: return
+        liteEco.pluginManager.callEvent(PlayerEconomyPayEvent(sender, target, currency, amount))
     }
+
 }

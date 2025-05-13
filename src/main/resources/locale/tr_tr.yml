@@ -43,7 +43,6 @@ messages:
   error:
     account_not_exist: "<prefix> <red><account> hesabı mevcut değil [!]"
     account_now_exist: "<prefix> <red><account> hesabı şimdi mevcut [!]"
-    currency_not_exist: "<prefix> <red>Bu <currency> para birimi mevcut değil!"
     missing_currency_permission: "<prefix> <red>Bu para birimini kullanma yetkiniz yok [!]"
     format_amount: "<prefix> <red>Geçersiz miktar. Lütfen ondalıklı sayılar veya sıkıştırılmış gösterimler kullanın (örneğin 1K) [!]"
     insufficient_funds: "<prefix> <red>Yetersiz bakiye! [!]"
@@ -55,10 +54,17 @@ messages:
     purge_monolog_fail: "<prefix> <red>Logları silemezsiniz, çünkü tablo boş [!]"
     player_is_null: "<prefix> <red>Lütfen bir oyuncu adı girin [!]"
     self_pay: "<prefix> <red>Kendinize para gönderemezsiniz [!]"
-    convert_fail: "<prefix> <red>Bir hata oluştu, lütfen konsolu kontrol edin [!]"
     amount_above_limit: "<prefix> <red>Miktar, serverda izin verilen limitin üzerinde!"
     balance_above_limit: "<prefix> <red><account> hesabının bakiyesi, izin verilen limitin üzerinde!"
     database_exception: "<prefix> <red>Veritabanı ile çalışırken beklenmedik bir hata oluştu: <exception> [!]"
+
+  # This messages not support MiniMessage and Style Formatting !
+  # Please don't try edit this messages !
+  parser:
+    error:
+      currency_not_exist: "Bu %s para birimi mevcut değil!"
+      language_not_exist: "This %s language is not supported [!]"
+      convert_fail: "Bir hata oluştu, lütfen konsolu kontrol edin [!]"
 
   # Monolog messages (Monolog mesajları)
   monolog:

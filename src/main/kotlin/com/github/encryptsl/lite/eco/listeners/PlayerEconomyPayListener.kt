@@ -19,9 +19,6 @@ class PlayerEconomyPayListener(private val liteEco: LiteEco) : Listener {
         val money: BigDecimal = event.money
         val currency: String = event.currency
 
-        if (!liteEco.currencyImpl.getCurrencyNameExist(currency))
-            return sender.sendMessage(liteEco.locale.translation("messages.error.currency_not_exist", Placeholder.parsed("currency", currency)))
-
         if (!liteEco.api.has(sender.uniqueId, currency, money))
             return sender.sendMessage(liteEco.locale.translation("messages.error.insufficient_funds"))
 

@@ -4,11 +4,18 @@ import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.ComponentPaginator
 import com.github.encryptsl.lite.eco.api.enums.CheckLevel
 import com.github.encryptsl.lite.eco.api.enums.PurgeKey
-import com.github.encryptsl.lite.eco.api.events.admin.*
+import com.github.encryptsl.lite.eco.api.events.admin.EconomyGlobalDepositEvent
+import com.github.encryptsl.lite.eco.api.events.admin.EconomyGlobalSetEvent
+import com.github.encryptsl.lite.eco.api.events.admin.EconomyGlobalWithdrawEvent
+import com.github.encryptsl.lite.eco.api.events.admin.EconomyMoneyDepositEvent
+import com.github.encryptsl.lite.eco.api.events.admin.EconomyMoneySetEvent
+import com.github.encryptsl.lite.eco.api.events.admin.EconomyMoneyWithdrawEvent
 import com.github.encryptsl.lite.eco.api.migrator.entity.PlayerBalances
 import com.github.encryptsl.lite.eco.api.objects.ModernText
+import com.github.encryptsl.lite.eco.commands.parsers.ConvertEconomyParser
+import com.github.encryptsl.lite.eco.commands.parsers.CurrencyParser
+import com.github.encryptsl.lite.eco.commands.parsers.LangParser
 import com.github.encryptsl.lite.eco.common.config.Locales
-import com.github.encryptsl.lite.eco.common.extensions.getRandomString
 import com.github.encryptsl.lite.eco.common.extensions.positionIndexed
 import com.github.encryptsl.lite.eco.utils.ConvertEconomy
 import com.github.encryptsl.lite.eco.utils.ConvertEconomy.Economies
@@ -20,324 +27,446 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
-import org.incendo.cloud.annotation.specifier.Range
-import org.incendo.cloud.annotations.*
-import java.math.BigDecimal
-import java.util.*
-import java.util.concurrent.ThreadLocalRandom
+import org.incendo.cloud.bukkit.parser.OfflinePlayerParser
+import org.incendo.cloud.component.DefaultValue
+import org.incendo.cloud.description.Description
+import org.incendo.cloud.paper.PaperCommandManager
+import org.incendo.cloud.paper.util.sender.Source
+import org.incendo.cloud.parser.standard.IntegerParser
+import org.incendo.cloud.parser.standard.StringParser
 import kotlin.system.measureTimeMillis
 
-@Suppress("UNUSED")
-@CommandDescription("Provided plugin by LiteEco")
-class EcoCMD(private val liteEco: LiteEco) {
+class EcoCMD(
+    private val commandManager: PaperCommandManager<Source>,
+    private val liteEco: LiteEco
+) {
+
+    companion object {
+        private const val DESCRIPTION = "Provided plugin by LiteEco"
+    }
 
     private val helper: Helper = Helper(liteEco)
     private val convertEconomy: ConvertEconomy = ConvertEconomy(liteEco)
 
-    @Command("eco help")
-    @Permission("lite.eco.admin.help")
-    fun adminHelp(commandSender: CommandSender) {
-        liteEco.locale.getList("messages.admin-help")?.forEach { s ->
-            commandSender.sendMessage(ModernText.miniModernText(s.toString()))
-        }
-    }
+    private val commandRoot = commandManager.commandBuilder("eco")
 
-    @Command("eco add <player> <amount> [currency]")
-    @Permission("lite.eco.admin.add")
-    fun onAddMoney(
-        commandSender: CommandSender,
-        @Argument(value = "player", suggestions = "players") offlinePlayer: OfflinePlayer,
-        @Argument(value = "amount") @Range(min = "1.00", max = "") amountStr: String,
-        @Argument(value = "currency", suggestions = "currencies") @Default("dollars") currency: String,
-        @Flag(value = "silent", aliases = ["s"]) silent: Boolean
-    ) {
-        val amount = helper.validateAmount(amountStr, commandSender) ?: return
-        liteEco.pluginManager.callEvent(EconomyMoneyDepositEvent(commandSender, offlinePlayer, currency, amount, silent))
-    }
+    fun adminCommands() {
+        commandManager.command(
+            commandRoot.literal("help")
+                .commandDescription(Description.description(DESCRIPTION))
+                .permission("lite.eco.admin.help")
+                .handler { ctx ->
+                    val sender: CommandSender = ctx.sender().source()
+                    liteEco.locale.getList("messages.admin-help")?.forEach { s -> sender.sendMessage(ModernText.miniModernText(s.toString())) }
+                }
+        ).command(
+            commandRoot.literal("add")
+                .commandDescription(Description.description(DESCRIPTION))
+                .permission("lite.eco.admin.add")
+                .required(
+                    "target",
+                    OfflinePlayerParser.offlinePlayerParser(),
+                    commandManager.parserRegistry().getSuggestionProvider("players").get()
+                )
+                .required(
+                    "amount",
+                    IntegerParser.integerParser(1)
+                )
+                .optional(commandManager
+                    .componentBuilder(String::class.java, "currency")
+                    .parser(CurrencyParser())
+                    .defaultValue(DefaultValue.parsed("dollars"))
+                )
+                .flag(commandManager
+                    .flagBuilder("silent")
+                    .withAliases("s")
+                    .build()
+                )
+                .handler { ctx ->
+                    val sender: CommandSender = ctx.sender().source()
+                    val target: OfflinePlayer = ctx.get("target")
+                    val amountStr: Integer = ctx.get("amount")
+                    val currency: String = ctx.get("currency")
+                    val silent: Boolean = ctx.flags().hasFlag("silent")
 
-    @Command("eco global add <amount> [currency]")
-    @Permission("lite.eco.admin.gadd", "lite.eco.admin.global.add")
-    fun onGlobalAddMoney(
-        commandSender: CommandSender,
-        @Argument("amount") @Range(min = "1.0", max = "") amountStr: String,
-        @Argument(value = "currency", suggestions = "currencies") @Default("dollars") currency: String,
-    ) {
-        val amount = helper.validateAmount(amountStr, commandSender) ?: return
-        liteEco.pluginManager.callEvent(EconomyGlobalDepositEvent(commandSender, currency, amount))
-    }
+                    val amount = helper.validateAmount(amountStr.toString(), sender) ?: return@handler
+                    liteEco.pluginManager.callEvent(EconomyMoneyDepositEvent(sender, target, currency, amount, silent))
+                }
+        ).command(
+            commandRoot.literal("global")
+                .literal("add")
+                .commandDescription(Description.description(DESCRIPTION))
+                .permission("lite.eco.admin.global.add")
+                .required(
+                    "amount",
+                    IntegerParser.integerParser(1)
+                )
+                .optional(commandManager
+                    .componentBuilder(String::class.java, "currency")
+                    .parser(CurrencyParser())
+                    .defaultValue(DefaultValue.parsed("dollars"))
+                ).handler { ctx ->
+                    val sender: CommandSender = ctx.sender().source()
+                    val amountStr: Integer = ctx.get("amount")
+                    val currency: String = ctx.get("currency")
 
-    @Command("eco set <player> [amount] [currency]")
-    @Permission("lite.eco.admin.set")
-    fun onSetBalance(
-        commandSender: CommandSender,
-        @Argument(value = "player", suggestions = "players") offlinePlayer: OfflinePlayer,
-        @Default("0.00") @Argument(value = "amount") amountStr: String,
-        @Argument(value = "currency", suggestions = "currencies") @Default("dollars") currency: String,
-    ) {
-        val amount = helper.validateAmount(amountStr, commandSender, CheckLevel.ONLY_NEGATIVE) ?: return
-        liteEco.pluginManager.callEvent(EconomyMoneySetEvent(commandSender, offlinePlayer, currency, amount))
-    }
+                    val amount = helper.validateAmount(amountStr.toString(), sender) ?: return@handler
+                    liteEco.pluginManager.callEvent(EconomyGlobalDepositEvent(sender, currency, amount))
+                }
+        ).command(
+            commandRoot.literal("set")
+                .commandDescription(Description.description(DESCRIPTION))
+                .permission("lite.eco.admin.set")
+                .required(
+                    "target",
+                    OfflinePlayerParser.offlinePlayerParser(),
+                    commandManager.parserRegistry().getSuggestionProvider("players").get()
+                )
+                .required(
+                    "amount",
+                    IntegerParser.integerParser(1)
+                )
+                .optional(commandManager
+                    .componentBuilder(String::class.java, "currency")
+                    .parser(CurrencyParser())
+                    .defaultValue(DefaultValue.parsed("dollars"))
+                ).handler { ctx ->
+                    val sender: CommandSender = ctx.sender().source()
+                    val target: OfflinePlayer = ctx.get("target")
+                    val amountStr: Integer = ctx.get("amount")
+                    val currency: String = ctx.get("currency")
 
-    @Command("eco global set <amount> [currency]")
-    @Permission("lite.eco.admin.gset", "lite.eco.admin.global.withdraw")
-    fun onGlobalSetMoney(
-        commandSender: CommandSender,
-        @Argument("amount") @Range(min = "1.0", max = "") amountStr: String,
-        @Argument(value = "currency", suggestions = "currencies") @Default("dollars") currency: String,
-    ) {
-        val amount = helper.validateAmount(amountStr, commandSender, CheckLevel.ONLY_NEGATIVE) ?: return
-        liteEco.pluginManager.callEvent(EconomyGlobalSetEvent(commandSender, currency, amount))
-    }
+                    val amount = helper.validateAmount(amountStr.toString(), sender, CheckLevel.ONLY_NEGATIVE) ?: return@handler
+                    liteEco.pluginManager.callEvent(EconomyMoneySetEvent(sender, target, currency, amount))
+                }
+        ).command(
+            commandRoot.literal("global")
+                .literal("set")
+                .commandDescription(Description.description(DESCRIPTION))
+                .permission("lite.eco.admin.global.set")
+                .required(
+                    "amount",
+                    IntegerParser.integerParser(1)
+                )
+                .optional(commandManager
+                    .componentBuilder(String::class.java, "currency")
+                    .parser(CurrencyParser())
+                    .defaultValue(DefaultValue.parsed("dollars"))
+                ).handler { ctx ->
+                    val sender: CommandSender = ctx.sender().source()
+                    val amountStr: Integer = ctx.get("amount")
+                    val currency: String = ctx.get("currency")
 
-    @Command("eco withdraw <player> <amount> [currency]")
-    @Permission("lite.eco.admin.withdraw", "lite.eco.admin.remove")
-    fun onWithdrawMoney(
-        commandSender: CommandSender,
-        @Argument(value = "player", suggestions = "players") offlinePlayer: OfflinePlayer,
-        @Argument(value = "amount") @Range(min = "1.00", max = "") amountStr: String,
-        @Argument(value = "currency", suggestions = "currencies") @Default("dollars") currency: String,
-        @Flag(value = "silent", aliases = ["s"]) silent: Boolean
-    ) {
-        val amount = helper.validateAmount(amountStr, commandSender) ?: return
-        liteEco.pluginManager.callEvent(EconomyMoneyWithdrawEvent(commandSender, offlinePlayer, currency, amount, silent))
-    }
+                    val amount = helper.validateAmount(amountStr.toString(), sender, CheckLevel.ONLY_NEGATIVE) ?: return@handler
+                    liteEco.pluginManager.callEvent(EconomyGlobalSetEvent(sender, currency, amount))
+                }
+        ).command(
+            commandRoot.literal("withdraw")
+                .commandDescription(Description.description(DESCRIPTION))
+                .permission("lite.eco.admin.withdraw")
+                .required(
+                    "target",
+                    OfflinePlayerParser.offlinePlayerParser(),
+                    commandManager.parserRegistry().getSuggestionProvider("players").get()
+                )
+                .required(
+                    "amount",
+                    IntegerParser.integerParser(1)
+                )
+                .optional(commandManager
+                    .componentBuilder(String::class.java, "currency")
+                    .parser(CurrencyParser())
+                    .defaultValue(DefaultValue.parsed("dollars"))
+                )
+                .flag(commandManager
+                    .flagBuilder("silent")
+                    .withAliases("s")
+                    .build()
+                )
+                .handler { ctx ->
+                    val sender: CommandSender = ctx.sender().source()
+                    val target: OfflinePlayer = ctx.get("target")
+                    val amountStr: Integer = ctx.get("amount")
+                    val currency: String = ctx.get("currency")
+                    val silent: Boolean = ctx.flags().hasFlag("silent")
 
-    @Command("eco global withdraw <amount> [currency]")
-    @Permission("lite.eco.admin.gremove", "lite.eco.admin.global.withdraw")
-    fun onGlobalWithdrawMoney(
-        commandSender: CommandSender,
-        @Argument("amount") @Range(min = "1.0", max = "") amountStr: String,
-        @Argument("currency", suggestions = "currencies") @Default("dollars") currency: String
-    ) {
-        val amount = helper.validateAmount(amountStr, commandSender) ?: return
+                    val amount = helper.validateAmount(amountStr.toString(), sender) ?: return@handler
+                    liteEco.pluginManager.callEvent(EconomyMoneyWithdrawEvent(sender, target, currency, amount, silent))
+                }
+        ).command(
+            commandRoot.literal("global")
+                .literal("withdraw")
+                .commandDescription(Description.description(DESCRIPTION))
+                .permission("lite.eco.admin.global.withdraw")
+                .required(
+                    "amount",
+                    IntegerParser.integerParser(1)
+                )
+                .optional(commandManager
+                    .componentBuilder(String::class.java, "currency")
+                    .parser(CurrencyParser())
+                    .defaultValue(DefaultValue.parsed("dollars"))
+                ).handler { ctx ->
+                    val sender: CommandSender = ctx.sender().source()
+                    val amountStr: Integer = ctx.get("amount")
+                    val currency: String = ctx.get("currency")
 
-        liteEco.pluginManager.callEvent(
-            EconomyGlobalWithdrawEvent(commandSender, currency, amount)
+                    val amount = helper.validateAmount(amountStr.toString(), sender, CheckLevel.ONLY_NEGATIVE) ?: return@handler
+                    liteEco.pluginManager.callEvent(EconomyGlobalWithdrawEvent(sender, currency, amount))
+                }
+        ).command(
+            commandRoot.literal("create")
+                .commandDescription(Description.description(DESCRIPTION))
+                .permission("lite.eco.admin.create")
+                .required(
+                    "target",
+                    OfflinePlayerParser.offlinePlayerParser(),
+                    commandManager.parserRegistry().getSuggestionProvider("players").get()
+                )
+                .required(
+                    "amount",
+                    IntegerParser.integerParser(1)
+                )
+                .optional(commandManager
+                    .componentBuilder(String::class.java, "currency")
+                    .parser(CurrencyParser())
+                    .defaultValue(DefaultValue.parsed("dollars"))
+                )
+                .handler { ctx ->
+                    val sender: CommandSender = ctx.sender().source()
+                    val target: OfflinePlayer = ctx.get("target")
+                    val amountStr: Int = ctx.get("amount")
+                    val currency: String = ctx.get("currency")
+
+                    val message = if (liteEco.api.createAccount(target, currency, amountStr.toBigDecimal())) {
+                        "messages.admin.create_account"
+                    } else {
+                        "messages.error.account_now_exist"
+                    }
+                    sender.sendMessage(liteEco.locale.translation(message, Placeholder.parsed("account", target.name.toString())))
+                }
+        ).command(
+            commandRoot.literal("delete")
+                .commandDescription(Description.description(DESCRIPTION))
+                .permission("lite.eco.admin.delete")
+                .required(
+                    "target",
+                    OfflinePlayerParser.offlinePlayerParser(),
+                    commandManager.parserRegistry().getSuggestionProvider("players").get()
+                )
+                .optional(commandManager
+                    .componentBuilder(String::class.java, "currency")
+                    .parser(CurrencyParser())
+                    .defaultValue(DefaultValue.parsed("dollars"))
+                )
+                .handler { ctx ->
+                    val sender: CommandSender = ctx.sender().source()
+                    val target: OfflinePlayer = ctx.get("target")
+                    val currency: String = ctx.get("currency")
+
+                    val message = if (liteEco.api.deleteAccount(target.uniqueId, currency)) {
+                        "messages.admin.delete_account"
+                    } else {
+                        "messages.error.account_not_exist"
+                    }
+                    sender.sendMessage(liteEco.locale.translation(message, Placeholder.parsed("account", target.name.toString())))
+                }
+        ).command(
+            commandRoot.literal("monolog")
+                .commandDescription(Description.description(DESCRIPTION))
+                .permission("lite.eco.admin.monolog")
+                .optional("page", IntegerParser.integerParser(1), DefaultValue.constant(1))
+                .optional(
+                    "target",
+                    StringParser.stringParser(),
+                    commandManager.parserRegistry().getSuggestionProvider("players").get()
+                ).handler { ctx ->
+                    val sender: CommandSender = ctx.sender().source()
+                    val page: Int = ctx.get("page")
+                    val target: String = ctx.getOrDefault("target", "all")
+
+                    val log = helper.validateLog(target)
+                    val pagination = ComponentPaginator(log) { itemsPerPage = 10 }.apply { page(page) }
+
+                    if (pagination.isAboveMaxPage(page))
+                        return@handler sender.sendMessage(liteEco.locale.translation("messages.error.maximum_page",
+                            Placeholder.parsed("max_page", pagination.maxPages.toString()))
+                        )
+
+                    val tags = TagResolver.resolver(Placeholder.parsed("page", page.toString()), Placeholder.parsed("max_page", pagination.maxPages.toString()))
+                    sender.sendMessage(liteEco.locale.translation("messages.monolog.header", tags))
+                    for (content in pagination.display()) {
+                        sender.sendMessage(content)
+                    }
+                    sender.sendMessage(liteEco.locale.translation("messages.monolog.footer", tags))
+                }
+        ).command(
+            commandRoot.literal("lang")
+                .commandDescription(Description.description(DESCRIPTION))
+                .permission("lite.eco.admin.lang")
+                .required(
+                    commandManager
+                        .componentBuilder(Locales.LangKey::class.java, "isoKey")
+                        .parser(LangParser())
+                ).handler { ctx ->
+                    val sender: CommandSender = ctx.sender().source()
+                    val lang: Locales.LangKey = ctx.get("isoKey")
+
+                    liteEco.locale.setLocale(lang)
+                    sender.sendMessage(liteEco.locale
+                        .translation("messages.admin.translation_switch", Placeholder.parsed("locale", lang.name))
+                    )
+                }
+        ).command(
+            commandRoot.literal("purge")
+                .commandDescription(Description.description(DESCRIPTION))
+                .permission("lite.eco.admin.purge")
+                .required(commandManager
+                    .componentBuilder(PurgeKey::class.java, "argument")
+                    .suggestionProvider(commandManager.parserRegistry().getSuggestionProvider("purgeKeys").get())
+                )
+                .optional(commandManager
+                    .componentBuilder(String::class.java, "currency")
+                    .parser(CurrencyParser())
+                    .defaultValue(DefaultValue.parsed("dollars"))
+                )
+                .handler { ctx ->
+                    val sender: CommandSender = ctx.sender().source()
+                    val purgeKey: PurgeKey = ctx.get("argument")
+                    val currency: String = ctx.get("currency")
+
+                    @Suppress("REDUNDANT_ELSE_IN_WHEN")
+                    when (purgeKey) {
+                        PurgeKey.ACCOUNTS -> {
+                            liteEco.databaseEcoModel.purgeAccounts(currency)
+                            sender.sendMessage(liteEco.locale.translation("messages.admin.purge_accounts"))
+                        }
+                        PurgeKey.NULL_ACCOUNTS -> {
+                            liteEco.databaseEcoModel.purgeInvalidAccounts(currency)
+                            sender.sendMessage(liteEco.locale.translation("messages.admin.purge_null_accounts"))
+                        }
+                        PurgeKey.DEFAULT_ACCOUNTS -> {
+                            liteEco.databaseEcoModel.purgeDefaultAccounts(liteEco.currencyImpl.getCurrencyStartBalance(currency), currency)
+                            sender.sendMessage(liteEco.locale.translation("messages.admin.purge_default_accounts"))
+                        }
+                        PurgeKey.MONO_LOG -> {
+                            val monolog = liteEco.loggerModel.getLog()
+                            if (monolog.isEmpty()) {
+                                return@handler sender.sendMessage(liteEco.locale.translation("messages.error.purge_monolog_fail"))
+                            }
+                            liteEco.loggerModel.clearLogs()
+                            sender.sendMessage(liteEco.locale.translation("messages.admin.purge_monolog_success", Placeholder.parsed("deleted", monolog.size.toString())))
+                        }
+                        else -> {
+                            sender.sendMessage(liteEco.locale.translation("messages.error.purge_argument"))
+                        }
+                    }
+                }
+        ).command(
+            commandRoot.literal("migration")
+                .commandDescription(Description.description(DESCRIPTION))
+                .permission("lite.eco.admin.migration")
+                .required(commandManager
+                    .componentBuilder(MigrationKey::class.java, "argument")
+                    .suggestionProvider(commandManager.parserRegistry().getSuggestionProvider("migrationKeys").get())
+                )
+                .optional(commandManager
+                    .componentBuilder(String::class.java, "currency")
+                    .parser(CurrencyParser())
+                    .defaultValue(DefaultValue.parsed("dollars"))
+                )
+                .handler { ctx ->
+                    val sender: CommandSender = ctx.sender().source()
+                    val migrationKey: MigrationKey = ctx.get("argument")
+                    val currency: String = ctx.get("currency")
+
+                    try {
+                        runBlocking {
+                            val timer = measureTimeMillis {
+                                val migrationTool = MigrationTool(liteEco)
+
+                                // This is better method to not crash server because data is exported from database and from game cache if is player connected and cached.
+                                val output = liteEco.api.getUUIDNameMap(currency.lowercase()).toList().positionIndexed { index, pair ->
+                                    PlayerBalances.PlayerBalance(index, pair.first, pair.second, liteEco.api.getBalance(pair.first))
+                                }
+
+                                val result = when(migrationKey) {
+                                    MigrationKey.CSV -> migrationTool.getCSVFileExporter("economy_migration", currency.lowercase()).exportToCSVFile(output)
+                                    MigrationKey.SQL -> migrationTool.getSQLFileExporter("economy_migration", currency.lowercase()).exportToSQLFile(output)
+                                    MigrationKey.LEGACY_TABLE -> migrationTool.getLegacyTableExporter(currency.lowercase()).exportToLiteEcoDollarsTable()
+                                    MigrationKey.SQL_LITE_FILE -> migrationTool.getSQLFileExporter("economy_migration_sql_lite", currency.lowercase()).exportToSQLFileLite(output)
+                                }
+
+                                val messageKey = if (result) {
+                                    "messages.admin.migration_success"
+                                } else {
+                                    "messages.error.migration_failed"
+                                }
+
+                                sender.sendMessage(liteEco.locale.translation(messageKey,
+                                    TagResolver.resolver(
+                                        Placeholder.parsed("type", migrationKey.name),
+                                        Placeholder.parsed("currency", currency)
+                                    )
+                                ))
+                            }
+                            liteEco.componentLogger.info(ModernText.miniModernText("Exporting of ${migrationKey.name} elapsed $timer ms"))
+                        }
+                    } catch (e : Exception) {
+                        liteEco.componentLogger.error(ModernText.miniModernText(e.message ?: e.localizedMessage))
+                    }
+                }
+        ).command(
+            commandRoot.literal("convert")
+                .commandDescription(Description.description(DESCRIPTION))
+                .permission("lite.eco.admin.convert")
+                .required(
+                    commandManager
+                        .componentBuilder(Economies::class.java, "economy")
+                        .parser(ConvertEconomyParser())
+                )
+                .optional(
+                    commandManager
+                        .componentBuilder(String::class.java, "currency")
+                        .parser(CurrencyParser())
+                        .defaultValue(DefaultValue.parsed("dollars"))
+                ).handler { ctx ->
+                    val sender: CommandSender = ctx.sender().source()
+                    val economy: Economies = ctx.get("economy")
+                    val currency: String = ctx.get("currency")
+
+                    when (economy) {
+                        Economies.EssentialsX -> {
+                            convertEconomy.convertEssentialsXEconomy(currency)
+                        }
+
+                        Economies.BetterEconomy -> {
+                            convertEconomy.convertBetterEconomy(currency)
+                        }
+                    }
+                    val (converted, balances) = convertEconomy.getResult()
+                    sender.sendMessage(
+                        liteEco.locale.translation("messages.admin.convert_success",
+                            TagResolver.resolver(
+                                Placeholder.parsed("economy", economy.name),
+                                Placeholder.parsed("converted", converted.toString()),
+                                Placeholder.parsed("balances", balances.toString())
+                            )
+                        ))
+                    convertEconomy.convertRefresh()
+                }
+        ).command(
+            commandRoot.literal("reload")
+                .commandDescription(Description.description(DESCRIPTION))
+                .permission("lite.eco.admin.reload")
+                .handler { ctx ->
+                    liteEco.reloadConfig()
+                    ctx.sender().source().sendMessage(liteEco.locale.translation("messages.admin.config_reload"))
+                    liteEco.componentLogger.info(ModernText.miniModernText("Config.yml was reloaded [!]"))
+                    liteEco.saveConfig()
+                    liteEco.locale.loadCurrentTranslation()
+                }
         )
     }
 
-    @Command("eco create <player> [amount] [currency]")
-    @Permission("lite.eco.admin.create")
-    fun onCreateWalletAccount(
-        commandSender: CommandSender,
-        @Argument("player", suggestions = "players") offlinePlayer: OfflinePlayer,
-        @Argument("amount") @Default("30.00") amount: Double,
-        @Argument(value = "currency", suggestions = "currencies") @Default("dollars") currency: String
-    ) {
-        val message = if (liteEco.api.createAccount(offlinePlayer, currency, amount.toBigDecimal())) {
-            "messages.admin.create_account"
-        } else {
-            "messages.error.account_now_exist"
-        }
-        commandSender.sendMessage(liteEco.locale.translation(message, Placeholder.parsed("account", offlinePlayer.name.toString())))
-    }
-
-    @Command("eco delete <player> [currency]")
-    @Permission("lite.eco.admin.delete")
-    fun onDeleteWalletAccount(
-        commandSender: CommandSender,
-        @Argument("player", suggestions = "players") offlinePlayer: OfflinePlayer,
-        @Argument(value = "currency", suggestions = "currencies") @Default("dollars") currency: String
-    ) {
-        val message = if (liteEco.api.deleteAccount(offlinePlayer.uniqueId, currency)) {
-            "messages.admin.delete_account"
-        } else {
-            "messages.error.account_not_exist"
-        }
-        commandSender.sendMessage(liteEco.locale.translation(message, Placeholder.parsed("account", offlinePlayer.name.toString())))
-    }
-
-    @Command("eco monolog [page] [player]")
-    @Permission("lite.eco.admin.monolog")
-    fun onLogView(commandSender: CommandSender, @Argument("page") @Default(value = "1") page: Int, @Argument("player") player: String?) {
-
-        val log = helper.validateLog(player)
-        val pagination = ComponentPaginator(log) { itemsPerPage = 10 }.apply { page(page) }
-
-        if (pagination.isAboveMaxPage(page))
-            return commandSender.sendMessage(liteEco.locale.translation("messages.error.maximum_page",
-                Placeholder.parsed("max_page", pagination.maxPages.toString()))
-            )
-
-        val tags = TagResolver.resolver(Placeholder.parsed("page", page.toString()), Placeholder.parsed("max_page", pagination.maxPages.toString()))
-        commandSender.sendMessage(liteEco.locale.translation("messages.monolog.header", tags))
-        for (content in pagination.display()) {
-            commandSender.sendMessage(content)
-        }
-        commandSender.sendMessage(liteEco.locale.translation("messages.monolog.footer", tags))
-    }
-
-    @Command("eco lang <isoKey>")
-    @Permission("lite.eco.admin.lang")
-    fun onLangSwitch(
-        commandSender: CommandSender,
-        @Argument(value = "isoKey", suggestions = "langKeys") isoKey: Locales.LangKey
-    ) {
-        try {
-            val langKey = Locales.LangKey.valueOf(isoKey.name)
-            liteEco.locale.setLocale(langKey)
-            commandSender.sendMessage(
-                liteEco.locale.translation("messages.admin.translation_switch", Placeholder.parsed("locale", langKey.name))
-            )
-        } catch (_: IllegalArgumentException) {
-            commandSender.sendMessage(
-                ModernText.miniModernText(
-                    "That translation doesn't exist."
-                )
-            )
-        }
-    }
-
-    @Command("eco purge <argument> [currency]")
-    @Permission("lite.eco.admin.purge")
-    fun onPurge(
-        commandSender: CommandSender,
-        @Argument(value = "argument", suggestions = "purgeKeys") purgeKey: PurgeKey,
-        @Argument(value = "currency", suggestions = "currencies") @Default("dollars") currency: String
-    ) {
-        @Suppress("REDUNDANT_ELSE_IN_WHEN")
-        when (purgeKey) {
-            PurgeKey.ACCOUNTS -> {
-                liteEco.databaseEcoModel.purgeAccounts(currency)
-                commandSender.sendMessage(liteEco.locale.translation("messages.admin.purge_accounts"))
-            }
-            PurgeKey.NULL_ACCOUNTS -> {
-                liteEco.databaseEcoModel.purgeInvalidAccounts(currency)
-                commandSender.sendMessage(liteEco.locale.translation("messages.admin.purge_null_accounts"))
-            }
-            PurgeKey.DEFAULT_ACCOUNTS -> {
-                liteEco.databaseEcoModel.purgeDefaultAccounts(liteEco.currencyImpl.getCurrencyStartBalance(currency), currency)
-                commandSender.sendMessage(liteEco.locale.translation("messages.admin.purge_default_accounts"))
-            }
-            PurgeKey.MONO_LOG -> {
-                val monolog = liteEco.loggerModel.getLog()
-                if (monolog.isEmpty()) {
-                    return commandSender.sendMessage(liteEco.locale.translation("messages.error.purge_monolog_fail"))
-                }
-                liteEco.loggerModel.clearLogs()
-                commandSender.sendMessage(liteEco.locale.translation("messages.admin.purge_monolog_success", Placeholder.parsed("deleted", monolog.size.toString())))
-            }
-            else -> {
-                commandSender.sendMessage(liteEco.locale.translation("messages.error.purge_argument"))
-            }
-        }
-    }
-
-    @Command("eco migration <argument> [currency]")
-    @Permission("lite.eco.admin.migration")
-    fun onMigration(
-        commandSender: CommandSender,
-        @Argument(value = "argument", suggestions = "migrationKeys") migrationKey: MigrationKey,
-        @Argument(value = "currency", suggestions = "currencies") @Default("dollars") currency: String
-    ) {
-        try {
-            runBlocking {
-                val timer = measureTimeMillis {
-                    val migrationTool = MigrationTool(liteEco)
-
-                    // This is better method to not crash server because data is exported from database and from game cache if is player connected and cached.
-                    val output = liteEco.api.getUUIDNameMap(currency.lowercase()).toList().positionIndexed { index, pair ->
-                        PlayerBalances.PlayerBalance(index, pair.first, pair.second, liteEco.api.getBalance(pair.first))
-                    }
-
-                    val result = when(migrationKey) {
-                        MigrationKey.CSV -> migrationTool.getCSVFileExporter("economy_migration", currency.lowercase()).exportToCsvFile(output)
-                        MigrationKey.SQL -> migrationTool.getSQLFileExporter("economy_migration", currency.lowercase()).exportToSQLFile(output)
-                        MigrationKey.LEGACY_TABLE -> migrationTool.getLegacyTableExporter(currency.lowercase()).exportToLiteEcoDollarsTable()
-                        MigrationKey.SQL_LITE_FILE -> migrationTool.getSQLFileExporter("economy_migration_sql_lite", currency.lowercase()).exportToSQLFileLite(output)
-                    }
-
-                    val messageKey = if (result) {
-                        "messages.admin.migration_success"
-                    } else {
-                        "messages.error.migration_failed"
-                    }
-
-                    commandSender.sendMessage(liteEco.locale.translation(messageKey,
-                        TagResolver.resolver(
-                            Placeholder.parsed("type", migrationKey.name),
-                            Placeholder.parsed("currency", currency)
-                        )
-                    ))
-                }
-                liteEco.componentLogger.info(ModernText.miniModernText("Exporting of ${migrationKey.name} elapsed $timer ms"))
-            }
-        } catch (e : Exception) {
-            liteEco.componentLogger.error(ModernText.miniModernText(e.message ?: e.localizedMessage))
-        }
-    }
-
-    @Command("eco convert <economy> [currency]")
-    @Permission("lite.eco.admin.convert")
-    fun onEconomyConvert(
-        commandSender: CommandSender,
-        @Argument("economy", suggestions = "economies") economy: Economies,
-        @Argument(value = "currency", suggestions = "currencies") @Default("dollars") currency: String
-    ) {
-        try {
-            when (economy) {
-                Economies.EssentialsX -> {
-                    convertEconomy.convertEssentialsXEconomy(currency)
-                }
-
-                Economies.BetterEconomy -> {
-                    convertEconomy.convertBetterEconomy(currency)
-                }
-            }
-            val (converted, balances) = convertEconomy.getResult()
-            commandSender.sendMessage(
-                liteEco.locale.translation("messages.admin.convert_success",
-                TagResolver.resolver(
-                    Placeholder.parsed("economy", economy.name),
-                    Placeholder.parsed("converted", converted.toString()),
-                    Placeholder.parsed("balances", balances.toString())
-                )
-            ))
-            convertEconomy.convertRefresh()
-        } catch (e : Exception) {
-            liteEco.componentLogger.error(ModernText.miniModernText(e.message ?: e.localizedMessage))
-            commandSender.sendMessage(liteEco.locale.translation("messages.error.convert_fail"))
-        }
-    }
-
-    @Command("eco debug create accounts <amount> [currency]")
-    @Permission("lite.eco.admin.debug.create.accounts")
-    fun onDebugCreateAccounts(
-        commandSender: CommandSender,
-        @Argument("amount") @Range(min = "1", max = "100") amountStr: Int,
-        @Argument(value = "currency", suggestions = "currencies") @Default("dollars") currency: String
-    ) {
-        val random = ThreadLocalRandom.current()
-
-        val time = measureTimeMillis {
-            for (i in 1 .. amountStr) {
-                liteEco.databaseEcoModel.createPlayerAccount(getRandomString(10), UUID.randomUUID(), currency, BigDecimal.valueOf(random.nextDouble(1000.0, 500000.0)))
-            }
-        }
-
-        commandSender.sendMessage("Into database was insterted $amountStr fake accounts in time $time ms")
-    }
-
-    @Command("eco debug database accounts [currency]")
-    @Permission("lite.eco.admin.debug.database.accounts")
-    fun onDebugDatabaseAccounts(
-        commandSender: CommandSender,
-        @Argument(value = "currency", suggestions = "currencies") @Default("dollars") currency: String
-    ) {
-        val data = liteEco.databaseEcoModel.getTopBalance(currency)
-
-        commandSender.sendMessage("Accounts list ${data.entries.map { k -> k.key }}")
-        commandSender.sendMessage("Accounts balances ${data.entries.sumOf { it.value.money }}")
-        commandSender.sendMessage("Accounts in database ${data.size}")
-    }
-
-    @Command("eco reload")
-    @Permission("lite.eco.admin.reload")
-    fun onReload(commandSender: CommandSender) {
-        liteEco.reloadConfig()
-        commandSender.sendMessage(liteEco.locale.translation("messages.admin.config_reload"))
-        liteEco.componentLogger.info(ModernText.miniModernText("Config.yml was reloaded [!]"))
-        liteEco.saveConfig()
-        liteEco.locale.loadCurrentTranslation()
-    }
 }

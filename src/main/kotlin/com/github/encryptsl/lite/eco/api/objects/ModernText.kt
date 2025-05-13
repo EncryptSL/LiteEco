@@ -19,6 +19,11 @@ object ModernText {
         return miniMessage.deserialize(convertVariables(message), resolver)
     }
 
+    @JvmStatic
+    fun miniModernTextSerialize(component: Component): String {
+        return miniMessage.serialize(component)
+    }
+
     private fun initMiniMessage(): MiniMessage {
         return MiniMessage.builder()
             .strict(false)

@@ -43,7 +43,6 @@ messages:
   error:
     account_not_exist: "<prefix> <red>Účet <account> neexistuje [!]"
     account_now_exist: "<prefix> <red>Účet <account> existuje [!]"
-    currency_not_exist: "<prefix> <red>Tato měna <currency> neexistuje [!]"
     missing_currency_permission: "<prefix> <red>Nemáš oprávnění pro využívání této měny [!]"
     format_amount: "<prefix> <red>Neplatná částka. Použijte desetinná čísla nebo kompaktní reprezentace (např. 1K) [!]" # TEMP #
     insufficient_funds: "<prefix> <red>Nedostatek finančních prostředků [!]"
@@ -55,10 +54,17 @@ messages:
     purge_monolog_fail: "<prefix> <red>Nemůžeš provést smazání logů, tabulka je prázdná [!]"
     player_is_null: "<prefix> <red>Jméno hráče musí být vyplněno [!]"
     self_pay: "<prefix> <red>Nemůžeš sám sobě poslat peníze [!]"
-    convert_fail: "<prefix> <red>Něco se pokazilo během konvertování, podívej se do konzole [!]"
     amount_above_limit: "<prefix> <red>Částka přesahuje, povolený limit serverem [!]"
     balance_above_limit: "<prefix> <red>Stav účtu <account> přesahuje, povolený limit serverem [!]"
     database_exception: "<prefix> <red>Při práci s databází se stalo něco neočekávaného: <exception> [!]"
+
+  # This messages not support MiniMessage and Style Formatting !
+  # Please don't try edit this messages !
+  parser:
+    error:
+      currency_not_exist: "Tato měna %s neexistuje [!]"
+      language_not_exist: "Tato %s jazyková sada není podporovaná [!]"
+      convert_fail: "Něco se pokazilo během konvertování, podívej se do konzole [!]"
 
   # Monolog message formatting
   monolog:

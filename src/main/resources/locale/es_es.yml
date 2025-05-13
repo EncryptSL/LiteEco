@@ -43,7 +43,6 @@ messages:
   error:
     account_not_exist: "<prefix> <red>No existe la cuenta <account> [!]"
     account_now_exist: "<prefix> <red>Account <account> now exists [!]"
-    currency_not_exist: "<prefix> <red>These currency <currency> not exist !"
     missing_currency_permission: "<prefix> <red>You do not have permission to use this currency [!]"
     format_amount: "<prefix> <red>Cantidad invalida. Usa numeros decimales o representaciones compactas (ej. 1K) [!]"
     insufficient_funds: "<prefix> <red>No tienes suficiente dinero [!]"
@@ -55,10 +54,17 @@ messages:
     purge_monolog_fail: "<prefix> <red>You can't delete logs, because table is empty [!]"
     player_is_null: "<prefix> <red>Debes especificar un jugador [!]"
     self_pay: "<prefix> <red>No puedes enviarte dinero a ti mismo [!]"
-    convert_fail: "<prefix> <red>Algo se rompió durante la conversión mira en la consola [!]"
     amount_above_limit: "<prefix> <red>El importe es superior al límite permitido por el servidor !"
     balance_above_limit: "<prefix> <red>Saldo de la cuenta <account> está por encima del límite permitido del servidor !"
     database_exception: "<prefix> <red>Something unexpected happened while working with the database: <exception> [!]"
+
+  # This messages not support MiniMessage and Style Formatting !
+  # Please don't try edit this messages !
+  parser:
+    error:
+      currency_not_exist: "These currency %s not exist [!]"
+      language_not_exist: "This %s language is not supported [!]"
+      convert_fail: "Algo se rompió durante la conversión mira en la consola [!]"
 
   # Monolog message formatting
   monolog:

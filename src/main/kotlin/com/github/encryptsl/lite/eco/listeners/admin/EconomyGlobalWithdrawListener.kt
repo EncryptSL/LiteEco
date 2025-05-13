@@ -18,9 +18,6 @@ class EconomyGlobalWithdrawListener(private val liteEco: LiteEco) : Listener {
         val money = event.money
         val offlinePlayers = Bukkit.getOfflinePlayers()
 
-        if (!liteEco.currencyImpl.getCurrencyNameExist(currency))
-            return sender.sendMessage(liteEco.locale.translation("messages.error.currency_not_exist", Placeholder.parsed("currency", currency)))
-
         if (liteEco.api.getUUIDNameMap(currency).isEmpty())
             return sender.sendMessage(liteEco.locale.translation("messages.error.database_exception", Placeholder.parsed("exception", "Collection is empty !")))
 

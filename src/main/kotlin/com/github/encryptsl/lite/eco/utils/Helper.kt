@@ -30,15 +30,18 @@ class Helper(private val liteEco: LiteEco) {
         }
     }
 
-    fun validateLog(playerName: String?): List<Component> {
+    fun validateLog(parameter: String): List<Component> {
         val log = liteEco.loggerModel.getLog()
-        if (playerName != null) {
-            return log.filter { p -> p.target == playerName }.map { el ->
-                liteEco.loggerModel.message("messages.monolog.formatting", EconomyOperations.valueOf(el.action), el.sender, el.target, el.currency, el.previousBalance, el.newBalance, el.timestamp)
+        return when(parameter) {
+            "all" -> {
+                log.map { el ->
+                    liteEco.loggerModel.message("messages.monolog.formatting", EconomyOperations.valueOf(el.action), el.sender, el.target, el.currency, el.previousBalance, el.newBalance, el.timestamp)
+                }
+            } else -> {
+                log.filter { p -> p.target == parameter }.map { el ->
+                    liteEco.loggerModel.message("messages.monolog.formatting", EconomyOperations.valueOf(el.action), el.sender, el.target, el.currency, el.previousBalance, el.newBalance, el.timestamp)
+                }
             }
-        }
-        return log.map { el ->
-            liteEco.loggerModel.message("messages.monolog.formatting", EconomyOperations.valueOf(el.action), el.sender, el.target, el.currency, el.previousBalance, el.newBalance, el.timestamp)
         }
     }
 

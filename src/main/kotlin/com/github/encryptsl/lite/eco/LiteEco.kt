@@ -15,25 +15,23 @@ import com.github.encryptsl.lite.eco.common.database.models.DatabaseMonologModel
 import com.github.encryptsl.lite.eco.common.hook.HookManager
 import com.github.encryptsl.lite.eco.listeners.*
 import com.github.encryptsl.lite.eco.listeners.admin.*
-import com.github.encryptsl.lite.eco.utils.ConvertEconomy.Economies
 import com.github.encryptsl.lite.eco.utils.MigrationTool
 import com.tchristofferson.configupdater.ConfigUpdater
 import org.bstats.bukkit.Metrics
 import org.bstats.charts.SingleLineChart
 import org.bukkit.Bukkit
-import org.bukkit.command.CommandSender
 import org.bukkit.plugin.PluginManager
 import org.bukkit.plugin.java.JavaPlugin
-import org.incendo.cloud.SenderMapper
-import org.incendo.cloud.annotations.AnnotationParser
-import org.incendo.cloud.bukkit.CloudBukkitCapabilities
 import org.incendo.cloud.execution.ExecutionCoordinator
 import org.incendo.cloud.minecraft.extras.MinecraftExceptionHandler
-import org.incendo.cloud.paper.LegacyPaperCommandManager
+import org.incendo.cloud.paper.PaperCommandManager
+import org.incendo.cloud.paper.util.sender.PaperSimpleSenderMapper
+import org.incendo.cloud.paper.util.sender.Source
 import org.incendo.cloud.suggestion.Suggestion
 import java.io.File
 import java.util.concurrent.CompletableFuture
 import kotlin.system.measureTimeMillis
+
 
 class LiteEco : JavaPlugin() {
     companion object {
@@ -75,7 +73,7 @@ class LiteEco : JavaPlugin() {
             hookRegistration()
             setupMetrics()
             checkUpdates()
-            registerCommands()
+            createCommandManager()
             registerListeners()
         }
         try {
@@ -142,59 +140,33 @@ class LiteEco : JavaPlugin() {
         componentLogger.info(ModernText.miniModernText("Registering <yellow>(${listeners.size})</yellow> of listeners took <yellow>$timeTaken ms</yellow> -> ok"))
     }
 
-    private fun registerCommands() {
+    private fun createCommandManager() {
         componentLogger.info(ModernText.miniModernText("<blue>Registering commands with Cloud Command Framework !"))
 
-        val commandManager = createCommandManager()
+
+        val commandManager: PaperCommandManager<Source> = PaperCommandManager
+            .builder(PaperSimpleSenderMapper.simpleSenderMapper())
+            .executionCoordinator(ExecutionCoordinator.simpleCoordinator())
+            .buildOnEnable(this)
 
         registerMinecraftExceptionHandler(commandManager)
-        registerSuggestionProviders(commandManager)
+        registerSuggestionModernProviders(commandManager)
 
-        val annotationParser = createAnnotationParser(commandManager)
-        annotationParser.parse(MoneyCMD(this))
-        annotationParser.parse(EcoCMD(this))
+        MoneyCMD(commandManager, this).playerCommands()
+        EcoCMD(commandManager, this).adminCommands()
     }
 
-    private fun createCommandManager(): LegacyPaperCommandManager<CommandSender> {
-        val commandManager = LegacyPaperCommandManager(
-            this,
-            ExecutionCoordinator.builder<CommandSender>().build(),
-            SenderMapper.identity()
-        )
-        if (commandManager.hasCapability(CloudBukkitCapabilities.NATIVE_BRIGADIER)) {
-            commandManager.registerBrigadier()
-            //commandManager.brigadierManager().setNativeNumberSuggestions(false)
-        } else if (commandManager.hasCapability(CloudBukkitCapabilities.ASYNCHRONOUS_COMPLETION)) {
-            (commandManager as LegacyPaperCommandManager<*>).registerAsynchronousCompletions()
-        }
-        return commandManager
-    }
-
-    private fun registerMinecraftExceptionHandler(commandManager: LegacyPaperCommandManager<CommandSender>) {
-        MinecraftExceptionHandler.createNative<CommandSender>()
+    private fun registerMinecraftExceptionHandler(commandManager: PaperCommandManager<Source>) {
+        MinecraftExceptionHandler.create<Source>(Source::source)
             .defaultHandlers()
             .decorator { component ->
-                ModernText.miniModernText(config.getString("plugin.prefix", "<red>[!]").toString())
-                    .appendSpace()
-                    .append(component)
-            }
-            .registerTo(commandManager)
+                ModernText.miniModernText(config.getString("plugin.prefix", "<red>[!]").toString()).appendSpace().append(component)
+            }.registerTo(commandManager)
     }
 
-    private fun registerSuggestionProviders(commandManager: LegacyPaperCommandManager<CommandSender>) {
+    private fun registerSuggestionModernProviders(commandManager: PaperCommandManager<Source>) {
         commandManager.parserRegistry().registerSuggestionProvider("players") { _, _ ->
             modifiableSuggestionPlayerSuggestion()
-        }
-        commandManager.parserRegistry().registerSuggestionProvider("currencies") { commandSender, _ ->
-            CompletableFuture.completedFuture(currencyImpl.getCurrenciesKeys().filter {
-                commandSender.hasPermission("lite.eco.balance.$it") || commandSender.hasPermission("lite.eco.balance.*")
-            }.map { Suggestion.suggestion(it) })
-        }
-        commandManager.parserRegistry().registerSuggestionProvider("economies") {_, _ ->
-            CompletableFuture.completedFuture(Economies.entries.map { Suggestion.suggestion(it.name) })
-        }
-        commandManager.parserRegistry().registerSuggestionProvider("langKeys") { _, _ ->
-            CompletableFuture.completedFuture(Locales.LangKey.entries.map { Suggestion.suggestion(it.name) })
         }
         commandManager.parserRegistry().registerSuggestionProvider("purgeKeys") { _, _ ->
             CompletableFuture.completedFuture(PurgeKey.entries.map { Suggestion.suggestion(it.name) })
@@ -213,9 +185,5 @@ class LiteEco : JavaPlugin() {
         }
 
         return suggestion
-    }
-
-    private fun createAnnotationParser(commandManager: LegacyPaperCommandManager<CommandSender>): AnnotationParser<CommandSender> {
-        return AnnotationParser(commandManager, CommandSender::class.java)
     }
 }

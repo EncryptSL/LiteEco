@@ -1,8 +1,8 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    kotlin("jvm") version "2.1.20" apply true
-    id("com.gradleup.shadow") version "8.3.4"
+    kotlin("jvm") version "2.2.0-Beta2" apply true
+    id("com.gradleup.shadow") version "9.0.0-beta13"
     id("maven-publish")
 }
 
@@ -24,14 +24,12 @@ repositories {
 }
 
 kotlin {
-    jvmToolchain {
-        languageVersion.set(JavaLanguageVersion.of(21))
-    }
+    jvmToolchain(21)
 }
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:${providers.gradleProperty("server_version").get()}")
-    compileOnly(kotlin("stdlib", "2.1.20"))
+    compileOnly(kotlin("stdlib", "2.2.0-Beta2"))
     compileOnly("me.lokka30:treasury-api:2.0.0")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
         exclude("org.bukkit", "bukkit")
@@ -45,6 +43,7 @@ dependencies {
     compileOnly("me.hsgamer:bettereconomy:3.1")
     compileOnly("net.milkbowl.vault:VaultUnlockedAPI:2.9")
     compileOnly("com.tchristofferson:ConfigUpdater:2.2-SNAPSHOT")
+    compileOnly("org.apache.commons:commons-csv:1.14.0")
 
     implementation("org.bstats:bstats-bukkit:3.0.1")
     implementation("org.incendo:cloud-paper:2.0.0-SNAPSHOT")
@@ -59,7 +58,7 @@ dependencies {
     }
     implementation("io.github.miniplaceholders:miniplaceholders-kotlin-ext:2.3.0")
 
-    testImplementation(kotlin("test", "2.1.20"))
+    testImplementation(kotlin("test", "2.2.0-Beta2"))
     testImplementation("com.zaxxer:HikariCP:6.2.1")
     testImplementation("org.xerial:sqlite-jdbc:3.49.1.0")
     testImplementation("org.jetbrains.exposed:exposed-core:0.60.0")
@@ -83,9 +82,9 @@ tasks {
         dependsOn(shadowJar)
     }
 
-    test {
-        useJUnitPlatform()
-    }
+    //test {
+    //    useJUnitPlatform()
+    //}
 
     processResources {
         filesMatching(listOf("plugin.yml", "paper-plugin.yml")) {

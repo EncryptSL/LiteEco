@@ -21,9 +21,6 @@ class EconomyMoneyDepositListener(private val liteEco: LiteEco) : Listener {
         val money: BigDecimal = event.money
         val silent: Boolean = event.silent
 
-        if (!liteEco.currencyImpl.getCurrencyNameExist(currency))
-            return sender.sendMessage(liteEco.locale.translation("messages.error.currency_not_exist", Placeholder.parsed("currency", currency)))
-
         if (liteEco.api.getCheckBalanceLimit(money) && !sender.hasPermission("lite.eco.admin.bypass.limit"))
             return sender.sendMessage(liteEco.locale.translation("messages.error.amount_above_limit"))
 

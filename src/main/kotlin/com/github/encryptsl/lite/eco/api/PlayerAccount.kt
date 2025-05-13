@@ -48,9 +48,10 @@ object PlayerAccount : AccountAPI {
 
     override fun syncAccounts() {
         try {
-            if (cache.isEmpty()) return
-            for (entry in cache) {
-                syncAccount(entry.key)
+            cache.entries.forEach { user ->
+                user.value.forEach { currency ->
+                    databaseEcoModel.setMoney(user.key, currency.key, currency.value)
+                }
             }
         } catch (e : Exception) {
             LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)

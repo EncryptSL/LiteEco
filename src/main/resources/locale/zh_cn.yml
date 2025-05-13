@@ -60,6 +60,14 @@ messages:
     balance_above_limit: "<prefix> <red>账号 <account> 持有的货币数量超出服务器允许上限!"
     database_exception: "<prefix> <red>与数据库交互时出现问题: <exception> [!]"
 
+  # This messages not support MiniMessage and Style Formatting !
+  # Please don't try edit this messages !
+  parser:
+    error:
+      currency_not_exist: "货币 %s 不存在!"
+      language_not_exist: "This %s language is not supported [!]"
+      convert_fail: "转化过程出现问题, 请查看控制台 [!]"
+
   # Monolog message formatting
   monolog:
     header: "<gray><st>─━━━━━━─</st> <blue>[ <yellow>Transaction History <blue>] <gray><st>─━━━━━━─</st>"
