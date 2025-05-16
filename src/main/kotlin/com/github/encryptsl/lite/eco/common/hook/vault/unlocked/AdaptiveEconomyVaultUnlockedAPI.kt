@@ -142,11 +142,14 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
     }
 
     override fun withdraw(pluginName: String, accountID: UUID, amount: BigDecimal): EconomyResponse {
+        liteEco.debugger.debug(AdaptiveEconomyVaultUnlockedAPI::class.java, "${pluginName} try withdraw from ${accountID} amount $amount")
+
         if (amount.isApproachingZero()) {
             return EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, AMOUNT_APPROACHING_ZERO)
         }
 
         return if (has(pluginName, accountID, amount)) {
+            liteEco.debugger.debug(AdaptiveEconomyVaultUnlockedAPI::class.java, "$pluginName successfully withdraw from ${accountID} amount $amount")
             liteEco.api.withDrawMoney(accountID, liteEco.currencyImpl.defaultCurrency(), amount)
             EconomyResponse(amount, balance(pluginName, accountID), EconomyResponse.ResponseType.SUCCESS, SUCCESS_WITHDRAW)
         } else {
@@ -161,12 +164,13 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
         currency: String,
         amount: BigDecimal
     ): EconomyResponse {
-
+        liteEco.debugger.debug(AdaptiveEconomyVaultUnlockedAPI::class.java, "$pluginName try withdraw from $accountID amount $amount")
         if (amount.isApproachingZero()) {
             return EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, AMOUNT_APPROACHING_ZERO)
         }
 
         return if (has(pluginName, accountID, amount)) {
+            liteEco.debugger.debug(AdaptiveEconomyVaultUnlockedAPI::class.java, "$pluginName successfully withdraw from $accountID amount $amount")
             liteEco.api.withDrawMoney(accountID, liteEco.currencyImpl.defaultCurrency(), amount)
             EconomyResponse(amount, balance(pluginName, accountID), EconomyResponse.ResponseType.SUCCESS, SUCCESS_WITHDRAW)
         } else {
@@ -179,10 +183,12 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
     }
 
     override fun deposit(pluginName: String, accountID: UUID, amount: BigDecimal): EconomyResponse {
+        liteEco.debugger.debug(AdaptiveEconomyVaultUnlockedAPI::class.java, "$pluginName try deposit to $accountID amount $amount")
         if (amount.isApproachingZero()) {
             return EconomyResponse(amount, balance(pluginName, accountID), EconomyResponse.ResponseType.FAILURE, AMOUNT_APPROACHING_ZERO)
         }
         return if (has(pluginName, accountID, amount)) {
+            liteEco.debugger.debug(AdaptiveEconomyVaultUnlockedAPI::class.java, "$pluginName successfully deposit from $accountID amount $amount")
             liteEco.api.depositMoney(accountID, liteEco.currencyImpl.defaultCurrency(), amount)
             EconomyResponse(amount, balance(pluginName, accountID), EconomyResponse.ResponseType.SUCCESS, SUCCESS_DEPOSIT)
         } else {
@@ -201,11 +207,13 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
         currency: String,
         amount: BigDecimal
     ): EconomyResponse {
+        liteEco.debugger.debug(AdaptiveEconomyVaultUnlockedAPI::class.java, "$pluginName try deposit to $accountID amount $amount")
         if (amount.isApproachingZero()) {
             return EconomyResponse(amount, balance(pluginName, accountID), EconomyResponse.ResponseType.FAILURE, AMOUNT_APPROACHING_ZERO)
         }
 
         return if (has(pluginName, accountID, amount)) {
+            liteEco.debugger.debug(AdaptiveEconomyVaultUnlockedAPI::class.java, "$pluginName successfully deposit from $accountID amount $amount")
             liteEco.api.depositMoney(accountID, currency, amount)
             EconomyResponse(amount, balance(pluginName, accountID), EconomyResponse.ResponseType.SUCCESS, SUCCESS_DEPOSIT)
         } else {

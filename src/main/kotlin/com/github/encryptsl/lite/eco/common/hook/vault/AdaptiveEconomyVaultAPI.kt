@@ -45,7 +45,7 @@ class AdaptiveEconomyVaultAPI(private val liteEco: LiteEco) : DeprecatedEconomy(
     override fun getBalance(player: OfflinePlayer?): Double {
         return try {
             player?.let { liteEco.api.getBalance(it).toDouble() } ?: 0.0
-        } catch (e : Exception) {
+        } catch (_ : Exception) {
             return 0.0
         }
     }
@@ -63,11 +63,13 @@ class AdaptiveEconomyVaultAPI(private val liteEco: LiteEco) : DeprecatedEconomy(
     }
 
     override fun withdrawPlayer(player: OfflinePlayer?, amount: Double): EconomyResponse {
+        liteEco.debugger.debug(AdaptiveEconomyVaultAPI::class.java, "try withdraw from ${player?.name} amount $amount")
         if (player == null || amount.toBigDecimal().isApproachingZero()) {
             return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.FAILURE, null)
         }
 
         return if (has(player, amount)) {
+            liteEco.debugger.debug(AdaptiveEconomyVaultAPI::class.java, "successfully withdraw from ${player.name} amount $amount")
             liteEco.api.withDrawMoney(player, liteEco.currencyImpl.defaultCurrency(), amount.toBigDecimal())
             EconomyResponse(amount, getBalance(player), EconomyResponse.ResponseType.SUCCESS, null)
         } else {
@@ -80,10 +82,12 @@ class AdaptiveEconomyVaultAPI(private val liteEco: LiteEco) : DeprecatedEconomy(
     }
 
     override fun depositPlayer(player: OfflinePlayer?, amount: Double): EconomyResponse {
+        liteEco.debugger.debug(AdaptiveEconomyVaultAPI::class.java, "try deposit to ${player?.name} amount $amount")
         if (player == null || !hasAccount(player) || amount.toBigDecimal().isApproachingZero() || liteEco.api.getCheckBalanceLimit(player, getBalance(player).toBigDecimal(), amount = amount.toBigDecimal())) {
             return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.FAILURE, null)
         }
 
+        liteEco.debugger.debug(AdaptiveEconomyVaultAPI::class.java, "successfully deposit to ${player.name} amount $amount")
         liteEco.api.depositMoney(player, liteEco.currencyImpl.defaultCurrency(), amount.toBigDecimal())
 
         return EconomyResponse(amount, getBalance(player), EconomyResponse.ResponseType.SUCCESS, null)

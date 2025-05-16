@@ -16,6 +16,7 @@ import com.github.encryptsl.lite.eco.common.database.models.DatabaseMonologModel
 import com.github.encryptsl.lite.eco.common.hook.HookManager
 import com.github.encryptsl.lite.eco.listeners.*
 import com.github.encryptsl.lite.eco.listeners.admin.*
+import com.github.encryptsl.lite.eco.utils.Debugger
 import com.github.encryptsl.lite.eco.utils.MigrationTool
 import com.tchristofferson.configupdater.ConfigUpdater
 import org.bstats.bukkit.Metrics
@@ -53,6 +54,7 @@ class LiteEco : JavaPlugin() {
     val currencyImpl: Currency by lazy { Currency(this) }
     val databaseConnector: DatabaseConnector by lazy { DatabaseConnector(this) }
     val accountManager: AccountManager by lazy { AccountManager(this) }
+    val debugger: Debugger by lazy { Debugger(this) }
 
     private val configAPI: ConfigAPI by lazy { ConfigAPI(this) }
     private val hookManager: HookManager by lazy { HookManager(this) }

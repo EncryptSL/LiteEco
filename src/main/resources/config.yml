@@ -7,6 +7,8 @@ plugin:
   prefix: "<dark_gray>[<green>Eco<dark_gray>] <dark_green>»</dark_gray>"
   # Enable or disable Metrics
   metrics: true
+  # Enable or disable Vault Debug
+  vault-debug: false
   # Settings for modifiable players suggestion.
   # Enabled: Offline Players Suggestion..
   # Disabled: Online Players Suggestion...
