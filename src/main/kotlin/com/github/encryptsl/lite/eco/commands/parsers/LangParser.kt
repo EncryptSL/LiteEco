@@ -27,8 +27,6 @@ class LangParser : ArgumentParser<Source, Locales.LangKey> {
     }
 
     override fun suggestionProvider(): SuggestionProvider<Source> {
-        return SuggestionProvider.blocking { _, _ ->
-            Locales.LangKey.entries.map { Suggestion.suggestion(it.name) }
-        }
+        return SuggestionProvider.suggesting(Locales.LangKey.entries.map { Suggestion.suggestion(it.name) })
     }
 }

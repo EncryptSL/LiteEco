@@ -14,6 +14,7 @@ import org.bukkit.entity.Player
 import org.incendo.cloud.bukkit.parser.OfflinePlayerParser
 import org.incendo.cloud.component.DefaultValue
 import org.incendo.cloud.description.Description
+import org.incendo.cloud.kotlin.extension.buildAndRegister
 import org.incendo.cloud.paper.PaperCommandManager
 import org.incendo.cloud.paper.util.sender.PlayerSource
 import org.incendo.cloud.paper.util.sender.Source
@@ -30,97 +31,85 @@ class MoneyCMD(
     }
 
     private val helper: Helper = Helper(liteEco)
-    private val commandRoot = commandManager.commandBuilder("money")
 
     fun playerCommands() {
-        commandManager.command(
-            commandRoot.commandDescription(Description.description(DESCRIPTION))
-            .permission("lite.eco.money")
-            .handler { ctx -> helpMessage(ctx.sender().source()) }
-        )
-        commandManager.command(
-                commandRoot.literal("help")
-                    .commandDescription(Description.description(DESCRIPTION))
-                .permission("lite.eco.help")
-                .handler { ctx -> helpMessage(ctx.sender().source()) }
-        )
-        val balanceCmd = commandRoot.literal("bal", "balance")
-                .commandDescription(Description.description(DESCRIPTION))
-            .permission("lite.eco.balance")
-            .required(
-                "target",
-                OfflinePlayerParser.offlinePlayerParser(),
-                commandManager.parserRegistry().getSuggestionProvider("players").get()
-            )
-            .optional(commandManager
-                .componentBuilder(String::class.java, "currency")
-                .parser(CurrencyParser())
-                .defaultValue(DefaultValue.parsed("dollars"))
-            )
-            .handler { ctx ->
-                val sender: CommandSender = ctx.sender().source()
-                val target: OfflinePlayer = ctx.get("target")
-                val currency: String = ctx.getOrDefault("currency", liteEco.currencyImpl.defaultCurrency())
-                balanceCommand(sender, target, currency)
+        commandManager.buildAndRegister("money", Description.description(DESCRIPTION)) {
+            permission("lite.eco.money")
+            handler { ctx -> helpMessage(ctx.sender().source()) }
+
+            commandManager.command(commandBuilder.literal("help").permission("lite.eco.money").handler {  ctx ->
+                helpMessage(ctx.sender().source())
+            })
+
+            val balanceCmd = commandBuilder.literal("bal").permission("lite.eco.balance")
+            val playerBalanceCmd = balanceCmd.senderType(PlayerSource::class.java).handler { ctx ->
+                val sender: Player = ctx.sender().source()
+                balanceCommand(sender, sender, liteEco.currencyImpl.defaultCurrency())
             }
-        commandManager.command(balanceCmd.build())
-        commandManager.command(commandManager.commandBuilder("balance", "bal")
-            .proxies(balanceCmd.build())
-            .build()
-        )
-        val balanceTopCmd = commandRoot.literal("top", "baltop")
-                .commandDescription(Description.description(DESCRIPTION))
-                .proxies(commandManager.commandBuilder("baltop", "balancetop").build())
-                .permission("lite.eco.top")
-                .optional(
-                    "page",
-                    IntegerParser.integerParser(1),
-                    DefaultValue.constant(1)
-                )
-                .optional(commandManager
-                    .componentBuilder(String::class.java, "currency")
-                    .parser(CurrencyParser())
-                    .defaultValue(DefaultValue.parsed("dollars"))
-                )
-                .handler { ctx ->
-                    val sender = ctx.sender().source()
-                    val page: Int = ctx.get("page")
-                    val currency: String = ctx.get("currency")
-                    balanceTopCommand(sender, page, currency)
-                }
-        commandManager.command(balanceTopCmd.build())
-        commandManager.command(commandManager.commandBuilder("balancetop", "baltop")
-            .proxies(balanceTopCmd.build())
-            .build()
-        )
-        val payCmd = commandRoot.literal("pay")
-                .commandDescription(Description.description(DESCRIPTION))
-                .proxies(commandManager.commandBuilder("pay").build())
-                .permission("lite.eco.pay")
-                .senderType(PlayerSource::class.java)
+            val consoleBalanceCmd = balanceCmd
                 .required(
                     "target",
                     OfflinePlayerParser.offlinePlayerParser(),
                     commandManager.parserRegistry().getSuggestionProvider("players").get()
                 )
-                .required("amount", IntegerParser.integerParser())
-                .optional(commandManager
-                    .componentBuilder(String::class.java, "currency")
+                .optional(commandManager.componentBuilder(String::class.java, "currency")
                     .parser(CurrencyParser())
                     .defaultValue(DefaultValue.parsed("dollars"))
                 )
                 .handler { ctx ->
+                    val sender: CommandSender = ctx.sender().source()
+                    val target: OfflinePlayer = ctx.get("target")
+                    val currency: String = ctx.getOrDefault("currency", liteEco.currencyImpl.defaultCurrency())
+                    balanceCommand(sender, target, currency)
+                }
+            commandManager.command(playerBalanceCmd)
+            commandManager.command(consoleBalanceCmd)
+
+            val balanceProxyCmd = commandManager.commandBuilder("bal", "balance")
+
+            commandManager.command(balanceProxyCmd.proxies(playerBalanceCmd.build()))
+            commandManager.command(balanceProxyCmd.proxies(consoleBalanceCmd.build()))
+
+            val balanceTopCmd = commandBuilder.literal("top")
+                .permission("lite.eco.top")
+                .optional("page", IntegerParser.integerParser(1), DefaultValue.constant(1))
+                .optional(
+                commandManager
+                    .componentBuilder(String::class.java, "currency")
+                    .parser(CurrencyParser())
+                    .defaultValue(DefaultValue.parsed("dollars"))
+                ).handler { ctx ->
+                    val sender = ctx.sender().source()
+                    val page: Int = ctx.getOrDefault("page", 1)
+                    val currency: String = ctx.getOrDefault("currency", "dollars")
+                    balanceTopCommand(sender, page, currency)
+                }
+
+            commandManager.command(balanceTopCmd)
+
+            commandManager.command(commandManager.commandBuilder("balancetop", "baltop")
+                .proxies(balanceTopCmd.build()))
+
+            val payCmd = commandBuilder
+                .literal("pay")
+                .senderType(PlayerSource::class.java)
+                .permission("lite.eco.pay")
+                .required("target", OfflinePlayerParser.offlinePlayerParser(), commandManager.parserRegistry().getSuggestionProvider("players").get())
+                .required("int", IntegerParser.integerParser(1))
+                    .optional(commandManager
+                    .componentBuilder(String::class.java, "currency")
+                    .parser(CurrencyParser())
+                    .defaultValue(DefaultValue.parsed("dollars"))
+                ).handler { ctx ->
                     val sender: Player = ctx.sender().source()
                     val target: OfflinePlayer = ctx.get("target")
-                    val amountStr: Int = ctx.get("amount")
+                    val amountStr: Int = ctx.get("int")
                     val currency: String = ctx.get("currency")
                     payCommand(sender, target, amountStr, currency)
                 }
-        commandManager.command(payCmd.build())
-        commandManager.command(commandManager.commandBuilder("pay")
-            .proxies(payCmd.build())
-            .build()
-        )
+            commandManager.command(payCmd)
+            commandManager.command(commandManager.commandBuilder("pay").proxies(payCmd.build()))
+        }
     }
 
     fun helpMessage(sender: CommandSender) {

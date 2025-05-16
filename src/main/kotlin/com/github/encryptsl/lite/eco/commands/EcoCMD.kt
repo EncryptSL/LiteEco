@@ -59,7 +59,8 @@ class EcoCMD(
                     val sender: CommandSender = ctx.sender().source()
                     liteEco.locale.getList("messages.admin-help")?.forEach { s -> sender.sendMessage(ModernText.miniModernText(s.toString())) }
                 }
-        ).command(
+        )
+        commandManager.command(
             commandRoot.literal("add")
                 .commandDescription(Description.description(DESCRIPTION))
                 .permission("lite.eco.admin.add")
@@ -92,7 +93,8 @@ class EcoCMD(
                     val amount = helper.validateAmount(amountStr.toString(), sender) ?: return@handler
                     liteEco.pluginManager.callEvent(EconomyMoneyDepositEvent(sender, target, currency, amount, silent))
                 }
-        ).command(
+        )
+        commandManager.command(
             commandRoot.literal("global")
                 .literal("add")
                 .commandDescription(Description.description(DESCRIPTION))
@@ -113,7 +115,8 @@ class EcoCMD(
                     val amount = helper.validateAmount(amountStr.toString(), sender) ?: return@handler
                     liteEco.pluginManager.callEvent(EconomyGlobalDepositEvent(sender, currency, amount))
                 }
-        ).command(
+        )
+        commandManager.command(
             commandRoot.literal("set")
                 .commandDescription(Description.description(DESCRIPTION))
                 .permission("lite.eco.admin.set")
@@ -139,7 +142,8 @@ class EcoCMD(
                     val amount = helper.validateAmount(amountStr.toString(), sender, CheckLevel.ONLY_NEGATIVE) ?: return@handler
                     liteEco.pluginManager.callEvent(EconomyMoneySetEvent(sender, target, currency, amount))
                 }
-        ).command(
+        )
+        commandManager.command(
             commandRoot.literal("global")
                 .literal("set")
                 .commandDescription(Description.description(DESCRIPTION))
@@ -160,7 +164,8 @@ class EcoCMD(
                     val amount = helper.validateAmount(amountStr.toString(), sender, CheckLevel.ONLY_NEGATIVE) ?: return@handler
                     liteEco.pluginManager.callEvent(EconomyGlobalSetEvent(sender, currency, amount))
                 }
-        ).command(
+        )
+        commandManager.command(
             commandRoot.literal("withdraw")
                 .commandDescription(Description.description(DESCRIPTION))
                 .permission("lite.eco.admin.withdraw")
@@ -193,7 +198,8 @@ class EcoCMD(
                     val amount = helper.validateAmount(amountStr.toString(), sender) ?: return@handler
                     liteEco.pluginManager.callEvent(EconomyMoneyWithdrawEvent(sender, target, currency, amount, silent))
                 }
-        ).command(
+        )
+        commandManager.command(
             commandRoot.literal("global")
                 .literal("withdraw")
                 .commandDescription(Description.description(DESCRIPTION))
@@ -214,7 +220,8 @@ class EcoCMD(
                     val amount = helper.validateAmount(amountStr.toString(), sender, CheckLevel.ONLY_NEGATIVE) ?: return@handler
                     liteEco.pluginManager.callEvent(EconomyGlobalWithdrawEvent(sender, currency, amount))
                 }
-        ).command(
+        )
+        commandManager.command(
             commandRoot.literal("create")
                 .commandDescription(Description.description(DESCRIPTION))
                 .permission("lite.eco.admin.create")
@@ -245,7 +252,8 @@ class EcoCMD(
                     }
                     sender.sendMessage(liteEco.locale.translation(message, Placeholder.parsed("account", target.name.toString())))
                 }
-        ).command(
+        )
+        commandManager.command(
             commandRoot.literal("delete")
                 .commandDescription(Description.description(DESCRIPTION))
                 .permission("lite.eco.admin.delete")
@@ -271,7 +279,8 @@ class EcoCMD(
                     }
                     sender.sendMessage(liteEco.locale.translation(message, Placeholder.parsed("account", target.name.toString())))
                 }
-        ).command(
+        )
+        commandManager.command(
             commandRoot.literal("monolog")
                 .commandDescription(Description.description(DESCRIPTION))
                 .permission("lite.eco.admin.monolog")
@@ -300,7 +309,8 @@ class EcoCMD(
                     }
                     sender.sendMessage(liteEco.locale.translation("messages.monolog.footer", tags))
                 }
-        ).command(
+        )
+        commandManager.command(
             commandRoot.literal("lang")
                 .commandDescription(Description.description(DESCRIPTION))
                 .permission("lite.eco.admin.lang")
@@ -317,7 +327,8 @@ class EcoCMD(
                         .translation("messages.admin.translation_switch", Placeholder.parsed("locale", lang.name))
                     )
                 }
-        ).command(
+        )
+        commandManager.command(
             commandRoot.literal("purge")
                 .commandDescription(Description.description(DESCRIPTION))
                 .permission("lite.eco.admin.purge")
@@ -362,7 +373,8 @@ class EcoCMD(
                         }
                     }
                 }
-        ).command(
+        )
+        commandManager.command(
             commandRoot.literal("migration")
                 .commandDescription(Description.description(DESCRIPTION))
                 .permission("lite.eco.admin.migration")
@@ -416,7 +428,8 @@ class EcoCMD(
                         liteEco.componentLogger.error(ModernText.miniModernText(e.message ?: e.localizedMessage))
                     }
                 }
-        ).command(
+        )
+        commandManager.command(
             commandRoot.literal("convert")
                 .commandDescription(Description.description(DESCRIPTION))
                 .permission("lite.eco.admin.convert")
@@ -445,17 +458,17 @@ class EcoCMD(
                         }
                     }
                     val (converted, balances) = convertEconomy.getResult()
-                    sender.sendMessage(
-                        liteEco.locale.translation("messages.admin.convert_success",
-                            TagResolver.resolver(
-                                Placeholder.parsed("economy", economy.name),
-                                Placeholder.parsed("converted", converted.toString()),
-                                Placeholder.parsed("balances", balances.toString())
-                            )
-                        ))
+                    sender.sendMessage(liteEco.locale.translation("messages.admin.convert_success",
+                        TagResolver.resolver(
+                            Placeholder.parsed("economy", economy.name),
+                            Placeholder.parsed("converted", converted.toString()),
+                            Placeholder.parsed("balances", balances.toString())
+                        )
+                    ))
                     convertEconomy.convertRefresh()
                 }
-        ).command(
+        )
+        commandManager.command(
             commandRoot.literal("reload")
                 .commandDescription(Description.description(DESCRIPTION))
                 .permission("lite.eco.admin.reload")

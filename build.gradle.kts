@@ -46,16 +46,17 @@ dependencies {
     compileOnly("org.apache.commons:commons-csv:1.14.0")
 
     implementation("org.bstats:bstats-bukkit:3.0.1")
-    implementation("org.incendo:cloud-paper:2.0.0-SNAPSHOT")
-    implementation("org.incendo:cloud-annotations:2.0.0-SNAPSHOT") {
+    compileOnly("org.incendo:cloud-annotations:2.0.0-SNAPSHOT") {
         exclude("org.incendo", "cloud-core")
     }
-    implementation("org.incendo:cloud-minecraft-extras:2.0.0-SNAPSHOT") {
+    compileOnly("org.incendo:cloud-paper:2.0.0-SNAPSHOT")
+    compileOnly("org.incendo:cloud-minecraft-extras:2.0.0-SNAPSHOT") {
         exclude("org.incendo", "cloud-core")
         exclude("net.kyori", "adventure-text-api")
         exclude("net.kyori", "adventure-text-minimessage")
         exclude("net.kyori", "adventure-text-serializer-plain")
     }
+    compileOnly("org.incendo:cloud-kotlin-extensions:2.0.0")
     implementation("io.github.miniplaceholders:miniplaceholders-kotlin-ext:2.3.0")
 
     testImplementation(kotlin("test", "2.2.0-Beta2"))
@@ -103,7 +104,7 @@ tasks {
         archiveFileName.set("${providers.gradleProperty("plugin_name").get()}-$version.jar")
         minimize {
             relocate("org.bstats", "com.github.encryptsl.metrics")
-            relocate("org.incendo", "com.github.encryptsl.cloud-core")
+            //relocate("org.incendo", "com.github.encryptsl.cloud-core")
         }
     }
 }

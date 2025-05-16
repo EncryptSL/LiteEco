@@ -8,6 +8,7 @@ import com.github.encryptsl.lite.eco.api.enums.PurgeKey
 import com.github.encryptsl.lite.eco.api.objects.ModernText
 import com.github.encryptsl.lite.eco.commands.EcoCMD
 import com.github.encryptsl.lite.eco.commands.MoneyCMD
+import com.github.encryptsl.lite.eco.common.AccountManager
 import com.github.encryptsl.lite.eco.common.config.Locales
 import com.github.encryptsl.lite.eco.common.database.DatabaseConnector
 import com.github.encryptsl.lite.eco.common.database.models.DatabaseEcoModel
@@ -51,6 +52,7 @@ class LiteEco : JavaPlugin() {
     val loggerModel: DatabaseMonologModel by lazy { DatabaseMonologModel(this) }
     val currencyImpl: Currency by lazy { Currency(this) }
     val databaseConnector: DatabaseConnector by lazy { DatabaseConnector(this) }
+    val accountManager: AccountManager by lazy { AccountManager(this) }
 
     private val configAPI: ConfigAPI by lazy { ConfigAPI(this) }
     private val hookManager: HookManager by lazy { HookManager(this) }
@@ -120,7 +122,6 @@ class LiteEco : JavaPlugin() {
 
     private fun registerListeners() {
         val listeners = arrayOf(
-            AccountManageListener(this),
             PlayerEconomyPayListener(this),
             EconomyGlobalDepositListener(this),
             EconomyGlobalSetListener(this),

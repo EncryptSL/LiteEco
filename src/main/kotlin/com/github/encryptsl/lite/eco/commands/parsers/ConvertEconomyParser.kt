@@ -26,8 +26,6 @@ class ConvertEconomyParser : ArgumentParser<Source, Economies> {
     }
 
     override fun suggestionProvider(): SuggestionProvider<Source> {
-        return SuggestionProvider.blocking { _, _ ->
-            Economies.entries.map { Suggestion.suggestion(it.name) }
-        }
+        return SuggestionProvider.suggesting(Economies.entries.map { Suggestion.suggestion(it.name) })
     }
 }

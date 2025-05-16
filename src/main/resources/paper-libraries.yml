@@ -8,3 +8,7 @@ libraries:
   - com.squareup.okhttp3:okhttp:4.12.0
   - com.tchristofferson:ConfigUpdater:2.2-SNAPSHOT
   - org.apache.commons:commons-csv:1.14.0
+  - org.incendo:cloud-annotations:2.0.0-SNAPSHOT
+  - org.incendo:cloud-minecraft-extras:2.0.0-SNAPSHOT
+  - org.incendo:cloud-kotlin-extensions:2.0.0
+  - org.incendo:cloud-paper:2.0.0-SNAPSHOT
