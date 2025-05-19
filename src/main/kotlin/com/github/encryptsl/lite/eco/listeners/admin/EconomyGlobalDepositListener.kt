@@ -25,7 +25,6 @@ class EconomyGlobalDepositListener(private val liteEco: LiteEco) : Listener {
         if (liteEco.api.getCheckBalanceLimit(money) && !sender.hasPermission("lite.eco.admin.bypass.limit"))
             return sender.sendMessage(liteEco.locale.translation("messages.error.amount_above_limit"))
 
-        //TODO: I don't know now how solve issue with not checking balance, only one way is add other same function with checking permission.
         for (p in offlinePlayers) {
             liteEco.api.getUserByUUID(p.uniqueId, currency).thenAccept {
                 if (it.isPresent) {
