@@ -47,7 +47,7 @@ class MoneyCMD(
                 balanceCommand(sender, sender, liteEco.currencyImpl.defaultCurrency())
             }
             val consoleBalanceCmd = balanceCmd
-                .required(
+                .optional(
                     "target",
                     OfflinePlayerParser.offlinePlayerParser(),
                     commandManager.parserRegistry().getSuggestionProvider("players").get()
@@ -58,7 +58,7 @@ class MoneyCMD(
                 )
                 .handler { ctx ->
                     val sender: CommandSender = ctx.sender().source()
-                    val target: OfflinePlayer = ctx.get("target")
+                    val target: OfflinePlayer = ctx.getOrDefault("target", sender as? OfflinePlayer ?: return@handler)
                     val currency: String = ctx.getOrDefault("currency", liteEco.currencyImpl.defaultCurrency())
                     balanceCommand(sender, target, currency)
                 }
