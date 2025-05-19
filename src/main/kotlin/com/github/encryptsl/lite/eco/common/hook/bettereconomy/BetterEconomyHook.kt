@@ -2,7 +2,6 @@ package com.github.encryptsl.lite.eco.common.hook.bettereconomy
 
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.common.hook.HookListener
-import com.github.encryptsl.lite.eco.common.hook.placeholderapi.PlaceholderAPIHook
 import com.github.encryptsl.lite.eco.utils.ClassUtil
 import me.hsgamer.bettereconomy.BetterEconomy
 import me.hsgamer.bettereconomy.api.EconomyHandler

@@ -1,7 +1,6 @@
 package com.github.encryptsl.lite.eco.utils
 
 import com.github.encryptsl.lite.eco.LiteEco
-import com.github.encryptsl.lite.eco.api.economy.Currency
 import com.github.encryptsl.lite.eco.common.hook.bettereconomy.BetterEconomyHook
 import com.github.encryptsl.lite.eco.common.hook.craftconomy3.CraftConomyHook
 import com.github.encryptsl.lite.eco.common.hook.scruffyboy13.ScruffyboyEconomyHook
