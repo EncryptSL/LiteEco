@@ -23,9 +23,9 @@ class SQLFileExporter(private val plugin: Plugin, private val fileName: String, 
                 }
 
                 BufferedWriter(FileWriter(file)).use { writer ->
-                    writer.write("DROP TABLE IF EXISTS lite_eco_$currency;")
+                    writer.write("DROP TABLE IF EXISTS lite_eco_$currency;\n")
                     writer.write("CREATE TABLE lite_eco_$currency (id INT(11), username VARCHAR(36), uuid BINARY(16), money DECIMAL(18,9));")
-                    writer.write("INSERT INTO lite_eco_$currency (id, username, uuid, money) VALUES $insertStatement;")
+                    writer.write("\nINSERT INTO lite_eco_$currency (id, username, uuid, money) VALUES $insertStatement;")
                     writer.write("\nALTER TABLE `lite_eco_$currency` ADD PRIMARY KEY(`id`);")
                     writer.flush()
                     writer.close()
