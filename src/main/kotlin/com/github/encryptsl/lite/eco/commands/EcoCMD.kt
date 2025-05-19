@@ -72,7 +72,7 @@ class EcoCMD(
                 )
                 .optional(
                     "silent",
-                    BooleanParser.booleanParser(true),
+                    BooleanParser.booleanParser(false),
                     DefaultValue.constant(false)
                 )
                 .handler { ctx ->
@@ -170,7 +170,7 @@ class EcoCMD(
                 )
                 .optional(
                     "silent",
-                    BooleanParser.booleanParser(true),
+                    BooleanParser.booleanParser(false),
                     DefaultValue.constant(false)
                 )
                 .handler { ctx ->
