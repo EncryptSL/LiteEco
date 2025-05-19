@@ -10,6 +10,6 @@ interface AccountAPI {
     fun syncAccounts()
     fun clearFromCache(uuid: UUID)
     fun getBalance(uuid: UUID, currency: String): BigDecimal
-    fun isAccountCached(uuid: UUID, currency: String): Boolean
+    fun isAccountCached(uuid: UUID, currency: String?): Boolean
     fun isPlayerOnline(uuid: UUID): Boolean
 }

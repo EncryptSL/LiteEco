@@ -12,7 +12,6 @@ object PlayerAccount : AccountAPI {
     private val databaseEcoModel: DatabaseEcoModel by lazy { DatabaseEcoModel() }
     private val cache = mutableMapOf<UUID, MutableMap<String, BigDecimal>>()
 
-
     override fun cacheAccount(uuid: UUID, currency: String, value: BigDecimal) {
         if (!isAccountCached(uuid, currency)) {
             cache.computeIfAbsent(uuid) { mutableMapOf() } [currency] = value
@@ -40,7 +39,7 @@ object PlayerAccount : AccountAPI {
                 val balance = iterator.next()
                 databaseEcoModel.setMoney(uuid, balance.key, balance.value)
             }
-            clearFromCache(uuid)
+            cache.remove(uuid)
         } catch (e : Exception) {
             LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
         }
@@ -48,11 +47,11 @@ object PlayerAccount : AccountAPI {
 
     override fun syncAccounts() {
         try {
-            cache.entries.forEach { user ->
-                user.value.forEach { currency ->
-                    databaseEcoModel.setMoney(user.key, currency.key, currency.value)
+            cache.entries.forEach { user -> user.value.forEach {
+                    databaseEcoModel.setMoney(user.key, it.key, it.value)
                 }
             }
+            cache.clear()
         } catch (e : Exception) {
             LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
         }
@@ -64,8 +63,8 @@ object PlayerAccount : AccountAPI {
         cache.remove(player)
     }
 
-    override fun isAccountCached(uuid: UUID, currency: String): Boolean {
-        return cache.containsKey(uuid) && cache.get(uuid)?.containsKey(currency) == true
+    override fun isAccountCached(uuid: UUID, currency: String?): Boolean {
+       return cache.containsKey(uuid) && cache[uuid]?.containsKey(currency) == true
     }
 
     override fun isPlayerOnline(uuid: UUID): Boolean {

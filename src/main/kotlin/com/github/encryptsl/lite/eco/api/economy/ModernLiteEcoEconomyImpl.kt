@@ -53,7 +53,7 @@ class ModernLiteEcoEconomyImpl : DeprecatedLiteEcoEconomyImpl() {
     }
 
     override fun depositMoney(uuid: UUID, currency: String, amount: BigDecimal) {
-        if (PlayerAccount.isPlayerOnline(uuid)) {
+        if (PlayerAccount.isPlayerOnline(uuid) && PlayerAccount.isAccountCached(uuid, currency)) {
             cacheAccount(uuid, currency, getBalance(uuid, currency).plus(amount))
         } else {
             CompletableFuture.runAsync { LiteEco.instance.databaseEcoModel.depositMoney(uuid, currency, amount) }
@@ -61,7 +61,7 @@ class ModernLiteEcoEconomyImpl : DeprecatedLiteEcoEconomyImpl() {
     }
 
     override fun withDrawMoney(uuid: UUID, currency: String, amount: BigDecimal) {
-        if (PlayerAccount.isPlayerOnline(uuid)) {
+        if (PlayerAccount.isPlayerOnline(uuid) && PlayerAccount.isAccountCached(uuid, currency)) {
             cacheAccount(uuid, currency, getBalance(uuid, currency).minus(amount))
         } else {
             CompletableFuture.runAsync { LiteEco.instance.databaseEcoModel.withdrawMoney(uuid, currency, amount) }

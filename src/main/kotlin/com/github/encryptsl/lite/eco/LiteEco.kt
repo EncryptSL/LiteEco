@@ -81,7 +81,7 @@ class LiteEco : JavaPlugin() {
             registerListeners()
         }
         try {
-            ConfigUpdater.update(this, "config.yml", configFile, "plugin", "economy")
+            ConfigUpdater.update(this, "config.yml", configFile, "economy")
             componentLogger.info(ModernText.miniModernText("<green>Config was updated on current version !"))
         } catch (e : Exception) {
             logger.severe(e.message ?: e.localizedMessage)

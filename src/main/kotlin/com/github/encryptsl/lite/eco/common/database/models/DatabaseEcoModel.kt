@@ -69,6 +69,18 @@ class DatabaseEcoModel : PlayerSQL {
         return future
     }
 
+    override fun getBalance(uuid: UUID, currency: String): BigDecimal {
+        return loggedTransaction {
+            try {
+                val table = Account(currency)
+                table.select(table.uuid, table.money).where { table.uuid eq uuid }.single()[table.money]
+            } catch (e : ExposedSQLException) {
+                LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
+                BigDecimal.ZERO
+            }
+        }
+    }
+
     override fun deletePlayerAccount(uuid: UUID, currency: String) {
         loggedTransaction {
             try {

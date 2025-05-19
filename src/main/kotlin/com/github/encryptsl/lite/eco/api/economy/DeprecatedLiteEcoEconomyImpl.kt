@@ -59,7 +59,7 @@ abstract class DeprecatedLiteEcoEconomyImpl : LiteEconomyAPI {
     }
 
     override fun depositMoney(player: OfflinePlayer, currency: String, amount: BigDecimal) {
-        if (PlayerAccount.isPlayerOnline(player.uniqueId)) {
+        if (PlayerAccount.isPlayerOnline(player.uniqueId) && PlayerAccount.isAccountCached(player.uniqueId, currency)) {
             cacheAccount(player, currency, getBalance(player, currency).plus(amount))
         } else {
             LiteEco.instance.databaseEcoModel.depositMoney(player.uniqueId, currency, amount)
@@ -67,7 +67,7 @@ abstract class DeprecatedLiteEcoEconomyImpl : LiteEconomyAPI {
     }
 
     override fun withDrawMoney(player: OfflinePlayer, currency: String, amount: BigDecimal) {
-        if (PlayerAccount.isPlayerOnline(player.uniqueId)) {
+        if (PlayerAccount.isPlayerOnline(player.uniqueId) && PlayerAccount.isAccountCached(player.uniqueId, currency)) {
             cacheAccount(player, currency, getBalance(player, currency).minus(amount))
         } else {
             LiteEco.instance.databaseEcoModel.withdrawMoney(player.uniqueId, currency, amount)

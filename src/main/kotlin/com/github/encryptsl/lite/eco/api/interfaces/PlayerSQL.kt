@@ -9,6 +9,7 @@ interface PlayerSQL {
     fun createPlayerAccount(username: String, uuid: UUID, currency: String, money: BigDecimal)
     fun updatePlayerName(uuid: UUID, username: String, currency: String)
     fun getUserByUUID(uuid: UUID, currency: String): CompletableFuture<Optional<User>>
+    fun getBalance(uuid: UUID, currency: String): BigDecimal
     fun deletePlayerAccount(uuid: UUID, currency: String)
     fun getExistPlayerAccount(uuid: UUID, currency: String): CompletableFuture<Boolean>
     fun getTopBalance(currency: String): MutableMap<String, User>
