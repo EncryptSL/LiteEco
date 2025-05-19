@@ -1,20 +1,23 @@
 package com.github.encryptsl.lite.eco.utils
 
 import com.github.encryptsl.lite.eco.LiteEco
+import com.github.encryptsl.lite.eco.api.economy.Currency
 import com.github.encryptsl.lite.eco.common.hook.bettereconomy.BetterEconomyHook
+import com.github.encryptsl.lite.eco.common.hook.craftconomy3.CraftConomyHook
+import com.github.encryptsl.lite.eco.common.hook.scruffyboy13.ScruffyboyEconomyHook
 import org.bukkit.Bukkit
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
 import java.math.BigDecimal
 
-class ConvertEconomy(private val liteEco: LiteEco) {
+class ImportEconomy(private val liteEco: LiteEco) {
 
     private var converted = 0
     private var balances = BigDecimal.ZERO
 
-    enum class Economies { EssentialsX, BetterEconomy, }
+    enum class Economies { EssentialsX, BetterEconomy, ScruffyBoyEconomy, CraftConomy3 }
 
-    fun convertEssentialsXEconomy(currency: String) {
+    fun importEssentialsXEconomy(currency: String) {
         for (p in Bukkit.getOfflinePlayers()) {
             val playerFile =  File("plugins/Essentials/userdata/", "${p.uniqueId}.yml")
             if (playerFile.exists()) {
@@ -28,11 +31,41 @@ class ConvertEconomy(private val liteEco: LiteEco) {
         }
     }
 
-    fun convertBetterEconomy(currency: String) {
+    fun importBetterEconomy(currency: String) {
         try {
             val betterEconomy = BetterEconomyHook(liteEco)
             for (p in Bukkit.getOfflinePlayers()) {
                 val balance = BigDecimal.valueOf(betterEconomy.getBalance(p.uniqueId))
+                if (liteEco.api.createAccount(p, currency, balance)) {
+                    balances += balance
+                    converted += 1
+                }
+            }
+        } catch (e : Exception) {
+            liteEco.logger.severe(e.message ?: e.localizedMessage)
+        }
+    }
+
+    fun importScruffyBoyEconomy(currency: String) {
+        try {
+            val scruffyboyEconomy = ScruffyboyEconomyHook(liteEco)
+            for (p in Bukkit.getOfflinePlayers()) {
+                val balance = BigDecimal.valueOf(scruffyboyEconomy.getBalance(p.uniqueId))
+                if (liteEco.api.createAccount(p, currency, balance)) {
+                    balances += balance
+                    converted += 1
+                }
+            }
+        } catch (e : Exception) {
+            liteEco.logger.severe(e.message ?: e.localizedMessage)
+        }
+    }
+
+    fun importCraftConomy3(currency: String) {
+        try {
+            val craftConomy = CraftConomyHook(liteEco)
+            for (p in Bukkit.getOfflinePlayers()) {
+                val balance = BigDecimal.valueOf(craftConomy.getBalance(p.name.toString()))
                 if (liteEco.api.createAccount(p, currency, balance)) {
                     balances += balance
                     converted += 1

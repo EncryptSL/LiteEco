@@ -1,36 +1,45 @@
 package com.github.encryptsl.lite.eco.common.manager
 
 import com.github.encryptsl.lite.eco.LiteEco
-import com.github.encryptsl.lite.eco.utils.ConvertEconomy
-import com.github.encryptsl.lite.eco.utils.ConvertEconomy.Economies
+import com.github.encryptsl.lite.eco.utils.ImportEconomy
+import com.github.encryptsl.lite.eco.utils.ImportEconomy.Economies
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.command.CommandSender
 
 class ImportManager(
     private val liteEco: LiteEco,
-    private val convertEconomy: ConvertEconomy
+    private val importEconomy: ImportEconomy
 ) {
 
     fun importEconomy(sender: CommandSender, economy: Economies, currency: String) {
         when (economy) {
             Economies.EssentialsX -> {
-                convertEconomy.convertEssentialsXEconomy(currency)
+                importEconomy.importEssentialsXEconomy(currency)
             }
-
             Economies.BetterEconomy -> {
-                convertEconomy.convertBetterEconomy(currency)
+                importEconomy.importBetterEconomy(currency)
+            }
+            Economies.ScruffyBoyEconomy -> {
+                importEconomy.importScruffyBoyEconomy(currency)
+            }
+            Economies.CraftConomy3 -> {
+                importEconomy.importCraftConomy3(currency)
             }
         }
-        val (converted, balances) = convertEconomy.getResult()
-        sender.sendMessage(liteEco.locale.translation("messages.admin.convert_success",
+        val (converted, balances) = importEconomy.getResult()
+
+        if (converted == 0)
+            return sender.sendMessage(liteEco.locale.translation("messages.error.import_failed"))
+
+        sender.sendMessage(liteEco.locale.translation("messages.admin.import_success",
             TagResolver.resolver(
                 Placeholder.parsed("economy", economy.name),
                 Placeholder.parsed("converted", converted.toString()),
                 Placeholder.parsed("balances", balances.toString())
             )
         ))
-        convertEconomy.convertRefresh()
+        importEconomy.convertRefresh()
     }
 
 }

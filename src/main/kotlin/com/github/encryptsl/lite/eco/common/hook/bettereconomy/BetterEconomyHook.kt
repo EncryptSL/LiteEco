@@ -13,7 +13,7 @@ class BetterEconomyHook(
     private val liteEco: LiteEco
 ) : HookListener(
     PLUGIN_NAME,
-    "You can now export economy from plugin BetterEconomy to LiteEco with /eco convert BetterEconomy <your_currency>"
+    "You can now export economy from plugin BetterEconomy to LiteEco with /eco database import BetterEconomy <your_currency>"
 ) {
     private lateinit var economyHandler: EconomyHandler
 
@@ -24,7 +24,7 @@ class BetterEconomyHook(
     }
 
     override fun canRegister(): Boolean {
-        return !registered && liteEco.pluginManager.isPluginEnabled(PlaceholderAPIHook.PLUGIN_NAME)
+        return !registered && liteEco.pluginManager.isPluginEnabled(PLUGIN_NAME)
     }
 
     override fun register() {
