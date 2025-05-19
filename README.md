@@ -32,6 +32,13 @@ With an intuitive command interface designed for both console and in-game usage,
 
   - Enhance your server with [custom placeholders][WK:Placeholders] for displaying economy-related information.
 
+- **Importing of economy from others plugins** :heavy_check_mark:
+
+  - Import economy from others supported plugins to LiteEco
+    - CraftConomy3 :green_heart:
+    - ScruffyBoyEconomy :green_heart:
+    - EssentialsX :green_heart:
+
 <div align=center>
 
 ## Documentation:
