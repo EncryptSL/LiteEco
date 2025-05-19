@@ -17,6 +17,9 @@ import com.github.encryptsl.lite.eco.commands.parsers.CurrencyParser
 import com.github.encryptsl.lite.eco.commands.parsers.LangParser
 import com.github.encryptsl.lite.eco.common.config.Locales
 import com.github.encryptsl.lite.eco.common.extensions.positionIndexed
+import com.github.encryptsl.lite.eco.common.manager.ImportManager
+import com.github.encryptsl.lite.eco.common.manager.MonologManager
+import com.github.encryptsl.lite.eco.common.manager.PurgeManager
 import com.github.encryptsl.lite.eco.utils.ConvertEconomy
 import com.github.encryptsl.lite.eco.utils.ConvertEconomy.Economies
 import com.github.encryptsl.lite.eco.utils.Helper
@@ -30,6 +33,7 @@ import org.bukkit.command.CommandSender
 import org.incendo.cloud.bukkit.parser.OfflinePlayerParser
 import org.incendo.cloud.component.DefaultValue
 import org.incendo.cloud.description.Description
+import org.incendo.cloud.kotlin.extension.buildAndRegister
 import org.incendo.cloud.paper.PaperCommandManager
 import org.incendo.cloud.paper.util.sender.Source
 import org.incendo.cloud.parser.standard.IntegerParser
@@ -47,21 +51,18 @@ class EcoCMD(
 
     private val helper: Helper = Helper(liteEco)
     private val convertEconomy: ConvertEconomy = ConvertEconomy(liteEco)
+    private val monologManager: MonologManager = MonologManager(liteEco, helper)
+    private val importManager: ImportManager = ImportManager(liteEco, convertEconomy)
+    private val purgeManager: PurgeManager = PurgeManager(liteEco)
 
-    private val commandRoot = commandManager.commandBuilder("eco")
 
     fun adminCommands() {
-        commandManager.command(
-            commandRoot.literal("help")
-                .commandDescription(Description.description(DESCRIPTION))
-                .permission("lite.eco.admin.help")
-                .handler { ctx ->
-                    val sender: CommandSender = ctx.sender().source()
-                    liteEco.locale.getList("messages.admin-help")?.forEach { s -> sender.sendMessage(ModernText.miniModernText(s.toString())) }
-                }
-        )
-        commandManager.command(
-            commandRoot.literal("add")
+        commandManager.buildAndRegister("eco", Description.description(DESCRIPTION)) {
+            commandBuilder.literal("help").permission("lite.eco.admin.help").handler { ctx ->
+                val sender: CommandSender = ctx.sender().source()
+                liteEco.locale.getList("messages.admin-help")?.forEach { s -> sender.sendMessage(ModernText.miniModernText(s.toString())) }
+            }
+            commandBuilder.literal("add")
                 .commandDescription(Description.description(DESCRIPTION))
                 .permission("lite.eco.admin.add")
                 .required(
@@ -93,9 +94,7 @@ class EcoCMD(
                     val amount = helper.validateAmount(amountStr.toString(), sender) ?: return@handler
                     liteEco.pluginManager.callEvent(EconomyMoneyDepositEvent(sender, target, currency, amount, silent))
                 }
-        )
-        commandManager.command(
-            commandRoot.literal("global")
+            commandBuilder.literal("global")
                 .literal("add")
                 .commandDescription(Description.description(DESCRIPTION))
                 .permission("lite.eco.admin.global.add")
@@ -115,9 +114,8 @@ class EcoCMD(
                     val amount = helper.validateAmount(amountStr.toString(), sender) ?: return@handler
                     liteEco.pluginManager.callEvent(EconomyGlobalDepositEvent(sender, currency, amount))
                 }
-        )
-        commandManager.command(
-            commandRoot.literal("set")
+
+            commandBuilder.literal("set")
                 .commandDescription(Description.description(DESCRIPTION))
                 .permission("lite.eco.admin.set")
                 .required(
@@ -142,9 +140,7 @@ class EcoCMD(
                     val amount = helper.validateAmount(amountStr.toString(), sender, CheckLevel.ONLY_NEGATIVE) ?: return@handler
                     liteEco.pluginManager.callEvent(EconomyMoneySetEvent(sender, target, currency, amount))
                 }
-        )
-        commandManager.command(
-            commandRoot.literal("global")
+            commandBuilder.literal("global")
                 .literal("set")
                 .commandDescription(Description.description(DESCRIPTION))
                 .permission("lite.eco.admin.global.set")
@@ -164,9 +160,7 @@ class EcoCMD(
                     val amount = helper.validateAmount(amountStr.toString(), sender, CheckLevel.ONLY_NEGATIVE) ?: return@handler
                     liteEco.pluginManager.callEvent(EconomyGlobalSetEvent(sender, currency, amount))
                 }
-        )
-        commandManager.command(
-            commandRoot.literal("withdraw")
+            commandBuilder.literal("withdraw")
                 .commandDescription(Description.description(DESCRIPTION))
                 .permission("lite.eco.admin.withdraw")
                 .required(
@@ -198,9 +192,7 @@ class EcoCMD(
                     val amount = helper.validateAmount(amountStr.toString(), sender) ?: return@handler
                     liteEco.pluginManager.callEvent(EconomyMoneyWithdrawEvent(sender, target, currency, amount, silent))
                 }
-        )
-        commandManager.command(
-            commandRoot.literal("global")
+            commandBuilder.literal("global")
                 .literal("withdraw")
                 .commandDescription(Description.description(DESCRIPTION))
                 .permission("lite.eco.admin.global.withdraw")
@@ -220,9 +212,7 @@ class EcoCMD(
                     val amount = helper.validateAmount(amountStr.toString(), sender, CheckLevel.ONLY_NEGATIVE) ?: return@handler
                     liteEco.pluginManager.callEvent(EconomyGlobalWithdrawEvent(sender, currency, amount))
                 }
-        )
-        commandManager.command(
-            commandRoot.literal("create")
+            commandBuilder.literal("create")
                 .commandDescription(Description.description(DESCRIPTION))
                 .permission("lite.eco.admin.create")
                 .required(
@@ -252,9 +242,7 @@ class EcoCMD(
                     }
                     sender.sendMessage(liteEco.locale.translation(message, Placeholder.parsed("account", target.name.toString())))
                 }
-        )
-        commandManager.command(
-            commandRoot.literal("delete")
+            commandBuilder.literal("delete")
                 .commandDescription(Description.description(DESCRIPTION))
                 .permission("lite.eco.admin.delete")
                 .required(
@@ -279,9 +267,7 @@ class EcoCMD(
                     }
                     sender.sendMessage(liteEco.locale.translation(message, Placeholder.parsed("account", target.name.toString())))
                 }
-        )
-        commandManager.command(
-            commandRoot.literal("monolog")
+            commandBuilder.literal("monolog")
                 .commandDescription(Description.description(DESCRIPTION))
                 .permission("lite.eco.admin.monolog")
                 .optional("page", IntegerParser.integerParser(1), DefaultValue.constant(1))
@@ -293,43 +279,9 @@ class EcoCMD(
                     val sender: CommandSender = ctx.sender().source()
                     val page: Int = ctx.get("page")
                     val target: String = ctx.getOrDefault("target", "all")
-
-                    val log = helper.validateLog(target)
-                    val pagination = ComponentPaginator(log) { itemsPerPage = 10 }.apply { page(page) }
-
-                    if (pagination.isAboveMaxPage(page))
-                        return@handler sender.sendMessage(liteEco.locale.translation("messages.error.maximum_page",
-                            Placeholder.parsed("max_page", pagination.maxPages.toString()))
-                        )
-
-                    val tags = TagResolver.resolver(Placeholder.parsed("page", page.toString()), Placeholder.parsed("max_page", pagination.maxPages.toString()))
-                    sender.sendMessage(liteEco.locale.translation("messages.monolog.header", tags))
-                    for (content in pagination.display()) {
-                        sender.sendMessage(content)
-                    }
-                    sender.sendMessage(liteEco.locale.translation("messages.monolog.footer", tags))
+                    monologManager.displayMonolog(sender, target, page)
                 }
-        )
-        commandManager.command(
-            commandRoot.literal("lang")
-                .commandDescription(Description.description(DESCRIPTION))
-                .permission("lite.eco.admin.lang")
-                .required(
-                    commandManager
-                        .componentBuilder(Locales.LangKey::class.java, "isoKey")
-                        .parser(LangParser())
-                ).handler { ctx ->
-                    val sender: CommandSender = ctx.sender().source()
-                    val lang: Locales.LangKey = ctx.get("isoKey")
-
-                    liteEco.locale.setLocale(lang)
-                    sender.sendMessage(liteEco.locale
-                        .translation("messages.admin.translation_switch", Placeholder.parsed("locale", lang.name))
-                    )
-                }
-        )
-        commandManager.command(
-            commandRoot.literal("purge")
+            commandBuilder.literal("purge")
                 .commandDescription(Description.description(DESCRIPTION))
                 .permission("lite.eco.admin.purge")
                 .required(commandManager
@@ -345,37 +297,9 @@ class EcoCMD(
                     val sender: CommandSender = ctx.sender().source()
                     val purgeKey: PurgeKey = ctx.get("argument")
                     val currency: String = ctx.get("currency")
-
-                    @Suppress("REDUNDANT_ELSE_IN_WHEN")
-                    when (purgeKey) {
-                        PurgeKey.ACCOUNTS -> {
-                            liteEco.databaseEcoModel.purgeAccounts(currency)
-                            sender.sendMessage(liteEco.locale.translation("messages.admin.purge_accounts"))
-                        }
-                        PurgeKey.NULL_ACCOUNTS -> {
-                            liteEco.databaseEcoModel.purgeInvalidAccounts(currency)
-                            sender.sendMessage(liteEco.locale.translation("messages.admin.purge_null_accounts"))
-                        }
-                        PurgeKey.DEFAULT_ACCOUNTS -> {
-                            liteEco.databaseEcoModel.purgeDefaultAccounts(liteEco.currencyImpl.getCurrencyStartBalance(currency), currency)
-                            sender.sendMessage(liteEco.locale.translation("messages.admin.purge_default_accounts"))
-                        }
-                        PurgeKey.MONO_LOG -> {
-                            val monolog = liteEco.loggerModel.getLog()
-                            if (monolog.isEmpty()) {
-                                return@handler sender.sendMessage(liteEco.locale.translation("messages.error.purge_monolog_fail"))
-                            }
-                            liteEco.loggerModel.clearLogs()
-                            sender.sendMessage(liteEco.locale.translation("messages.admin.purge_monolog_success", Placeholder.parsed("deleted", monolog.size.toString())))
-                        }
-                        else -> {
-                            sender.sendMessage(liteEco.locale.translation("messages.error.purge_argument"))
-                        }
-                    }
+                    purgeManager.purge(sender, purgeKey, currency)
                 }
-        )
-        commandManager.command(
-            commandRoot.literal("migration")
+            commandBuilder.literal("migration")
                 .commandDescription(Description.description(DESCRIPTION))
                 .permission("lite.eco.admin.migration")
                 .required(commandManager
@@ -428,9 +352,7 @@ class EcoCMD(
                         liteEco.componentLogger.error(ModernText.miniModernText(e.message ?: e.localizedMessage))
                     }
                 }
-        )
-        commandManager.command(
-            commandRoot.literal("convert")
+            commandBuilder.literal("convert")
                 .commandDescription(Description.description(DESCRIPTION))
                 .permission("lite.eco.admin.convert")
                 .required(
@@ -447,39 +369,33 @@ class EcoCMD(
                     val sender: CommandSender = ctx.sender().source()
                     val economy: Economies = ctx.get("economy")
                     val currency: String = ctx.get("currency")
-
-                    when (economy) {
-                        Economies.EssentialsX -> {
-                            convertEconomy.convertEssentialsXEconomy(currency)
-                        }
-
-                        Economies.BetterEconomy -> {
-                            convertEconomy.convertBetterEconomy(currency)
-                        }
-                    }
-                    val (converted, balances) = convertEconomy.getResult()
-                    sender.sendMessage(liteEco.locale.translation("messages.admin.convert_success",
-                        TagResolver.resolver(
-                            Placeholder.parsed("economy", economy.name),
-                            Placeholder.parsed("converted", converted.toString()),
-                            Placeholder.parsed("balances", balances.toString())
-                        )
-                    ))
-                    convertEconomy.convertRefresh()
+                    importManager.importEconomy(sender, economy, currency)
                 }
-        )
-        commandManager.command(
-            commandRoot.literal("reload")
-                .commandDescription(Description.description(DESCRIPTION))
-                .permission("lite.eco.admin.reload")
-                .handler { ctx ->
+            val configSubCommand = commandBuilder.literal("config")
+            configSubCommand.literal("lang")
+                .permission("lite.eco.admin.lang")
+                .required(
+                    commandManager
+                        .componentBuilder(Locales.LangKey::class.java, "isoKey")
+                        .parser(LangParser())
+                ).handler { ctx ->
+                    val sender: CommandSender = ctx.sender().source()
+                    val lang: Locales.LangKey = ctx.get("isoKey")
+
+                    liteEco.locale.setLocale(lang)
+                    sender.sendMessage(liteEco.locale
+                        .translation("messages.admin.translation_switch", Placeholder.parsed("locale", lang.name))
+                    )
+                }
+            configSubCommand.literal("reload")
+                .permission("lite.eco.admin.reload").handler { ctx ->
                     liteEco.reloadConfig()
                     ctx.sender().source().sendMessage(liteEco.locale.translation("messages.admin.config_reload"))
                     liteEco.componentLogger.info(ModernText.miniModernText("Config.yml was reloaded [!]"))
                     liteEco.saveConfig()
                     liteEco.locale.loadCurrentTranslation()
                 }
-        )
+        }
     }
 
 }
