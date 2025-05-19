@@ -49,21 +49,17 @@ permissions:
       lite.eco.admin.help: true
       lite.eco.admin.eco: true
       lite.eco.admin.add: true
-      lite.eco.admin.gadd: true
       lite.eco.admin.global.add: true
       lite.eco.admin.set: true
-      lite.eco.admin.gset: true
       lite.eco.admin.global.set: true
       lite.eco.admin.remove: true
       lite.eco.admin.withdraw: true
-      lite.eco.admin.gremove: true
       lite.eco.admin.global.withdraw: true
       lite.eco.admin.monolog: true
       lite.eco.admin.lang: true
       lite.eco.admin.purge: true
-      lite.eco.admin.migration: true
-      lite.eco.admin.convert: true
-      lite.eco.admin.debug.create.accounts: true
+      lite.eco.admin.export: true
+      lite.eco.admin.import: true
       lite.eco.admin.reload: true
       lite.eco.admin.bypass.limit: true
       lite.eco.pay.*: true
