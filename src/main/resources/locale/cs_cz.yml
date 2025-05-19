@@ -48,8 +48,9 @@ messages:
     insufficient_funds: "<prefix> <red>Nedostatek finančních prostředků [!]"
     maximum_page: "<red>Limit stránkování je <max_page>"
     negative_amount: "<prefix> <red>Detekovano negativní číslo [!]"
-    migration_argument: "<prefix> <red>Tento <argument> argument není validní nebo není připraven do produkce."
-    migration_failed: "<prefix> <red>Při migraci došlo k chybě. Podrobnosti naleznete v konzoli." # TEMP #
+    export_argument: "<prefix> <red>Tento <argument> argument není validní nebo není připraven do produkce."
+    export_failed: "<prefix> <red>Při exportu došlo k chybě. Podrobnosti naleznete v konzoli." # TEMP #
+    import_failed: "<prefix> <red>Při importu došlo k chybě nebo chybí data pro import !"
     purge_argument: "<prefix> <red>Tento <argument> argument není validní nebo není připraven do produkce."
     purge_monolog_fail: "<prefix> <red>Nemůžeš provést smazání logů, tabulka je prázdná [!]"
     player_is_null: "<prefix> <red>Jméno hráče musí být vyplněno [!]"
@@ -82,8 +83,8 @@ messages:
     purge_default_accounts: "<prefix> <green>Smazal jsi účty s defaultní hodnotou."
     purge_monolog_success: "<prefix> <green>Záznam o ekonomických aktivitách byl smazán, <deleted> [!]"
     delete_account: "<prefix> <green>Účet hráče <account> byl smazán !"
-    migration_success: "<prefix> <green>Migrace <type> byla úspěšně vytvořena [!]"
-    convert_success: "<prefix> <green>Převod <converted> účtů a <balances> peněz z <economy> do LiteEco bylo úspěšné !"
+    export_success: "<prefix> <green>Migrace <type> byla úspěšně vytvořena [!]"
+    import_success: "<prefix> <green>Převod <converted> účtů a <balances> peněz z <economy> do LiteEco bylo úspěšné !"
 
   help:
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> LiteEco <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
@@ -104,10 +105,10 @@ messages:
     - "<red>[★] <gray><hover:show_text:'<#F39E9E>Přidá všem offline i online hráčům peníze.'>/eco global add <#3EE84D><amount> <#3EE84D>[currency]"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E>Nastavím všem offline i online fixovanou částku peněz.'>/eco global set <#3EE84D><amount> <#3EE84D>[currency]"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E>Odebere všem offline i online hráčům peníze z účtu.'>/eco global remove <#3EE84D><amount> <#3EE84D>[currency]"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Přepne překlad zpráv.'>/eco lang <#b37dc7>[lang]"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Čištění dat.'>/eco purge <#b37dc7><argument> <#3EE84D>[currency]"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Migrace databáze do různých formátů.'>/eco migration <#b37dc7><argument> <#3EE84D>[currency]"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Přesun z jiného Economy pluginu do LiteEco.'>/eco convert <#b37dc7><argument> <#3EE84D>[currency]"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Znovu načte konfiguraci.'>/eco reload"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Čištění dat.'>/eco database purge <#b37dc7><argument> <#3EE84D>[currency]"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Export databáze do různých formátů.'>/eco database export <#b37dc7><argument> <#3EE84D>[currency]"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Import z jiného Economy pluginu do LiteEco.'>/eco database import <#b37dc7><argument> <#3EE84D>[currency]"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Přepne překlad zpráv.'>/eco config lang <#b37dc7>[lang]"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Znovu načte konfiguraci.'>/eco config reload"
     - " "
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> LiteEco <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
