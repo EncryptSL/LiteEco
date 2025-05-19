@@ -40,7 +40,6 @@ dependencies {
     compileOnly("org.jetbrains.exposed:exposed-jdbc:0.60.0")
     compileOnly("org.jetbrains.exposed:exposed-kotlin-datetime:0.60.0")
     compileOnly("com.squareup.okhttp3:okhttp:4.12.0")
-    compileOnly("me.hsgamer:bettereconomy:3.1")
     compileOnly("net.milkbowl.vault:VaultUnlockedAPI:2.9")
     compileOnly("com.tchristofferson:ConfigUpdater:2.2-SNAPSHOT")
     compileOnly("org.apache.commons:commons-csv:1.14.0")
@@ -57,6 +56,12 @@ dependencies {
         exclude("net.kyori", "adventure-text-serializer-plain")
     }
     compileOnly("org.incendo:cloud-kotlin-extensions:2.0.0")
+
+    // Plugins for import economy to LiteEco
+    compileOnly("me.hsgamer:bettereconomy:3.1")
+    compileOnly("me.scruffyboy13:Economy:2.0")
+    compileOnly("com.greatmancode:Craftconomy3:3.3.3-SNAPSHOT")
+
     implementation("io.github.miniplaceholders:miniplaceholders-kotlin-ext:2.3.0")
 
     testImplementation(kotlin("test", "2.2.0-Beta2"))

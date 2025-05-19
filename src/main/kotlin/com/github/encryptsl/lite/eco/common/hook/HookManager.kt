@@ -3,8 +3,10 @@ package com.github.encryptsl.lite.eco.common.hook
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.objects.ModernText
 import com.github.encryptsl.lite.eco.common.hook.bettereconomy.BetterEconomyHook
+import com.github.encryptsl.lite.eco.common.hook.craftconomy3.CraftConomyHook
 import com.github.encryptsl.lite.eco.common.hook.miniplaceholder.MiniPlaceholdersHook
 import com.github.encryptsl.lite.eco.common.hook.placeholderapi.PlaceholderAPIHook
+import com.github.encryptsl.lite.eco.common.hook.scruffyboy13.ScruffyboyEconomyHook
 import com.github.encryptsl.lite.eco.common.hook.treasury.TreasuryHook
 import com.github.encryptsl.lite.eco.common.hook.vault.VaultHook
 import kotlin.system.measureTimeMillis
@@ -13,6 +15,8 @@ class HookManager(private val liteEco: LiteEco) {
 
     private val hooks: Set<HookListener> = mutableSetOf(
         BetterEconomyHook(liteEco),
+        CraftConomyHook(liteEco),
+        ScruffyboyEconomyHook(liteEco),
         MiniPlaceholdersHook(liteEco),
         PlaceholderAPIHook(liteEco),
         TreasuryHook(liteEco),
