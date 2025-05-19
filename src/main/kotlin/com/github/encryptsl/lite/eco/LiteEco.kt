@@ -4,6 +4,7 @@ import com.github.encryptsl.lite.eco.api.ConfigAPI
 import com.github.encryptsl.lite.eco.api.UpdateNotifier
 import com.github.encryptsl.lite.eco.api.economy.Currency
 import com.github.encryptsl.lite.eco.api.economy.ModernLiteEcoEconomyImpl
+import com.github.encryptsl.lite.eco.api.enums.ExportKeys
 import com.github.encryptsl.lite.eco.api.enums.PurgeKey
 import com.github.encryptsl.lite.eco.api.objects.ModernText
 import com.github.encryptsl.lite.eco.commands.EcoCMD
@@ -17,7 +18,6 @@ import com.github.encryptsl.lite.eco.common.hook.HookManager
 import com.github.encryptsl.lite.eco.listeners.*
 import com.github.encryptsl.lite.eco.listeners.admin.*
 import com.github.encryptsl.lite.eco.utils.Debugger
-import com.github.encryptsl.lite.eco.utils.MigrationTool
 import com.tchristofferson.configupdater.ConfigUpdater
 import org.bstats.bukkit.Metrics
 import org.bstats.charts.SingleLineChart
@@ -174,8 +174,8 @@ class LiteEco : JavaPlugin() {
         commandManager.parserRegistry().registerSuggestionProvider("purgeKeys") { _, _ ->
             CompletableFuture.completedFuture(PurgeKey.entries.map { Suggestion.suggestion(it.name) })
         }
-        commandManager.parserRegistry().registerSuggestionProvider("migrationKeys") { _, _ ->
-            CompletableFuture.completedFuture(MigrationTool.MigrationKey.entries.map { Suggestion.suggestion(it.name) })
+        commandManager.parserRegistry().registerSuggestionProvider("exportKeys") { _, _ ->
+            CompletableFuture.completedFuture(ExportKeys.entries.map { Suggestion.suggestion(it.name) })
         }
     }
 
