@@ -12,7 +12,7 @@ import java.io.IOException
 class SQLFileExporter(private val plugin: Plugin, private val fileName: String, private val currency: String) : Export() {
 
     suspend fun exportToSQLFile(balances: List<PlayerBalances.PlayerBalance>) : Boolean {
-        val file = File("${plugin.dataFolder}/migration/", "${fileName}_${currency}_${timestamp}.csv")
+        val file = File("${plugin.dataFolder}/migration/", "${fileName}_${currency}_${timestamp}.sql")
 
         return withContext(Dispatchers.IO) {
             try {
@@ -41,7 +41,7 @@ class SQLFileExporter(private val plugin: Plugin, private val fileName: String, 
     }
 
     suspend fun exportToSQLFileLite(balances: List<PlayerBalances.PlayerBalance>) : Boolean {
-        val file = File("${plugin.dataFolder}/migration/", "${fileName}_${currency}_${timestamp}.csv")
+        val file = File("${plugin.dataFolder}/migration/", "${fileName}_${currency}_${timestamp}.sql")
         return withContext(Dispatchers.IO) {
             try {
                 file.parentFile.mkdirs()
