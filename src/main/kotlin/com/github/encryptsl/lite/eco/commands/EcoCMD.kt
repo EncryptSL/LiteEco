@@ -1,15 +1,9 @@
 package com.github.encryptsl.lite.eco.commands
 
 import com.github.encryptsl.lite.eco.LiteEco
-import com.github.encryptsl.lite.eco.api.ComponentPaginator
 import com.github.encryptsl.lite.eco.api.enums.CheckLevel
 import com.github.encryptsl.lite.eco.api.enums.PurgeKey
-import com.github.encryptsl.lite.eco.api.events.admin.EconomyGlobalDepositEvent
-import com.github.encryptsl.lite.eco.api.events.admin.EconomyGlobalSetEvent
-import com.github.encryptsl.lite.eco.api.events.admin.EconomyGlobalWithdrawEvent
-import com.github.encryptsl.lite.eco.api.events.admin.EconomyMoneyDepositEvent
-import com.github.encryptsl.lite.eco.api.events.admin.EconomyMoneySetEvent
-import com.github.encryptsl.lite.eco.api.events.admin.EconomyMoneyWithdrawEvent
+import com.github.encryptsl.lite.eco.api.events.admin.*
 import com.github.encryptsl.lite.eco.api.migrator.entity.PlayerBalances
 import com.github.encryptsl.lite.eco.api.objects.ModernText
 import com.github.encryptsl.lite.eco.commands.parsers.ConvertEconomyParser
