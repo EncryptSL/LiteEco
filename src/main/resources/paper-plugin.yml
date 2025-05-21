@@ -63,4 +63,5 @@ permissions:
       lite.eco.admin.reload: true
       lite.eco.admin.bypass.limit: true
       lite.eco.pay.*: true
+      lite.eco.balance.others: true
       lite.eco.balance.*: true

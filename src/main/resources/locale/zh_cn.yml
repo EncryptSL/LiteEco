@@ -43,7 +43,7 @@ messages:
   error:
     account_not_exist: "<prefix> <red>账号 <account> 不存在 [!]"
     account_now_exist: "<prefix> <red>账号 <account> 已存在 [!]"
-    currency_not_exist: "<prefix> <red>货币 <currency> 不存在!"
+    missing_balance_others_permission: "<prefix> <red>You do not have permission to view the account balance of others [!]"
     missing_currency_permission: "<prefix> <red>你没有权限使用此货币 [!]"
     format_amount: "<prefix> <red>数量无效. 请使用小数或缩写 (如 1K) [!]"
     insufficient_funds: "<prefix> <red>余额不足! [!]"

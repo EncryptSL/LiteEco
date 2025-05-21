@@ -43,6 +43,7 @@ messages:
   error:
     account_not_exist: "<prefix> <red><account> hesabı mevcut değil [!]"
     account_now_exist: "<prefix> <red><account> hesabı şimdi mevcut [!]"
+    missing_balance_others_permission: "<prefix> <red>You do not have permission to view the account balance of others [!]"
     missing_currency_permission: "<prefix> <red>Bu para birimini kullanma yetkiniz yok [!]"
     format_amount: "<prefix> <red>Geçersiz miktar. Lütfen ondalıklı sayılar veya sıkıştırılmış gösterimler kullanın (örneğin 1K) [!]"
     insufficient_funds: "<prefix> <red>Yetersiz bakiye! [!]"

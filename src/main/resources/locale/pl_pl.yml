@@ -43,6 +43,7 @@ messages:
   error:
     account_not_exist: "<prefix> <red>Konto <account> nie istnieje [!]"
     account_now_exist: "<prefix> <red>Konto <account> od teraz istnieje [!]"
+    missing_balance_others_permission: "<prefix> <red>You do not have permission to view the account balance of others [!]"
     missing_currency_permission: "<prefix> <red>You do not have permission to use this currency [!]"
     format_amount: "<prefix> <red>Nieprawidłowa kwota. Użyj liczb zmienno przecinkowych lub kompaktowego rozwiązania (np. 1K) [!]"
     insufficient_funds: "<prefix> <red>Niewystarczająca kwota! [!]"

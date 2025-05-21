@@ -43,6 +43,7 @@ messages:
   error:
     account_not_exist: "<prefix> <red>Účet <account> neexistuje [!]"
     account_now_exist: "<prefix> <red>Účet <account> existuje [!]"
+    missing_balance_others_permission: "<prefix> <red>Nemáš oprávnění zobrazit zůstatek účtu ostatních [!]"
     missing_currency_permission: "<prefix> <red>Nemáš oprávnění pro využívání této měny [!]"
     format_amount: "<prefix> <red>Neplatná částka. Použijte desetinná čísla nebo kompaktní reprezentace (např. 1K) [!]" # TEMP #
     insufficient_funds: "<prefix> <red>Nedostatek finančních prostředků [!]"

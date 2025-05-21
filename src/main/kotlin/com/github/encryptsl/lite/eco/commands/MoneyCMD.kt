@@ -60,6 +60,9 @@ class MoneyCMD(
                     val sender: CommandSender = ctx.sender().source()
                     val target: OfflinePlayer = ctx.get("target")
                     val currency: String = ctx.getOrDefault("currency", liteEco.currencyImpl.defaultCurrency())
+                    if (!sender.hasPermission("lite.eco.balance.others") && sender != target) {
+                        return@handler sender.sendMessage(liteEco.locale.translation("messages.error.missing_balance_others_permission"))
+                    }
                     balanceCommand(sender, target, currency)
                 }
             commandManager.command(playerBalanceCmd)
