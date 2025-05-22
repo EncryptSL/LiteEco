@@ -9,6 +9,7 @@ body:
     attributes:
       value: |
         Thanks for taking the time to fill out this bug report!
+        Remember only last version is supported !
   - type: textarea
     id: what-happened
     attributes:
