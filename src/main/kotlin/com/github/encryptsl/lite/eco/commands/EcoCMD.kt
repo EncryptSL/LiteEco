@@ -17,6 +17,8 @@ import com.github.encryptsl.lite.eco.common.manager.PurgeManager
 import com.github.encryptsl.lite.eco.utils.Helper
 import com.github.encryptsl.lite.eco.utils.ImportEconomy
 import com.github.encryptsl.lite.eco.utils.ImportEconomy.Economies
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.launch
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
@@ -47,6 +49,7 @@ class EcoCMD(
     private val purgeManager: PurgeManager = PurgeManager(liteEco)
 
 
+    @OptIn(DelicateCoroutinesApi::class)
     fun adminCommands() {
         commandManager.buildAndRegister("eco", Description.description(DESCRIPTION)) {
             commandManager.command(commandBuilder.literal("help").permission("lite.eco.admin.help").handler { ctx ->
@@ -226,12 +229,14 @@ class EcoCMD(
                     val amountStr: Int = ctx.get("amount")
                     val currency: String = ctx.get("currency")
 
-                    val message = if (liteEco.api.createAccount(target, currency, amountStr.toBigDecimal())) {
-                        "messages.admin.create_account"
-                    } else {
-                        "messages.error.account_now_exist"
+                    liteEco.pluginScope.launch {
+                        val message = if (liteEco.suspendApiWrapper.createAccount(target, currency, amountStr.toBigDecimal())) {
+                            "messages.admin.create_account"
+                        } else {
+                            "messages.error.account_now_exist"
+                        }
+                        sender.sendMessage(liteEco.locale.translation(message, Placeholder.parsed("account", target.name.toString())))
                     }
-                    sender.sendMessage(liteEco.locale.translation(message, Placeholder.parsed("account", target.name.toString())))
                 })
             commandManager.command(commandBuilder.literal("delete")
                 .commandDescription(Description.description(DESCRIPTION))
@@ -251,12 +256,14 @@ class EcoCMD(
                     val target: OfflinePlayer = ctx.get("target")
                     val currency: String = ctx.get("currency")
 
-                    val message = if (liteEco.api.deleteAccount(target.uniqueId, currency)) {
-                        "messages.admin.delete_account"
-                    } else {
-                        "messages.error.account_not_exist"
+                    liteEco.pluginScope.launch {
+                        val message = if (liteEco.suspendApiWrapper.deleteAccount(target.uniqueId, currency)) {
+                            "messages.admin.delete_account"
+                        } else {
+                            "messages.error.account_not_exist"
+                        }
+                        sender.sendMessage(liteEco.locale.translation(message, Placeholder.parsed("account", target.name.toString())))
                     }
-                    sender.sendMessage(liteEco.locale.translation(message, Placeholder.parsed("account", target.name.toString())))
                 })
             commandManager.command(commandBuilder.literal("monolog")
                 .commandDescription(Description.description(DESCRIPTION))

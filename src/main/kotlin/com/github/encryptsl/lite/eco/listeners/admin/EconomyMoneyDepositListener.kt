@@ -3,6 +3,7 @@ package com.github.encryptsl.lite.eco.listeners.admin
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.economy.EconomyOperations
 import com.github.encryptsl.lite.eco.api.events.admin.EconomyMoneyDepositEvent
+import kotlinx.coroutines.launch
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.OfflinePlayer
@@ -10,6 +11,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import java.math.BigDecimal
+import kotlin.jvm.optionals.getOrNull
 
 class EconomyMoneyDepositListener(private val liteEco: LiteEco) : Listener {
 
@@ -24,19 +26,17 @@ class EconomyMoneyDepositListener(private val liteEco: LiteEco) : Listener {
         if (liteEco.api.getCheckBalanceLimit(money) && !sender.hasPermission("lite.eco.admin.bypass.limit"))
             return sender.sendMessage(liteEco.locale.translation("messages.error.amount_above_limit"))
 
-        liteEco.api.getUserByUUID(target.uniqueId, currency).thenAccept {
-            if (!it.isPresent) {
+        liteEco.pluginScope.launch {
+            val user = liteEco.suspendApiWrapper.getUserByUUID(target.uniqueId, currency).getOrNull()
+            if (user == null) {
                 sender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist", Placeholder.parsed("account", target.name.toString())))
-                return@thenAccept
+                return@launch
             }
-
-            val user = it.get()
-
             if (liteEco.api.getCheckBalanceLimit(target.uniqueId, user.money, currency, money) || !sender.hasPermission("lite.eco.admin.bypass.limit")) {
                 sender.sendMessage(liteEco.locale.translation("messages.error.balance_above_limit",
                     Placeholder.parsed("account", target.name.toString())
                 ))
-                return@thenAccept
+                return@launch
             }
 
             liteEco.increaseTransactions(1)
@@ -45,10 +45,10 @@ class EconomyMoneyDepositListener(private val liteEco: LiteEco) : Listener {
 
             if (sender.name == target.name) {
                 sender.sendMessage(liteEco.locale.translation("messages.self.add_money", TagResolver.resolver(
-                        Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
-                        Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
+                    Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
+                    Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
                 )))
-                return@thenAccept
+                return@launch
             }
 
             sender.sendMessage(liteEco.locale.translation("messages.sender.add_money",
@@ -63,15 +63,16 @@ class EconomyMoneyDepositListener(private val liteEco: LiteEco) : Listener {
                     target.player?.sendMessage(
                         liteEco.locale.translation("messages.target.add_money_silent", Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency))
                         ))
-                    return@thenAccept
+                    return@launch
                 }
                 target.player?.sendMessage(liteEco.locale.translation("messages.target.add_money",
-                        TagResolver.resolver(
-                            Placeholder.parsed("sender", sender.name),
-                            Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
-                            Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money)))
+                    TagResolver.resolver(
+                        Placeholder.parsed("sender", sender.name),
+                        Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
+                        Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money)))
                 ))
             }
+
         }
     }
 

@@ -32,11 +32,13 @@ class AdaptiveEconomyVaultAPI(private val liteEco: LiteEco) : DeprecatedEconomy(
     }
 
     override fun hasAccount(player: OfflinePlayer): Boolean {
-        return liteEco.api.getUserByUUID(player).thenApply {
-            return@thenApply true
-        }.exceptionally {
-            return@exceptionally false
-        }.get()
+        val result: Boolean = try {
+            liteEco.api.getUserByUUID(player.uniqueId)
+                .thenApply { true }
+                .exceptionally { false }
+                .get()
+        } catch (_: Exception) { false }
+        return result
     }
 
     override fun hasAccount(player: OfflinePlayer, worldName: String?): Boolean {
@@ -47,7 +49,7 @@ class AdaptiveEconomyVaultAPI(private val liteEco: LiteEco) : DeprecatedEconomy(
         return try {
             player?.let {
                 if (PlayerAccount.isPlayerOnline(it.uniqueId)) {
-                    liteEco.api.getBalance(it).toDouble()
+                    liteEco.api.getBalance(it.uniqueId).toDouble()
                 } else {
                     liteEco.databaseEcoModel.getBalance(it.uniqueId, liteEco.currencyImpl.defaultCurrency()).toDouble()
                 }
@@ -62,7 +64,7 @@ class AdaptiveEconomyVaultAPI(private val liteEco: LiteEco) : DeprecatedEconomy(
     }
 
     override fun has(player: OfflinePlayer?, amount: Double): Boolean {
-        return if(player != null) liteEco.api.has(player, liteEco.currencyImpl.defaultCurrency(), amount.toBigDecimal()) else false
+        return if(player != null) liteEco.api.has(player.uniqueId, liteEco.currencyImpl.defaultCurrency(), amount.toBigDecimal()) else false
     }
 
     override fun has(player: OfflinePlayer?, worldName: String?, amount: Double): Boolean {
@@ -77,7 +79,7 @@ class AdaptiveEconomyVaultAPI(private val liteEco: LiteEco) : DeprecatedEconomy(
 
         return if (has(player, amount)) {
             liteEco.debugger.debug(AdaptiveEconomyVaultAPI::class.java, "successfully withdraw ${player.name} from his balance ${getBalance(player)} amount $amount")
-            liteEco.api.withDrawMoney(player, liteEco.currencyImpl.defaultCurrency(), amount.toBigDecimal())
+            liteEco.api.withDrawMoney(player.uniqueId, liteEco.currencyImpl.defaultCurrency(), amount.toBigDecimal())
             EconomyResponse(amount, getBalance(player), EconomyResponse.ResponseType.SUCCESS, null)
         } else {
             EconomyResponse(0.0, getBalance(player), EconomyResponse.ResponseType.FAILURE, null)
@@ -90,12 +92,12 @@ class AdaptiveEconomyVaultAPI(private val liteEco: LiteEco) : DeprecatedEconomy(
 
     override fun depositPlayer(player: OfflinePlayer?, amount: Double): EconomyResponse {
         liteEco.debugger.debug(AdaptiveEconomyVaultAPI::class.java, "try deposit to ${player?.name} amount $amount")
-        if (player == null || !hasAccount(player) || amount.toBigDecimal().isApproachingZero() || liteEco.api.getCheckBalanceLimit(player, getBalance(player).toBigDecimal(), amount = amount.toBigDecimal())) {
+        if (player == null || !hasAccount(player) || amount.toBigDecimal().isApproachingZero() || liteEco.api.getCheckBalanceLimit(player.uniqueId, getBalance(player).toBigDecimal(), amount = amount.toBigDecimal())) {
             return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.FAILURE, null)
         }
 
         liteEco.debugger.debug(AdaptiveEconomyVaultAPI::class.java, "successfully deposit ${player.name} to his balance ${getBalance(player)} amount $amount")
-        liteEco.api.depositMoney(player, liteEco.currencyImpl.defaultCurrency(), amount.toBigDecimal())
+        liteEco.api.depositMoney(player.uniqueId, liteEco.currencyImpl.defaultCurrency(), amount.toBigDecimal())
 
         return EconomyResponse(amount, getBalance(player), EconomyResponse.ResponseType.SUCCESS, null)
     }

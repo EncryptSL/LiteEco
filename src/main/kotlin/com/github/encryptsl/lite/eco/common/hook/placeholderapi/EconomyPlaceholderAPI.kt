@@ -28,25 +28,25 @@ class EconomyPlaceholderAPI(private val liteEco: LiteEco, private val extVersion
         val rank = args.getOrNull(2)?.toIntOrNull()
 
         return when (identifier) {
-            "balance" -> liteEco.api.getBalance(player, liteEco.currencyImpl.defaultCurrency()).toString()
-            "balance_formatted" -> liteEco.api.fullFormatting(liteEco.api.getBalance(player, liteEco.currencyImpl.defaultCurrency()))
-            "balance_compacted" -> liteEco.api.compacted(liteEco.api.getBalance(player, liteEco.currencyImpl.defaultCurrency()))
+            "balance" -> liteEco.api.getBalance(player.uniqueId, liteEco.currencyImpl.defaultCurrency()).toString()
+            "balance_formatted" -> liteEco.api.fullFormatting(liteEco.api.getBalance(player.uniqueId, liteEco.currencyImpl.defaultCurrency()))
+            "balance_compacted" -> liteEco.api.compacted(liteEco.api.getBalance(player.uniqueId, liteEco.currencyImpl.defaultCurrency()))
             "top_rank_player" -> nameByRank(1, liteEco.currencyImpl.defaultCurrency())
             else -> {
                 when {
                     identifier.startsWith("balance_") -> {
                         if (identifier.startsWith("balance_formatted_")) {
                             val currency = extractPlaceholderIdentifierName(2, args)
-                            return liteEco.api.fullFormatting(liteEco.api.getBalance(player, currency), currency)
+                            return liteEco.api.fullFormatting(liteEco.api.getBalance(player.uniqueId, currency), currency)
                         }
 
                         if (identifier.startsWith("balance_compacted_")) {
                             val currency = extractPlaceholderIdentifierName(2, args)
-                            return liteEco.api.compacted(liteEco.api.getBalance(player, currency))
+                            return liteEco.api.compacted(liteEco.api.getBalance(player.uniqueId, currency))
                         }
                         val currency = extractPlaceholderIdentifierName(1, args)
 
-                        return liteEco.api.getBalance(player, currency).toString()
+                        return liteEco.api.getBalance(player.uniqueId, currency).toString()
                     }
                     identifier.startsWith("top_rank_player_") -> {
                         val currency = extractPlaceholderIdentifierName(3, args)

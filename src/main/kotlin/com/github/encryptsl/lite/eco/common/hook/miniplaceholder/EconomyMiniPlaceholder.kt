@@ -19,7 +19,7 @@ class EconomyMiniPlaceholder(private val liteEco: LiteEco) {
                 if (!liteEco.currencyImpl.getCurrencyNameExist(currency))
                     return@audiencePlaceholder null
 
-                return@audiencePlaceholder Component.text(liteEco.api.getBalance(player, currency).toPlainString()).asInsertingTag()
+                return@audiencePlaceholder Component.text(liteEco.api.getBalance(player.uniqueId, currency).toPlainString()).asInsertingTag()
             }
             audiencePlaceholder("balance_formatted") { p, s, _ ->
                 val player: OfflinePlayer = p as OfflinePlayer
@@ -27,12 +27,12 @@ class EconomyMiniPlaceholder(private val liteEco: LiteEco) {
                 if (!liteEco.currencyImpl.getCurrencyNameExist(currency))
                     return@audiencePlaceholder null
 
-                return@audiencePlaceholder Component.text(liteEco.api.fullFormatting(liteEco.api.getBalance(player, currency))).asInsertingTag()
+                return@audiencePlaceholder Component.text(liteEco.api.fullFormatting(liteEco.api.getBalance(player.uniqueId, currency))).asInsertingTag()
             }
             audiencePlaceholder("balance_compacted") { p, s, _ ->
                 val player: OfflinePlayer = p as OfflinePlayer
                 val currency = if (s.hasNext()) s.pop().value() else liteEco.currencyImpl.defaultCurrency()
-                return@audiencePlaceholder Component.text(liteEco.api.fullFormatting(liteEco.api.getBalance(player, currency))).asInsertingTag()
+                return@audiencePlaceholder Component.text(liteEco.api.fullFormatting(liteEco.api.getBalance(player.uniqueId, currency))).asInsertingTag()
             }
             globalPlaceholder("top_rank_player") { i, _ ->
                 val currency = if (i.hasNext()) i.pop().value() else liteEco.currencyImpl.defaultCurrency()

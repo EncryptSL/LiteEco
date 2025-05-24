@@ -30,7 +30,7 @@ abstract class TreasuryAccount(private val uuid: UUID) : Account {
         if (!currency.identifier.equals(TreasuryCurrency.CURRENCY_IDENTIFIER, true)) {
             return CompletableFuture.failedFuture(UnsupportedOperationException("LiteEco Currency not found !"))
         } else {
-            return CompletableFuture.completedFuture(LiteEco.instance.api.getBalance(PlayerUtils.getOfflinePlayer(uuid)))
+            return CompletableFuture.completedFuture(LiteEco.instance.api.getBalance(uuid, currency.identifier))
         }
     }
 
@@ -43,7 +43,7 @@ abstract class TreasuryAccount(private val uuid: UUID) : Account {
             val money = economyTransaction.amount
             val player = PlayerUtils.getOfflinePlayer(uuid)
             val isApproachingZero = money.isApproachingZero()
-            val playerHasAccount = LiteEco.instance.api.hasAccount(player).join()
+            val playerHasAccount = LiteEco.instance.api.hasAccount(player.uniqueId).join()
 
             when (economyTransaction.type) {
                 EconomyTransactionType.DEPOSIT -> {
@@ -53,11 +53,11 @@ abstract class TreasuryAccount(private val uuid: UUID) : Account {
                     if (isApproachingZero) {
                         throw IllegalArgumentException(AMOUNT_IS_NEGATIVE_OR_ZERO)
                     }
-                    if(LiteEco.instance.api.getCheckBalanceLimit(player, LiteEco.instance.api.getBalance(player, LiteEco.instance.currencyImpl.defaultCurrency()), LiteEco.instance.currencyImpl.defaultCurrency(), money)) {
+                    if(LiteEco.instance.api.getCheckBalanceLimit(player.uniqueId, LiteEco.instance.api.getBalance(player.uniqueId, LiteEco.instance.currencyImpl.defaultCurrency()), LiteEco.instance.currencyImpl.defaultCurrency(), money)) {
                         throw IllegalArgumentException(AMOUNT_REACH_LIMIT_OF_BALANCE)
                     }
 
-                    LiteEco.instance.api.depositMoney(player, LiteEco.instance.currencyImpl.defaultCurrency(), money)
+                    LiteEco.instance.api.depositMoney(player.uniqueId, LiteEco.instance.currencyImpl.defaultCurrency(), money)
                 }
                 EconomyTransactionType.WITHDRAWAL -> {
                     if (!playerHasAccount) {
@@ -67,24 +67,24 @@ abstract class TreasuryAccount(private val uuid: UUID) : Account {
                         throw IllegalArgumentException(AMOUNT_IS_NEGATIVE_OR_ZERO)
                     }
 
-                    LiteEco.instance.api.withDrawMoney(player, LiteEco.instance.currencyImpl.defaultCurrency(), money)
+                    LiteEco.instance.api.withDrawMoney(player.uniqueId, LiteEco.instance.currencyImpl.defaultCurrency(), money)
                 }
                 EconomyTransactionType.SET -> {
                     if (!playerHasAccount) {
                         throw IllegalArgumentException(PLAYER_NOT_FOUND)
                     }
-                    LiteEco.instance.api.setMoney(player, LiteEco.instance.currencyImpl.defaultCurrency(), money)
+                    LiteEco.instance.api.setMoney(player.uniqueId, LiteEco.instance.currencyImpl.defaultCurrency(), money)
                 }
             }
-            return@supplyAsync LiteEco.instance.api.getBalance(player)
+            return@supplyAsync LiteEco.instance.api.getBalance(player.uniqueId)
         }
     }
 
     override fun deleteAccount(): CompletableFuture<Boolean> {
-        if (!LiteEco.instance.api.hasAccount(PlayerUtils.getOfflinePlayer(uuid)).join())
+        if (!LiteEco.instance.api.hasAccount(uuid).join())
             return CompletableFuture.completedFuture(false)
 
-        return CompletableFuture.completedFuture(LiteEco.instance.api.deleteAccount(Bukkit.getOfflinePlayer(uuid)))
+        return CompletableFuture.completedFuture(LiteEco.instance.api.deleteAccount(uuid))
     }
 
     override fun retrieveHeldCurrencies(): CompletableFuture<MutableCollection<String>> {

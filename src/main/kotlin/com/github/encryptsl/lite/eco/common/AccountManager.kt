@@ -1,14 +1,18 @@
 package com.github.encryptsl.lite.eco.common
 
 import com.github.encryptsl.lite.eco.LiteEco
+import kotlinx.coroutines.future.await
+import kotlinx.coroutines.launch
 import org.bukkit.Bukkit
 import java.util.*
 
 class AccountManager(private val liteEco: LiteEco) {
 
     fun createAccount(uuid: UUID) {
-        for (currency in liteEco.currencyImpl.getCurrenciesKeys()) {
-            liteEco.api.createAccount(Bukkit.getOfflinePlayer(uuid), currency, liteEco.currencyImpl.getCurrencyStartBalance(currency))
+        liteEco.pluginScope.launch {
+            for (currency in liteEco.currencyImpl.getCurrenciesKeys()) {
+                liteEco.suspendApiWrapper.createAccount(Bukkit.getOfflinePlayer(uuid), currency, liteEco.currencyImpl.getCurrencyStartBalance(currency))
+            }
         }
     }
 
@@ -17,13 +21,13 @@ class AccountManager(private val liteEco: LiteEco) {
     }
 
     fun cachingAccount(uuid: UUID) {
-        for (currency in liteEco.currencyImpl.getCurrenciesKeys()) {
-            val future = liteEco.databaseEcoModel.getUserByUUID(uuid, currency).thenAccept {
-                if (it.isPresent) {
-                    liteEco.api.cacheAccount(uuid, currency, it.get().money)
+        liteEco.pluginScope.launch {
+            for (currency in liteEco.currencyImpl.getCurrenciesKeys()) {
+                val result = liteEco.databaseEcoModel.getUserByUUID(uuid, currency).await()
+                if (result.isPresent) {
+                    liteEco.api.cacheAccount(uuid, currency, result.get().money)
                 }
             }
-            future.join()
         }
     }
 

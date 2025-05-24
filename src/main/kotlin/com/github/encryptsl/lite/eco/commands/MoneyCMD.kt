@@ -6,6 +6,8 @@ import com.github.encryptsl.lite.eco.api.events.PlayerEconomyPayEvent
 import com.github.encryptsl.lite.eco.api.objects.ModernText
 import com.github.encryptsl.lite.eco.commands.parsers.CurrencyParser
 import com.github.encryptsl.lite.eco.utils.Helper
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.OfflinePlayer
@@ -123,13 +125,14 @@ class MoneyCMD(
         if (!sender.hasPermission("lite.eco.balance.$currency") && !sender.hasPermission("lite.eco.balance.*"))
             return sender.sendMessage(liteEco.locale.translation("messages.error.missing_currency_permission"))
 
-        liteEco.api.getUserByUUID(target, currency).thenAccept { value ->
-            value.ifPresentOrElse({
+        liteEco.pluginScope.launch {
+            liteEco.suspendApiWrapper.getUserByUUID(target.uniqueId, currency).ifPresentOrElse({
                 val formatMessage = if (sender == target)
                     liteEco.locale.translation("messages.balance.format", helper.getComponentBal(it, currency))
                 else
                     liteEco.locale.translation("messages.balance.format_target", helper.getComponentBal(it, currency))
-                sender.sendMessage(formatMessage) }, {
+                sender.sendMessage(formatMessage)
+            }, {
                 sender.sendMessage(
                     liteEco.locale.translation("messages.error.account_not_exist",
                         Placeholder.parsed("account", target.name.toString()))

@@ -3,12 +3,15 @@ package com.github.encryptsl.lite.eco.listeners.admin
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.economy.EconomyOperations
 import com.github.encryptsl.lite.eco.api.events.admin.EconomyGlobalSetEvent
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import kotlin.jvm.optionals.getOrNull
 
 class EconomyGlobalSetListener(private val liteEco: LiteEco) : Listener {
     @EventHandler
@@ -24,11 +27,11 @@ class EconomyGlobalSetListener(private val liteEco: LiteEco) : Listener {
         if (liteEco.api.getCheckBalanceLimit(money) && !sender.hasPermission("lite.eco.admin.bypass.limit"))
             return sender.sendMessage(liteEco.locale.translation("messages.error.amount_above_limit"))
 
-        for (p in offlinePlayers) {
-            liteEco.api.getUserByUUID(p.uniqueId, currency).thenAccept {
-                if (it.isPresent && liteEco.currencyImpl.getCurrencyLimit(currency) < money) {
-                    val user = it.get()
-                    liteEco.loggerModel.logging(EconomyOperations.SET, sender.name, it.get().userName, currency, user.money, money)
+        liteEco.pluginScope.launch {
+            for (p in offlinePlayers) {
+                val user = liteEco.suspendApiWrapper.getUserByUUID(p.uniqueId, currency).getOrNull()
+                if (user != null) {
+                    liteEco.loggerModel.logging(EconomyOperations.SET, sender.name, user.userName, currency, user.money, money)
                     liteEco.api.setMoney(p.uniqueId, currency, money)
                 }
             }

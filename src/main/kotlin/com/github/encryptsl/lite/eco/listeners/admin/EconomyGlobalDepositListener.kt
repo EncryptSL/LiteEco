@@ -3,12 +3,14 @@ package com.github.encryptsl.lite.eco.listeners.admin
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.economy.EconomyOperations
 import com.github.encryptsl.lite.eco.api.events.admin.EconomyGlobalDepositEvent
+import kotlinx.coroutines.launch
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import kotlin.jvm.optionals.getOrNull
 
 class EconomyGlobalDepositListener(private val liteEco: LiteEco) : Listener {
 
@@ -25,10 +27,10 @@ class EconomyGlobalDepositListener(private val liteEco: LiteEco) : Listener {
         if (liteEco.api.getCheckBalanceLimit(money) && !sender.hasPermission("lite.eco.admin.bypass.limit"))
             return sender.sendMessage(liteEco.locale.translation("messages.error.amount_above_limit"))
 
-        for (p in offlinePlayers) {
-            liteEco.api.getUserByUUID(p.uniqueId, currency).thenAccept {
-                if (it.isPresent) {
-                    val user = it.get()
+        liteEco.pluginScope.launch {
+            for (p in offlinePlayers) {
+                val user = liteEco.suspendApiWrapper.getUserByUUID(p.uniqueId, currency).getOrNull()
+                if (user != null) {
                     if (!liteEco.api.getCheckBalanceLimit(user.uuid, user.money, currency, money)) {
                         liteEco.loggerModel.logging(EconomyOperations.DEPOSIT, sender.name, user.userName, currency, user.money, user.money.plus(money))
                         liteEco.api.depositMoney(user.uuid, currency, money)

@@ -22,17 +22,6 @@ interface LiteEconomyAPI {
 
     /**
      * Cache player account during login
-     * @param player is OfflinePlayer
-     * @param currency name of currency
-     * @param amount is value of player account from database.
-     * @return Boolean
-     * @see OfflinePlayer
-     * @see com.github.encryptsl.lite.eco.common.database.models.DatabaseEcoModel.getUserByUUID(uuid)
-     */
-    fun cacheAccount(player: OfflinePlayer, currency: String = "dollars", amount: BigDecimal)
-
-    /**
-     * Cache player account during login
      * @param uuid is UUID
      * @param currency name of currency
      * @param amount is value of player account from database.
@@ -41,15 +30,6 @@ interface LiteEconomyAPI {
      * @see com.github.encryptsl.lite.eco.common.database.models.DatabaseEcoModel.getUserByUUID(uuid)
      */
     fun cacheAccount(uuid: UUID, currency: String = "dollars", amount: BigDecimal)
-
-    /**
-     * Delete player account from database
-     * @param player is OfflinePlayer
-     * @param currency name of currency
-     * @return Boolean
-     * @see OfflinePlayer
-     */
-    fun deleteAccount(player: OfflinePlayer, currency: String = "dollars"): Boolean
 
     /**
      * Delete player account from database
@@ -62,30 +42,12 @@ interface LiteEconomyAPI {
 
     /**
      * Boolean for check if player have account in database
-     * @param player is OfflinePlayer
-     * @param currency name of currency
-     * @return Boolean
-     * @see OfflinePlayer
-     */
-    fun hasAccount(player: OfflinePlayer, currency: String = "dollars"): CompletableFuture<Boolean>
-
-    /**
-     * Boolean for check if player have account in database
      * @param uuid is UUID
      * @param currency name of currency
      * @return Boolean
      * @see UUID
      */
     fun hasAccount(uuid: UUID, currency: String = "dollars"): CompletableFuture<Boolean>
-
-    /**
-     * Boolean for check if player have enough money
-     * @param player is OfflinePlayer
-     * @param currency name of currency
-     * @return Boolean
-     * @see OfflinePlayer
-     */
-    fun has(player: OfflinePlayer, currency: String = "dollars", amount: BigDecimal): Boolean
 
     /**
      * Boolean for check if player have enough money
@@ -98,30 +60,12 @@ interface LiteEconomyAPI {
 
     /**
      * Get user account
-     * @param player is OfflinePlayer
-     * @param currency name of currency
-     * @return User
-     * @see OfflinePlayer
-     */
-    fun getUserByUUID(player: OfflinePlayer, currency: String = "dollars"): CompletableFuture<Optional<User>>
-
-    /**
-     * Get user account
      * @param uuid is UUID
      * @param currency name of currency
      * @return User
      * @see OfflinePlayer
      */
     fun getUserByUUID(uuid: UUID, currency: String = "dollars"): CompletableFuture<Optional<User>>
-
-    /**
-     * Get balance of player account
-     * @param player is OfflinePlayer
-     * @param currency name of currency
-     * @return Double
-     * @see OfflinePlayer
-     */
-    fun getBalance(player: OfflinePlayer, currency: String = "dollars"): BigDecimal
 
     /**
      * Get balance of player account
@@ -143,16 +87,6 @@ interface LiteEconomyAPI {
 
     /**
      * Get check limit of player balance.
-     * @param player is OfflinePlayer
-     * @param currentBalance is Current Balance of Player
-     * @param currency name of currency
-     * @return Boolean
-     * @see OfflinePlayer
-     */
-    fun getCheckBalanceLimit(player: OfflinePlayer, currentBalance: BigDecimal, currency: String = "dollars", amount: BigDecimal): Boolean
-
-    /**
-     * Get check limit of player balance.
      * @param uuid is UUID
      * @param currentBalance is Current Balance of Player
      * @param currency name of currency
@@ -160,15 +94,6 @@ interface LiteEconomyAPI {
      * @see UUID
      */
     fun getCheckBalanceLimit(uuid: UUID, currentBalance: BigDecimal, currency: String = "dollars", amount: BigDecimal): Boolean
-
-    /**
-     * Deposit money to player account
-     * @param player is OfflinePlayer
-     * @param currency name of currency
-     * @param amount is amount added to player account
-     * @see OfflinePlayer
-     */
-    fun depositMoney(player: OfflinePlayer, currency: String = "dollars", amount: BigDecimal)
 
     /**
      * Deposit money to player account
@@ -181,31 +106,12 @@ interface LiteEconomyAPI {
 
     /**
      * Withdraw money from player account
-     * @param player is OfflinePlayer
-     * @param currency name of currency
-     * @param amount is amount removed from player account
-     * @see OfflinePlayer
-     */
-    fun withDrawMoney(player: OfflinePlayer, currency: String = "dollars", amount: BigDecimal)
-
-    /**
-     * Withdraw money from player account
      * @param uuid is UUID
      * @param currency name of currency
      * @param amount is amount removed from player account
      * @see UUID
      */
     fun withDrawMoney(uuid: UUID, currency: String = "dollars", amount: BigDecimal)
-
-    /**
-     * Transfer of money from player account to another player account.
-     * @param fromPlayer is sender Player
-     * @param target is offline player who receive money.
-     * @param currency name of currency
-     * @see Player
-     * @see OfflinePlayer
-     */
-    fun transfer(fromPlayer: Player, target: OfflinePlayer, currency: String = "dollars", amount: BigDecimal)
 
     /**
      * Transfer of money from player account to another player account.
@@ -219,28 +125,12 @@ interface LiteEconomyAPI {
 
     /**
      * Set fixed money to player account
-     * @param player is OfflinePlayer
-     * @param currency name of currency
-     * @param amount is amount fixed value
-     * @see OfflinePlayer
-     */
-    fun setMoney(player: OfflinePlayer, currency: String = "dollars", amount: BigDecimal)
-
-    /**
-     * Set fixed money to player account
      * @param uuid is UUID
      * @param currency name of currency
      * @param amount is amount fixed value
      * @see UUID
      */
     fun setMoney(uuid: UUID, currency: String = "dollars", amount: BigDecimal)
-
-    /**
-     * Synchronize cache with database
-     * @param offlinePlayer is OfflinePlayer
-     * @see OfflinePlayer
-     */
-    fun syncAccount(offlinePlayer: OfflinePlayer, currency: String = "dollars")
 
     /**
      * Synchronize cache with database

@@ -4,6 +4,7 @@ import com.github.encryptsl.lite.eco.api.ConfigAPI
 import com.github.encryptsl.lite.eco.api.UpdateNotifier
 import com.github.encryptsl.lite.eco.api.economy.Currency
 import com.github.encryptsl.lite.eco.api.economy.ModernLiteEcoEconomyImpl
+import com.github.encryptsl.lite.eco.api.economy.SuspendLiteEcoEconomyWrapper
 import com.github.encryptsl.lite.eco.api.enums.ExportKeys
 import com.github.encryptsl.lite.eco.api.enums.PurgeKey
 import com.github.encryptsl.lite.eco.api.objects.ModernText
@@ -19,6 +20,10 @@ import com.github.encryptsl.lite.eco.listeners.*
 import com.github.encryptsl.lite.eco.listeners.admin.*
 import com.github.encryptsl.lite.eco.utils.Debugger
 import com.tchristofferson.configupdater.ConfigUpdater
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import org.bstats.bukkit.Metrics
 import org.bstats.charts.SingleLineChart
 import org.bukkit.Bukkit
@@ -48,6 +53,7 @@ class LiteEco : JavaPlugin() {
     private var countTransactions: LinkedHashMap<String, Int> = LinkedHashMap()
 
     val api: ModernLiteEcoEconomyImpl by lazy { ModernLiteEcoEconomyImpl() }
+    val suspendApiWrapper: SuspendLiteEcoEconomyWrapper by lazy { SuspendLiteEcoEconomyWrapper() }
     val locale: Locales by lazy { Locales(this) }
     val databaseEcoModel: DatabaseEcoModel by lazy { DatabaseEcoModel() }
     val loggerModel: DatabaseMonologModel by lazy { DatabaseMonologModel(this) }
@@ -55,6 +61,8 @@ class LiteEco : JavaPlugin() {
     val databaseConnector: DatabaseConnector by lazy { DatabaseConnector(this) }
     val accountManager: AccountManager by lazy { AccountManager(this) }
     val debugger: Debugger by lazy { Debugger(this) }
+
+    val pluginScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
     private val configAPI: ConfigAPI by lazy { ConfigAPI(this) }
     private val hookManager: HookManager by lazy { HookManager(this) }
@@ -92,6 +100,7 @@ class LiteEco : JavaPlugin() {
 
     override fun onDisable() {
         api.syncAccounts()
+        pluginScope.cancel()
         logger.info("Plugin is disabled")
     }
 

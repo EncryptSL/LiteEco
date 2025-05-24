@@ -45,17 +45,12 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
     }
 
     override fun createAccount(accountID: UUID, name: String, player: Boolean): Boolean {
-        if (!player) {
-            return false
-        }
+        if (!player) { return false }
         return liteEco.api.createAccount(Bukkit.getOfflinePlayer(accountID), startAmount = liteEco.currencyImpl.defaultStartBalance())
     }
 
     override fun createAccount(accountID: UUID, name: String, worldName: String, player: Boolean): Boolean {
-        if (!player) {
-            return false
-        }
-
+        if (!player) { return false }
         return liteEco.api.createAccount(Bukkit.getOfflinePlayer(accountID), startAmount = liteEco.currencyImpl.defaultStartBalance())
     }
 
@@ -72,9 +67,9 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
 
     override fun hasAccount(uuid: UUID): Boolean {
         return liteEco.api.getUserByUUID(uuid, liteEco.currencyImpl.defaultCurrency()).thenApply {
-            return@thenApply true
+            true
         }.exceptionally {
-            return@exceptionally false
+            false
         }.get()
     }
 
@@ -85,11 +80,15 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
     override fun renameAccount(plugin: String, accountID: UUID, name: String): Boolean = false
 
     override fun accountSupportsCurrency(plugin: String, accountID: UUID, currency: String): Boolean {
-        return liteEco.api.hasAccount(accountID, currency).thenApply {
-            return@thenApply true
-        }.exceptionally {
-            return@exceptionally false
-        }.join()
+        val result: Boolean = try {
+            liteEco.api.getUserByUUID(accountID)
+                .thenApply { true }
+                .exceptionally { false }
+                .get()
+        } catch (_: Exception) {
+            false
+        }
+        return result
     }
 
     override fun accountSupportsCurrency(plugin: String, accountID: UUID, currency: String, world: String): Boolean {

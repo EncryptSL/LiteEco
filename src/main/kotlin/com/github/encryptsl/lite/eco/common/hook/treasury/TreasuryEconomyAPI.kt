@@ -41,7 +41,7 @@ class TreasuryEconomyAPI(private val liteEco: LiteEco) : EconomyProvider, Accoun
             return CompletableFuture.failedFuture(UnsupportedOperationException(TreasuryNonPlayerAccount.UNSUPPORTED_NON_PLAYER))
         }
 
-        return LiteEco.instance.api.hasAccount(PlayerUtils.getOfflinePlayer(accountData.playerIdentifier.get()))
+        return LiteEco.instance.api.hasAccount(accountData.playerIdentifier.get())
     }
 
     override fun retrievePlayerAccountIds(): CompletableFuture<MutableCollection<UUID>> {
