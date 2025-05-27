@@ -11,6 +11,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import java.math.BigDecimal
+import kotlin.jvm.optionals.getOrNull
 
 class PlayerEconomyPayListener(private val liteEco: LiteEco) : Listener {
     @EventHandler
@@ -21,47 +22,44 @@ class PlayerEconomyPayListener(private val liteEco: LiteEco) : Listener {
         val currency: String = event.currency
 
         liteEco.pluginScope.launch {
-            val user = liteEco.suspendApiWrapper.getUserByUUID(target.uniqueId, currency)
-            if (!user.isPresent) {
+            val user = liteEco.suspendApiWrapper.getUserByUUID(target.uniqueId, currency).getOrNull()
+            if (user == null) {
                 sender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist",
                     Placeholder.parsed("account", target.name.toString())
                 ))
                 return@launch
             }
 
-            val e = user.get()
             if (!liteEco.api.has(sender.uniqueId, currency, money))
                 return@launch sender.sendMessage(liteEco.locale.translation("messages.error.insufficient_funds"))
 
-            if (liteEco.api.getCheckBalanceLimit(target.uniqueId, e.money, currency, money)) {
+            if (liteEco.api.getCheckBalanceLimit(target.uniqueId, user.money, currency, money)) {
                 sender.sendMessage(liteEco.locale.translation("messages.error.balance_above_limit",
                     Placeholder.parsed("account", target.name.toString())
                 ))
                 return@launch
             }
 
-            sender.sendMessage(liteEco.locale.translation("messages.sender.add_money", TagResolver.resolver(
-                Placeholder.parsed("target", e.userName),
+            liteEco.loggerModel.logging(EconomyOperations.TRANSFER,
+                sender.name, target.name.toString(), currency, user.money, user.money.plus(money)
+            )
+            liteEco.suspendApiWrapper.transfer(sender.uniqueId, target.uniqueId, currency, money)
+        }
+
+        sender.sendMessage(liteEco.locale.translation("messages.sender.add_money", TagResolver.resolver(
+            Placeholder.parsed("target", target.name.toString()),
+            Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
+            Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
+        )))
+
+        liteEco.increaseTransactions(1)
+
+        if (target.isOnline) {
+            target.player?.sendMessage(liteEco.locale.translation("messages.target.add_money", TagResolver.resolver(
+                Placeholder.parsed("sender", sender.name),
                 Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
                 Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
             )))
-
-            liteEco.loggerModel.logging(EconomyOperations.TRANSFER, sender.name, target.name.toString(), currency, e.money, e.money.plus(money))
-
-            liteEco.api.transfer(sender.uniqueId, target.uniqueId, currency, money)
-            liteEco.increaseTransactions(1)
-
-            if (target.isOnline) {
-                target.player?.sendMessage(
-                    liteEco.locale.translation("messages.target.add_money",
-                        TagResolver.resolver(
-                            Placeholder.parsed("sender", sender.name),
-                            Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
-                            Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
-                        )
-                    ))
-            }
-
         }
     }
 }

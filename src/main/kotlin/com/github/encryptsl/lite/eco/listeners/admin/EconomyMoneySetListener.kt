@@ -33,34 +33,29 @@ class EconomyMoneySetListener(private val liteEco: LiteEco) : Listener {
             }
             liteEco.loggerModel.logging(EconomyOperations.SET, sender.name, target.name.toString(), currency, user.money, money)
             liteEco.increaseTransactions(1)
-            liteEco.api.setMoney(target.uniqueId, currency, money)
+            liteEco.suspendApiWrapper.set(target.uniqueId, currency, money)
+        }
 
-            if (sender.name == target.name) {
-                sender.sendMessage(liteEco.locale.translation("messages.self.set_money", TagResolver.resolver(
-                    Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
-                    Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
-                )))
-                return@launch
-            }
+        if (sender.name == target.name) {
+            sender.sendMessage(liteEco.locale.translation("messages.self.set_money", TagResolver.resolver(
+                Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
+                Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
+            )))
+            return
+        }
 
-            sender.sendMessage(
-                liteEco.locale.translation("messages.sender.set_money", TagResolver.resolver(
-                    Placeholder.parsed("target", target.name.toString()),
-                    Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
-                    Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
-                ))
-            )
+        sender.sendMessage(liteEco.locale.translation("messages.sender.set_money", TagResolver.resolver(
+            Placeholder.parsed("target", target.name.toString()),
+            Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
+            Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
+        )))
 
-            if (target.isOnline && liteEco.config.getBoolean("messages.target.notify_set")) {
-                target.player?.sendMessage(
-                    liteEco.locale.translation("messages.target.set_money",
-                        TagResolver.resolver(
-                            Placeholder.parsed("sender", sender.name),
-                            Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
-                            Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
-                        )
-                    ))
-            }
+        if (target.isOnline && liteEco.config.getBoolean("messages.target.notify_set")) {
+            target.player?.sendMessage(liteEco.locale.translation("messages.target.set_money", TagResolver.resolver(
+                Placeholder.parsed("sender", sender.name),
+                Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
+                Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
+            )))
         }
     }
 

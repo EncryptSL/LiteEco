@@ -6,6 +6,7 @@ import net.milkbowl.vault2.economy.EconomyResponse
 import org.bukkit.Bukkit
 import java.math.BigDecimal
 import java.util.*
+import kotlin.jvm.optionals.getOrNull
 
 class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaultUnlockedAPI() {
 
@@ -61,16 +62,13 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
     }
 
     override fun getAccountName(uuid: UUID): Optional<String> {
-        val user = liteEco.api.getUserByUUID(uuid, liteEco.currencyImpl.defaultCurrency())
-        return Optional.of(user.join().get().userName)
+        return liteEco.api.getUserByUUID(uuid, liteEco.currencyImpl.defaultCurrency()).getOrNull()?.let {
+            Optional.of(it.userName)
+        } ?: Optional.empty()
     }
 
     override fun hasAccount(uuid: UUID): Boolean {
-        return liteEco.api.getUserByUUID(uuid, liteEco.currencyImpl.defaultCurrency()).thenApply {
-            true
-        }.exceptionally {
-            false
-        }.get()
+        return liteEco.api.getUserByUUID(uuid).isPresent
     }
 
     override fun hasAccount(accountID: UUID, worldName: String): Boolean = hasAccount(accountID)
@@ -81,10 +79,7 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
 
     override fun accountSupportsCurrency(plugin: String, accountID: UUID, currency: String): Boolean {
         val result: Boolean = try {
-            liteEco.api.getUserByUUID(accountID)
-                .thenApply { true }
-                .exceptionally { false }
-                .get()
+            liteEco.api.getUserByUUID(accountID, currency).isPresent
         } catch (_: Exception) {
             false
         }

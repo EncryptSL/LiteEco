@@ -12,40 +12,42 @@ import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import java.math.BigDecimal
 import java.util.*
-import java.util.concurrent.CompletableFuture
 
 class ModernLiteEcoEconomyImpl : LiteEconomyAPI {
 
     override fun createAccount(player: OfflinePlayer, currency: String, startAmount: BigDecimal): Boolean {
-        return getUserByUUID(player.uniqueId, currency).thenApply {
-            if (!it.isPresent) {
-                LiteEco.instance.databaseEcoModel.createPlayerAccount(player.name.toString(), player.uniqueId, currency, startAmount)
-                true
-            }
+        val user = getUserByUUID(player.uniqueId, currency).orElse(null)
+        return if (user == null) {
+            LiteEco.instance.databaseEcoModel.createPlayerAccount(player.name.toString(), player.uniqueId, currency, startAmount)
+            true
+        } else {
             LiteEco.instance.databaseEcoModel.updatePlayerName(player.uniqueId, player.name.toString(), currency)
             false
-        }.join()
+        }
     }
 
-    override fun getUserByUUID(uuid: UUID, currency: String): CompletableFuture<Optional<User>> {
+    override fun getUserByUUID(uuid: UUID, currency: String): Optional<User> {
         return if (PlayerAccount.isPlayerOnline(uuid) || PlayerAccount.isAccountCached(uuid, currency)) {
-            CompletableFuture.supplyAsync { Optional.of(User(Bukkit.getPlayer(uuid)?.name.toString(), uuid, PlayerAccount.getBalance(uuid, currency))) }
+            Optional.of(User(Bukkit.getPlayer(uuid)?.name.toString(), uuid, PlayerAccount.getBalance(uuid, currency)))
         } else {
-            LiteEco.instance.databaseEcoModel.getUserByUUID(uuid, currency)
+            Optional.ofNullable(LiteEco.instance.databaseEcoModel.getUserByUUID(uuid, currency))
         }
     }
 
     override fun deleteAccount(uuid: UUID, currency: String): Boolean {
-        return getUserByUUID(uuid, currency).thenApply {
-            PlayerAccount.clearFromCache(uuid)
-            LiteEco.instance.databaseEcoModel.deletePlayerAccount(uuid, currency)
-            true
-        }.exceptionally {
+        return try {
+            getUserByUUID(uuid, currency).orElse(null)?.let {
+                PlayerAccount.clearFromCache(uuid)
+                LiteEco.instance.databaseEcoModel.deletePlayerAccount(uuid, currency)
+                true
+            } ?: false
+        } catch (e: Exception) {
+            LiteEco.instance.logger.severe("Chyba při mazání účtu: ${e.message}")
             false
-        }.join()
+        }
     }
 
-    override fun hasAccount(uuid: UUID, currency: String): CompletableFuture<Boolean> {
+    override fun hasAccount(uuid: UUID, currency: String): Boolean {
         return LiteEco.instance.databaseEcoModel.getExistPlayerAccount(uuid, currency)
     }
 
@@ -57,7 +59,7 @@ class ModernLiteEcoEconomyImpl : LiteEconomyAPI {
         if (PlayerAccount.isPlayerOnline(uuid) && PlayerAccount.isAccountCached(uuid, currency)) {
             cacheAccount(uuid, currency, getBalance(uuid, currency).plus(amount))
         } else {
-            CompletableFuture.runAsync { LiteEco.instance.databaseEcoModel.depositMoney(uuid, currency, amount) }
+            LiteEco.instance.databaseEcoModel.depositMoney(uuid, currency, amount)
         }
     }
 
@@ -65,7 +67,7 @@ class ModernLiteEcoEconomyImpl : LiteEconomyAPI {
         if (PlayerAccount.isPlayerOnline(uuid) && PlayerAccount.isAccountCached(uuid, currency)) {
             cacheAccount(uuid, currency, getBalance(uuid, currency).minus(amount))
         } else {
-            CompletableFuture.runAsync { LiteEco.instance.databaseEcoModel.withdrawMoney(uuid, currency, amount) }
+            LiteEco.instance.databaseEcoModel.withdrawMoney(uuid, currency, amount)
         }
     }
 
@@ -73,12 +75,12 @@ class ModernLiteEcoEconomyImpl : LiteEconomyAPI {
         if (PlayerAccount.isPlayerOnline(uuid)) {
             cacheAccount(uuid, currency, amount)
         } else {
-            CompletableFuture.runAsync { LiteEco.instance.databaseEcoModel.setMoney(uuid, currency, amount) }
+            LiteEco.instance.databaseEcoModel.setMoney(uuid, currency, amount)
         }
     }
 
     override fun getBalance(uuid: UUID, currency: String): BigDecimal {
-        return getUserByUUID(uuid, currency).thenApply { it.map { it.money }.orElse(BigDecimal.ZERO) }.get()
+        return getUserByUUID(uuid, currency).map { it.money }.orElse(BigDecimal.ZERO)
     }
 
     override fun getCheckBalanceLimit(amount: BigDecimal, currency: String): Boolean {

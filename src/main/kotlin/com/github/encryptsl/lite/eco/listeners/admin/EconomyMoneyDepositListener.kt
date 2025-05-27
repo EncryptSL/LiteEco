@@ -41,39 +41,39 @@ class EconomyMoneyDepositListener(private val liteEco: LiteEco) : Listener {
 
             liteEco.increaseTransactions(1)
             liteEco.loggerModel.logging(EconomyOperations.DEPOSIT, sender.name, user.userName, currency, user.money, user.money.plus(money))
-            liteEco.api.depositMoney(target.uniqueId, currency, money)
-
-            if (sender.name == target.name) {
-                sender.sendMessage(liteEco.locale.translation("messages.self.add_money", TagResolver.resolver(
-                    Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
-                    Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
-                )))
-                return@launch
-            }
-
-            sender.sendMessage(liteEco.locale.translation("messages.sender.add_money",
-                TagResolver.resolver(
-                    Placeholder.parsed("target", target.name.toString()), Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
-                    Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
-                )
-            ))
-
-            if (target.isOnline && liteEco.config.getBoolean("messages.target.notify_add")) {
-                if (silent) {
-                    target.player?.sendMessage(
-                        liteEco.locale.translation("messages.target.add_money_silent", Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency))
-                        ))
-                    return@launch
-                }
-                target.player?.sendMessage(liteEco.locale.translation("messages.target.add_money",
-                    TagResolver.resolver(
-                        Placeholder.parsed("sender", sender.name),
-                        Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
-                        Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money)))
-                ))
-            }
-
+            liteEco.suspendApiWrapper.deposit(target.uniqueId, currency, money)
         }
+
+        if (sender.name == target.name) {
+            sender.sendMessage(liteEco.locale.translation("messages.self.add_money", TagResolver.resolver(
+                Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
+                Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
+            )))
+            return
+        }
+
+        sender.sendMessage(liteEco.locale.translation("messages.sender.add_money",
+            TagResolver.resolver(
+                Placeholder.parsed("target", target.name.toString()), Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
+                Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
+            )
+        ))
+
+        if (target.isOnline && liteEco.config.getBoolean("messages.target.notify_add")) {
+            if (silent) {
+                target.player?.sendMessage(liteEco.locale.translation(
+                    "messages.target.add_money_silent",
+                    Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency))
+                ))
+                return
+            }
+            target.player?.sendMessage(liteEco.locale.translation("messages.target.add_money", TagResolver.resolver(
+                Placeholder.parsed("sender", sender.name),
+                Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
+                Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money)))
+            ))
+        }
+
     }
 
 }

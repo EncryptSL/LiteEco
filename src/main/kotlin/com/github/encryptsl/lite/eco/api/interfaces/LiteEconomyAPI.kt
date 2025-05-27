@@ -47,7 +47,7 @@ interface LiteEconomyAPI {
      * @return Boolean
      * @see UUID
      */
-    fun hasAccount(uuid: UUID, currency: String = "dollars"): CompletableFuture<Boolean>
+    fun hasAccount(uuid: UUID, currency: String = "dollars"): Boolean
 
     /**
      * Boolean for check if player have enough money
@@ -65,7 +65,7 @@ interface LiteEconomyAPI {
      * @return User
      * @see OfflinePlayer
      */
-    fun getUserByUUID(uuid: UUID, currency: String = "dollars"): CompletableFuture<Optional<User>>
+    fun getUserByUUID(uuid: UUID, currency: String = "dollars"): Optional<User>
 
     /**
      * Get balance of player account
@@ -102,7 +102,7 @@ interface LiteEconomyAPI {
      * @param amount is amount added to player account
      * @see UUID
      */
-    fun depositMoney(uuid: UUID, currency: String = "dollars", amount: BigDecimal)
+     fun depositMoney(uuid: UUID, currency: String = "dollars", amount: BigDecimal)
 
     /**
      * Withdraw money from player account

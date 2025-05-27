@@ -9,12 +9,9 @@ import org.bukkit.Bukkit
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.minus
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.notInList
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.plus
 import java.math.BigDecimal
 import java.util.*
-import java.util.concurrent.CompletableFuture
 
 class DatabaseEcoModel : PlayerSQL {
 
@@ -46,27 +43,17 @@ class DatabaseEcoModel : PlayerSQL {
         }
     }
 
-    override fun getUserByUUID(uuid: UUID, currency: String): CompletableFuture<Optional<User>> {
-        val future: CompletableFuture<Optional<User>> = CompletableFuture.supplyAsync {
-            loggedTransaction {
-                try {
-                    val table = Account(currency)
-                    val row = table.select(table.uuid, table.username, table.money).where(table.uuid eq uuid).single()
-                    Optional.of(User(row[table.username], row[table.uuid], row[table.money]))
-                } catch (e: ExposedSQLException) {
-                    LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
-                    Optional.empty()
-                } catch (e: NoSuchElementException) {
-                    LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
-                    Optional.empty()
-                } catch (e: Exception) {
-                    LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
-                    Optional.empty()
-                }
+    override fun getUserByUUID(uuid: UUID, currency: String): User? {
+        return loggedTransaction {
+            try {
+                val table = Account(currency)
+                val row = table.select(table.uuid, table.username, table.money).where(table.uuid eq uuid).single()
+                User(row[table.username], row[table.uuid], row[table.money])
+            } catch (e : Exception) {
+                LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
+                null
             }
         }
-
-        return future
     }
 
     override fun getBalance(uuid: UUID, currency: String): BigDecimal {
@@ -92,19 +79,16 @@ class DatabaseEcoModel : PlayerSQL {
         }
     }
 
-    override fun getExistPlayerAccount(uuid: UUID, currency: String): CompletableFuture<Boolean> {
-        val future: CompletableFuture<Boolean> = CompletableFuture.supplyAsync {
-            loggedTransaction {
-                try {
-                    val table = Account(currency)
-                    !table.select(table.uuid).where(table.uuid eq uuid).empty()
-                } catch (e : ExposedSQLException) {
-                    LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
-                    false
-                }
+    override fun getExistPlayerAccount(uuid: UUID, currency: String): Boolean {
+        return loggedTransaction {
+            try {
+                val table = Account(currency)
+                !table.select(table.uuid).where(table.uuid eq uuid).empty()
+            } catch (e : ExposedSQLException) {
+                LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
+                false
             }
         }
-        return future
     }
 
     override fun getTopBalance(currency: String): MutableMap<String, User> = loggedTransaction {
@@ -122,19 +106,16 @@ class DatabaseEcoModel : PlayerSQL {
         }.toMutableMap()
     }
 
-    override fun getPlayersIds(currency: String): CompletableFuture<MutableCollection<UUID>> {
-        val future: CompletableFuture<MutableCollection<UUID>> = CompletableFuture.supplyAsync {
-            loggedTransaction {
-                try {
-                    val table = Account(currency)
-                    table.selectAll().map {it[table.uuid] }.toMutableList()
-                } catch (e : ExposedSQLException) {
-                    LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
-                    mutableListOf()
-                }
+    override fun getPlayersIds(currency: String): MutableCollection<UUID> {
+        return loggedTransaction {
+            try {
+                val table = Account(currency)
+                table.selectAll().map {it[table.uuid] }.toMutableList()
+            } catch (e : ExposedSQLException) {
+                LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
+                mutableListOf()
             }
         }
-        return future
     }
 
     override fun depositMoney(uuid: UUID, currency: String, money: BigDecimal) {
@@ -142,7 +123,9 @@ class DatabaseEcoModel : PlayerSQL {
             try {
                 val table = Account(currency)
                 table.update({ table.uuid eq uuid }) {
-                    it[table.money] = table.money plus money
+                    with(SqlExpressionBuilder) {
+                        it[table.money] = table.money + money
+                    }
                 }
             } catch (e : ExposedSQLException) {
                 LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
@@ -154,7 +137,9 @@ class DatabaseEcoModel : PlayerSQL {
             try {
                 val table = Account(currency)
                 table.update({ table.uuid eq uuid }) {
-                    it[table.money] = table.money minus money
+                    with(SqlExpressionBuilder) {
+                        it[table.money] = table.money - money
+                    }
                 }
             } catch (e : ExposedSQLException) {
                 LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
@@ -166,7 +151,9 @@ class DatabaseEcoModel : PlayerSQL {
             try {
                 val table = Account(currency)
                 table.update({ table.uuid eq uuid }) {
-                    it[table.money] = money
+                    with(SqlExpressionBuilder) {
+                        it[table.money] = money
+                    }
                 }
             } catch (e : ExposedSQLException) {
                 LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)

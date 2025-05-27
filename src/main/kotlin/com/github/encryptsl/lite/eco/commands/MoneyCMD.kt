@@ -6,6 +6,7 @@ import com.github.encryptsl.lite.eco.api.events.PlayerEconomyPayEvent
 import com.github.encryptsl.lite.eco.api.objects.ModernText
 import com.github.encryptsl.lite.eco.commands.parsers.CurrencyParser
 import com.github.encryptsl.lite.eco.utils.Helper
+import com.github.encryptsl.lite.eco.utils.runBlockingIO
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
@@ -20,7 +21,6 @@ import org.incendo.cloud.paper.PaperCommandManager
 import org.incendo.cloud.paper.util.sender.PlayerSource
 import org.incendo.cloud.paper.util.sender.Source
 import org.incendo.cloud.parser.standard.IntegerParser
-import java.util.concurrent.CompletableFuture
 
 class MoneyCMD(
     private val commandManager: PaperCommandManager<Source>,
@@ -125,42 +125,45 @@ class MoneyCMD(
             return sender.sendMessage(liteEco.locale.translation("messages.error.missing_currency_permission"))
 
         liteEco.pluginScope.launch {
-            liteEco.suspendApiWrapper.getUserByUUID(target.uniqueId, currency).ifPresentOrElse({
-                val formatMessage = if (sender == target)
-                    liteEco.locale.translation("messages.balance.format", helper.getComponentBal(it, currency))
+            liteEco.suspendApiWrapper.getUserByUUID(target.uniqueId, currency).orElse(null)?.let { user ->
+                val message = if (sender == target)
+                    liteEco.locale.translation("messages.balance.format", helper.getComponentBal(user, currency))
                 else
-                    liteEco.locale.translation("messages.balance.format_target", helper.getComponentBal(it, currency))
-                sender.sendMessage(formatMessage)
-            }, {
-                sender.sendMessage(
-                    liteEco.locale.translation("messages.error.account_not_exist",
-                        Placeholder.parsed("account", target.name.toString()))
+                    liteEco.locale.translation("messages.balance.format_target", helper.getComponentBal(user, currency))
+                sender.sendMessage(message)
+            } ?: sender.sendMessage(
+                liteEco.locale.translation(
+                    "messages.error.account_not_exist",
+                    Placeholder.parsed("account", target.name.toString())
                 )
-            })
+            )
         }
     }
 
     fun balanceTopCommand(sender: CommandSender, page: Int, currency: String) {
         try {
-            CompletableFuture.runAsync {
-                val topPlayers = helper.getTopBalancesFormatted(currency)
+            liteEco.pluginScope.launch {
+                val topPlayers = runBlockingIO {
+                    helper.getTopBalancesFormatted(currency)
+                }
 
                 val pagination = ComponentPaginator(topPlayers) { itemsPerPage = 10 }.apply { page(page) }
 
-                if (pagination.isAboveMaxPage(page))
-                    return@runAsync sender.sendMessage(
-                        liteEco.locale.translation(
-                            "messages.error.maximum_page",
+                if (pagination.isAboveMaxPage(page)) {
+                    sender.sendMessage(
+                        liteEco.locale.translation("messages.error.maximum_page",
                             Placeholder.parsed("max_page", pagination.maxPages.toString())
                         )
                     )
+                    return@launch
+                }
 
                 val tagResolver = TagResolver.resolver(
                     Placeholder.parsed("page", pagination.currentPage().toString()),
                     Placeholder.parsed("max_page", pagination.maxPages.toString())
                 )
                 sender.sendMessage(liteEco.locale.translation("messages.balance.top_header", tagResolver))
-                for (content in pagination.display()) {
+                pagination.display().forEach { content ->
                     sender.sendMessage(content)
                 }
                 sender.sendMessage(liteEco.locale.translation("messages.balance.top_footer", tagResolver))
