@@ -5,7 +5,7 @@ import com.github.encryptsl.lite.eco.common.database.entity.EconomyLog
 import java.math.BigDecimal
 
 interface TransactionLogger {
-    fun logging(economyOperations: EconomyOperations, sender:String, target: String, currency: String, previousBalance: BigDecimal, newBalance: BigDecimal)
+    suspend fun logging(economyOperations: EconomyOperations, sender:String, target: String, currency: String, previousBalance: BigDecimal, newBalance: BigDecimal)
     fun clearLogs()
-    fun getLog(): List<EconomyLog>
+    suspend fun getLog(): List<EconomyLog>
 }

@@ -47,6 +47,18 @@ class SuspendLiteEcoEconomyWrapper {
         }
     }
 
+    suspend fun purgeAccounts(currency: String) = runBlockingIO {
+        LiteEco.instance.databaseEcoModel.purgeAccounts(currency)
+    }
+
+    suspend fun purgeInvalidAccounts(currency: String) = runBlockingIO {
+        LiteEco.instance.databaseEcoModel.purgeInvalidAccounts(currency)
+    }
+
+    suspend fun purgeDefaultAccounts(currency: String, defaultValue: BigDecimal) = runBlockingIO {
+        LiteEco.instance.databaseEcoModel.purgeDefaultAccounts(defaultValue, currency)
+    }
+
     suspend fun withdraw(uuid: UUID, currency: String = "dollars", amount: BigDecimal) = runBlockingIO {
         economyImpl.withDrawMoney(uuid, currency, amount)
     }

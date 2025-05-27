@@ -7,6 +7,7 @@ import com.github.encryptsl.lite.eco.common.database.entity.EconomyLog
 import com.github.encryptsl.lite.eco.common.database.tables.MonologTable
 import com.github.encryptsl.lite.eco.common.extensions.convertInstant
 import com.github.encryptsl.lite.eco.common.extensions.loggedTransaction
+import com.github.encryptsl.lite.eco.common.extensions.runBlockingIO
 import kotlinx.datetime.Instant
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
@@ -20,7 +21,7 @@ import java.math.BigDecimal
 
 class DatabaseMonologModel(val plugin: Plugin) : TransactionLogger {
 
-    override fun logging(
+    override suspend fun logging(
         economyOperations: EconomyOperations,
         sender: String,
         target: String,
@@ -35,7 +36,7 @@ class DatabaseMonologModel(val plugin: Plugin) : TransactionLogger {
         loggedTransaction { MonologTable.deleteAll() }
     }
 
-    override fun getLog(): List<EconomyLog> {
+    override suspend fun getLog(): List<EconomyLog> {
         return loggedTransaction {
             MonologTable.selectAll().orderBy(MonologTable.timestamp, SortOrder.DESC).mapNotNull {
                 EconomyLog(it[MonologTable.action], it[MonologTable.sender], it[MonologTable.target], it[MonologTable.currency], it[MonologTable.previousBalance], it[MonologTable.newBalance], it[MonologTable.timestamp])
@@ -64,7 +65,7 @@ class DatabaseMonologModel(val plugin: Plugin) : TransactionLogger {
         ))
     }
 
-    private fun log(
+    private suspend fun log(
         economyOperations: EconomyOperations,
         sender: String,
         target: String,
@@ -73,14 +74,16 @@ class DatabaseMonologModel(val plugin: Plugin) : TransactionLogger {
         newBalance: BigDecimal
     ) {
         if (!plugin.config.getBoolean("economy.monolog_activity", true)) return
-        loggedTransaction {
-            MonologTable.insert {
-                it[action] = economyOperations.name
-                it[MonologTable.sender] = sender
-                it[MonologTable.target] = target
-                it[MonologTable.currency] = currency
-                it[MonologTable.previousBalance] = previousBalance
-                it[MonologTable.newBalance] = newBalance
+        runBlockingIO {
+            loggedTransaction {
+                MonologTable.insert {
+                    it[action] = economyOperations.name
+                    it[MonologTable.sender] = sender
+                    it[MonologTable.target] = target
+                    it[MonologTable.currency] = currency
+                    it[MonologTable.previousBalance] = previousBalance
+                    it[MonologTable.newBalance] = newBalance
+                }
             }
         }
     }
