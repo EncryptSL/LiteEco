@@ -5,7 +5,7 @@ object ClassUtil {
         return try {
             Class.forName(classpath, false, javaClass.classLoader)
             true
-        } catch (ex: ClassNotFoundException) {
+        } catch (_: ClassNotFoundException) {
             false
         }
     }
