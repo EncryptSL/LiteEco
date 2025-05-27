@@ -48,8 +48,7 @@ object PlayerAccount : AccountAPI {
     override fun syncAccounts() {
         try {
             cache.entries.forEach { user -> user.value.forEach {
-                    databaseEcoModel.setMoney(user.key, it.key, it.value)
-                }
+                databaseEcoModel.setMoney(user.key, it.key, it.value) }
             }
             cache.clear()
         } catch (e : Exception) {
