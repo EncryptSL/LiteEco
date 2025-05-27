@@ -20,9 +20,12 @@ import com.github.encryptsl.lite.eco.utils.ImportEconomy.Economies
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
+import org.incendo.cloud.bukkit.data.MultiplePlayerSelector
 import org.incendo.cloud.bukkit.parser.OfflinePlayerParser
+import org.incendo.cloud.bukkit.parser.selector.MultiplePlayerSelectorParser
 import org.incendo.cloud.component.DefaultValue
 import org.incendo.cloud.description.Description
 import org.incendo.cloud.kotlin.extension.buildAndRegister
@@ -61,7 +64,7 @@ class EcoCMD(
                 .permission("lite.eco.admin.add")
                 .required(
                     "target",
-                    OfflinePlayerParser.offlinePlayerParser(),
+                    MultiplePlayerSelectorParser.multiplePlayerSelectorParser(),
                     commandManager.parserRegistry().getSuggestionProvider("players").get()
                 )
                 .required(
@@ -80,33 +83,39 @@ class EcoCMD(
                 )
                 .handler { ctx ->
                     val sender: CommandSender = ctx.sender().source()
-                    val target: OfflinePlayer = ctx.get("target")
+                    val selector: MultiplePlayerSelector = ctx.get("target")
                     val amountStr: Integer = ctx.get("amount")
                     val currency: String = ctx.get("currency")
                     val silent: Boolean = ctx.get("silent")
 
                     val amount = helper.validateAmount(amountStr.toString(), sender) ?: return@handler
-                    liteEco.pluginManager.callEvent(EconomyMoneyDepositEvent(sender, target, currency, amount, silent))
-                })
-            commandManager.command(commandBuilder.literal("global")
-                .literal("add")
-                .commandDescription(Description.description(DESCRIPTION))
-                .permission("lite.eco.admin.global.add")
-                .required(
-                    "amount",
-                    IntegerParser.integerParser(1)
-                )
-                .optional(commandManager
-                    .componentBuilder(String::class.java, "currency")
-                    .parser(CurrencyParser())
-                    .defaultValue(DefaultValue.parsed("dollars"))
-                ).handler { ctx ->
-                    val sender: CommandSender = ctx.sender().source()
-                    val amountStr: Integer = ctx.get("amount")
-                    val currency: String = ctx.get("currency")
+                    val players = selector.values()
+                    val input = selector.inputString()
+                    val isSelectorAndPlayersNotEmpty = input.startsWith("@") && players.isNotEmpty() && players.size > 1
 
-                    val amount = helper.validateAmount(amountStr.toString(), sender) ?: return@handler
-                    liteEco.pluginManager.callEvent(EconomyGlobalDepositEvent(sender, currency, amount))
+                    if (isSelectorAndPlayersNotEmpty) {
+                        if (!sender.hasPermission("lite.eco.admin.global.add")) return@handler
+                        val offlinePlayers: MutableCollection<OfflinePlayer> = players.toMutableList()
+                        liteEco.pluginManager.callEvent(EconomyGlobalDepositEvent(sender, currency, amount, offlinePlayers))
+                        return@handler
+                    }
+
+                    if (input.startsWith("@a") && players.isEmpty()) {
+                        if (!sender.hasPermission("lite.eco.admin.global.add")) return@handler
+                        val offlinePlayers: MutableCollection<OfflinePlayer> = Bukkit.getOfflinePlayers().toMutableList()
+                        liteEco.pluginManager.callEvent(EconomyGlobalDepositEvent(sender, currency, amount, offlinePlayers))
+                        return@handler
+                    }
+
+                    if (!input.startsWith("@") || players.isEmpty()) {
+                        val offlinePlayer = Bukkit.getOfflinePlayerIfCached(input)
+                            ?: return@handler sender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist",
+                                Placeholder.parsed("account", input)))
+                        liteEco.pluginManager.callEvent(EconomyMoneyDepositEvent(sender, offlinePlayer, currency, amount, silent))
+                        return@handler
+                    }
+
+                    liteEco.pluginManager.callEvent(EconomyMoneyDepositEvent(sender, players.single(), currency, amount, silent))
                 })
 
             commandManager.command(commandBuilder.literal("set")
@@ -114,7 +123,7 @@ class EcoCMD(
                 .permission("lite.eco.admin.set")
                 .required(
                     "target",
-                    OfflinePlayerParser.offlinePlayerParser(),
+                    MultiplePlayerSelectorParser.multiplePlayerSelectorParser(),
                     commandManager.parserRegistry().getSuggestionProvider("players").get()
                 )
                 .required(
@@ -127,39 +136,45 @@ class EcoCMD(
                     .defaultValue(DefaultValue.parsed("dollars"))
                 ).handler { ctx ->
                     val sender: CommandSender = ctx.sender().source()
-                    val target: OfflinePlayer = ctx.get("target")
+                    val selector: MultiplePlayerSelector = ctx.get("target")
                     val amountStr: Integer = ctx.get("amount")
                     val currency: String = ctx.get("currency")
 
                     val amount = helper.validateAmount(amountStr.toString(), sender, CheckLevel.ONLY_NEGATIVE) ?: return@handler
-                    liteEco.pluginManager.callEvent(EconomyMoneySetEvent(sender, target, currency, amount))
-                })
-            commandManager.command(commandBuilder.literal("global")
-                .literal("set")
-                .commandDescription(Description.description(DESCRIPTION))
-                .permission("lite.eco.admin.global.set")
-                .required(
-                    "amount",
-                    IntegerParser.integerParser(1)
-                )
-                .optional(commandManager
-                    .componentBuilder(String::class.java, "currency")
-                    .parser(CurrencyParser())
-                    .defaultValue(DefaultValue.parsed("dollars"))
-                ).handler { ctx ->
-                    val sender: CommandSender = ctx.sender().source()
-                    val amountStr: Integer = ctx.get("amount")
-                    val currency: String = ctx.get("currency")
+                    val players = selector.values()
+                    val input = selector.inputString()
+                    val isSelectorAndPlayersNotEmpty = input.startsWith("@") && players.isNotEmpty() && players.size > 1
 
-                    val amount = helper.validateAmount(amountStr.toString(), sender, CheckLevel.ONLY_NEGATIVE) ?: return@handler
-                    liteEco.pluginManager.callEvent(EconomyGlobalSetEvent(sender, currency, amount))
+                    if (isSelectorAndPlayersNotEmpty) {
+                        if (!sender.hasPermission("lite.eco.admin.global.set")) return@handler
+                        val offlinePlayers: MutableCollection<OfflinePlayer> = players.toMutableList()
+                        liteEco.pluginManager.callEvent(EconomyGlobalSetEvent(sender, currency, amount, offlinePlayers))
+                        return@handler
+                    }
+
+                    if (input.startsWith("@a") && players.isEmpty()) {
+                        if (!sender.hasPermission("lite.eco.admin.global.set")) return@handler
+                        val offlinePlayers: MutableCollection<OfflinePlayer> = Bukkit.getOfflinePlayers().toMutableList()
+                        liteEco.pluginManager.callEvent(EconomyGlobalSetEvent(sender, currency, amount, offlinePlayers))
+                        return@handler
+                    }
+
+                    if (!input.startsWith("@") || players.isEmpty()) {
+                        val offlinePlayer = Bukkit.getOfflinePlayerIfCached(input)
+                            ?: return@handler sender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist",
+                                Placeholder.parsed("account", input)))
+                        liteEco.pluginManager.callEvent(EconomyMoneySetEvent(sender, offlinePlayer, currency, amount))
+                        return@handler
+                    }
+
+                    liteEco.pluginManager.callEvent(EconomyMoneySetEvent(sender, players.single(), currency, amount))
                 })
             commandManager.command(commandBuilder.literal("withdraw")
                 .commandDescription(Description.description(DESCRIPTION))
                 .permission("lite.eco.admin.withdraw")
                 .required(
                     "target",
-                    OfflinePlayerParser.offlinePlayerParser(),
+                    MultiplePlayerSelectorParser.multiplePlayerSelectorParser(),
                     commandManager.parserRegistry().getSuggestionProvider("players").get()
                 )
                 .required(
@@ -178,33 +193,39 @@ class EcoCMD(
                 )
                 .handler { ctx ->
                     val sender: CommandSender = ctx.sender().source()
-                    val target: OfflinePlayer = ctx.get("target")
+                    val selector: MultiplePlayerSelector = ctx.get("target")
                     val amountStr: Integer = ctx.get("amount")
                     val currency: String = ctx.get("currency")
                     val silent: Boolean = ctx.get("silent")
 
                     val amount = helper.validateAmount(amountStr.toString(), sender) ?: return@handler
-                    liteEco.pluginManager.callEvent(EconomyMoneyWithdrawEvent(sender, target, currency, amount, silent))
-                })
-            commandManager.command(commandBuilder.literal("global")
-                .literal("withdraw")
-                .commandDescription(Description.description(DESCRIPTION))
-                .permission("lite.eco.admin.global.withdraw")
-                .required(
-                    "amount",
-                    IntegerParser.integerParser(1)
-                )
-                .optional(commandManager
-                    .componentBuilder(String::class.java, "currency")
-                    .parser(CurrencyParser())
-                    .defaultValue(DefaultValue.parsed("dollars"))
-                ).handler { ctx ->
-                    val sender: CommandSender = ctx.sender().source()
-                    val amountStr: Integer = ctx.get("amount")
-                    val currency: String = ctx.get("currency")
+                    val players = selector.values()
+                    val input = selector.inputString()
+                    val isSelectorAndPlayersNotEmpty = input.startsWith("@") && players.isNotEmpty() && players.size > 1
 
-                    val amount = helper.validateAmount(amountStr.toString(), sender, CheckLevel.ONLY_NEGATIVE) ?: return@handler
-                    liteEco.pluginManager.callEvent(EconomyGlobalWithdrawEvent(sender, currency, amount))
+                    if (isSelectorAndPlayersNotEmpty) {
+                        if (!sender.hasPermission("lite.eco.admin.global.withdraw")) return@handler
+                        val offlinePlayers: MutableCollection<OfflinePlayer> = players.toMutableList()
+                        liteEco.pluginManager.callEvent(EconomyGlobalWithdrawEvent(sender, currency, amount, offlinePlayers))
+                        return@handler
+                    }
+
+                    if (input.startsWith("@a") && players.isEmpty()) {
+                        if (!sender.hasPermission("lite.eco.admin.global.withdraw")) return@handler
+                        val offlinePlayers: MutableCollection<OfflinePlayer> = Bukkit.getOfflinePlayers().toMutableList()
+                        liteEco.pluginManager.callEvent(EconomyGlobalWithdrawEvent(sender, currency, amount, offlinePlayers))
+                        return@handler
+                    }
+
+                    if (!input.startsWith("@") || players.isEmpty()) {
+                        val offlinePlayer = Bukkit.getOfflinePlayerIfCached(input)
+                            ?: return@handler sender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist",
+                                Placeholder.parsed("account", input)))
+                        liteEco.pluginManager.callEvent(EconomyMoneyWithdrawEvent(sender, offlinePlayer, currency, amount, silent))
+                        return@handler
+                    }
+
+                    liteEco.pluginManager.callEvent(EconomyMoneyWithdrawEvent(sender, players.single(), currency, amount, silent))
                 })
             commandManager.command(commandBuilder.literal("create")
                 .commandDescription(Description.description(DESCRIPTION))
