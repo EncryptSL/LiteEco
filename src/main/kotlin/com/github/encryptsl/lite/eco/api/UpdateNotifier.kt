@@ -1,8 +1,8 @@
 package com.github.encryptsl.lite.eco.api
 
-import com.google.gson.Gson
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.objects.ModernText
+import com.google.gson.Gson
 import okhttp3.Call
 import okhttp3.OkHttpClient
 import okhttp3.Request

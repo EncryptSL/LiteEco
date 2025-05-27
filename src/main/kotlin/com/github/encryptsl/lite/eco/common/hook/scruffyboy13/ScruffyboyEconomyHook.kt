@@ -7,7 +7,7 @@ import com.github.encryptsl.lite.eco.common.hook.placeholderapi.PlaceholderAPIHo
 import com.github.encryptsl.lite.eco.utils.ClassUtil
 import me.scruffyboy13.Economy.EconomyMain
 import me.scruffyboy13.Economy.eco.Economy
-import java.util.UUID
+import java.util.*
 
 class ScruffyboyEconomyHook(
     private val liteEco: LiteEco

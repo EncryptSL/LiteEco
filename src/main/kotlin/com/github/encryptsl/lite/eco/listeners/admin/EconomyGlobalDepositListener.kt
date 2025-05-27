@@ -3,10 +3,7 @@ package com.github.encryptsl.lite.eco.listeners.admin
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.economy.EconomyOperations
 import com.github.encryptsl.lite.eco.api.events.admin.EconomyGlobalDepositEvent
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.Bukkit
