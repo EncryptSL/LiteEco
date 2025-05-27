@@ -30,7 +30,6 @@ kotlin {
 dependencies {
     compileOnly("io.papermc.paper:paper-api:${providers.gradleProperty("server_version").get()}")
     compileOnly(kotlin("stdlib", "2.2.0-Beta2"))
-    compileOnly("me.lokka30:treasury-api:2.0.0")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
         exclude("org.bukkit", "bukkit")
     }
