@@ -15,7 +15,7 @@ softdepend: [PlaceholderAPI, Vault, Treasury, MiniPlaceholders]
 libraries:
   - com.zaxxer:HikariCP:6.2.1
   - org.mariadb.jdbc:mariadb-java-client:3.5.2
-  - org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.1.20
+  - org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.2.0-RC
   - org.jetbrains.exposed:exposed-core:0.60.0
   - org.jetbrains.exposed:exposed-jdbc:0.60.0
   - org.jetbrains.exposed:exposed-kotlin-datetime:0.60.0

@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    kotlin("jvm") version "2.2.0-Beta2" apply true
+    kotlin("jvm") version "2.2.0-RC" apply true
     id("com.gradleup.shadow") version "9.0.0-beta13"
     id("maven-publish")
 }
@@ -29,21 +29,28 @@ kotlin {
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:${providers.gradleProperty("server_version").get()}")
-    compileOnly(kotlin("stdlib", "2.2.0-Beta2"))
+    compileOnly(kotlin("stdlib", "2.2.0-RC"))
     compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
         exclude("org.bukkit", "bukkit")
     }
-    compileOnly("com.zaxxer:HikariCP:6.2.1")
     compileOnly("me.clip:placeholderapi:2.11.5")
+
+    //Exposed Database Orm
     compileOnly("org.jetbrains.exposed:exposed-core:0.60.0")
     compileOnly("org.jetbrains.exposed:exposed-jdbc:0.60.0")
     compileOnly("org.jetbrains.exposed:exposed-kotlin-datetime:0.60.0")
-    compileOnly("com.squareup.okhttp3:okhttp:4.12.0")
+    //Database Pool HikariCP
+    compileOnly("com.zaxxer:HikariCP:6.2.1")
+
+    //EconomyAPI
     compileOnly("net.milkbowl.vault:VaultUnlockedAPI:2.9")
+
+    //Coding Utils
+    compileOnly("com.squareup.okhttp3:okhttp:4.12.0")
     compileOnly("com.tchristofferson:ConfigUpdater:2.2-SNAPSHOT")
     compileOnly("org.apache.commons:commons-csv:1.14.0")
 
-    implementation("org.bstats:bstats-bukkit:3.0.1")
+    //Command Framework
     compileOnly("org.incendo:cloud-annotations:2.0.0-SNAPSHOT") {
         exclude("org.incendo", "cloud-core")
     }
@@ -61,6 +68,10 @@ dependencies {
     compileOnly("me.scruffyboy13:Economy:2.0")
     compileOnly("com.greatmancode:Craftconomy3:3.3.3-SNAPSHOT")
 
+    //Metrics
+    implementation("org.bstats:bstats-bukkit:3.0.1")
+
+    //MiniPlaceholders
     implementation("io.github.miniplaceholders:miniplaceholders-kotlin-ext:2.3.0")
 
     testImplementation(kotlin("test", "2.2.0-Beta2"))
@@ -108,7 +119,6 @@ tasks {
         archiveFileName.set("${providers.gradleProperty("plugin_name").get()}-$version.jar")
         minimize {
             relocate("org.bstats", "com.github.encryptsl.metrics")
-            //relocate("org.incendo", "com.github.encryptsl.cloud-core")
         }
     }
 }
