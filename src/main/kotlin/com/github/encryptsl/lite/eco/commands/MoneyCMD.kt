@@ -6,7 +6,7 @@ import com.github.encryptsl.lite.eco.api.events.PlayerEconomyPayEvent
 import com.github.encryptsl.lite.eco.api.objects.ModernText
 import com.github.encryptsl.lite.eco.commands.parsers.CurrencyParser
 import com.github.encryptsl.lite.eco.utils.Helper
-import com.github.encryptsl.lite.eco.utils.runBlockingIO
+import com.github.encryptsl.lite.eco.common.extensions.runBlockingIO
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver

@@ -3,7 +3,7 @@ package com.github.encryptsl.lite.eco.api.economy
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.PlayerAccount
 import com.github.encryptsl.lite.eco.common.database.entity.User
-import com.github.encryptsl.lite.eco.utils.runBlockingIO
+import com.github.encryptsl.lite.eco.common.extensions.runBlockingIO
 import org.bukkit.OfflinePlayer
 import java.math.BigDecimal
 import java.util.*

@@ -14,10 +14,12 @@ class ImportEconomy(private val liteEco: LiteEco) {
     private var converted = 0
     private var balances = BigDecimal.ZERO
 
+    private var offlinePlayers = Bukkit.getOfflinePlayers()
+
     enum class Economies { EssentialsX, BetterEconomy, ScruffyBoyEconomy, CraftConomy3 }
 
     fun importEssentialsXEconomy(currency: String) {
-        for (p in Bukkit.getOfflinePlayers()) {
+        for (p in offlinePlayers) {
             val playerFile =  File("plugins/Essentials/userdata/", "${p.uniqueId}.yml")
             if (playerFile.exists()) {
                 val essentialsXConfig = YamlConfiguration.loadConfiguration(playerFile)
@@ -33,7 +35,7 @@ class ImportEconomy(private val liteEco: LiteEco) {
     fun importBetterEconomy(currency: String) {
         try {
             val betterEconomy = BetterEconomyHook(liteEco)
-            for (p in Bukkit.getOfflinePlayers()) {
+            for (p in offlinePlayers) {
                 val balance = BigDecimal.valueOf(betterEconomy.getBalance(p.uniqueId))
                 if (liteEco.api.createAccount(p, currency, balance)) {
                     balances += balance
@@ -48,7 +50,7 @@ class ImportEconomy(private val liteEco: LiteEco) {
     fun importScruffyBoyEconomy(currency: String) {
         try {
             val scruffyboyEconomy = ScruffyboyEconomyHook(liteEco)
-            for (p in Bukkit.getOfflinePlayers()) {
+            for (p in offlinePlayers) {
                 val balance = BigDecimal.valueOf(scruffyboyEconomy.getBalance(p.uniqueId))
                 if (liteEco.api.createAccount(p, currency, balance)) {
                     balances += balance
@@ -63,7 +65,7 @@ class ImportEconomy(private val liteEco: LiteEco) {
     fun importCraftConomy3(currency: String) {
         try {
             val craftConomy = CraftConomyHook(liteEco)
-            for (p in Bukkit.getOfflinePlayers()) {
+            for (p in offlinePlayers) {
                 val balance = BigDecimal.valueOf(craftConomy.getBalance(p.name.toString()))
                 if (liteEco.api.createAccount(p, currency, balance)) {
                     balances += balance
