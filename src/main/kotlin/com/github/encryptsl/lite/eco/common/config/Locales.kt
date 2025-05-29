@@ -9,19 +9,24 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
-import java.util.*
 
 class Locales(private val liteEco: LiteEco) {
     enum class LangKey { CS_CZ, EN_US, ES_ES, JA_JP, DE_DE, PL_PL, PT_BR, TR_TR, ZH_CN }
 
-    private var langYML: FileConfiguration? = null
+    private lateinit var langYml: FileConfiguration
+    private val config get() = liteEco.config
+    private val logger get() = liteEco.logger
+
+    private val localeDir = File(liteEco.dataFolder, "locale")
+
+    val prefix: String
+        get() = config.getString("plugin.prefix").orEmpty()
 
     fun translation(translationKey: String): Component {
         return ModernText.miniModernText(getMessage(translationKey))
     }
 
     fun translation(translationKey: String, tagResolver: TagResolver): Component {
-
         return ModernText.miniModernText(getMessage(translationKey), tagResolver)
     }
 
@@ -30,52 +35,60 @@ class Locales(private val liteEco: LiteEco) {
         return PlainTextComponentSerializer.plainText().serialize(component)
     }
 
-    fun getMessage(value: String): String {
-        val key = Optional.ofNullable(langYML?.getString(value)).orElse(langYML?.getString("messages.admin.translation_missing")?.replace("<key>", value))
-        val prefix = liteEco.config.getString("plugin.prefix", "").toString()
-        return Optional.ofNullable(key?.replace("<prefix>", prefix)).orElse("Translation missing error: $value")
+    fun getMessage(key: String): String {
+        val raw = langYml.getString(key)
+            ?: langYml.getString("messages.admin.translation_missing")?.replace("<key>", key)
+        return raw?.replace("<prefix>", prefix)
+            ?: "Translation missing: $key"
     }
 
-    fun getList(value: String): MutableList<*>? {
-        val list = langYML?.getList(value)?.toMutableList()
-        val prefix = liteEco.config.getString("plugin.prefix", "").toString()
-        list?.replaceAll { it?.toString()?.replace("<prefix>", prefix) }
-
-        return list
+    fun getList(key: String): List<String> {
+        return langYml.getList(key)
+            ?.mapNotNull { it?.toString()?.replace("<prefix>", prefix) }
+            ?: emptyList()
     }
 
     fun setLocale(langKey: LangKey) {
-        val currentLocale: String = Optional.ofNullable(liteEco.config.getString("plugin.translation")).orElse(LangKey.EN_US.name)
-        val fileName = "${getRequiredLocaleOrFallback(langKey, currentLocale)}.yml"
-        val file = File("${liteEco.dataFolder}/locale/", fileName)
+        val selectedLocale = resolveLocale(langKey)
+        val fileName = "$selectedLocale.yml"
+        val file = File(localeDir, fileName)
+
         try {
             if (!file.exists()) {
                 file.parentFile.mkdirs()
                 liteEco.saveResource("locale/$fileName", false)
             }
-            reloadLangFile(langKey, fileName)
+
             ConfigUpdater.update(liteEco, "locale/$fileName", file)
-            langYML = YamlConfiguration.loadConfiguration(file)
-        } catch (e: Exception) {
-            liteEco.logger.warning("Unsupported language, lang file for $langKey doesn't exist [!]")
-            liteEco.logger.severe(e.message ?: e.localizedMessage)
-            e.fillInStackTrace()
+            langYml = YamlConfiguration.loadConfiguration(file)
+
+            config.set("plugin.translation", langKey.name)
+            liteEco.saveConfig()
+
+            logger.info("✅ Translation loaded: $fileName")
+
+        } catch (ex: Exception) {
+            logger.warning("⚠️ Failed to load translation for ${langKey.name}")
+            logger.severe(ex.message ?: ex.toString())
         }
     }
 
-    private fun reloadLangFile(langKey: LangKey, fileName: String) {
-        liteEco.config.set("plugin.translation", langKey.name)
-        liteEco.saveConfig()
-        liteEco.reloadConfig()
-        liteEco.logger.info("Loaded translation $fileName [!]")
+    fun reloadCurrentLocale() {
+        val current = config.getString("plugin.translation").orEmpty()
+        val langKey = runCatching { LangKey.valueOf(current) }.getOrDefault(LangKey.EN_US)
+        setLocale(langKey)
     }
 
-    private fun getRequiredLocaleOrFallback(langKey: LangKey, currentLocale: String): String {
-        return LangKey.entries.stream().map(LangKey::name).filter { el -> el.equals(langKey.name, true)}.findFirst().orElse(currentLocale).lowercase()
+    fun load() {
+        val selected = config.getString("plugin.translation").orEmpty()
+        val langKey = runCatching { LangKey.valueOf(selected) }.getOrDefault(LangKey.EN_US)
+        setLocale(langKey)
     }
 
-    fun loadCurrentTranslation() {
-        val optionalLocale: String = Optional.ofNullable(liteEco.config.getString("plugin.translation")).orElse(LangKey.EN_US.name)
-        setLocale(LangKey.valueOf(optionalLocale))
+    private fun resolveLocale(langKey: LangKey): String {
+        return LangKey.entries
+            .firstOrNull { it.name.equals(langKey.name, ignoreCase = true) }
+            ?.name?.lowercase()
+            ?: "en_us"
     }
 }
