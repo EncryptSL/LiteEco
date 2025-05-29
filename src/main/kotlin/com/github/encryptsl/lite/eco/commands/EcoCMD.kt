@@ -17,7 +17,6 @@ import com.github.encryptsl.lite.eco.common.manager.PurgeManager
 import com.github.encryptsl.lite.eco.utils.Helper
 import com.github.encryptsl.lite.eco.utils.ImportEconomy
 import com.github.encryptsl.lite.eco.utils.ImportEconomy.Economies
-import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.Bukkit
@@ -36,9 +35,8 @@ import org.incendo.cloud.parser.standard.IntegerParser
 import org.incendo.cloud.parser.standard.StringParser
 
 class EcoCMD(
-    private val commandManager: PaperCommandManager<Source>,
     private val liteEco: LiteEco
-) {
+) : InternalCmd {
 
     companion object {
         private const val DESCRIPTION = "Provided plugin by LiteEco"
@@ -51,13 +49,12 @@ class EcoCMD(
     private val importManager: ImportManager = ImportManager(liteEco, importEconomy)
     private val purgeManager: PurgeManager = PurgeManager(liteEco)
 
-
-    @OptIn(DelicateCoroutinesApi::class)
-    fun adminCommands() {
+    override fun execute(commandManager: PaperCommandManager<Source>) {
         commandManager.buildAndRegister("eco", Description.description(DESCRIPTION)) {
+            permission("lite.eco.admin.eco")
             commandManager.command(commandBuilder.literal("help").permission("lite.eco.admin.help").handler { ctx ->
                 val sender: CommandSender = ctx.sender().source()
-                liteEco.locale.getList("messages.admin-help")?.forEach { s -> sender.sendMessage(ModernText.miniModernText(s.toString())) }
+                liteEco.locale.getList("messages.admin-help").forEach { s -> sender.sendMessage(ModernText.miniModernText(s)) }
             })
             commandManager.command(commandBuilder.literal("add")
                 .commandDescription(Description.description(DESCRIPTION))
@@ -65,7 +62,6 @@ class EcoCMD(
                 .required(
                     "target",
                     MultiplePlayerSelectorParser.multiplePlayerSelectorParser(),
-                    commandManager.parserRegistry().getSuggestionProvider("players").get()
                 )
                 .required(
                     "amount",
@@ -124,7 +120,6 @@ class EcoCMD(
                 .required(
                     "target",
                     MultiplePlayerSelectorParser.multiplePlayerSelectorParser(),
-                    commandManager.parserRegistry().getSuggestionProvider("players").get()
                 )
                 .required(
                     "amount",
@@ -175,7 +170,6 @@ class EcoCMD(
                 .required(
                     "target",
                     MultiplePlayerSelectorParser.multiplePlayerSelectorParser(),
-                    commandManager.parserRegistry().getSuggestionProvider("players").get()
                 )
                 .required(
                     "amount",
@@ -376,10 +370,9 @@ class EcoCMD(
             commandManager.command(configSubCommand.literal("reload")
                 .permission("lite.eco.admin.reload").handler { ctx ->
                     liteEco.reloadConfig()
+                    liteEco.locale.reloadCurrentLocale()
                     ctx.sender().source().sendMessage(liteEco.locale.translation("messages.admin.config_reload"))
-                    liteEco.componentLogger.info(ModernText.miniModernText("Config.yml was reloaded [!]"))
-                    liteEco.saveConfig()
-                    liteEco.locale.loadCurrentTranslation()
+                    liteEco.componentLogger.info(ModernText.miniModernText("✅ config.yml & locale reloaded."))
                 })
         }
     }
