@@ -15,36 +15,35 @@ import org.jetbrains.exposed.sql.SchemaUtils
 class DatabaseConnector(private val liteEco: LiteEco) : DatabaseConnectorProvider {
 
     override fun load() {
-        initConnect(
-            liteEco.config.getString("database.connection.driverClassName") ?: "org.sqlite.JDBC",
-            liteEco.config.getString("database.connection.jdbc_url") ?: "jdbc:sqlite:plugins/LiteEco/database.db",
-            liteEco.config.getString("database.connection.username") ?: "root",
-            liteEco.config.getString("database.connection.password") ?: "admin"
-        )
+        val configLoader = DatabaseConfigLoader(liteEco.config)
+        val (driver, jdbcUrl, username, password) = configLoader.load()
+
+        initConnect(driver, jdbcUrl, username, password)
     }
 
     override fun initConnect(driver: String, jdbcHost: String, user: String, pass: String) {
-        Database.connect(HikariDataSource().apply {
-            jdbcUrl = jdbcHost
-            driverClassName = driver
-            username = user
-            password = pass
-            poolName = liteEco.javaClass.simpleName
-            maximumPoolSize = 20
-            isReadOnly = false
-            transactionIsolation = "TRANSACTION_SERIALIZABLE"
-        }, databaseConfig = DatabaseConfig {
-            @OptIn(ExperimentalKeywordApi::class)
-            preserveKeywordCasing = true
-        },connectionAutoRegistration = ExposedConnectionImpl())
+        try {
+            Database.connect(HikariDataSource().apply {
+                this.driverClassName = driver
+                this.jdbcUrl = jdbcHost
+                this.username = user
+                this.password = pass
+                this.poolName = liteEco.javaClass.simpleName
+                this.maximumPoolSize = 20
+                this.isReadOnly = false
+                this.transactionIsolation = "TRANSACTION_SERIALIZABLE"
+            }, databaseConfig = DatabaseConfig {
+                @OptIn(ExperimentalKeywordApi::class)
+                preserveKeywordCasing = true
+            }, connectionAutoRegistration = ExposedConnectionImpl())
 
-        val currencyIterator = liteEco.currencyImpl.getCurrenciesKeys().iterator()
-
-        while (currencyIterator.hasNext()) {
-            val currency = currencyIterator.next()
-            loggedTransaction {
-                SchemaUtils.create(Account(currency), MonologTable)
+            liteEco.currencyImpl.getCurrenciesKeys().forEach { currency ->
+                loggedTransaction {
+                    SchemaUtils.create(Account(currency), MonologTable)
+                }
             }
+        } catch (e: Exception) {
+            liteEco.logger.severe("Database initialization failed: ${e.message}")
         }
     }
 }
