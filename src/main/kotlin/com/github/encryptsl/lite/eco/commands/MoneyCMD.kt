@@ -5,11 +5,10 @@ import com.github.encryptsl.lite.eco.api.ComponentPaginator
 import com.github.encryptsl.lite.eco.api.events.PlayerEconomyPayEvent
 import com.github.encryptsl.lite.eco.api.objects.ModernText
 import com.github.encryptsl.lite.eco.commands.parsers.CurrencyParser
-import com.github.encryptsl.lite.eco.utils.Helper
 import com.github.encryptsl.lite.eco.common.extensions.runBlockingIO
+import com.github.encryptsl.lite.eco.utils.Helper
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -23,9 +22,8 @@ import org.incendo.cloud.paper.util.sender.Source
 import org.incendo.cloud.parser.standard.IntegerParser
 
 class MoneyCMD(
-    private val commandManager: PaperCommandManager<Source>,
     private val liteEco: LiteEco
-) {
+) : InternalCmd {
 
     companion object {
         private const val DESCRIPTION = "Provided plugin by LiteEco"
@@ -33,7 +31,7 @@ class MoneyCMD(
 
     private val helper: Helper = Helper(liteEco)
 
-    fun playerCommands() {
+    override fun execute(commandManager: PaperCommandManager<Source>) {
         commandManager.buildAndRegister("money", Description.description(DESCRIPTION)) {
             permission("lite.eco.money")
             handler { ctx -> helpMessage(ctx.sender().source()) }
@@ -78,10 +76,10 @@ class MoneyCMD(
                 .permission("lite.eco.top")
                 .optional("page", IntegerParser.integerParser(1), DefaultValue.constant(1))
                 .optional(
-                commandManager
-                    .componentBuilder(String::class.java, "currency")
-                    .parser(CurrencyParser())
-                    .defaultValue(DefaultValue.parsed("dollars"))
+                    commandManager
+                        .componentBuilder(String::class.java, "currency")
+                        .parser(CurrencyParser())
+                        .defaultValue(DefaultValue.parsed("dollars"))
                 ).handler { ctx ->
                     val sender = ctx.sender().source()
                     val page: Int = ctx.getOrDefault("page", 1)
@@ -100,7 +98,7 @@ class MoneyCMD(
                 .permission("lite.eco.pay")
                 .required("target", OfflinePlayerParser.offlinePlayerParser(), commandManager.parserRegistry().getSuggestionProvider("players").get())
                 .required("int", IntegerParser.integerParser(1))
-                    .optional(commandManager
+                .optional(commandManager
                     .componentBuilder(String::class.java, "currency")
                     .parser(CurrencyParser())
                     .defaultValue(DefaultValue.parsed("dollars"))
@@ -147,7 +145,12 @@ class MoneyCMD(
                     helper.getTopBalancesFormatted(currency)
                 }
 
-                val pagination = ComponentPaginator(topPlayers) { itemsPerPage = 10 }.apply { page(page) }
+                val pagination = ComponentPaginator(topPlayers) {
+                    selectedPage = page
+                    itemsPerPage = 10
+                    headerFormat = liteEco.locale.getMessage("messages.balance.top_header")
+                    navigationFormat = liteEco.locale.getMessage("messages.balance.top_footer")
+                }
 
                 if (pagination.isAboveMaxPage(page)) {
                     sender.sendMessage(
@@ -158,15 +161,11 @@ class MoneyCMD(
                     return@launch
                 }
 
-                val tagResolver = TagResolver.resolver(
-                    Placeholder.parsed("page", pagination.currentPage().toString()),
-                    Placeholder.parsed("max_page", pagination.maxPages.toString())
-                )
-                sender.sendMessage(liteEco.locale.translation("messages.balance.top_header", tagResolver))
+                pagination.header("").let { sender.sendMessage(it) }
                 pagination.display().forEach { content ->
                     sender.sendMessage(content)
                 }
-                sender.sendMessage(liteEco.locale.translation("messages.balance.top_footer", tagResolver))
+                sender.sendMessage(pagination.navigationBar("money top", currency))
             }
         } catch (e : Exception) {
             liteEco.logger.severe(e.message ?: e.localizedMessage)
