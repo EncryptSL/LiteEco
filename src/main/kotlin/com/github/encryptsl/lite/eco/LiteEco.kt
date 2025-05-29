@@ -16,9 +16,9 @@ import com.github.encryptsl.lite.eco.common.database.DatabaseConnector
 import com.github.encryptsl.lite.eco.common.database.models.DatabaseEcoModel
 import com.github.encryptsl.lite.eco.common.database.models.DatabaseMonologModel
 import com.github.encryptsl.lite.eco.common.hook.HookManager
+import com.github.encryptsl.lite.eco.listeners.PlayerAsyncPreLoginListener
 import com.github.encryptsl.lite.eco.listeners.PlayerEconomyPayListener
 import com.github.encryptsl.lite.eco.listeners.PlayerJoinListener
-import com.github.encryptsl.lite.eco.listeners.PlayerLoginListener
 import com.github.encryptsl.lite.eco.listeners.PlayerQuitListener
 import com.github.encryptsl.lite.eco.listeners.admin.*
 import com.github.encryptsl.lite.eco.utils.Debugger
@@ -77,8 +77,7 @@ class LiteEco : JavaPlugin() {
         configAPI
             .create("database.db")
             .createConfig("config.yml")
-        locale
-            .loadCurrentTranslation()
+        locale.load()
         databaseConnector.load()
     }
 
@@ -143,7 +142,7 @@ class LiteEco : JavaPlugin() {
             EconomyMoneyDepositListener(this),
             EconomyMoneyWithdrawListener(this),
             EconomyMoneySetListener(this),
-            PlayerLoginListener(this),
+            PlayerAsyncPreLoginListener(this),
             PlayerJoinListener(this),
             PlayerQuitListener(this)
         )
@@ -158,7 +157,6 @@ class LiteEco : JavaPlugin() {
     private fun createCommandManager() {
         componentLogger.info(ModernText.miniModernText("<blue>Registering commands with Cloud Command Framework !"))
 
-
         val commandManager: PaperCommandManager<Source> = PaperCommandManager
             .builder(PaperSimpleSenderMapper.simpleSenderMapper())
             .executionCoordinator(ExecutionCoordinator.simpleCoordinator())
@@ -167,8 +165,12 @@ class LiteEco : JavaPlugin() {
         registerMinecraftExceptionHandler(commandManager)
         registerSuggestionModernProviders(commandManager)
 
-        MoneyCMD(commandManager, this).playerCommands()
-        EcoCMD(commandManager, this).adminCommands()
+        listOf(
+            MoneyCMD(this),
+            EcoCMD(this),
+        ).forEach {
+            it.execute(commandManager)
+        }
     }
 
     private fun registerMinecraftExceptionHandler(commandManager: PaperCommandManager<Source>) {
