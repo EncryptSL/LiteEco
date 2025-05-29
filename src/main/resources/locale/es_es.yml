@@ -4,8 +4,8 @@ messages:
     format: "<prefix> <white>Tu saldo es de <green><money></green> es <currency> [!]"
     format_target: "<prefix> <white>El saldo de <gold><target></gold> es de <green><money></green> es <gold><currency></gold> [!]"
     top_format: "<yellow><position># <gold><player></gold> <gray>- <green><money></green>"
-    top_header: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>TOP ECONOMIA<gray>]</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray>"
-    top_footer: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47><red><page>/<max_page></#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray>"
+    top_header: "<gray><st>─━━━━━━─</st> <#64646F>[ <#F9AD47>TOP ECONOMIA<gray> ]</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray>"
+    top_footer: "<gray><st>─━━━━━━─</st> <#64646F>[ <#F9AD47><pagination></#F9AD47> ]</#64646F> <st>─━━━━━━─</st></gray>"
 
   # Self-transaction messages
   self:
@@ -71,7 +71,7 @@ messages:
   # Monolog message formatting
   monolog:
     header: "<gray><st>─━━━━━━─</st> <blue>[ <yellow>Transaction History <blue>] <gray><st>─━━━━━━─</st>"
-    footer: "<gray><st>─━━━━━━─</st> <blue>[ <yellow><page>/<max_page> <blue>] <gray><st>─━━━━━━─</st>"
+    footer: "<gray><st>─━━━━━━─</st> <blue>[ <pagination> <blue>] <gray><st>─━━━━━━─</st>"
     formatting: "<blue>[<white><hover:show_text:'<timestamp>'><action></hover></white>]</blue> <sender> to <target> <green><st><hover:show_text:'<red>Old balance'><previous_balance></hover></st> <hover:show_text:'<green>New balance'><new_balance></hover></green> <gold>[<currency>]</gold>"
 
   # Admin commands
@@ -87,6 +87,13 @@ messages:
     delete_account: "<prefix> <green>Account of player <account> was deleted !"
     export_success: "<prefix> <green>La migracion de <type> fue exitosa [!]"
     import_success: "<prefix> <green>La conversión <converted>x cuentas y <balances> saldos de <economy> a LiteEco se ha realizado correctamente !"
+
+  # Translation for pagination component
+  # Is available with placeholder <pagination>
+  pagination:
+    previous: "« Previous"
+    center: " <yellow><page>/<max_page> "
+    next: "Next »"
 
   help:
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> LiteEco <st>─━━━━━━━━━━━━━━━━━─</st></gray>"

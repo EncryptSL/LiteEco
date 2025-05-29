@@ -4,8 +4,8 @@ messages:
     format: "<prefix> <white>Seu saldo de <gold><currency></gold> é <green><money></green>. [!]"
     format_target: "<prefix> <white>O Saldo de <#13AFFE><target></#13AFFE> <gold><currency><gold> é <green><money></green>. [!]"
     top_format: "<yellow><position># <gold><player></gold> <gray>- <green><money></green>"
-    top_header: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>BALTOP</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray>"
-    top_footer: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47><red><page>/<max_page></#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray>"
+    top_header: "<gray><st>─━━━━━━─</st> <#64646F>[ <#F9AD47>BALTOP</#F9AD47> ]</#64646F> <st>─━━━━━━─</st></gray>"
+    top_footer: "<gray><st>─━━━━━━─</st> <#64646F>[ <#F9AD47><pagination></#F9AD47> ]</#64646F> <st>─━━━━━━─</st></gray>"
 
   # Self-transaction messages
   self:
@@ -87,6 +87,13 @@ messages:
     delete_account: "<prefix> <green>Conta do player <account> foi deletada !"
     export_success: "<prefix> <green>Migração de <type> foi um sucesso [!]"
     import_success: "<prefix> <green>Conversão de <converted>x contas e <balances> saldos de <economy> para LiteEco foi um sucesso [!]"
+
+  # Translation for pagination component
+  # Is available with placeholder <pagination>
+  pagination:
+    previous: "« Previous"
+    center: " <yellow><page>/<max_page> "
+    next: "Next »"
 
   help:
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> LiteEco <st>─━━━━━━━━━━━━━━━━━─</st></gray>"

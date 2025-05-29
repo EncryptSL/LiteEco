@@ -4,8 +4,8 @@ messages:
     format: "<prefix> <white>Bakiyeniz <currency> para biriminde <green><money></green>. [!]"
     format_target: "<prefix> <white><target></#13AFFE>'nin <gold><currency></gold> bakiyesi <green><money></green>. [!]"
     top_format: "<yellow><position># <gold><player></gold> <gray>- <green><money></green>"
-    top_header: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>BALTOP</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray>"
-    top_footer: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47><red><page>/<max_page></#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray>"
+    top_header: "<gray><st>─━━━━━━─</st> <#64646F>[ <#F9AD47>BALTOP</#F9AD47> ]</#64646F> <st>─━━━━━━─</st></gray>"
+    top_footer: "<gray><st>─━━━━━━─</st> <#64646F>[ <#F9AD47><pagination></#F9AD47> ]</#64646F> <st>─━━━━━━─</st></gray>"
 
   # Self-transaction messages (Kendi işlem mesajları)
   self:
@@ -68,19 +68,11 @@ messages:
       language_not_exist: "This %s language is not supported [!]"
       convert_fail: "Bir hata oluştu, lütfen konsolu kontrol edin [!]"
 
-  # Monolog messages (Monolog mesajları)
+  # Monolog message formatting
   monolog:
-    admin:
-      normal:
-        deposit: "Admin <sender> <target>'e <money> <currency> yatırdı"
-        set: "Admin <sender> <target>'e <money> <currency> olarak ayarladı"
-        withdraw: "Admin <sender> <target>'ten <money> <currency> çekti"
-      global:
-        deposit: "Admin <sender> <accounts>x hesaplara <money> <currency> yatırdı"
-        set: "Admin <sender> <accounts>x hesaplara <money> <currency> olarak ayarladı"
-        withdraw: "Admin <sender> <accounts>x hesaplardan <money> <currency> çekti"
-    player:
-      pay: "Oyuncu <sender> <target>'e <money> <currency> gönderdi"
+    header: "<gray><st>─━━━━━━─</st> <blue>[ <yellow>Transaction History <blue>] <gray><st>─━━━━━━─</st>"
+    footer: "<gray><st>─━━━━━━─</st> <blue>[ <pagination> <blue>] <gray><st>─━━━━━━─</st>"
+    formatting: "<blue>[<white><hover:show_text:'<timestamp>'><action></hover></white>]</blue> <sender> to <target> <green><st><hover:show_text:'<red>Old balance'><previous_balance></hover></st> <hover:show_text:'<green>New balance'><new_balance></hover></green> <gold>[<currency>]</gold>"
 
   # Admin commands (Yönetici komutları)
   admin:
@@ -97,6 +89,13 @@ messages:
     delete_account: "<prefix> <green><account> oyuncusunun hesabı silindi!"
     export_success: "<prefix> <green><type> taşıma işlemi başarılı [!]"
     import_success: "<prefix> <green><converted>x hesap ve <balances> bakiyeler <economy>'den LiteEco'ya dönüştürüldü [!]"
+
+  # Translation for pagination component
+  # Is available with placeholder <pagination>
+  pagination:
+    previous: "« Previous"
+    center: " <yellow><page>/<max_page> "
+    next: "Next »"
 
   # Help messages (Yardım mesajları)
   help:

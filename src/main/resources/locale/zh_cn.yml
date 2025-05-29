@@ -4,8 +4,8 @@ messages:
     format: "<prefix> <white>你拥有 <green><money></green> <gold><currency></gold>. [!]"
     format_target: "<prefix> <white>玩家 <#13AFFE><target></#13AFFE> 拥有 <green><money></green> <gold><currency><gold>. [!]"
     top_format: "<yellow><position># <gold><player></gold> <gray>- <green><money></green>"
-    top_header: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47>排行榜</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray>"
-    top_footer: "<gray><st>─━━━━━━─</st> <#64646F>[<#F9AD47><red><page>/<max_page></#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray>"
+    top_header: "<gray><st>─━━━━━━─</st> <#64646F>[ <#F9AD47>排行榜</#F9AD47> ]</#64646F> <st>─━━━━━━─</st></gray>"
+    top_footer: "<gray><st>─━━━━━━─</st> <#64646F>[ <#F9AD47><pagination></#F9AD47> ]</#64646F> <st>─━━━━━━─</st></gray>"
 
   # 转账消息
   self:
@@ -88,6 +88,13 @@ messages:
     delete_account: "<prefix> <green>玩家 <account> 的账户已被删除!"
     export_success: "<prefix> <green>迁移 <type> 成功 [!]"
     import_success: "<prefix> <green>转化来自 <economy> 的 <converted> 个账户, 共计 <balances> 经济单位至 LiteEco 的操作已成功完成 [!]"
+
+  # Translation for pagination component
+  # Is available with placeholder <pagination>
+  pagination:
+    previous: "« Previous"
+    center: " <yellow><page>/<max_page> "
+    next: "Next »"
 
   help:
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> LiteEco <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
