@@ -1,8 +1,10 @@
+import io.papermc.paperweight.userdev.ReobfArtifactConfiguration
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     kotlin("jvm") version "2.2.0-RC" apply true
     id("com.gradleup.shadow") version "9.0.0-beta13"
+    id("io.papermc.paperweight.userdev") version "2.0.0-beta.17"
     id("maven-publish")
 }
 
@@ -28,7 +30,7 @@ kotlin {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:${providers.gradleProperty("server_version").get()}")
+    paperweight.paperDevBundle(providers.gradleProperty("server_version").get())
     compileOnly(kotlin("stdlib", "2.2.0-RC"))
     compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
         exclude("org.bukkit", "bukkit")
@@ -93,20 +95,21 @@ sourceSets {
 }
 
 tasks {
-
-    build {
-        dependsOn(shadowJar)
-    }
-
-    //test {
-    //    useJUnitPlatform()
-    //}
-
     processResources {
         filesMatching(listOf("plugin.yml", "paper-plugin.yml")) {
             expand(project.properties)
         }
     }
+
+    shadowJar {
+        archiveFileName.set("${providers.gradleProperty("plugin_name").get()}-$version.jar")
+        minimize {
+            relocate("org.bstats", "com.github.encryptsl.metrics")
+        }
+    }
+    //test {
+    //    useJUnitPlatform()
+    //}
     compileJava {
         options.encoding = "UTF-8"
         options.release.set(21)
@@ -115,11 +118,8 @@ tasks {
     compileKotlin {
         compilerOptions.jvmTarget.set(JvmTarget.JVM_21)
     }
-    shadowJar {
-        archiveFileName.set("${providers.gradleProperty("plugin_name").get()}-$version.jar")
-        minimize {
-            relocate("org.bstats", "com.github.encryptsl.metrics")
-        }
+    build {
+        dependsOn(shadowJar)
     }
 }
 
@@ -129,3 +129,5 @@ publishing {
     }
     publications.create<MavenPublication>("libs").from(components["kotlin"])
 }
+
+paperweight.reobfArtifactConfiguration = ReobfArtifactConfiguration.MOJANG_PRODUCTION
