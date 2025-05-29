@@ -36,6 +36,27 @@ class SuspendLiteEcoEconomyWrapper {
             }
         }
 
+    suspend fun createAccount(uuid: UUID, username: String, currency: String = "dollars", startAmount: BigDecimal): Boolean =
+        runBlockingIO {
+            val userOpt = economyImpl.getUserByUUID(uuid, currency)
+            if (!userOpt.isPresent) {
+                LiteEco.instance.databaseEcoModel.createPlayerAccount(
+                    username,
+                    uuid,
+                    currency,
+                    startAmount
+                )
+                true
+            } else {
+                LiteEco.instance.databaseEcoModel.updatePlayerName(
+                    uuid,
+                    username,
+                    currency
+                )
+                false
+            }
+        }
+
     suspend fun deleteAccount(uuid: UUID, currency: String = "dollars"): Boolean = runBlockingIO {
         val user = economyImpl.getUserByUUID(uuid, currency).orElse(null)
         if (user == null) {
@@ -69,6 +90,10 @@ class SuspendLiteEcoEconomyWrapper {
 
     suspend fun set(uuid: UUID, currency: String = "dollars", amount: BigDecimal) = runBlockingIO {
         economyImpl.setMoney(uuid, currency, amount)
+    }
+
+    suspend fun syncAccount(uuid: UUID, currency: String = "dollars") {
+        economyImpl.syncAccount(uuid, currency)
     }
 
     suspend fun transfer(sender: UUID, target: UUID, currency: String = "dollars", amount: BigDecimal) = runBlockingIO {
