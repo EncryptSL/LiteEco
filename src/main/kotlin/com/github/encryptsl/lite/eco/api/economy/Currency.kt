@@ -54,14 +54,11 @@ class Currency(private val liteEco: LiteEco) {
     }
 
     fun currencyModularNameConvert(currency: String, value: BigDecimal): String {
-        return when(value) {
-            BigDecimal.valueOf(0.00) -> getCurrencyPlural(currency)
-            BigDecimal.valueOf(0) -> getCurrencyPlural(currency)
-            BigDecimal.valueOf(1.00) -> getCurrencySingular(currency)
-            BigDecimal.valueOf(1) -> getCurrencySingular(currency)
-            else -> getCurrencyPlural(currency)
+        return if (value.compareTo(BigDecimal.ONE) == 0) {
+            getCurrencySingular(currency)
+        } else {
+            getCurrencyPlural(currency)
         }
-
     }
 
 }
