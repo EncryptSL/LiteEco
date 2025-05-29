@@ -5,7 +5,6 @@ import com.github.encryptsl.lite.eco.api.ComponentPaginator
 import com.github.encryptsl.lite.eco.utils.Helper
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.command.CommandSender
 
 class MonologManager(
