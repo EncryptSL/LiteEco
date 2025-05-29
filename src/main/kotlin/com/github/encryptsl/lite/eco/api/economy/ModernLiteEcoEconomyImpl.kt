@@ -26,6 +26,17 @@ class ModernLiteEcoEconomyImpl : LiteEconomyAPI {
         }
     }
 
+    override fun createAccount(uuid: UUID, username: String, currency: String, startAmount: BigDecimal): Boolean {
+        val user = getUserByUUID(uuid, currency).orElse(null)
+        return if (user == null) {
+            LiteEco.instance.databaseEcoModel.createPlayerAccount(username, uuid, currency, startAmount)
+            true
+        } else {
+            LiteEco.instance.databaseEcoModel.updatePlayerName(uuid, username, currency)
+            false
+        }
+    }
+
     override fun getUserByUUID(uuid: UUID, currency: String): Optional<User> {
         return if (PlayerAccount.isPlayerOnline(uuid) || PlayerAccount.isAccountCached(uuid, currency)) {
             Optional.of(User(Bukkit.getPlayer(uuid)?.name.toString(), uuid, PlayerAccount.getBalance(uuid, currency)))
