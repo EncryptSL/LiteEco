@@ -87,6 +87,7 @@ database:
   #
   # MariaDB - org.mariadb.jdbc.Driver (https://youtrack.jetbrains.com/issue/EXPOSED-170)
   # MySQL - com.mysql.cj.jdbc.Driver Don't use if you have MariaDB version 11.X and newer.
+  # PostgreSQL - org.postgresql.Driver
   # SQL - org.sqlite.JDBC
   connection:
     # Settings for DriverClassName
