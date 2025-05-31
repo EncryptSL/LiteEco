@@ -1,6 +1,6 @@
 <div align="center">
 
-[![Banner]](https://github.com/EncryptSL/LiteEco)
+![[liteeco]](https://github.com/user-attachments/assets/f58e36ab-a54f-4b93-bca1-518f3f2ce476)
 
 ***
 # 💸 LiteEco - Minecraft Economy Plugin
