@@ -1,119 +1,81 @@
-<div align=center>
-
-# LiteEco - Minecraft Economy Plugin
+<div align="center">
 
 [![Banner]](https://github.com/EncryptSL/LiteEco)
 
-### Enhance your Minecraft server's economy with LiteEco, a lightweight plugin inspired on IConomy!
+***
+# 💸 LiteEco - Minecraft Economy Plugin
+*A lightweight, Vault-compatible economy plugin for Minecraft servers.*
 
-by [EncryptSL][EncryptSL] and [LcyDev][LcyDev].
+![GitHub release](https://img.shields.io/github/v/release/EncryptSL/LiteEco?style=flat-square)
+![GitHub issues](https://img.shields.io/github/issues/EncryptSL/LiteEco?style=flat-square)
+![bStats](https://img.shields.io/bstats/servers/16774?label=bStats&style=flat-square)
+![License](https://img.shields.io/github/license/EncryptSL/LiteEco?style=flat-square)
 
-## [Wiki][Wiki] &bullet; [FAQ][WK:FAQ] &bullet; [Releases](https://github.com/EncryptSL/LiteEco/releases)
+---
 </div>
 
-* * *
+## ✨ Features
 
-LiteEco brings the power of a robust economy system to your Minecraft server, providing support for both SQLite and MySQL connections for efficient player data storage.
+- 🦹 **Vault support** – compatible with any plugin using Vault or VaultUnlocked
+- 💱 **Multi-currency** system
+- 📁 **YAML-based locale system** with placeholder support
+- 📚 **Pagination support** for `/baltop` and `/eco monolog`
+- 🗂️ Support for **SQLite**, **MySQL**, **MariaDB**, and **PostgreSQL**
+- 🗂️ Support for **PlaceholderAPI**, **MiniPlaceholders**
+- 📈 Integrated with [bStats](https://bstats.org/plugin/bukkit/LiteEco)
+- 💡 Lightweight and performance-optimized
+- 🔧 Easy to configure with clean `config.yml`
 
-With an intuitive command interface designed for both console and in-game usage, managing your server's economy has never been easier.
+---
 
-## Features:
+## 📅 Download
 
-- **Multiple Database Support:** :heavy_check_mark:
+➡️ [Get the latest release](https://www.spigotmc.org/resources/liteeco-simple-economy-plugin-1-21-x.101934/updates)
 
-  - Choose between SQLite or MySQL to store player data securely and efficiently.
+---
 
-- **Seamless Integration with VaultAPI:** :heavy_check_mark:
+## 📘 Wiki & Configuration
 
-  - LiteEco effortlessly works with [VaultAPI][Vault] for smooth and reliable economy transactions.
-  - LiteEco works with [VaultUnlocked][VaultUnlocked] for multicurrency support. **Since 1.4.8 and newer versions...**
+Find full documentation and configuration examples in the **[GitHub Wiki](https://github.com/EncryptSL/LiteEco/wiki)**.
 
-- **Convenient PlaceholderAPI Integration:** :heavy_check_mark:
+Popular sections:
+- [Plugin Settings](https://github.com/EncryptSL/LiteEco/wiki/Plugin-Settings)
+- [Database Configuration](https://github.com/EncryptSL/LiteEco/wiki/Database-Settings)
+- [Economy & Currencies](https://github.com/EncryptSL/LiteEco/wiki/Economy-Settings)
+- [Commands Overview](https://github.com/EncryptSL/LiteEco/wiki/Commands)
+- [Placeholders](https://github.com/EncryptSL/LiteEco/wiki/Placeholders)
+---
 
-  - Enhance your server with [custom placeholders][WK:Placeholders] for displaying economy-related information.
+## 🧪 bStats Metrics
 
-- **Importing of economy from others plugins** :heavy_check_mark:
+LiteEco collects **anonymous usage statistics** via [bStats](https://bstats.org/), which helps improve development:
 
-  - Import economy from others supported plugins to LiteEco
-    - CraftConomy3 :green_heart:
-    - ScruffyBoyEconomy :green_heart:
-    - EssentialsX :green_heart:
+- Online servers
+- Plugin version usage
+- Command usage
 
-<div align=center>
+You can disable this in `config.yml` under `plugin.metrics`.
 
-## Documentation:
+---
 
-Want to learn more about LiteEco and its capabilities? 
+## 🖠️ Development
 
-Check out our comprehensive documentation [**here**][Wiki].
+### Build Locally
 
-## Easy to Use:
+```bash
+git clone https://github.com/EncryptSL/LiteEco.git
+cd LiteEco
+./gradlew build
+```
 
-LiteEco is designed to be user-friendly, making it simple for server owners and administrators to manage their economies without any hassle.
+Compiled JAR will be located in: `build/libs/`
 
-## Get Started:
+---
 
-Ready to take your Minecraft server's economy to the next level? Download LiteEco now and [get started][WK:Quickstart]!
+## ☕ Support Development
 
-[![Ko-Fi]](https://ko-fi.com/encryptsl)
+If you enjoy LiteEco and want to support its future:
 
-[![GitHub Downloads]](https://github.com/EncryptSL/LiteEco/releases/latest)
-[![GitHub Releases]](https://github.com/EncryptSL/LiteEco/releases)
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/encryptsl)
 
-[![GitHub Issues]](https://github.com/EncryptSL/LiteEco/issues)
-[![GitHub Pulls]](https://github.com/EncryptSL/LiteEco/pulls)
-
-* * *
-
-[![bStats Metrics]](https://bstats.org/plugin/bukkit/LiteEco/15144)
-
-* * *
-
-### Download the latest version now and let the prosperity begin!
-
-Join thousands of satisfied server owners and administrators who have improved their Minecraft economies with LiteEco.
-
-</div>
-
-[//]: # (Other)
-
-[Banner]: https://i.ibb.co/gvpv3CX/LiteEco.jpg
-
-[Ko-Fi]: https://storage.ko-fi.com/cdn/brandasset/kofi_s_tag_white.png
-
-[//]: # (Data)
-
-[GitHub Issues]: https://img.shields.io/github/issues/EncryptSL/LiteEco
-[GitHub Pulls]: https://img.shields.io/github/issues-pr/EncryptSL/LiteEco
-[GitHub Downloads]: https://img.shields.io/github/downloads/EncryptSL/LiteEco/total
-[GitHub Releases]: https://img.shields.io/github/v/release/EncryptSL/LiteEco.svg?include_prereleases=&sort=semver&color=blue
-[bStats Metrics]: https://bstats.org/signatures/bukkit/LiteEco.svg
-
-[//]: # (Wiki)
-
-[Wiki]: https://github.com/EncryptSL/LiteEco/wiki
-
-[WK:FAQ]: https://github.com/EncryptSL/LiteEco/wiki/Frequently-Asked-Questions
-[WK:Quickstart]: https://github.com/EncryptSL/LiteEco/wiki/Quickstart
-[WK:Credits]: https://github.com/EncryptSL/LiteEco/wiki/Credits
-
-[WK:Setup]: https://github.com/EncryptSL/LiteEco/wiki/Setup
-[WK:Contributing]: https://github.com/EncryptSL/LiteEco/wiki/Contributing
-
-[WK:Migrations]: https://github.com/EncryptSL/LiteEco/wiki/Migrations
-[WK:Permissions]: https://github.com/EncryptSL/LiteEco/wiki/Permissions
-[WK:Placeholders]: https://github.com/EncryptSL/LiteEco/wiki/Placeholders
-[WK:Translations]: https://github.com/EncryptSL/LiteEco/wiki/Translations
-
-[//]: # (Third-parties)
-
-[PAPI]: https://github.com/PlaceholderAPI/PlaceholderAPI
-[PAPI List]: https://github.com/PlaceholderAPI/PlaceholderAPI/wiki/Placeholders
-[Vault]: https://github.com/MilkBowl/VaultAPI
-[VaultUnlocked]: https://github.com/TheNewEconomy/VaultUnlocked
-[Treasury]: https://github.com/ArcanePlugins/Treasury
-
-[//]: # (Contributors)
-
-[EncryptSL]: https://github.com/EncryptSL
-[LcyDev]: https://github.com/LcyDev
+> Built with ❤️ by [EncryptSL](https://encryptsl.github.io)
