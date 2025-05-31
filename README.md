@@ -42,7 +42,7 @@ Popular sections:
 - [Plugin Settings](https://github.com/EncryptSL/LiteEco/wiki/Plugin-Settings)
 - [Database Configuration](https://github.com/EncryptSL/LiteEco/wiki/Database-Settings)
 - [Economy & Currencies](https://github.com/EncryptSL/LiteEco/wiki/Economy-Settings)
-- [Commands Overview](https://github.com/EncryptSL/LiteEco/wiki/Commands)
+- [Commands & Overview](https://github.com/EncryptSL/LiteEco/wiki/Commands-&-Permissions)
 - [Placeholders](https://github.com/EncryptSL/LiteEco/wiki/Placeholders)
 ---
 
