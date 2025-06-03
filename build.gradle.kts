@@ -2,8 +2,8 @@ import io.papermc.paperweight.userdev.ReobfArtifactConfiguration
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    kotlin("jvm") version "2.2.0-RC" apply true
-    id("com.gradleup.shadow") version "9.0.0-beta13"
+    kotlin("jvm") version "2.2.0-RC"
+    id("com.gradleup.shadow") version "9.0.0-beta15"
     id("io.papermc.paperweight.userdev") version "2.0.0-beta.17"
     id("maven-publish")
 }
@@ -11,6 +11,8 @@ plugins {
 group = "com.github.encryptsl"
 version = providers.gradleProperty("plugin_version").get()
 description = providers.gradleProperty("plugin_description").get()
+
+val props = project.properties.mapValues { it.value.toString() }
 
 repositories {
     flatDir {
@@ -27,11 +29,14 @@ repositories {
 
 kotlin {
     jvmToolchain(21)
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_21)
+        freeCompilerArgs.add("-Xcontext-parameters")
+    }
 }
 
 dependencies {
     paperweight.paperDevBundle(providers.gradleProperty("server_version").get())
-    compileOnly(kotlin("stdlib", "2.2.0-RC"))
     compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
         exclude("org.bukkit", "bukkit")
     }
@@ -76,7 +81,7 @@ dependencies {
     //MiniPlaceholders
     implementation("io.github.miniplaceholders:miniplaceholders-kotlin-ext:2.3.0")
 
-    testImplementation(kotlin("test", "2.2.0-Beta2"))
+    testImplementation(kotlin("test", "2.2.0-RC"))
     testImplementation("com.zaxxer:HikariCP:6.2.1")
     testImplementation("org.xerial:sqlite-jdbc:3.49.1.0")
     testImplementation("org.jetbrains.exposed:exposed-core:0.60.0")
@@ -97,12 +102,12 @@ sourceSets {
 tasks {
     processResources {
         filesMatching(listOf("plugin.yml", "paper-plugin.yml")) {
-            expand(project.properties)
+            expand(props)
         }
     }
 
     shadowJar {
-        archiveFileName.set("${providers.gradleProperty("plugin_name").get()}-$version.jar")
+        archiveFileName.set("${providers.gradleProperty("plugin_name").get()}-${project.version}.jar")
         minimize {
             relocate("org.bstats", "com.github.encryptsl.metrics")
         }
@@ -114,9 +119,6 @@ tasks {
         options.encoding = "UTF-8"
         options.release.set(21)
         options.compilerArgs.add("-Xlint:deprecation")
-    }
-    compileKotlin {
-        compilerOptions.jvmTarget.set(JvmTarget.JVM_21)
     }
     build {
         dependsOn(shadowJar)
