@@ -6,7 +6,7 @@ import com.github.encryptsl.lite.eco.api.enums.ExportKeys
 import com.github.encryptsl.lite.eco.api.enums.PurgeKey
 import com.github.encryptsl.lite.eco.api.events.admin.*
 import com.github.encryptsl.lite.eco.api.objects.ModernText
-import com.github.encryptsl.lite.eco.commands.parsers.ConvertEconomyParser
+import com.github.encryptsl.lite.eco.commands.parsers.ImportEconomyParser
 import com.github.encryptsl.lite.eco.commands.parsers.CurrencyParser
 import com.github.encryptsl.lite.eco.commands.parsers.LangParser
 import com.github.encryptsl.lite.eco.common.config.Locales
@@ -14,9 +14,8 @@ import com.github.encryptsl.lite.eco.common.manager.ExportManager
 import com.github.encryptsl.lite.eco.common.manager.ImportManager
 import com.github.encryptsl.lite.eco.common.manager.MonologManager
 import com.github.encryptsl.lite.eco.common.manager.PurgeManager
+import com.github.encryptsl.lite.eco.common.manager.importer.ImportEconomy
 import com.github.encryptsl.lite.eco.utils.Helper
-import com.github.encryptsl.lite.eco.utils.ImportEconomy
-import com.github.encryptsl.lite.eco.utils.ImportEconomy.Economies
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.Bukkit
@@ -48,6 +47,8 @@ class EcoCMD(
     private val monologManager: MonologManager = MonologManager(liteEco, helper)
     private val importManager: ImportManager = ImportManager(liteEco, importEconomy)
     private val purgeManager: PurgeManager = PurgeManager(liteEco)
+
+    private val importEconomyParser by lazy { ImportEconomyParser(importEconomy) }
 
     override fun execute(commandManager: PaperCommandManager<Source>) {
         commandManager.buildAndRegister("eco", Description.description(DESCRIPTION)) {
@@ -336,8 +337,8 @@ class EcoCMD(
                 .permission("lite.eco.admin.import")
                 .required(
                     commandManager
-                        .componentBuilder(Economies::class.java, "economy")
-                        .parser(ConvertEconomyParser())
+                        .componentBuilder(String::class.java, "economy")
+                        .parser(importEconomyParser)
                 )
                 .optional(
                     commandManager
@@ -346,7 +347,7 @@ class EcoCMD(
                         .defaultValue(DefaultValue.parsed("dollars"))
                 ).handler { ctx ->
                     val sender: CommandSender = ctx.sender().source()
-                    val economy: Economies = ctx.get("economy")
+                    val economy: String = ctx.get("economy")
                     val currency: String = ctx.get("currency")
                     importManager.importEconomy(sender, economy, currency)
                 })

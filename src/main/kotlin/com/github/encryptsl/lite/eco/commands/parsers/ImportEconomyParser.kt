@@ -1,7 +1,7 @@
 package com.github.encryptsl.lite.eco.commands.parsers
 
 import com.github.encryptsl.lite.eco.LiteEco
-import com.github.encryptsl.lite.eco.utils.ImportEconomy.Economies
+import com.github.encryptsl.lite.eco.common.manager.importer.ImportEconomy
 import org.incendo.cloud.context.CommandContext
 import org.incendo.cloud.context.CommandInput
 import org.incendo.cloud.paper.util.sender.Source
@@ -10,22 +10,22 @@ import org.incendo.cloud.parser.ArgumentParser
 import org.incendo.cloud.suggestion.Suggestion
 import org.incendo.cloud.suggestion.SuggestionProvider
 
-class ConvertEconomyParser : ArgumentParser<Source, Economies> {
+class ImportEconomyParser(private val importer: ImportEconomy) : ArgumentParser<Source, String> {
     override fun parse(
         commandContext: CommandContext<Source>,
         commandInput: CommandInput
-    ): ArgumentParseResult<Economies> {
+    ): ArgumentParseResult<String> {
         val input = commandInput.peekString()
-
-        try {
+        commandInput.readString()
+        if (importer.getAvailableImporters().contains(input)) {
             commandInput.readString()
-            return ArgumentParseResult.success(Economies.valueOf(input))
-        } catch (_ : IllegalArgumentException) {
-            return ArgumentParseResult.failure(Exception(LiteEco.instance.locale.getMessage("messages.parser.error.convert_fail")))
+            return ArgumentParseResult.success(input)
         }
+
+        return ArgumentParseResult.failure(Exception(LiteEco.instance.locale.getMessage("messages.parser.error.convert_fail")))
     }
 
     override fun suggestionProvider(): SuggestionProvider<Source> {
-        return SuggestionProvider.suggesting(Economies.entries.map { Suggestion.suggestion(it.name) })
+        return SuggestionProvider.suggesting(importer.getAvailableImporters().map { Suggestion.suggestion(it) })
     }
 }
