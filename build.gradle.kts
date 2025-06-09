@@ -50,7 +50,7 @@ dependencies {
     compileOnly("com.zaxxer:HikariCP:6.2.1")
 
     //EconomyAPI
-    compileOnly("net.milkbowl.vault:VaultUnlockedAPI:2.9")
+    compileOnly("net.milkbowl.vault:VaultUnlockedAPI:2.11")
 
     //Coding Utils
     compileOnly("com.squareup.okhttp3:okhttp:4.12.0")
@@ -111,6 +111,8 @@ tasks {
         minimize {
             relocate("org.bstats", "com.github.encryptsl.metrics")
         }
+        exclude("kotlin/**")
+        exclude("kotlinx/**")
     }
     //test {
     //    useJUnitPlatform()
