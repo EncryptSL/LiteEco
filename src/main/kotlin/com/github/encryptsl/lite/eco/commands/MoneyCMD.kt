@@ -4,6 +4,7 @@ import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.ComponentPaginator
 import com.github.encryptsl.lite.eco.api.events.PlayerEconomyPayEvent
 import com.github.encryptsl.lite.eco.api.objects.ModernText
+import com.github.encryptsl.lite.eco.commands.parsers.AmountValidatorParser
 import com.github.encryptsl.lite.eco.commands.parsers.CurrencyParser
 import com.github.encryptsl.lite.eco.common.extensions.runBlockingIO
 import com.github.encryptsl.lite.eco.utils.Helper
@@ -20,6 +21,7 @@ import org.incendo.cloud.paper.PaperCommandManager
 import org.incendo.cloud.paper.util.sender.PlayerSource
 import org.incendo.cloud.paper.util.sender.Source
 import org.incendo.cloud.parser.standard.IntegerParser
+import java.math.BigDecimal
 
 class MoneyCMD(
     private val liteEco: LiteEco
@@ -97,7 +99,11 @@ class MoneyCMD(
                 .senderType(PlayerSource::class.java)
                 .permission("lite.eco.pay")
                 .required("target", OfflinePlayerParser.offlinePlayerParser(), commandManager.parserRegistry().getSuggestionProvider("players").get())
-                .required("int", IntegerParser.integerParser(1))
+                .required(commandManager
+                    .componentBuilder(BigDecimal::class.java, "amount")
+                    .parser(AmountValidatorParser())
+                    .defaultValue(DefaultValue.constant(BigDecimal.ONE))
+                )
                 .optional(commandManager
                     .componentBuilder(String::class.java, "currency")
                     .parser(CurrencyParser())
@@ -105,9 +111,9 @@ class MoneyCMD(
                 ).handler { ctx ->
                     val sender: Player = ctx.sender().source()
                     val target: OfflinePlayer = ctx.get("target")
-                    val amountStr: Int = ctx.get("int")
+                    val amount: BigDecimal = ctx.get("amount")
                     val currency: String = ctx.get("currency")
-                    payCommand(sender, target, amountStr, currency)
+                    payCommand(sender, target, amount, currency)
                 }
             commandManager.command(payCmd)
             commandManager.command(commandManager.commandBuilder("pay").proxies(payCmd.build()))
@@ -173,14 +179,13 @@ class MoneyCMD(
         }
     }
 
-    fun payCommand(sender: Player, target: OfflinePlayer, amountStr: Int, currency: String) {
+    fun payCommand(sender: Player, target: OfflinePlayer, amount: BigDecimal, currency: String) {
         if (!sender.hasPermission("lite.eco.pay.$currency") && !sender.hasPermission("lite.eco.pay.*"))
             return sender.sendMessage(liteEco.locale.translation("messages.error.missing_currency_permission"))
 
         if (sender.uniqueId == target.uniqueId)
             return sender.sendMessage(liteEco.locale.translation("messages.error.self_pay"))
 
-        val amount = helper.validateAmount(amountStr.toString(), sender) ?: return
         liteEco.pluginManager.callEvent(PlayerEconomyPayEvent(sender, target, currency, amount))
     }
 
