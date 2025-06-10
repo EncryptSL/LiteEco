@@ -246,7 +246,7 @@ class EcoCMD(
                     val currency: String = ctx.get("currency")
 
                     liteEco.pluginScope.launch {
-                        val message = if (liteEco.suspendApiWrapper.createAccount(target, currency, amountStr.toBigDecimal())) {
+                        val message = if (liteEco.suspendApiWrapper.createOrUpdateAccount(target.uniqueId, target.name.toString(), currency, amountStr.toBigDecimal())) {
                             "messages.admin.create_account"
                         } else {
                             "messages.error.account_now_exist"
