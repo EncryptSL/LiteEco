@@ -47,10 +47,10 @@ class DatabaseConnector(private val liteEco: LiteEco) : DatabaseConnectorProvide
                 preserveKeywordCasing = true
             }, connectionAutoRegistration = ExposedConnectionImpl())
 
-            liteEco.currencyImpl.getCurrenciesKeys().forEach { currency ->
-                loggedTransaction {
-                    SchemaUtils.create(Account(currency), MonologTable)
-                }
+            val tables = liteEco.currencyImpl.getCurrenciesKeys().map { Account(it) }.toTypedArray()
+
+            loggedTransaction {
+                SchemaUtils.create(*tables, MonologTable)
             }
         } catch (e: Exception) {
             liteEco.logger.severe("Database initialization failed: ${e.message}")
