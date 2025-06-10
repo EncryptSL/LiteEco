@@ -82,10 +82,14 @@ dependencies {
     implementation("io.github.miniplaceholders:miniplaceholders-kotlin-ext:2.3.0")
 
     testImplementation(kotlin("test", "2.2.0-RC"))
+    testImplementation("org.mariadb.jdbc:mariadb-java-client:3.5.2")
+    testImplementation("org.flywaydb:flyway-core:11.9.1")
     testImplementation("com.zaxxer:HikariCP:6.2.1")
     testImplementation("org.xerial:sqlite-jdbc:3.49.1.0")
     testImplementation("org.jetbrains.exposed:exposed-core:0.60.0")
     testImplementation("org.jetbrains.exposed:exposed-jdbc:0.60.0")
+    testImplementation("org.jetbrains.exposed:exposed-migration:0.60.0")
+    testImplementation("org.jetbrains.exposed:exposed-kotlin-datetime:0.60.0")
 }
 
 sourceSets {
