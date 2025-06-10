@@ -45,10 +45,8 @@ messages:
     account_now_exist: "<prefix> <red>Účet <account> existuje [!]"
     missing_balance_others_permission: "<prefix> <red>Nemáš oprávnění zobrazit zůstatek účtu ostatních [!]"
     missing_currency_permission: "<prefix> <red>Nemáš oprávnění pro využívání této měny [!]"
-    format_amount: "<prefix> <red>Neplatná částka. Použijte desetinná čísla nebo kompaktní reprezentace (např. 1K) [!]" # TEMP #
     insufficient_funds: "<prefix> <red>Nedostatek finančních prostředků [!]"
     maximum_page: "<red>Limit stránkování je <max_page>"
-    negative_amount: "<prefix> <red>Detekovano negativní číslo [!]"
     export_argument: "<prefix> <red>Tento <argument> argument není validní nebo není připraven do produkce."
     export_failed: "<prefix> <red>Při exportu došlo k chybě. Podrobnosti naleznete v konzoli." # TEMP #
     import_failed: "<prefix> <red>Při importu došlo k chybě nebo chybí data pro import !"
@@ -64,6 +62,8 @@ messages:
   # Please don't try edit this messages !
   parser:
     error:
+      format_amount: "Neplatná částka. Použijte desetinná čísla nebo kompaktní reprezentace (např. 1K) [!]"
+      negative_amount: "Detekovano negativní číslo [!]"
       currency_not_exist: "Tato měna %s neexistuje [!]"
       language_not_exist: "Tato %s jazyková sada není podporovaná [!]"
       convert_fail: "Něco se pokazilo během konvertování, podívej se do konzole [!]"

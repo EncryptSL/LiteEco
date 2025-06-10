@@ -45,10 +45,8 @@ messages:
     account_now_exist: "<prefix> <red>Account <account> now exists [!]"
     missing_balance_others_permission: "<prefix> <red>You do not have permission to view the account balance of others [!]"
     missing_currency_permission: "<prefix> <red>You do not have permission to use this currency [!]"
-    format_amount: "<prefix> <red>無効な金額です。小数点を使用するか、コンパクトな表記（例：1K）を利用してください。" # TEMP #
     insufficient_funds: "<prefix> <red>お金が足りていません。"
     maximum_page: "<red>ページ数の上限は <max_page>"
-    negative_amount: "<prefix> <red>マイナスの金額は入力できません。"
     export_argument: "<prefix> <red>この<argument>は適切ではないか、サーバーの移行の準備が完了していない可能性があります。"
     export_failed: "<prefix> <red>マイグレーション中に問題が発生しました。詳細についてはコンソールをご確認ください。" # TEMP #
     import_failed: "<prefix> <red>There was an issue during the import or missing data !"
@@ -64,6 +62,8 @@ messages:
   # Please don't try edit this messages !
   parser:
     error:
+      format_amount: "無効な金額です。小数点を使用するか、コンパクトな表記（例：1K）を利用してください。"
+      negative_amount: "マイナスの金額は入力できません。"
       currency_not_exist: "These currency %s not exist [!]"
       language_not_exist: "This %s language is not supported [!]"
       convert_fail: "Something broke during convert look into console [!]"

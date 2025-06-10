@@ -45,10 +45,8 @@ messages:
     account_now_exist: "<prefix> <red>Account <account> now exists [!]"
     missing_balance_others_permission: "<prefix> <red>You do not have permission to view the account balance of others [!]"
     missing_currency_permission: "<prefix> <red>You do not have permission to use this currency [!]"
-    format_amount: "<prefix> <red>Invalid amount. Use float numbers or compact representations (e.g 1K) [!]"
     insufficient_funds: "<prefix> <red>Insufficient funds! [!]"
     maximum_page: "<red>Limit of pagination is <max_page>"
-    negative_amount: "<prefix> <red>Negative amounts are not allowed. [!]"
     export_argument: "<prefix> <red>This <argument> argument is not valid or not ready for production."
     export_failed: "<prefix> <red>There was an issue during the export. Please check the console for more details."
     import_failed: "<prefix> <red>There was an issue during the import or missing data !"
@@ -64,6 +62,8 @@ messages:
   # Please don't try edit this messages !
   parser:
     error:
+      format_amount: "Invalid amount. Use float numbers or compact representations (e.g 1K) [!]"
+      negative_amount: "Negative amounts are not allowed. [!]"
       currency_not_exist: "These currency %s not exist [!]"
       language_not_exist: "This %s language is not supported [!]"
       convert_fail: "Something broke during convert look into console [!]"

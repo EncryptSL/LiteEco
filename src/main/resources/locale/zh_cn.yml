@@ -45,10 +45,8 @@ messages:
     account_now_exist: "<prefix> <red>账号 <account> 已存在 [!]"
     missing_balance_others_permission: "<prefix> <red>You do not have permission to view the account balance of others [!]"
     missing_currency_permission: "<prefix> <red>你没有权限使用此货币 [!]"
-    format_amount: "<prefix> <red>数量无效. 请使用小数或缩写 (如 1K) [!]"
     insufficient_funds: "<prefix> <red>余额不足! [!]"
     maximum_page: "<red>最大页码为 <max_page>"
-    negative_amount: "<prefix> <red>请勿输入负数. [!]"
     export_argument: "<prefix> <red>参数 <参数> 无效或尚不可用."
     export_failed: "<prefix> <red>迁移过程遇到问题. 请检查控制台获取信息."
     import_failed: "<prefix> <red>There was an issue during the import or missing data !"
@@ -65,6 +63,8 @@ messages:
   # Please don't try edit this messages !
   parser:
     error:
+      format_amount: "数量无效. 请使用小数或缩写 (如 1K) [!]"
+      negative_amount: "请勿输入负数. [!]"
       currency_not_exist: "货币 %s 不存在!"
       language_not_exist: "This %s language is not supported [!]"
       convert_fail: "转化过程出现问题, 请查看控制台 [!]"

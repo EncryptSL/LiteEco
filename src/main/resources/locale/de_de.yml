@@ -45,10 +45,8 @@ messages:
     account_now_exist: "<prefix> <red>Account <account> now exists [!]"
     missing_balance_others_permission: "<prefix> <red>You do not have permission to view the account balance of others [!]"
     missing_currency_permission: "<prefix> <red>You do not have permission to use this currency [!]"
-    format_amount: "<prefix> <red>Ungültiger Betrag. Verwende Gleitkommazahlen oder kompakte Darstellungen (z.B. 1K) [!]"
     insufficient_funds: "<prefix> <red>Nicht genug Geld [!]"
     maximum_page: "<red>Grenze der Seitenzahlen ist <max_page>"
-    negative_amount: "<prefix> <red>Negative Beträge sind nicht erlaubt. [!]"
     export_argument: "<prefix> <red>Dieses <argument> Argument ist nicht gültig oder nicht bereit für Produktion."
     export_failed: "<prefix> <red>Es gab ein Problem während der Migration. Bitte prüfe die Konsole für weitere Details."
     import_failed: "<prefix> <red>There was an issue during the import or missing data !"
@@ -64,6 +62,8 @@ messages:
   # Please don't try edit this messages !
   parser:
     error:
+      format_amount: "Ungültiger Betrag. Verwende Gleitkommazahlen oder kompakte Darstellungen (z.B. 1K) [!]"
+      negative_amount: "Negative Beträge sind nicht erlaubt. [!]"
       currency_not_exist: "These currency %s not exist [!]"
       language_not_exist: "This %s language is not supported [!]"
       convert_fail: "Irgendetwas ist bei der Konvertierung kaputt gegangen, prüfe die Konsole [!]"

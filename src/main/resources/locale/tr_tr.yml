@@ -45,10 +45,8 @@ messages:
     account_now_exist: "<prefix> <red><account> hesabı şimdi mevcut [!]"
     missing_balance_others_permission: "<prefix> <red>You do not have permission to view the account balance of others [!]"
     missing_currency_permission: "<prefix> <red>Bu para birimini kullanma yetkiniz yok [!]"
-    format_amount: "<prefix> <red>Geçersiz miktar. Lütfen ondalıklı sayılar veya sıkıştırılmış gösterimler kullanın (örneğin 1K) [!]"
     insufficient_funds: "<prefix> <red>Yetersiz bakiye! [!]"
     maximum_page: "<red>Sayfalama limitinin <max_page> olduğunu unutmayın."
-    negative_amount: "<prefix> <red>Negatif miktarlar kabul edilmez. [!]"
     export_argument: "<prefix> <red>Bu <argument> argümanı geçerli değil ya da üretime hazır değil."
     export_failed: "<prefix> <red>Taşıma işlemi sırasında bir sorun oluştu. Detaylar için konsolu kontrol edin."
     import_failed: "<prefix> <red>İçe aktarma sırasında bir sorun oluştu veya veriler eksik!"
@@ -64,6 +62,8 @@ messages:
   # Please don't try edit this messages !
   parser:
     error:
+      format_amount: "Geçersiz miktar. Lütfen ondalıklı sayılar veya sıkıştırılmış gösterimler kullanın (örneğin 1K) [!]"
+      negative_amount: "Negatif miktarlar kabul edilmez. [!]"
       currency_not_exist: "Bu %s para birimi mevcut değil!"
       language_not_exist: "This %s language is not supported [!]"
       convert_fail: "Bir hata oluştu, lütfen konsolu kontrol edin [!]"
