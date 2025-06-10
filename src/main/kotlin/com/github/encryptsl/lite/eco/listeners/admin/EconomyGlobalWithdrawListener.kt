@@ -42,23 +42,22 @@ class EconomyGlobalWithdrawListener(private val liteEco: LiteEco) : Listener {
                     }
                 }
             }
-        }
 
-        liteEco.increaseTransactions(players.size)
+            liteEco.increaseTransactions(players.size)
 
-        sender.sendMessage(
-            liteEco.locale.translation("messages.global.withdraw_money",
-            TagResolver.resolver(
-                Placeholder.parsed("money", liteEco.api.fullFormatting(money)),
-                Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
-            )
-        ))
-        if (liteEco.config.getBoolean("messages.global.notify_withdraw")) {
-            Bukkit.broadcast(liteEco.locale.translation("messages.broadcast.withdraw_money", TagResolver.resolver(
-                Placeholder.parsed("sender", sender.name),
-                Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
-                Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
-            )))
+            sender.sendMessage(liteEco.locale.translation("messages.global.withdraw_money",
+                TagResolver.resolver(
+                    Placeholder.parsed("money", liteEco.api.fullFormatting(money)),
+                    Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
+                )
+            ))
+            if (liteEco.config.getBoolean("messages.global.notify_withdraw")) {
+                Bukkit.broadcast(liteEco.locale.translation("messages.broadcast.withdraw_money", TagResolver.resolver(
+                    Placeholder.parsed("sender", sender.name),
+                    Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
+                    Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
+                )))
+            }
         }
     }
 }

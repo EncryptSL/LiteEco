@@ -40,36 +40,36 @@ class EconomyMoneyWithdrawListener(private val liteEco: LiteEco) : Listener {
 
             liteEco.increaseTransactions(1)
             liteEco.suspendApiWrapper.withdraw(target.uniqueId, currency, money)
-        }
 
-        if (sender.name == target.name) {
-            sender.sendMessage(liteEco.locale.translation("messages.self.withdraw_money", TagResolver.resolver(
-                Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
-                Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
-            )))
-            return
-        }
-
-        sender.sendMessage(liteEco.locale.translation("messages.sender.withdraw_money", TagResolver.resolver(
-            Placeholder.parsed("target", target.name.toString()),
-            Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
-            Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
-        )))
-
-        if (target.isOnline && liteEco.config.getBoolean("messages.target.notify_withdraw")) {
-            if (silent) {
-                target.player?.sendMessage(liteEco.locale.translation(
-                    "messages.target.withdraw_money_silent",
+            if (sender.name == target.name) {
+                sender.sendMessage(liteEco.locale.translation("messages.self.withdraw_money", TagResolver.resolver(
+                    Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
                     Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
-                ))
-                return
+                )))
+                return@launch
             }
 
-            target.player?.sendMessage(liteEco.locale.translation("messages.target.withdraw_money", TagResolver.resolver(
-                Placeholder.parsed("sender", sender.name),
+            sender.sendMessage(liteEco.locale.translation("messages.sender.withdraw_money", TagResolver.resolver(
+                Placeholder.parsed("target", target.name.toString()),
                 Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
                 Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
             )))
+
+            if (target.isOnline && liteEco.config.getBoolean("messages.target.notify_withdraw")) {
+                if (silent) {
+                    target.player?.sendMessage(liteEco.locale.translation(
+                        "messages.target.withdraw_money_silent",
+                        Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
+                    ))
+                    return@launch
+                }
+
+                target.player?.sendMessage(liteEco.locale.translation("messages.target.withdraw_money", TagResolver.resolver(
+                    Placeholder.parsed("sender", sender.name),
+                    Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
+                    Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
+                )))
+            }
         }
     }
 
