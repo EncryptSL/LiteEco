@@ -33,15 +33,14 @@ object PlayerAccount : AccountAPI {
     }
 
     override fun syncAccount(uuid: UUID) {
+        val userBalances = cache[uuid] ?: return
         try {
-            val iterator = cache[uuid]?.iterator()
-            while (iterator?.hasNext() == true) {
-                val balance = iterator.next()
-                databaseEcoModel.setMoney(uuid, balance.key, balance.value)
+            userBalances.forEach { (currency, amount) ->
+                databaseEcoModel.setMoney(uuid, currency, amount)
             }
             cache.remove(uuid)
-        } catch (e : Exception) {
-            LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
+        } catch (e: Exception) {
+            LiteEco.instance.logger.severe("Error while sync cache with database for $uuid: ${e.localizedMessage}")
         }
     }
 
