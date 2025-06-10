@@ -3,46 +3,64 @@ package com.github.encryptsl.lite.eco.api
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.objects.ModernText
 import com.google.gson.Gson
-import okhttp3.Call
+import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.Response
 
 
-class UpdateNotifier(private val liteEco: LiteEco, private val id: String, private val pluginVersion: String) {
-
-    private val okHttpClient = OkHttpClient()
-    private val requestClient = Request.Builder()
-
+class UpdateNotifier(
+    private val liteEco: LiteEco,
+    private val resourceId: String,
+    private val currentVersion: String
+) {
     companion object {
-        const val API_LINK = "https://api.spiget.org/v2/resources/%s/versions/latest"
+        private const val API_URL = "https://api.spiget.org/v2/resources/%s/versions/latest"
     }
 
-    fun makeUpdateCheck() {
-        try {
-            val request: Request = requestClient.url(String.format(API_LINK, id)).build()
-            val call: Call = okHttpClient.newCall(request)
-            call.execute().use { r ->
-                if (!r.isSuccessful) { r.close() }
-                liteEco.componentLogger.info(ModernText.miniModernText(logUpdate(r)))
+    private val httpClient = OkHttpClient()
+    private val gson = Gson()
+
+    fun checkForUpdateAsync() {
+        liteEco.pluginScope.launch {
+            try {
+                val request = Request.Builder()
+                    .url(API_URL.format(resourceId))
+                    .build()
+
+                val response = httpClient.newCall(request).execute()
+                response.use {
+                    if (!it.isSuccessful) {
+                        logError("Update check failed with HTTP ${it.code}")
+                        return@use
+                    }
+
+                    val responseBody = it.body?.string()
+                    if (responseBody == null) {
+                        logError("Update check returned empty response body.")
+                        return@use
+                    }
+                    val version = gson.fromJson(responseBody, Version::class.java)
+                    logUpdate(version)
+                }
+            } catch (e: Exception) {
+                logError("Exception during update check: ${e.localizedMessage}")
             }
-        } catch (e : Exception) {
-            liteEco.componentLogger.error(e.message ?: e.localizedMessage)
         }
     }
 
-    private fun logUpdate(response: Response): String {
-        if (response.code != 200)
-            return "<red>Error during check update.. response code, <yellow>${response.code}"
-
-        val data = Gson().fromJson(response.body?.string(), Version::class.java)
-
-        return when(data.name.equals(pluginVersion, true)) {
-            true -> "<green>You are using current version !"
-            false -> {
-                "<green>New version is here <dark_green>[${data.name}]</dark_green> <green>you are using <dark_green>[$pluginVersion]"
-            }
+    private fun logUpdate(version: Version) {
+        val message = if (version.name.equals(currentVersion, ignoreCase = true)) {
+            "<green>You are using the current version!"
+        } else {
+            "<green>New version available <dark_green>[${version.name}]</dark_green>, " +
+                    "<green>you are using <dark_green>[$currentVersion]</dark_green>"
         }
+        liteEco.componentLogger.info(ModernText.miniModernText(message))
     }
+
+    private fun logError(message: String) {
+        liteEco.componentLogger.error(message)
+    }
+
     data class Version(val name: String, val id: String)
 }
