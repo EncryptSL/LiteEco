@@ -4,7 +4,6 @@ import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.PlayerAccount
 import com.github.encryptsl.lite.eco.common.database.entity.User
 import com.github.encryptsl.lite.eco.common.extensions.runBlockingIO
-import org.bukkit.OfflinePlayer
 import java.math.BigDecimal
 import java.util.*
 
@@ -15,47 +14,32 @@ class SuspendLiteEcoEconomyWrapper {
     suspend fun getUserByUUID(uuid: UUID, currency: String = "dollars"): Optional<User> =
         runBlockingIO { economyImpl.getUserByUUID(uuid, currency) }
 
-    suspend fun createAccount(player: OfflinePlayer, currency: String = "dollars", startAmount: BigDecimal): Boolean =
-        runBlockingIO {
-            val userOpt = economyImpl.getUserByUUID(player.uniqueId, currency)
-            if (!userOpt.isPresent) {
-                LiteEco.instance.databaseEcoModel.createPlayerAccount(
-                    player.name.toString(),
-                    player.uniqueId,
-                    currency,
-                    startAmount
-                )
+    suspend fun createOrUpdateAccount(uuid: UUID, username: String, currency: String = "dollars", value: BigDecimal, ignoreUpdate: Boolean = true): Boolean {
+        return runBlockingIO {
+            val userOpt = economyImpl.getUserByUUID(uuid, currency).orElse(null)
+            if (userOpt == null) {
+                LiteEco.instance.databaseEcoModel.createPlayerAccount(username, uuid, currency, value)
                 true
             } else {
-                LiteEco.instance.databaseEcoModel.updatePlayerName(
-                    player.uniqueId,
-                    player.name.toString(),
-                    currency
-                )
+                if (!ignoreUpdate) {
+                    LiteEco.instance.databaseEcoModel.updatePlayerName(uuid, username, currency)
+                }
                 false
             }
         }
+    }
 
-    suspend fun createAccount(uuid: UUID, username: String, currency: String = "dollars", startAmount: BigDecimal): Boolean =
+    suspend fun createOrUpdateAndCache(uuid: UUID, username: String, currency: String = "dollars", start: BigDecimal) {
         runBlockingIO {
-            val userOpt = economyImpl.getUserByUUID(uuid, currency)
-            if (!userOpt.isPresent) {
-                LiteEco.instance.databaseEcoModel.createPlayerAccount(
-                    username,
-                    uuid,
-                    currency,
-                    startAmount
-                )
-                true
+            val user = economyImpl.getUserByUUID(uuid, currency).orElse(null)
+            if (user == null) {
+                LiteEco.instance.databaseEcoModel.createPlayerAccount(username, uuid, currency, start)
             } else {
-                LiteEco.instance.databaseEcoModel.updatePlayerName(
-                    uuid,
-                    username,
-                    currency
-                )
-                false
+                LiteEco.instance.databaseEcoModel.updatePlayerName(uuid, username, currency)
+                LiteEco.instance.api.cacheAccount(uuid, currency, user.money)
             }
         }
+    }
 
     suspend fun deleteAccount(uuid: UUID, currency: String = "dollars"): Boolean = runBlockingIO {
         val user = economyImpl.getUserByUUID(uuid, currency).orElse(null)
@@ -92,7 +76,7 @@ class SuspendLiteEcoEconomyWrapper {
         economyImpl.setMoney(uuid, currency, amount)
     }
 
-    suspend fun syncAccount(uuid: UUID, currency: String = "dollars") {
+    suspend fun syncAccount(uuid: UUID, currency: String = "dollars") = runBlockingIO {
         economyImpl.syncAccount(uuid, currency)
     }
 
