@@ -16,13 +16,12 @@ class CurrencyParser : ArgumentParser<Source, String> {
         commandContext: CommandContext<Source>,
         commandInput: CommandInput
     ): ArgumentParseResult<String> {
-        val input = commandInput.peekString()
+        val input = commandInput.readString()
 
         if (!LiteEco.instance.currencyImpl.getCurrencyNameExist(input)) {
             val message = LiteEco.instance.locale.getMessage("messages.parser.error.currency_not_exist")
             return ArgumentParseResult.failure(Exception(String.format(message, input)))
         }
-        commandInput.readString()
         return ArgumentParseResult.success(input)
     }
 

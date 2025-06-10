@@ -15,10 +15,9 @@ class LangParser : ArgumentParser<Source, Locales.LangKey> {
         commandContext: CommandContext<Source>,
         commandInput: CommandInput
     ): ArgumentParseResult<Locales.LangKey> {
-        val input = commandInput.peekString()
+        val input = commandInput.readString()
 
         try {
-            commandInput.readString()
             return ArgumentParseResult.success(Locales.LangKey.valueOf(input))
         } catch (_ : IllegalArgumentException) {
             val message = LiteEco.instance.locale.getMessage("messages.parser.error.language_not_exist")

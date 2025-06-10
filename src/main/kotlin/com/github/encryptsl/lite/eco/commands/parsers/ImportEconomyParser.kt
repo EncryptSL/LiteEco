@@ -15,10 +15,9 @@ class ImportEconomyParser(private val importer: ImportEconomy) : ArgumentParser<
         commandContext: CommandContext<Source>,
         commandInput: CommandInput
     ): ArgumentParseResult<String> {
-        val input = commandInput.peekString()
+        val input = commandInput.readString()
         commandInput.readString()
         if (importer.getAvailableImporters().contains(input)) {
-            commandInput.readString()
             return ArgumentParseResult.success(input)
         }
 
