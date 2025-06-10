@@ -1,13 +1,13 @@
 package com.github.encryptsl.lite.eco.commands
 
 import com.github.encryptsl.lite.eco.LiteEco
-import com.github.encryptsl.lite.eco.api.enums.CheckLevel
 import com.github.encryptsl.lite.eco.api.enums.ExportKeys
 import com.github.encryptsl.lite.eco.api.enums.PurgeKey
 import com.github.encryptsl.lite.eco.api.events.admin.*
 import com.github.encryptsl.lite.eco.api.objects.ModernText
-import com.github.encryptsl.lite.eco.commands.parsers.ImportEconomyParser
+import com.github.encryptsl.lite.eco.commands.parsers.AmountValidatorParser
 import com.github.encryptsl.lite.eco.commands.parsers.CurrencyParser
+import com.github.encryptsl.lite.eco.commands.parsers.ImportEconomyParser
 import com.github.encryptsl.lite.eco.commands.parsers.LangParser
 import com.github.encryptsl.lite.eco.common.config.Locales
 import com.github.encryptsl.lite.eco.common.manager.ExportManager
@@ -32,6 +32,7 @@ import org.incendo.cloud.paper.util.sender.Source
 import org.incendo.cloud.parser.standard.BooleanParser
 import org.incendo.cloud.parser.standard.IntegerParser
 import org.incendo.cloud.parser.standard.StringParser
+import java.math.BigDecimal
 
 class EcoCMD(
     private val liteEco: LiteEco
@@ -64,9 +65,10 @@ class EcoCMD(
                     "target",
                     MultiplePlayerSelectorParser.multiplePlayerSelectorParser(),
                 )
-                .required(
-                    "amount",
-                    IntegerParser.integerParser(1)
+                .required(commandManager
+                    .componentBuilder(BigDecimal::class.java, "amount")
+                    .parser(AmountValidatorParser())
+                    .defaultValue(DefaultValue.constant(BigDecimal.ONE))
                 )
                 .optional(commandManager
                     .componentBuilder(String::class.java, "currency")
@@ -81,11 +83,10 @@ class EcoCMD(
                 .handler { ctx ->
                     val sender: CommandSender = ctx.sender().source()
                     val selector: MultiplePlayerSelector = ctx.get("target")
-                    val amountStr: Integer = ctx.get("amount")
+                    val amount: BigDecimal = ctx.get("amount")
                     val currency: String = ctx.get("currency")
                     val silent: Boolean = ctx.get("silent")
 
-                    val amount = helper.validateAmount(amountStr.toString(), sender) ?: return@handler
                     val players = selector.values()
                     val input = selector.inputString()
                     val isSelectorAndPlayersNotEmpty = input.startsWith("@") && players.isNotEmpty() && players.size > 1
@@ -122,9 +123,10 @@ class EcoCMD(
                     "target",
                     MultiplePlayerSelectorParser.multiplePlayerSelectorParser(),
                 )
-                .required(
-                    "amount",
-                    IntegerParser.integerParser(1)
+                .required(commandManager
+                    .componentBuilder(BigDecimal::class.java, "amount")
+                    .parser(AmountValidatorParser())
+                    .defaultValue(DefaultValue.constant(BigDecimal.ONE))
                 )
                 .optional(commandManager
                     .componentBuilder(String::class.java, "currency")
@@ -133,10 +135,9 @@ class EcoCMD(
                 ).handler { ctx ->
                     val sender: CommandSender = ctx.sender().source()
                     val selector: MultiplePlayerSelector = ctx.get("target")
-                    val amountStr: Integer = ctx.get("amount")
+                    val amount: BigDecimal = ctx.get("amount")
                     val currency: String = ctx.get("currency")
 
-                    val amount = helper.validateAmount(amountStr.toString(), sender, CheckLevel.ONLY_NEGATIVE) ?: return@handler
                     val players = selector.values()
                     val input = selector.inputString()
                     val isSelectorAndPlayersNotEmpty = input.startsWith("@") && players.isNotEmpty() && players.size > 1
@@ -172,9 +173,10 @@ class EcoCMD(
                     "target",
                     MultiplePlayerSelectorParser.multiplePlayerSelectorParser(),
                 )
-                .required(
-                    "amount",
-                    IntegerParser.integerParser(1)
+                .required(commandManager
+                    .componentBuilder(BigDecimal::class.java, "amount")
+                    .parser(AmountValidatorParser())
+                    .defaultValue(DefaultValue.constant(BigDecimal.ONE))
                 )
                 .optional(commandManager
                     .componentBuilder(String::class.java, "currency")
@@ -189,11 +191,10 @@ class EcoCMD(
                 .handler { ctx ->
                     val sender: CommandSender = ctx.sender().source()
                     val selector: MultiplePlayerSelector = ctx.get("target")
-                    val amountStr: Integer = ctx.get("amount")
+                    val amount: BigDecimal = ctx.get("amount")
                     val currency: String = ctx.get("currency")
                     val silent: Boolean = ctx.get("silent")
 
-                    val amount = helper.validateAmount(amountStr.toString(), sender) ?: return@handler
                     val players = selector.values()
                     val input = selector.inputString()
                     val isSelectorAndPlayersNotEmpty = input.startsWith("@") && players.isNotEmpty() && players.size > 1
