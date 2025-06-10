@@ -14,16 +14,24 @@ import org.jetbrains.exposed.sql.SchemaUtils
 
 class DatabaseConnector(private val liteEco: LiteEco) : DatabaseConnectorProvider {
 
-    override fun load() {
+    private var hikari: HikariDataSource? = null
+
+    override fun onLoad() {
         val configLoader = DatabaseConfigLoader(liteEco.config)
         val (driver, jdbcUrl, username, password) = configLoader.load()
 
-        initConnect(driver, jdbcUrl, username, password)
+        try {
+            initConnect(driver, jdbcUrl, username, password)
+            liteEco.logger.info("✅ Database connection established successfully.")
+        } catch (e: Exception) {
+            liteEco.logger.severe("❌ Database failed to initialize: ${e.message}")
+            liteEco.pluginManager.disablePlugin(liteEco)
+        }
     }
 
     override fun initConnect(driver: String, jdbcHost: String, user: String, pass: String) {
         try {
-            Database.connect(HikariDataSource().apply {
+            hikari = HikariDataSource().apply {
                 this.driverClassName = driver
                 this.jdbcUrl = jdbcHost
                 this.username = user
@@ -32,7 +40,9 @@ class DatabaseConnector(private val liteEco: LiteEco) : DatabaseConnectorProvide
                 this.maximumPoolSize = 20
                 this.isReadOnly = false
                 this.transactionIsolation = "TRANSACTION_SERIALIZABLE"
-            }, databaseConfig = DatabaseConfig {
+            }
+
+            Database.connect(hikari!!, databaseConfig = DatabaseConfig {
                 @OptIn(ExperimentalKeywordApi::class)
                 preserveKeywordCasing = true
             }, connectionAutoRegistration = ExposedConnectionImpl())
@@ -44,6 +54,17 @@ class DatabaseConnector(private val liteEco: LiteEco) : DatabaseConnectorProvide
             }
         } catch (e: Exception) {
             liteEco.logger.severe("Database initialization failed: ${e.message}")
+        }
+    }
+
+    override fun onDisable() {
+        try {
+            hikari?.close()
+            liteEco.logger.info("✅ Database connection closed cleanly.")
+        } catch (e: Exception) {
+            liteEco.logger.warning("⚠️ Failed to close database connection: ${e.message}")
+        } finally {
+            hikari = null
         }
     }
 }
