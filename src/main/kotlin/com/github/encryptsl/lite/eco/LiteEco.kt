@@ -18,7 +18,6 @@ import com.github.encryptsl.lite.eco.common.database.models.DatabaseMonologModel
 import com.github.encryptsl.lite.eco.common.hook.HookManager
 import com.github.encryptsl.lite.eco.listeners.PlayerAsyncPreLoginListener
 import com.github.encryptsl.lite.eco.listeners.PlayerEconomyPayListener
-import com.github.encryptsl.lite.eco.listeners.PlayerJoinListener
 import com.github.encryptsl.lite.eco.listeners.PlayerQuitListener
 import com.github.encryptsl.lite.eco.listeners.admin.*
 import com.github.encryptsl.lite.eco.utils.Debugger
@@ -65,7 +64,7 @@ class LiteEco : JavaPlugin() {
     val accountManager: AccountManager by lazy { AccountManager(this) }
     val debugger: Debugger by lazy { Debugger(this) }
 
-    val pluginScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
+    val pluginScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     private val configAPI: ConfigAPI by lazy { ConfigAPI(this) }
     private val hookManager: HookManager by lazy { HookManager(this) }
@@ -78,7 +77,7 @@ class LiteEco : JavaPlugin() {
             .create("database.db")
             .createConfig("config.yml")
         locale.load()
-        databaseConnector.load()
+        databaseConnector.onLoad()
     }
 
     override fun onEnable() {
@@ -103,6 +102,7 @@ class LiteEco : JavaPlugin() {
     override fun onDisable() {
         api.syncAccounts()
         pluginScope.cancel()
+        databaseConnector.onDisable()
         logger.info("Plugin is disabled")
     }
 
@@ -130,7 +130,7 @@ class LiteEco : JavaPlugin() {
     @Suppress("UnstableApiUsage")
     private fun checkUpdates() {
         val updateNotifier = UpdateNotifier(this,"101934", pluginMeta.version)
-        updateNotifier.makeUpdateCheck()
+        updateNotifier.checkForUpdateAsync()
     }
 
     private fun registerListeners() {
@@ -143,7 +143,6 @@ class LiteEco : JavaPlugin() {
             EconomyMoneyWithdrawListener(this),
             EconomyMoneySetListener(this),
             PlayerAsyncPreLoginListener(this),
-            PlayerJoinListener(this),
             PlayerQuitListener(this)
         )
         val timeTaken = measureTimeMillis {
@@ -154,6 +153,7 @@ class LiteEco : JavaPlugin() {
         componentLogger.info(ModernText.miniModernText("Registering <yellow>(${listeners.size})</yellow> of listeners took <yellow>$timeTaken ms</yellow> -> ok"))
     }
 
+    @Suppress("UnstableApiUsage")
     private fun createCommandManager() {
         componentLogger.info(ModernText.miniModernText("<blue>Registering commands with Cloud Command Framework !"))
 
