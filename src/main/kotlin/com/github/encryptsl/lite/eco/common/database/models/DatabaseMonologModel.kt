@@ -76,13 +76,17 @@ class DatabaseMonologModel(val plugin: Plugin) : TransactionLogger {
         if (!plugin.config.getBoolean("economy.monolog_activity", true)) return
         runBlockingIO {
             loggedTransaction {
-                MonologTable.insert {
-                    it[action] = economyOperations.name
-                    it[MonologTable.sender] = sender
-                    it[MonologTable.target] = target
-                    it[MonologTable.currency] = currency
-                    it[MonologTable.previousBalance] = previousBalance
-                    it[MonologTable.newBalance] = newBalance
+                try {
+                    MonologTable.insert {
+                        it[action] = economyOperations.name
+                        it[MonologTable.sender] = sender
+                        it[MonologTable.target] = target
+                        it[MonologTable.currency] = currency
+                        it[MonologTable.previousBalance] = previousBalance
+                        it[MonologTable.newBalance] = newBalance
+                    }
+                } catch (e : Exception) {
+                    plugin.componentLogger.warn(e.message ?: e.localizedMessage)
                 }
             }
         }
