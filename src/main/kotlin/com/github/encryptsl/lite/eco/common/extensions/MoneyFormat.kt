@@ -8,6 +8,8 @@ import java.util.*
 private val units = charArrayOf('\u0000', 'K', 'M', 'B', 'T', 'Q')
 
 fun String.toValidDecimal(): BigDecimal? {
+    if (this.isBlank() || this.contains(" ")) return null
+
     return decompressNumber(this)
 }
 
@@ -36,15 +38,16 @@ private fun formatNumber(number: BigDecimal, pattern: String, locale: String, co
 }
 
 private fun decompressNumber(str: String): BigDecimal? {
-    if (str.isBlank()) return null
+    if (str.isBlank() || str.contains(" ")) return null
 
     val lastChar = str.last().uppercaseChar()
-
     return if (lastChar in units) {
-        val multiplier = BigDecimal.valueOf(10.0).pow(units.indexOf(lastChar) * 3)
-        str.dropLast(1).toBigDecimal().times(multiplier)
+        val multiplier = BigDecimal.TEN.pow(units.indexOf(lastChar) * 3)
+        val numberPart = str.dropLast(1)
+        numberPart.toBigDecimalOrNull()?.multiply(multiplier)
+    } else {
+        str.toBigDecimalOrNull()
     }
-    else str.toBigDecimal()
 }
 
 private fun compactNumber(number: BigDecimal): Pair<BigDecimal, Char>? {
