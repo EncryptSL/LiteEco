@@ -10,8 +10,8 @@ object MonologTable : Table("lite_eco_monolog") {
     val sender = varchar("sender", 36)
     val target = varchar("target", 36)
     val currency = varchar("currency", 16)
-    val previousBalance = decimal("previous_balance", 18, 9)
-    val newBalance = decimal("new_balance", 18, 9)
+    val previousBalance = decimal("previous_balance", 30, 2)
+    val newBalance = decimal("new_balance", 30, 2)
     val timestamp = timestamp("timestamp").defaultExpression(CurrentTimestamp)
 
     override val primaryKey: PrimaryKey = PrimaryKey(id)
