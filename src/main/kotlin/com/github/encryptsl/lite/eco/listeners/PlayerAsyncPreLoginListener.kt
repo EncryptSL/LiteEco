@@ -13,7 +13,7 @@ class PlayerAsyncPreLoginListener(
     fun onPreLogin(event: AsyncPlayerPreLoginEvent) {
         val uuid = event.uniqueId
         val username = event.name
-        liteEco.accountManager.createAccount(uuid, username)
+        liteEco.accountManager.createOrUpdateAndCache(uuid, username)
     }
 
 }
