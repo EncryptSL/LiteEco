@@ -56,7 +56,9 @@ class EcoCMD(
             permission("lite.eco.admin.eco")
             commandManager.command(commandBuilder.literal("help").permission("lite.eco.admin.help").handler { ctx ->
                 val sender: CommandSender = ctx.sender().source()
-                liteEco.locale.getList("messages.admin-help").forEach { s -> sender.sendMessage(ModernText.miniModernText(s)) }
+                liteEco.locale.translationList("messages.admin-help").forEach {
+                    sender.sendMessage(it)
+                }
             })
             commandManager.command(commandBuilder.literal("add")
                 .commandDescription(Description.description(DESCRIPTION))

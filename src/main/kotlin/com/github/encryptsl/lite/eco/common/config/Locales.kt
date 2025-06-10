@@ -30,6 +30,14 @@ class Locales(private val liteEco: LiteEco) {
         return ModernText.miniModernText(getMessage(translationKey), tagResolver)
     }
 
+    fun translationList(translationKey: String): List<Component> {
+        return getList(translationKey).map { ModernText.miniModernText(it) }
+    }
+
+    fun translationList(translationKey: String, tagResolver: TagResolver): List<Component> {
+        return getList(translationKey).map { ModernText.miniModernText(it, tagResolver) }
+    }
+
     fun plainTextTranslation(component: Component): String {
 
         return PlainTextComponentSerializer.plainText().serialize(component)

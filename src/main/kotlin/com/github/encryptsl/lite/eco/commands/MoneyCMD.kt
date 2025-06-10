@@ -3,7 +3,6 @@ package com.github.encryptsl.lite.eco.commands
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.ComponentPaginator
 import com.github.encryptsl.lite.eco.api.events.PlayerEconomyPayEvent
-import com.github.encryptsl.lite.eco.api.objects.ModernText
 import com.github.encryptsl.lite.eco.commands.parsers.AmountValidatorParser
 import com.github.encryptsl.lite.eco.commands.parsers.CurrencyParser
 import com.github.encryptsl.lite.eco.common.extensions.runBlockingIO
@@ -121,7 +120,9 @@ class MoneyCMD(
     }
 
     fun helpMessage(sender: CommandSender) {
-        liteEco.locale.getList("messages.help")?.forEach { s -> sender.sendMessage(ModernText.miniModernText(s.toString())) }
+        liteEco.locale.translationList("messages.help").forEach {
+            sender.sendMessage(it)
+        }
     }
 
     fun balanceCommand(sender: CommandSender, target: OfflinePlayer, currency: String) {
