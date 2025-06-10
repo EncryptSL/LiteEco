@@ -15,19 +15,23 @@ import org.bukkit.command.CommandSender
 import java.math.BigDecimal
 
 class Helper(private val liteEco: LiteEco) {
-    fun validateAmount(amountStr: String, commandSender: CommandSender, checkLevel: CheckLevel = CheckLevel.FULL): BigDecimal? {
-        val amount = amountStr.toValidDecimal()
-        return when {
-            amount == null -> {
-                commandSender.sendMessage(liteEco.locale.translation("messages.error.format_amount"))
-                null
-            }
-            checkLevel == CheckLevel.ONLY_NEGATIVE && amount.isNegative() || checkLevel == CheckLevel.FULL && (amount.isApproachingZero()) -> {
-                commandSender.sendMessage(liteEco.locale.translation("messages.error.negative_amount"))
-                null
-            }
-            else -> amount
+    fun validateAmount(amountStr: String, sender: CommandSender, level: CheckLevel = CheckLevel.FULL): BigDecimal? {
+        val amount = amountStr.toValidDecimal() ?: run {
+            sender.sendMessage(liteEco.locale.translation("messages.error.format_amount"))
+            return null
         }
+
+        val isInvalid = when (level) {
+            CheckLevel.ONLY_NEGATIVE -> amount.isNegative()
+            CheckLevel.FULL -> amount.isApproachingZero()
+        }
+
+        if (isInvalid) {
+            sender.sendMessage(liteEco.locale.translation("messages.error.negative_amount"))
+            return null
+        }
+
+        return amount
     }
 
     suspend fun validateLog(parameter: String): List<Component> {
