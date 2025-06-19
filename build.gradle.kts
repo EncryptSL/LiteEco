@@ -50,7 +50,7 @@ dependencies {
     compileOnly("com.zaxxer:HikariCP:6.2.1")
 
     //EconomyAPI
-    compileOnly("net.milkbowl.vault:VaultUnlockedAPI:2.11")
+    compileOnly("net.milkbowl.vault:VaultUnlockedAPI:2.12")
 
     //Coding Utils
     compileOnly("com.squareup.okhttp3:okhttp:4.12.0")
