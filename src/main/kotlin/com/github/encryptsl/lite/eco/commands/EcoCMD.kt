@@ -9,7 +9,6 @@ import com.github.encryptsl.lite.eco.commands.parsers.AmountValidatorParser
 import com.github.encryptsl.lite.eco.commands.parsers.CurrencyParser
 import com.github.encryptsl.lite.eco.commands.parsers.ImportEconomyParser
 import com.github.encryptsl.lite.eco.commands.parsers.LangParser
-import com.github.encryptsl.lite.eco.common.config.Locales
 import com.github.encryptsl.lite.eco.common.manager.ExportManager
 import com.github.encryptsl.lite.eco.common.manager.ImportManager
 import com.github.encryptsl.lite.eco.common.manager.MonologManager
@@ -360,16 +359,17 @@ class EcoCMD(
                 .permission("lite.eco.admin.lang")
                 .required(
                     commandManager
-                        .componentBuilder(Locales.LangKey::class.java, "isoKey")
-                        .parser(LangParser())
+                        .componentBuilder(String::class.java, "isoKey")
+                        .parser(LangParser(liteEco))
                 ).handler { ctx ->
                     val sender: CommandSender = ctx.sender().source()
-                    val lang: Locales.LangKey = ctx.get("isoKey")
+                    val lang: String = ctx.get("isoKey")
 
-                    liteEco.locale.setLocale(lang)
-                    sender.sendMessage(liteEco.locale
-                        .translation("messages.admin.translation_switch", Placeholder.parsed("locale", lang.name))
-                    )
+                    if (liteEco.locale.setLocale(lang)) {
+                        sender.sendMessage(liteEco.locale
+                            .translation("messages.admin.translation_switch", Placeholder.parsed("locale", lang))
+                        )
+                    }
                 })
             commandManager.command(configSubCommand.literal("reload")
                 .permission("lite.eco.admin.reload").handler { ctx ->
