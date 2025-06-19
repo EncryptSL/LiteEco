@@ -99,15 +99,36 @@ class Locales(private val liteEco: LiteEco) {
     }
 
     fun availableLocales(): List<String> {
-        return localeDir.listFiles()
+        val fromJar = runCatching { availableLocalesFromJar() }.getOrElse { emptyList() }
+        val fromDisk = localeDir.listFiles()
             ?.filter { it.isFile && it.extension == "yml" }
             ?.map { it.nameWithoutExtension.lowercase() }
             ?: emptyList()
+
+        return (fromJar + fromDisk).distinct()
     }
 
     fun isLocaleAvailable(locale: String): Boolean {
         val normalized = locale.lowercase()
         return availableLocales().contains(normalized)
                 || liteEco.getResource("locale/$normalized.yml") != null
+    }
+
+    private fun availableLocalesFromJar(): List<String> {
+        val locales = mutableListOf<String>()
+
+        val jarUrl = this::class.java.protectionDomain.codeSource.location
+        val jarFile = java.util.jar.JarFile(File(jarUrl.toURI()))
+
+        jarFile.use { jar ->
+            for (entry in jar.entries()) {
+                if (entry.name.startsWith("locale/") && entry.name.endsWith(".yml")) {
+                    val localeName = entry.name.substringAfter("locale/").substringBeforeLast(".yml")
+                    locales.add(localeName.lowercase())
+                }
+            }
+        }
+
+        return locales
     }
 }
