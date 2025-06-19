@@ -10,8 +10,10 @@ import org.jetbrains.exposed.sql.DatabaseConfig
 import org.jetbrains.exposed.sql.ExperimentalKeywordApi
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
-import kotlin.test.Test
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 
+@Disabled("Disabled because this is only for experimental dev purpose")
 class FlyWayMigrationScript {
 
     private var hikari: HikariDataSource? = null
