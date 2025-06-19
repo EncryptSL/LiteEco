@@ -81,7 +81,9 @@ dependencies {
     //MiniPlaceholders
     implementation("io.github.miniplaceholders:miniplaceholders-kotlin-ext:2.3.0")
 
-    testImplementation(kotlin("test", "2.2.0-RC"))
+    testImplementation("org.junit.jupiter:junit-jupiter:5.13.1")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
     testImplementation("org.mariadb.jdbc:mariadb-java-client:3.5.2")
     testImplementation("org.flywaydb:flyway-core:11.9.1")
     testImplementation("com.zaxxer:HikariCP:6.2.1")
@@ -118,9 +120,9 @@ tasks {
         exclude("kotlin/**")
         exclude("kotlinx/**")
     }
-    //test {
-    //    useJUnitPlatform()
-    //}
+    test {
+        useJUnitPlatform()
+    }
     compileJava {
         options.encoding = "UTF-8"
         options.release.set(21)
