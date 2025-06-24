@@ -2,10 +2,10 @@ libraries:
   - com.zaxxer:HikariCP:6.2.1
   - org.mariadb.jdbc:mariadb-java-client:3.5.2
   - org.postgresql:postgresql:42.7.6
-  - org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.2.0-RC
-  - org.jetbrains.exposed:exposed-core:0.60.0
-  - org.jetbrains.exposed:exposed-jdbc:0.60.0
-  - org.jetbrains.exposed:exposed-kotlin-datetime:0.60.0
+  - org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.2.0
+  - org.jetbrains.exposed:exposed-core:1.0.0-beta-2
+  - org.jetbrains.exposed:exposed-jdbc:1.0.0-beta-2
+  - org.jetbrains.exposed:exposed-kotlin-datetime:1.0.0-beta-2
   - com.squareup.okhttp3:okhttp:4.12.0
   - com.tchristofferson:ConfigUpdater:2.2-SNAPSHOT
   - org.apache.commons:commons-csv:1.14.0
