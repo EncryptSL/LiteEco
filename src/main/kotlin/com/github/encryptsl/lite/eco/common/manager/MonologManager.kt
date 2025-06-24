@@ -30,7 +30,7 @@ class MonologManager(
             pagination.display().forEach {
                 sender.sendMessage(it)
             }
-            sender.sendMessage(pagination.navigationBar("eco monolog", parameter))
+            pagination.navigationBar("eco monolog", parameter).let { sender.sendMessage(it) }
         }
     }
 }
