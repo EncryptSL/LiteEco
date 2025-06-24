@@ -1,38 +1,14 @@
 package com.github.encryptsl.lite.eco.utils
 
 import com.github.encryptsl.lite.eco.LiteEco
-import com.github.encryptsl.lite.eco.api.economy.EconomyOperations
-import com.github.encryptsl.lite.eco.api.enums.CheckLevel
+import com.github.encryptsl.lite.eco.api.enums.TypeLogger
 import com.github.encryptsl.lite.eco.common.database.entity.User
-import com.github.encryptsl.lite.eco.common.extensions.isApproachingZero
-import com.github.encryptsl.lite.eco.common.extensions.isNegative
 import com.github.encryptsl.lite.eco.common.extensions.positionIndexed
-import com.github.encryptsl.lite.eco.common.extensions.toValidDecimal
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
-import org.bukkit.command.CommandSender
-import java.math.BigDecimal
 
 class Helper(private val liteEco: LiteEco) {
-    fun validateAmount(amountStr: String, sender: CommandSender, level: CheckLevel = CheckLevel.FULL): BigDecimal? {
-        val amount = amountStr.toValidDecimal() ?: run {
-            sender.sendMessage(liteEco.locale.translation("messages.error.format_amount"))
-            return null
-        }
-
-        val isInvalid = when (level) {
-            CheckLevel.ONLY_NEGATIVE -> amount.isNegative()
-            CheckLevel.FULL -> amount.isApproachingZero()
-        }
-
-        if (isInvalid) {
-            sender.sendMessage(liteEco.locale.translation("messages.error.negative_amount"))
-            return null
-        }
-
-        return amount
-    }
 
     suspend fun validateLog(parameter: String): List<Component> {
         val log = liteEco.loggerModel.getLog()
@@ -40,7 +16,7 @@ class Helper(private val liteEco: LiteEco) {
 
         return log.map { el ->
             liteEco.loggerModel.message("messages.monolog.formatting",
-                EconomyOperations.valueOf(el.action),
+                TypeLogger.valueOf(el.action),
                 el.sender,
                 el.target,
                 el.currency,
