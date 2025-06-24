@@ -2,7 +2,7 @@ import io.papermc.paperweight.userdev.ReobfArtifactConfiguration
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    kotlin("jvm") version "2.2.0-RC"
+    kotlin("jvm") version "2.2.0"
     id("com.gradleup.shadow") version "9.0.0-beta15"
     id("io.papermc.paperweight.userdev") version "2.0.0-beta.17"
     id("maven-publish")
@@ -43,9 +43,9 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.5")
 
     //Exposed Database Orm
-    compileOnly("org.jetbrains.exposed:exposed-core:0.60.0")
-    compileOnly("org.jetbrains.exposed:exposed-jdbc:0.60.0")
-    compileOnly("org.jetbrains.exposed:exposed-kotlin-datetime:0.60.0")
+    compileOnly("org.jetbrains.exposed:exposed-core:1.0.0-beta-2")
+    compileOnly("org.jetbrains.exposed:exposed-jdbc:1.0.0-beta-2")
+    compileOnly("org.jetbrains.exposed:exposed-kotlin-datetime:1.0.0-beta-2")
     //Database Pool HikariCP
     compileOnly("com.zaxxer:HikariCP:6.2.1")
 
@@ -88,10 +88,10 @@ dependencies {
     testImplementation("org.flywaydb:flyway-core:11.9.1")
     testImplementation("com.zaxxer:HikariCP:6.2.1")
     testImplementation("org.xerial:sqlite-jdbc:3.49.1.0")
-    testImplementation("org.jetbrains.exposed:exposed-core:0.60.0")
-    testImplementation("org.jetbrains.exposed:exposed-jdbc:0.60.0")
-    testImplementation("org.jetbrains.exposed:exposed-migration:0.60.0")
-    testImplementation("org.jetbrains.exposed:exposed-kotlin-datetime:0.60.0")
+    testImplementation("org.jetbrains.exposed:exposed-core:1.0.0-beta-2")
+    testImplementation("org.jetbrains.exposed:exposed-jdbc:1.0.0-beta-2")
+    testImplementation("org.jetbrains.exposed:exposed-migration:1.0.0-beta-2")
+    testImplementation("org.jetbrains.exposed:exposed-kotlin-datetime:1.0.0-beta-2")
 }
 
 sourceSets {
