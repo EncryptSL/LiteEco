@@ -1,7 +1,7 @@
 package com.github.encryptsl.lite.eco.common.database.models
 
 import com.github.encryptsl.lite.eco.LiteEco
-import com.github.encryptsl.lite.eco.api.economy.EconomyOperations
+import com.github.encryptsl.lite.eco.api.enums.TypeLogger
 import com.github.encryptsl.lite.eco.api.interfaces.TransactionLogger
 import com.github.encryptsl.lite.eco.common.database.entity.EconomyLog
 import com.github.encryptsl.lite.eco.common.database.tables.MonologTable
@@ -22,14 +22,14 @@ import java.math.BigDecimal
 class DatabaseMonologModel(val plugin: Plugin) : TransactionLogger {
 
     override suspend fun logging(
-        economyOperations: EconomyOperations,
+        typeLogger: TypeLogger,
         sender: String,
         target: String,
         currency: String,
         previousBalance: BigDecimal,
         newBalance: BigDecimal
     ) {
-        log(economyOperations, sender, target, currency, previousBalance, newBalance)
+        log(typeLogger, sender, target, currency, previousBalance, newBalance)
     }
 
     override fun clearLogs() {
@@ -46,7 +46,7 @@ class DatabaseMonologModel(val plugin: Plugin) : TransactionLogger {
 
     fun message(
         translation: String,
-        economyOperations: EconomyOperations,
+        typeLogger: TypeLogger,
         sender: String,
         target: String,
         currency: String,
@@ -55,7 +55,7 @@ class DatabaseMonologModel(val plugin: Plugin) : TransactionLogger {
         instant: Instant,
     ): Component {
         return LiteEco.instance.locale.translation(translation, TagResolver.resolver(
-            Placeholder.parsed("action", economyOperations.name),
+            Placeholder.parsed("action", typeLogger.name),
             Placeholder.parsed("sender", sender),
             Placeholder.parsed("target", target),
             Placeholder.parsed("currency", currency),
@@ -66,7 +66,7 @@ class DatabaseMonologModel(val plugin: Plugin) : TransactionLogger {
     }
 
     private suspend fun log(
-        economyOperations: EconomyOperations,
+        typeLogger: TypeLogger,
         sender: String,
         target: String,
         currency: String,
@@ -78,7 +78,7 @@ class DatabaseMonologModel(val plugin: Plugin) : TransactionLogger {
             loggedTransaction {
                 try {
                     MonologTable.insert {
-                        it[action] = economyOperations.name
+                        it[action] = typeLogger.name
                         it[MonologTable.sender] = sender
                         it[MonologTable.target] = target
                         it[MonologTable.currency] = currency

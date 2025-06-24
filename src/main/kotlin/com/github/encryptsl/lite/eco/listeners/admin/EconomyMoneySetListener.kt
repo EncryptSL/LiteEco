@@ -1,7 +1,7 @@
 package com.github.encryptsl.lite.eco.listeners.admin
 
 import com.github.encryptsl.lite.eco.LiteEco
-import com.github.encryptsl.lite.eco.api.economy.EconomyOperations
+import com.github.encryptsl.lite.eco.api.enums.TypeLogger
 import com.github.encryptsl.lite.eco.api.events.admin.EconomyMoneySetEvent
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
@@ -33,7 +33,7 @@ class EconomyMoneySetListener(private val liteEco: LiteEco) : Listener {
                 sender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist", Placeholder.parsed("account", target.name.toString())))
                 return@launch
             }
-            liteEco.loggerModel.logging(EconomyOperations.SET, sender.name, target.name.toString(), currency, user.money, money)
+            liteEco.loggerModel.logging(TypeLogger.SET, sender.name, target.name.toString(), currency, user.money, money)
             liteEco.increaseTransactions(1)
             liteEco.suspendApiWrapper.set(target.uniqueId, currency, money)
 

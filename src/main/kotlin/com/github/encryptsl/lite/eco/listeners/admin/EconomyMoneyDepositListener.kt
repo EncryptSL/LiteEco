@@ -1,7 +1,7 @@
 package com.github.encryptsl.lite.eco.listeners.admin
 
 import com.github.encryptsl.lite.eco.LiteEco
-import com.github.encryptsl.lite.eco.api.economy.EconomyOperations
+import com.github.encryptsl.lite.eco.api.enums.TypeLogger
 import com.github.encryptsl.lite.eco.api.events.admin.EconomyMoneyDepositEvent
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
@@ -42,7 +42,7 @@ class EconomyMoneyDepositListener(private val liteEco: LiteEco) : Listener {
             }
 
             liteEco.increaseTransactions(1)
-            liteEco.loggerModel.logging(EconomyOperations.DEPOSIT, sender.name, user.userName, currency, user.money, user.money.plus(money))
+            liteEco.loggerModel.logging(TypeLogger.DEPOSIT, sender.name, user.userName, currency, user.money, user.money.plus(money))
             liteEco.suspendApiWrapper.deposit(target.uniqueId, currency, money)
 
             if (sender.name == target.name) {

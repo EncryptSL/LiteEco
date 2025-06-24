@@ -1,7 +1,7 @@
 package com.github.encryptsl.lite.eco.listeners.admin
 
 import com.github.encryptsl.lite.eco.LiteEco
-import com.github.encryptsl.lite.eco.api.economy.EconomyOperations
+import com.github.encryptsl.lite.eco.api.enums.TypeLogger
 import com.github.encryptsl.lite.eco.api.events.admin.EconomyGlobalDepositEvent
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
@@ -39,7 +39,7 @@ class EconomyGlobalDepositListener(private val liteEco: LiteEco) : Listener {
                 }?.also { u ->
                     with(liteEco) {
                         loggerModel.logging(
-                            EconomyOperations.DEPOSIT,
+                            TypeLogger.DEPOSIT,
                             sender.name,
                             u.userName,
                             currency,

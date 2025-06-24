@@ -1,7 +1,7 @@
 package com.github.encryptsl.lite.eco.listeners
 
 import com.github.encryptsl.lite.eco.LiteEco
-import com.github.encryptsl.lite.eco.api.economy.EconomyOperations
+import com.github.encryptsl.lite.eco.api.enums.TypeLogger
 import com.github.encryptsl.lite.eco.api.events.PlayerEconomyPayEvent
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
@@ -40,7 +40,7 @@ class PlayerEconomyPayListener(private val liteEco: LiteEco) : Listener {
                 return@launch
             }
 
-            liteEco.loggerModel.logging(EconomyOperations.TRANSFER,
+            liteEco.loggerModel.logging(TypeLogger.TRANSFER,
                 sender.name, target.name.toString(), currency, user.money, user.money.plus(money)
             )
             liteEco.suspendApiWrapper.transfer(sender.uniqueId, target.uniqueId, currency, money)

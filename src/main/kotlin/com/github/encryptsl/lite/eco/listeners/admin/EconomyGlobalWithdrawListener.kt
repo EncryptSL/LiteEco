@@ -1,7 +1,7 @@
 package com.github.encryptsl.lite.eco.listeners.admin
 
 import com.github.encryptsl.lite.eco.LiteEco
-import com.github.encryptsl.lite.eco.api.economy.EconomyOperations
+import com.github.encryptsl.lite.eco.api.enums.TypeLogger
 import com.github.encryptsl.lite.eco.api.events.admin.EconomyGlobalWithdrawEvent
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
@@ -31,7 +31,7 @@ class EconomyGlobalWithdrawListener(private val liteEco: LiteEco) : Listener {
                 user?.also { u ->
                     with(liteEco) {
                         loggerModel.logging(
-                            EconomyOperations.WITHDRAW,
+                            TypeLogger.WITHDRAW,
                             sender.name,
                             u.userName,
                             currency,
