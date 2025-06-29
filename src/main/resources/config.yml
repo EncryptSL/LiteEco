@@ -1,104 +1,115 @@
-#Official settings for this plugin.
+# Official settings for this plugin.
 plugin:
-  # Translations list of supported locales below
-  # https://github.com/EncryptSL/LiteEco/blob/main/src/main/kotlin/encryptsl/cekuj/net/api/enums/LangKey.kt
+  # List of supported locales for translations.
+  # See more at: https://github.com/EncryptSL/LiteEco/blob/main/src/main/kotlin/encryptsl/cekuj/net/api/enums/LangKey.kt
   translation: EN_US
-  # Plugin prefix
+  # Plugin prefix displayed in chat.
   prefix: "<dark_gray>[<green>Eco<dark_gray>] <dark_green>»</dark_gray>"
-  # Enable or disable Metrics
+  # Enable or disable plugin metrics collection.
   metrics: true
-  # Enable or disable Vault Debug
+  # Enable or disable Vault debug messages.
   vault-debug: false
-  # Settings for modifiable players suggestion.
-  # Enabled: Offline Players Suggestion..
-  # Disabled: Online Players Suggestion...
+  # Settings for player suggestions in commands.
+  # Enabled: Suggests offline players.
+  # Disabled: Suggests only online players.
   offline-suggestion-players: true
 
 economy:
-  currencies: # Since 1.4.8 to newer versions
-    # Don't change this currency because this is implemented for vault....
-    # Key of currencies is name of table please don't change this value if you don't want to lose data.
+  currencies: # Applicable since version 1.4.8 and newer.
+    # Do not change this currency key as it is integrated with Vault.
+    # The key of each currency corresponds to its table name in the database.
+    # Changing this value may result in data loss.
     dollars:
       currency_name: dollars
       currency_plural_name: dollars
       currency_singular_name: dollar
-      # Currency Format
+      # Format for displaying currency values.
       currency_format: '$ <money>'
-      # This amount is granted to players who don't have an existing account in the database.
+      # The initial amount granted to new players who do not have an existing account.
       starting_balance: 30
-      # This amount is checked when player is above allowed limit
+      # The maximum allowed balance for a player.
       balance_limit: 1000000
-      # Enabled or disable balance limit, disabled check mean fully for paid amounts by player, given/set by admins.
+      # Enable or disable the balance limit check.
+      # If disabled, players can exceed the limit through paid amounts, or amounts given/set by administrators.
       balance_limit_check: true
-      # Convert large currency values into a more compact format.
+      # Convert large currency values into a more compact format (e.g., 1,000,000 to 1M).
       compact_display: false
 
-    # Example of other currencies
-    # Don't change this currency because this is implemented for vault....
-    # Key of currencies is name of table please don't change this value if you don't want to lose data.
-    # credits:
+        # Example of an additional currency.
+        # Do not change this currency key as it is integrated with Vault.
+        # The key of each currency corresponds to its table name in the database.
+        # Changing this value may result in data loss.
+        # credits:
         # currency_name: credits
         # currency_plural_name: credits
         # currency_singular_name: credit
-        # Currency Format
+        # Format for displaying currency values.
         # currency_format: '€ <money>'
-        # # This amount is granted to players who don't have an existing account in the database.
+        # The initial amount granted to new players who do not have an existing account.
         # starting_balance: 30
-        # # This amount is checked when player is above allowed limit
+        # The maximum allowed balance for a player.
         # balance_limit: 1000000
-        # # Enabled or disable balance limit, disabled check mean fully for paid amounts by player, given/set by admins.
+        # Enable or disable the balance limit check.
+        # If disabled, players can exceed the limit through paid amounts, or amounts given/set by administrators.
         # balance_limit_check: true
-        # # Convert large currency values into a more compact format.
-        # compact_display: false
+        # Convert large currency values into a more compact format (e.g., 1,000,000 to 1M).
+      # compact_display: false
 
-  # Enable logging about economies activities add, set, withdraw, pay money.
-  # Command /eco monolog [player]
+  # Enable logging of economic activities such as adding, setting, withdrawing, and paying money.
+  # View logs using the command: /eco monolog [player]
   monolog_activity: true
 
 formatting:
-  # Currency value format
+  # The format pattern for displaying currency values.
   currency_pattern: "#,##0.00"
-  # Compact value format
+  # The format pattern for displaying compacted currency values.
   compacted_pattern: "#,##0.0##"
-  # Locale symbol format
+  # The locale used for currency symbols and formatting.
   currency_locale: en-US
 
   placeholders:
+    # Text displayed when a name placeholder is empty.
     empty-name: "EMPTY"
 
-# These settings toggle messages.
+# These settings control message notifications.
 messages:
   global:
+    # Notify global chat when money is added.
     notify_add: true
+    # Notify global chat when money is withdrawn.
     notify_withdraw: true
+    # Notify global chat when money is set.
     notify_set: true
   target:
+    # Notify the target player when money is added to their account.
     notify_add: true
+    # Notify the target player when money is withdrawn from their account.
     notify_withdraw: true
+    # Notify the target player when their money is set.
     notify_set: true
 
-# Settings for Database or SQLite connection.
+# Settings for database connection (SQLite, MySQL, MariaDB, PostgreSQL).
 database:
-  # For SQLite, the path to the SQLite database file: jdbc:sqlite:plugins/LiteEco/database.db
-  # For MySQL, the JDBC connection URL in the format: jdbc:mysql://your_host:port/name_of_database
-  # For MariaDB, the JDBC connection URL in the format: jdbc:mariadb://your_host:port/name_of_database
-  # For PostgreSQL, the JDBC connection URL in the format: jdbc:postgresql://your_host:port/name_of_database
+  # Connection URL for the database. Examples:
+  # SQLite: jdbc:sqlite:plugins/LiteEco/database.db
+  # MySQL: jdbc:mysql://your_host:port/name_of_database
+  # MariaDB: jdbc:mariadb://your_host:port/name_of_database
+  # PostgreSQL: jdbc:postgresql://your_host:port/name_of_database
 
-  # Drivers:
-  #
-  # MariaDB - org.mariadb.jdbc.Driver (https://youtrack.jetbrains.com/issue/EXPOSED-170)
-  # MySQL - com.mysql.cj.jdbc.Driver Don't use if you have MariaDB version 11.X and newer.
-  # PostgreSQL - org.postgresql.Driver
-  # SQL - org.sqlite.JDBC
+  # Database drivers:
+  # MariaDB: org.mariadb.jdbc.Driver (Note: See https://youtrack.jetbrains.com/issue/EXPOSED-170 for potential issues)
+  # MySQL: com.mysql.cj.jdbc.Driver (Do not use if you have MariaDB version 11.X or newer)
+  # PostgreSQL: org.postgresql.Driver
+  # SQLite: org.sqlite.JDBC
   connection:
-    # Settings for DriverClassName
+    # The full class name of the JDBC driver.
     driverClassName: "org.sqlite.JDBC"
-    # Settings for JDBC_HOST
+    # The JDBC connection URL.
     jdbc_url: "jdbc:sqlite:plugins/LiteEco/database.db"
-    # The username of the user to connect to your database (MySQL only).
+    # The username for connecting to your database (MySQL/MariaDB/PostgreSQL only).
     username: user_name
-    # The password of the user to connect to your database (MySQL only).
+    # The password for connecting to your database (MySQL/MariaDB/PostgreSQL only).
     password: password
 
-  # You can enable sql-plugin-logger for some problems with database...
+  # Enable SQL plugin logger for debugging database-related problems.
   sql-plugin-logger: false
