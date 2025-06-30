@@ -34,6 +34,7 @@ class SuspendLiteEcoEconomyWrapper {
             val user = economyImpl.getUserByUUID(uuid, currency).orElse(null)
             if (user == null) {
                 LiteEco.instance.databaseEcoModel.createPlayerAccount(username, uuid, currency, start)
+                LiteEco.instance.api.cacheAccount(uuid, currency, start)
             } else {
                 LiteEco.instance.databaseEcoModel.updatePlayerName(uuid, username, currency)
                 LiteEco.instance.api.cacheAccount(uuid, currency, user.money)
