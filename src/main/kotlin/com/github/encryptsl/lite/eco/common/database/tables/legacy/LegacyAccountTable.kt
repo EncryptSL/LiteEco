@@ -1,12 +1,10 @@
 package com.github.encryptsl.lite.eco.common.database.tables.legacy
 
-import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.v1.core.dao.id.LongIdTable
 
-object LegacyAccountTable : Table("lite_eco") {
-    val id = integer("id").autoIncrement()
+
+object LegacyAccountTable : LongIdTable("lite_eco") {
     val username = varchar("username", 36)
     val uuid = varchar("uuid", 36)
     val money = double("money")
-
-    override val primaryKey: PrimaryKey = PrimaryKey(id)
 }

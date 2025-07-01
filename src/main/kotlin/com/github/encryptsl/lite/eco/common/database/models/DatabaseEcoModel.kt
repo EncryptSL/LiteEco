@@ -6,10 +6,17 @@ import com.github.encryptsl.lite.eco.common.database.entity.User
 import com.github.encryptsl.lite.eco.common.database.tables.Account
 import com.github.encryptsl.lite.eco.common.extensions.loggedTransaction
 import org.bukkit.Bukkit
-import org.jetbrains.exposed.exceptions.ExposedSQLException
-import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.notInList
+import org.jetbrains.exposed.v1.core.SortOrder
+import org.jetbrains.exposed.v1.core.SqlExpressionBuilder
+import org.jetbrains.exposed.v1.core.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.v1.core.SqlExpressionBuilder.notInList
+import org.jetbrains.exposed.v1.exceptions.ExposedSQLException
+import org.jetbrains.exposed.v1.jdbc.deleteAll
+import org.jetbrains.exposed.v1.jdbc.deleteWhere
+import org.jetbrains.exposed.v1.jdbc.insertIgnore
+import org.jetbrains.exposed.v1.jdbc.select
+import org.jetbrains.exposed.v1.jdbc.selectAll
+import org.jetbrains.exposed.v1.jdbc.update
 import java.math.BigDecimal
 import java.util.*
 
@@ -164,8 +171,7 @@ class DatabaseEcoModel : PlayerSQL {
     override fun purgeAccounts(currency: String) {
         loggedTransaction {
             try {
-                val table = Account(currency)
-                table.deleteAll()
+                Account(currency).deleteAll()
             } catch (e : ExposedSQLException) {
                 LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
             }
@@ -175,8 +181,7 @@ class DatabaseEcoModel : PlayerSQL {
     override fun purgeDefaultAccounts(defaultMoney: BigDecimal, currency: String) {
         loggedTransaction {
             try {
-                val table = Account(currency)
-                table.deleteWhere { money eq defaultMoney }
+                Account(currency).deleteWhere { money eq defaultMoney }
             } catch (e : ExposedSQLException) {
                 LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
             }
@@ -186,8 +191,7 @@ class DatabaseEcoModel : PlayerSQL {
     override fun purgeInvalidAccounts(currency: String) {
         loggedTransaction {
             try {
-                val table = Account(currency)
-                table.deleteWhere {
+                Account(currency).deleteWhere {
                     uuid notInList Bukkit.getOfflinePlayers().map { it.uniqueId }
                 }
             } catch (e : ExposedSQLException) {

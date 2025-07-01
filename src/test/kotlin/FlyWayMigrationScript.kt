@@ -1,15 +1,15 @@
 package com.github.encryptsl.lite.eco.common.database
 
-import MigrationUtils
 import com.github.encryptsl.lite.eco.common.database.com.github.encryptsl.test.tables.V1AccountTable
 import com.github.encryptsl.lite.eco.common.database.com.github.encryptsl.test.tables.V2AccountTable
 import com.zaxxer.hikari.HikariDataSource
-import org.jetbrains.exposed.jdbc.ExposedConnectionImpl
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.DatabaseConfig
-import org.jetbrains.exposed.sql.ExperimentalKeywordApi
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.v1.core.DatabaseConfig
+import org.jetbrains.exposed.v1.core.ExperimentalKeywordApi
+import org.jetbrains.exposed.v1.jdbc.Database
+import org.jetbrains.exposed.v1.jdbc.ExposedConnectionImpl
+import org.jetbrains.exposed.v1.jdbc.SchemaUtils
+import org.jetbrains.exposed.v1.jdbc.transactions.transaction
+import org.jetbrains.exposed.v1.migration.MigrationUtils
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 

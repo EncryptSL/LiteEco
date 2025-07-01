@@ -1,6 +1,7 @@
 package com.github.encryptsl.lite.eco.common.database.tables
 
-import org.jetbrains.exposed.dao.id.LongIdTable
+import org.jetbrains.exposed.v1.core.dao.id.LongIdTable
+
 
 class Account(currency: String) : LongIdTable("lite_eco_$currency") {
     val username = varchar("username", 36)

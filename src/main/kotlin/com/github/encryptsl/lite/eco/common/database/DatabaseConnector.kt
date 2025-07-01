@@ -6,11 +6,11 @@ import com.github.encryptsl.lite.eco.common.database.tables.Account
 import com.github.encryptsl.lite.eco.common.database.tables.MonologTable
 import com.github.encryptsl.lite.eco.common.extensions.loggedTransaction
 import com.zaxxer.hikari.HikariDataSource
-import org.jetbrains.exposed.jdbc.ExposedConnectionImpl
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.DatabaseConfig
-import org.jetbrains.exposed.sql.ExperimentalKeywordApi
-import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.v1.core.DatabaseConfig
+import org.jetbrains.exposed.v1.core.ExperimentalKeywordApi
+import org.jetbrains.exposed.v1.jdbc.Database
+import org.jetbrains.exposed.v1.jdbc.ExposedConnectionImpl
+import org.jetbrains.exposed.v1.jdbc.SchemaUtils
 
 class DatabaseConnector(private val liteEco: LiteEco) : DatabaseConnectorProvider {
 

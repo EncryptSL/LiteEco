@@ -6,12 +6,12 @@ import com.github.encryptsl.lite.eco.common.database.tables.Account
 import com.github.encryptsl.lite.eco.common.database.tables.legacy.LegacyAccountTable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.jetbrains.exposed.exceptions.ExposedSQLException
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.v1.core.ResultRow
+import org.jetbrains.exposed.v1.exceptions.ExposedSQLException
+import org.jetbrains.exposed.v1.jdbc.SchemaUtils
+import org.jetbrains.exposed.v1.jdbc.insert
+import org.jetbrains.exposed.v1.jdbc.selectAll
+import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import java.util.*
 
 class LegacyDatabaseEcoModel(
@@ -26,7 +26,7 @@ class LegacyDatabaseEcoModel(
         transaction {
             LegacyAccountTable.selectAll().forEach { resultRow: ResultRow ->
                 playersBalances[UUID.fromString(resultRow[LegacyAccountTable.uuid])] = PlayerBalances.PlayerBalance(
-                    resultRow[LegacyAccountTable.id],
+                    resultRow[LegacyAccountTable.id].value.toInt(),
                     UUID.fromString(resultRow[LegacyAccountTable.uuid]),
                     resultRow[LegacyAccountTable.username],
                     resultRow[LegacyAccountTable.money].toBigDecimal()
