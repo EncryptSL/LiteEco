@@ -48,6 +48,8 @@ dependencies {
     compileOnly("org.jetbrains.exposed:exposed-kotlin-datetime:1.0.0-beta-2")
     //Database Pool HikariCP
     compileOnly("com.zaxxer:HikariCP:6.2.1")
+    //Database Migration FlyWay
+    compileOnly("org.flywaydb:flyway-core:11.10.1")
 
     //EconomyAPI
     compileOnly("net.milkbowl.vault:VaultUnlockedAPI:2.12")

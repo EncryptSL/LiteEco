@@ -6,10 +6,10 @@ import com.github.encryptsl.lite.eco.common.database.tables.Account
 import com.github.encryptsl.lite.eco.common.database.tables.MonologTable
 import com.github.encryptsl.lite.eco.common.extensions.loggedTransaction
 import com.zaxxer.hikari.HikariDataSource
+import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.v1.core.DatabaseConfig
 import org.jetbrains.exposed.v1.core.ExperimentalKeywordApi
 import org.jetbrains.exposed.v1.jdbc.Database
-import org.jetbrains.exposed.v1.jdbc.ExposedConnectionImpl
 import org.jetbrains.exposed.v1.jdbc.SchemaUtils
 
 class DatabaseConnector(private val liteEco: LiteEco) : DatabaseConnectorProvider {
@@ -42,10 +42,18 @@ class DatabaseConnector(private val liteEco: LiteEco) : DatabaseConnectorProvide
                 this.transactionIsolation = "TRANSACTION_SERIALIZABLE"
             }
 
+            Flyway.configure()
+                .locations("classpath:db/migration")
+                .baselineOnMigrate(true)
+                .dataSource(hikari)
+                .load()
+                .migrate()
+
+            @OptIn(ExperimentalKeywordApi::class)
             Database.connect(hikari!!, databaseConfig = DatabaseConfig {
-                @OptIn(ExperimentalKeywordApi::class)
                 preserveKeywordCasing = true
-            }, connectionAutoRegistration = ExposedConnectionImpl())
+            })
+
 
             val tables = liteEco.currencyImpl.getCurrenciesKeys().map { Account(it) }.toTypedArray()
 
