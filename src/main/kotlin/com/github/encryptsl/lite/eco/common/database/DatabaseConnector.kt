@@ -44,6 +44,7 @@ class DatabaseConnector(private val liteEco: LiteEco) : DatabaseConnectorProvide
 
             Flyway.configure()
                 .locations("classpath:db/migration")
+                .table("lite_eco_schema_history")
                 .baselineOnMigrate(true)
                 .dataSource(hikari)
                 .load()
