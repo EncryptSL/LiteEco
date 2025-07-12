@@ -1,11 +1,11 @@
 libraries:
   - com.zaxxer:HikariCP:6.2.1
-  - org.mariadb.jdbc:mariadb-java-client:3.5.2
+  - org.mariadb.jdbc:mariadb-java-client:3.5.4
   - org.postgresql:postgresql:42.7.6
   - org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.2.0
-  - org.jetbrains.exposed:exposed-core:1.0.0-beta-2
-  - org.jetbrains.exposed:exposed-jdbc:1.0.0-beta-2
-  - org.jetbrains.exposed:exposed-kotlin-datetime:1.0.0-beta-2
+  - org.jetbrains.exposed:exposed-core:1.0.0-beta-4
+  - org.jetbrains.exposed:exposed-jdbc:1.0.0-beta-4
+  - org.jetbrains.exposed:exposed-kotlin-datetime:1.0.0-beta-4
   - org.flywaydb:flyway-core:11.10.1
   - org.flywaydb:flyway-mysql:11.10.1
   - com.squareup.okhttp3:okhttp:4.12.0

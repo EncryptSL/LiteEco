@@ -40,12 +40,12 @@ dependencies {
     compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
         exclude("org.bukkit", "bukkit")
     }
-    compileOnly("me.clip:placeholderapi:2.11.5")
+    compileOnly("me.clip:placeholderapi:2.11.6")
 
     //Exposed Database Orm
-    compileOnly("org.jetbrains.exposed:exposed-core:1.0.0-beta-2")
-    compileOnly("org.jetbrains.exposed:exposed-jdbc:1.0.0-beta-2")
-    compileOnly("org.jetbrains.exposed:exposed-kotlin-datetime:1.0.0-beta-2")
+    compileOnly("org.jetbrains.exposed:exposed-core:1.0.0-beta-4")
+    compileOnly("org.jetbrains.exposed:exposed-jdbc:1.0.0-beta-4")
+    compileOnly("org.jetbrains.exposed:exposed-kotlin-datetime:1.0.0-beta-4")
     //Database Pool HikariCP
     compileOnly("com.zaxxer:HikariCP:6.2.1")
     //Database Migration FlyWay
@@ -86,14 +86,14 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.13.1")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
-    testImplementation("org.mariadb.jdbc:mariadb-java-client:3.5.2")
+    testImplementation("org.mariadb.jdbc:mariadb-java-client:3.5.4")
     testImplementation("org.flywaydb:flyway-core:11.9.1")
     testImplementation("com.zaxxer:HikariCP:6.2.1")
     testImplementation("org.xerial:sqlite-jdbc:3.49.1.0")
-    testImplementation("org.jetbrains.exposed:exposed-core:1.0.0-beta-2")
-    testImplementation("org.jetbrains.exposed:exposed-jdbc:1.0.0-beta-2")
-    testImplementation("org.jetbrains.exposed:exposed-migration:1.0.0-beta-2")
-    testImplementation("org.jetbrains.exposed:exposed-kotlin-datetime:1.0.0-beta-2")
+    testImplementation("org.jetbrains.exposed:exposed-core:1.0.0-beta-4")
+    testImplementation("org.jetbrains.exposed:exposed-jdbc:1.0.0-beta-4")
+    testImplementation("org.jetbrains.exposed:exposed-migration:1.0.0-beta-4")
+    testImplementation("org.jetbrains.exposed:exposed-kotlin-datetime:1.0.0-beta-4")
 }
 
 sourceSets {

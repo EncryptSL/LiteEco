@@ -19,8 +19,6 @@ dependencies:
       required: false
     Vault:
       required: false
-    Treasury:
-      required: false
     MiniPlaceholders:
       required: false
 
