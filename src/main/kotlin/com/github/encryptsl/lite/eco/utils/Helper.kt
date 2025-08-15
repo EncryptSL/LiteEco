@@ -7,9 +7,11 @@ import com.github.encryptsl.lite.eco.common.extensions.positionIndexed
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
+import kotlin.time.ExperimentalTime
 
 class Helper(private val liteEco: LiteEco) {
 
+    @OptIn(ExperimentalTime::class)
     suspend fun validateLog(parameter: String): List<Component> {
         val log = liteEco.loggerModel.getLog()
             .let { if (parameter != "all") it.filter { p -> p.target == parameter } else it }
