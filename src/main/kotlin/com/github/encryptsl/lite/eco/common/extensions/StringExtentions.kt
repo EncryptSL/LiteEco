@@ -1,9 +1,10 @@
 package com.github.encryptsl.lite.eco.common.extensions
 
-import kotlinx.datetime.Instant
-import kotlinx.datetime.toJavaInstant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
+import kotlin.time.toJavaInstant
 
 fun getRandomString(length: Int) : String {
     val allowedChars = ('A'..'Z') + ('a'..'z') + ('0'..'9')
@@ -12,6 +13,7 @@ fun getRandomString(length: Int) : String {
         .joinToString("")
 }
 
+@OptIn(ExperimentalTime::class)
 fun convertInstant(instant: Instant): String {
    return instant
        .toJavaInstant()

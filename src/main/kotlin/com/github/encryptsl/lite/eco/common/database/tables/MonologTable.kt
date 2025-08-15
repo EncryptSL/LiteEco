@@ -3,8 +3,10 @@ package com.github.encryptsl.lite.eco.common.database.tables
 import org.jetbrains.exposed.v1.core.dao.id.LongIdTable
 import org.jetbrains.exposed.v1.datetime.CurrentTimestamp
 import org.jetbrains.exposed.v1.datetime.timestamp
+import kotlin.time.ExperimentalTime
 
 
+@OptIn(ExperimentalTime::class)
 object MonologTable : LongIdTable("lite_eco_monolog") {
     val action = varchar("action", 8)
     val sender = varchar("sender", 36)

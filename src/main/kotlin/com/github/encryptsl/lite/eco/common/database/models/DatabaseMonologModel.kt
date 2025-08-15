@@ -8,7 +8,6 @@ import com.github.encryptsl.lite.eco.common.database.tables.MonologTable
 import com.github.encryptsl.lite.eco.common.extensions.convertInstant
 import com.github.encryptsl.lite.eco.common.extensions.loggedTransaction
 import com.github.encryptsl.lite.eco.common.extensions.runBlockingIO
-import kotlinx.datetime.Instant
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
@@ -18,7 +17,10 @@ import org.jetbrains.exposed.v1.jdbc.deleteAll
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.selectAll
 import java.math.BigDecimal
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
+@OptIn(ExperimentalTime::class)
 class DatabaseMonologModel(val plugin: Plugin) : TransactionLogger {
 
     override suspend fun logging(
@@ -36,6 +38,7 @@ class DatabaseMonologModel(val plugin: Plugin) : TransactionLogger {
         loggedTransaction { MonologTable.deleteAll() }
     }
 
+    @OptIn(ExperimentalTime::class)
     override suspend fun getLog(): List<EconomyLog> {
         return loggedTransaction {
             MonologTable.selectAll().orderBy(MonologTable.timestamp, SortOrder.DESC).mapNotNull {

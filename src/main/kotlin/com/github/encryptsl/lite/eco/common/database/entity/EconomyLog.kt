@@ -1,8 +1,10 @@
 package com.github.encryptsl.lite.eco.common.database.entity
 
-import kotlinx.datetime.Instant
 import java.math.BigDecimal
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
+@OptIn(ExperimentalTime::class)
 data class EconomyLog(
     val action: String,
     val sender: String,
