@@ -28,7 +28,7 @@ class HookManager(private val liteEco: LiteEco) {
     fun blockPlugin(vararg plugins: String) {
         for (plugin in plugins) {
             if (liteEco.pluginManager.isPluginEnabled(plugin)) {
-                liteEco.componentLogger.error("Please don't use $plugin, because there can be conflict.")
+                liteEco.componentLogger.error("This is not a bug. Please do not report issues..\n${plugin.uppercase()} can corrupt database data or cause other problems.")
                 liteEco.pluginManager.disablePlugin(liteEco)
             }
         }
@@ -45,7 +45,7 @@ class HookManager(private val liteEco: LiteEco) {
                 liteEco.componentLogger.info(it.description)
             }
         }
-        liteEco.componentLogger.info(ModernText.miniModernText("Registered ${hooks.count { it.registered }} of ${hooks.size} hooks took ${timeTaken} ms"))
+        liteEco.componentLogger.info(ModernText.miniModernText("Registered ${hooks.count { it.registered }} of ${hooks.size} hooks took $timeTaken ms"))
     }
 
     fun unregisterHooks() {
