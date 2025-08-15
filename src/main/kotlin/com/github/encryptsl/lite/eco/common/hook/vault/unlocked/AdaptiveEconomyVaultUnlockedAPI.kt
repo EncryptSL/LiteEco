@@ -11,7 +11,6 @@ import kotlin.jvm.optionals.getOrNull
 class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaultUnlockedAPI() {
 
     companion object {
-        private const val MULTI_WORLD_CURRENCIES_NOT_SUPPORTED_MESSAGE = "LiteEco does not support multi world currencies, actions !"
         private const val AMOUNT_APPROACHING_ZERO = "LiteEco negative amounts are not allowed."
         private const val SUCCESS_WITHDRAW = "LiteEco withdraw was success."
         private const val FAIL_WITHDRAW = "LiteEco something happened in withdraw process."
