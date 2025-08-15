@@ -1,0 +1,61 @@
+[versions]
+kotlin = "2.2.0"
+exposed = "1.0.0-beta-5"
+cloud = "2.0.0-SNAPSHOT"
+flyway = "11.10.4"
+flyway-test = "11.9.1"
+hikari = "7.0.1"
+vaultapi = "1.7"
+vaultunlocked = "2.15"
+okhttp = "5.1.0"
+csv = "1.14.0"
+config-updater = "2.2-SNAPSHOT"
+miniplaceholders = "2.3.1"
+bstats = "3.0.1"
+junit-jupiter = "5.13.1"
+sqlite = "3.49.1.0"
+mariadb = "3.5.4"
+postqres = "42.7.6"
+placeholderapi = "2.11.6"
+bettereconomy = "3.1"
+scruffyeconomy = "2.0"
+craftconomy = "3.3.3-SNAPSHOT"
+
+[libraries]
+kotlin-stdlib-jdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
+
+vaultapi = { module = "com.github.MilkBowl:VaultAPI", version.ref = "vaultapi" }
+vaultunlocked = { module = "net.milkbowl.vault:VaultUnlockedAPI", version.ref = "vaultunlocked" }
+placeholderapi = { module = "me.clip:placeholderapi", version.ref = "placeholderapi" }
+
+exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "exposed" }
+exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "exposed" }
+exposed-kotlin-datetime = { module = "org.jetbrains.exposed:exposed-kotlin-datetime", version.ref = "exposed" }
+exposed-migration = { module = "org.jetbrains.exposed:exposed-migration", version.ref = "exposed" }
+
+hikaricp = { module = "com.zaxxer:HikariCP", version.ref = "hikari" }
+flyway-core = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
+flyway-mysql = { module = "org.flywaydb:flyway-mysql", version.ref = "flyway" }
+flyway-core-test = { module = "org.flywaydb:flyway-core", version.ref = "flyway-test" }
+
+okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+config-updater = { module = "com.tchristofferson:ConfigUpdater", version.ref = "config-updater" }
+commons-csv = { module = "org.apache.commons:commons-csv", version.ref = "csv" }
+
+cloud-annotations = { module = "org.incendo:cloud-annotations", version.ref = "cloud" }
+cloud-paper = { module = "org.incendo:cloud-paper", version.ref = "cloud" }
+cloud-extras = { module = "org.incendo:cloud-minecraft-extras", version.ref = "cloud" }
+cloud-kotlin = { module = "org.incendo:cloud-kotlin-extensions", version = "2.0.0" }
+
+bettereconomy = { module = "me.hsgamer:bettereconomy", version.ref = "bettereconomy" }
+scruffyeconomy = { module = "me.scruffyboy13:Economy", version.ref = "scruffyeconomy" }
+craftconomy = { module = "com.greatmancode:Craftconomy3", version.ref = "craftconomy" }
+
+bstats = { module = "org.bstats:bstats-bukkit", version.ref = "bstats" }
+miniplaceholders = { module = "io.github.miniplaceholders:miniplaceholders-kotlin-ext", version.ref = "miniplaceholders" }
+
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit-jupiter" }
+junit-launcher = { module = "org.junit.platform:junit-platform-launcher" }
+sqlite = { module = "org.xerial:sqlite-jdbc", version.ref = "sqlite" }
+mariadb = { module = "org.mariadb.jdbc:mariadb-java-client", version.ref = "mariadb" }
+postqresql = { module = "org.postgresql:postgresql", version.ref = "postqres" }
