@@ -1,28 +1,26 @@
-package com.github.encryptsl.lite.eco.listeners.admin
+package com.github.encryptsl.lite.eco.common.manager.economy.admin
 
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.enums.TypeLogger
-import com.github.encryptsl.lite.eco.api.events.admin.EconomyMoneyWithdrawEvent
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
-import org.bukkit.event.EventHandler
-import org.bukkit.event.Listener
 import java.math.BigDecimal
 import kotlin.jvm.optionals.getOrNull
 
-class EconomyMoneyWithdrawListener(private val liteEco: LiteEco) : Listener {
+class EconomyMoneyWithdrawHandler(
+    private val liteEco: LiteEco
+) {
 
-    @EventHandler
-    fun onAdminEconomyMoneyWithdraw(event: EconomyMoneyWithdrawEvent) {
-        val sender: CommandSender = event.commandSender
-        val target: OfflinePlayer = event.offlinePlayer
-        val currency = event.currency
-        val money: BigDecimal = event.money
-        val silent: Boolean = event.silent
-
+    fun onAdminWithdrawMoney(
+        sender: CommandSender,
+        target: OfflinePlayer,
+        currency: String,
+        money: BigDecimal,
+        silent: Boolean,
+    ) {
         if (!liteEco.api.has(target.uniqueId, currency, money))
             return sender.sendMessage(liteEco.locale.translation("messages.error.insufficient_funds"))
 

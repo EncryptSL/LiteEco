@@ -1,28 +1,26 @@
-package com.github.encryptsl.lite.eco.listeners.admin
+package com.github.encryptsl.lite.eco.common.manager.economy.admin
 
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.enums.TypeLogger
-import com.github.encryptsl.lite.eco.api.events.admin.EconomyMoneyDepositEvent
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
-import org.bukkit.event.EventHandler
-import org.bukkit.event.Listener
 import java.math.BigDecimal
 import kotlin.jvm.optionals.getOrNull
 
-class EconomyMoneyDepositListener(private val liteEco: LiteEco) : Listener {
+class EconomyMoneyDepositHandler(
+    private val liteEco: LiteEco
+) {
 
-    @EventHandler
-    fun onAdminEconomyDeposit(event: EconomyMoneyDepositEvent) {
-        val sender: CommandSender = event.commandSender
-        val target: OfflinePlayer = event.offlinePlayer
-        val currency = event.currency
-        val money: BigDecimal = event.money
-        val silent: Boolean = event.silent
-
+    fun onAdminDepositMoney(
+        sender: CommandSender,
+        target: OfflinePlayer,
+        currency: String,
+        money: BigDecimal,
+        silent: Boolean,
+    ) {
         if (liteEco.api.getCheckBalanceLimit(money) && !sender.hasPermission("lite.eco.admin.bypass.limit")) {
             sender.sendMessage(liteEco.locale.translation("messages.error.amount_above_limit"))
             return
@@ -75,7 +73,6 @@ class EconomyMoneyDepositListener(private val liteEco: LiteEco) : Listener {
                 ))
             }
         }
-
     }
 
 }

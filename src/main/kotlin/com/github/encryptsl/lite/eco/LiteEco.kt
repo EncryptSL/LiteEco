@@ -17,9 +17,7 @@ import com.github.encryptsl.lite.eco.common.database.models.DatabaseEcoModel
 import com.github.encryptsl.lite.eco.common.database.models.DatabaseMonologModel
 import com.github.encryptsl.lite.eco.common.hook.HookManager
 import com.github.encryptsl.lite.eco.listeners.PlayerAsyncPreLoginListener
-import com.github.encryptsl.lite.eco.listeners.PlayerEconomyPayListener
 import com.github.encryptsl.lite.eco.listeners.PlayerQuitListener
-import com.github.encryptsl.lite.eco.listeners.admin.*
 import com.github.encryptsl.lite.eco.utils.Debugger
 import com.tchristofferson.configupdater.ConfigUpdater
 import kotlinx.coroutines.CoroutineScope
@@ -127,7 +125,6 @@ class LiteEco : JavaPlugin() {
         }
     }
 
-    @Suppress("UnstableApiUsage")
     private fun checkUpdates() {
         val updateNotifier = UpdateNotifier(this,"101934", pluginMeta.version)
         updateNotifier.checkForUpdateAsync()
@@ -135,13 +132,6 @@ class LiteEco : JavaPlugin() {
 
     private fun registerListeners() {
         val listeners = arrayOf(
-            PlayerEconomyPayListener(this),
-            EconomyGlobalDepositListener(this),
-            EconomyGlobalSetListener(this),
-            EconomyGlobalWithdrawListener(this),
-            EconomyMoneyDepositListener(this),
-            EconomyMoneyWithdrawListener(this),
-            EconomyMoneySetListener(this),
             PlayerAsyncPreLoginListener(this),
             PlayerQuitListener(this)
         )
@@ -153,7 +143,6 @@ class LiteEco : JavaPlugin() {
         componentLogger.info(ModernText.miniModernText("Registering <yellow>(${listeners.size})</yellow> of listeners took <yellow>$timeTaken ms</yellow> -> ok"))
     }
 
-    @Suppress("UnstableApiUsage")
     private fun createCommandManager() {
         componentLogger.info(ModernText.miniModernText("<blue>Registering commands with Cloud Command Framework !"))
 

@@ -1,25 +1,26 @@
-package com.github.encryptsl.lite.eco.listeners.admin
+package com.github.encryptsl.lite.eco.common.manager.economy.admin
 
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.enums.TypeLogger
-import com.github.encryptsl.lite.eco.api.events.admin.EconomyGlobalWithdrawEvent
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.Bukkit
+import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
-import org.bukkit.event.EventHandler
-import org.bukkit.event.Listener
+import java.math.BigDecimal
 import kotlin.jvm.optionals.getOrNull
 
-class EconomyGlobalWithdrawListener(private val liteEco: LiteEco) : Listener {
-    @EventHandler
-    fun onAdminEconomyGlobalWithdraw(event: EconomyGlobalWithdrawEvent) {
-        val sender: CommandSender = event.commandSender
-        val currency = event.currency
-        val money = event.money
-        val players = event.players
+class EconomyGlobalWithdrawHandler(
+    private val liteEco: LiteEco
+) {
 
+    fun onAdminGlobalWithdrawMoney(
+        sender: CommandSender,
+        currency: String,
+        money: BigDecimal,
+        players:  MutableCollection<OfflinePlayer>
+    ) {
         if (liteEco.api.getUUIDNameMap(currency).isEmpty())
             return sender.sendMessage(liteEco.locale.translation("messages.error.database_exception", Placeholder.parsed("exception", "Collection is empty !")))
 
@@ -60,4 +61,5 @@ class EconomyGlobalWithdrawListener(private val liteEco: LiteEco) : Listener {
             }
         }
     }
+
 }

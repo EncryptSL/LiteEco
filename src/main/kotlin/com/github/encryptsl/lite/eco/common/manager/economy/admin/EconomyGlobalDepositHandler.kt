@@ -1,26 +1,26 @@
-package com.github.encryptsl.lite.eco.listeners.admin
+package com.github.encryptsl.lite.eco.common.manager.economy.admin
 
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.enums.TypeLogger
-import com.github.encryptsl.lite.eco.api.events.admin.EconomyGlobalDepositEvent
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.Bukkit
+import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
-import org.bukkit.event.EventHandler
-import org.bukkit.event.Listener
+import java.math.BigDecimal
 import kotlin.jvm.optionals.getOrNull
 
-class EconomyGlobalDepositListener(private val liteEco: LiteEco) : Listener {
+class EconomyGlobalDepositHandler(
+    private val liteEco: LiteEco
+) {
 
-    @EventHandler
-    fun onAdminEconomyGlobalDeposit(event: EconomyGlobalDepositEvent) {
-        val sender: CommandSender = event.commandSender
-        val currency = event.currency
-        val money = event.money
-        val players = event.players
-
+    fun onAdminGlobalDepositMoney(
+        sender: CommandSender,
+        currency: String,
+        money: BigDecimal,
+        players:  MutableCollection<OfflinePlayer>
+    ) {
         if (liteEco.api.getUUIDNameMap(currency).isEmpty())
             return sender.sendMessage(liteEco.locale.translation("messages.error.database_exception", Placeholder.parsed("exception", "Collection is empty !")))
 

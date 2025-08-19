@@ -1,26 +1,25 @@
-package com.github.encryptsl.lite.eco.listeners
+package com.github.encryptsl.lite.eco.common.manager.economy
 
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.enums.TypeLogger
-import com.github.encryptsl.lite.eco.api.events.PlayerEconomyPayEvent
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
-import org.bukkit.event.EventHandler
-import org.bukkit.event.Listener
 import java.math.BigDecimal
 import kotlin.jvm.optionals.getOrNull
 
-class PlayerEconomyPayListener(private val liteEco: LiteEco) : Listener {
-    @EventHandler
-    fun onEconomyPay(event: PlayerEconomyPayEvent) {
-        val sender: Player = event.sender
-        val target: OfflinePlayer = event.target
-        val money: BigDecimal = event.money
-        val currency: String = event.currency
+class PlayerEconomyPayHandler(
+    private val liteEco: LiteEco
+) {
 
+    fun onPlayerPay(
+        sender: Player,
+        target: OfflinePlayer,
+        money: BigDecimal,
+        currency: String
+    ) {
         liteEco.pluginScope.launch {
             val user = liteEco.suspendApiWrapper.getUserByUUID(target.uniqueId, currency).getOrNull()
             if (user == null) {
@@ -62,4 +61,5 @@ class PlayerEconomyPayListener(private val liteEco: LiteEco) : Listener {
             )))
         }
     }
+
 }

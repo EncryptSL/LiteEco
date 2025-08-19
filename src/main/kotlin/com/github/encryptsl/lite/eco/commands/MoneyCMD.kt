@@ -2,10 +2,10 @@ package com.github.encryptsl.lite.eco.commands
 
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.ComponentPaginator
-import com.github.encryptsl.lite.eco.api.events.PlayerEconomyPayEvent
 import com.github.encryptsl.lite.eco.commands.parsers.AmountValidatorParser
 import com.github.encryptsl.lite.eco.commands.parsers.CurrencyParser
 import com.github.encryptsl.lite.eco.common.extensions.runBlockingIO
+import com.github.encryptsl.lite.eco.common.manager.economy.PlayerEconomyPayHandler
 import com.github.encryptsl.lite.eco.utils.Helper
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
@@ -31,6 +31,8 @@ class MoneyCMD(
     }
 
     private val helper: Helper = Helper(liteEco)
+
+    private val economyPay by lazy { PlayerEconomyPayHandler(liteEco) }
 
     override fun execute(commandManager: PaperCommandManager<Source>) {
         commandManager.buildAndRegister("money", Description.description(DESCRIPTION)) {
@@ -187,7 +189,7 @@ class MoneyCMD(
         if (sender.uniqueId == target.uniqueId)
             return sender.sendMessage(liteEco.locale.translation("messages.error.self_pay"))
 
-        liteEco.pluginManager.callEvent(PlayerEconomyPayEvent(sender, target, currency, amount))
+        economyPay.onPlayerPay(sender, target, amount, currency)
     }
 
 }
