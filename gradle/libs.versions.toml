@@ -1,13 +1,13 @@
 [versions]
-kotlin = "2.2.0"
+kotlin = "2.2.10"
 exposed = "1.0.0-beta-5"
 cloud = "2.0.0-SNAPSHOT"
-flyway = "11.10.4"
-flyway-test = "11.9.1"
+flyway = "11.11.2"
+flyway-test = "11.11.2"
 hikari = "7.0.1"
 vaultapi = "1.7"
 vaultunlocked = "2.15"
-okhttp = "5.1.0"
+ktor = "3.2.3"
 csv = "1.14.0"
 config-updater = "2.2-SNAPSHOT"
 miniplaceholders = "2.3.0"
@@ -23,6 +23,7 @@ craftconomy = "3.3.3-SNAPSHOT"
 
 [libraries]
 kotlin-stdlib-jdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
+kotlin-reflection = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin"}
 
 vaultapi = { module = "com.github.MilkBowl:VaultAPI", version.ref = "vaultapi" }
 vaultunlocked = { module = "net.milkbowl.vault:VaultUnlockedAPI", version.ref = "vaultunlocked" }
@@ -38,7 +39,10 @@ flyway-core = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
 flyway-mysql = { module = "org.flywaydb:flyway-mysql", version.ref = "flyway" }
 flyway-core-test = { module = "org.flywaydb:flyway-core", version.ref = "flyway-test" }
 
-okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-client-java = { module = "io.ktor:ktor-client-java", version.ref = "ktor"}
+ktor-serialization-gson = { module = "io.ktor:ktor-serialization-gson", version.ref = "ktor" }
 config-updater = { module = "com.tchristofferson:ConfigUpdater", version.ref = "config-updater" }
 commons-csv = { module = "org.apache.commons:commons-csv", version.ref = "csv" }
 
