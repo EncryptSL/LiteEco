@@ -1,10 +1,10 @@
 libraries:
-  - com.squareup.okhttp3:okhttp:5.1.0
   - com.tchristofferson:ConfigUpdater:2.2-SNAPSHOT
   - com.zaxxer:HikariCP:7.0.1
+  - io.ktor:ktor-client-core:3.2.3
   - org.apache.commons:commons-csv:1.14.0
-  - org.flywaydb:flyway-core:11.10.4
-  - org.flywaydb:flyway-mysql:11.10.4
+  - org.flywaydb:flyway-core:11.11.2
+  - org.flywaydb:flyway-mysql:11.11.2
   - org.incendo:cloud-annotations:2.0.0-SNAPSHOT
   - org.incendo:cloud-kotlin-extensions:2.0.0
   - org.incendo:cloud-minecraft-extras:2.0.0-SNAPSHOT
@@ -12,6 +12,8 @@ libraries:
   - org.jetbrains.exposed:exposed-core:1.0.0-beta-5
   - org.jetbrains.exposed:exposed-jdbc:1.0.0-beta-5
   - org.jetbrains.exposed:exposed-kotlin-datetime:1.0.0-beta-5
-  - org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.2.0
+  - org.jetbrains.kotlin:kotlin-reflect:2.2.10
+  - org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.2.10
   - org.mariadb.jdbc:mariadb-java-client:3.5.4
   - org.postgresql:postgresql:42.7.6
+  - org.xerial:sqlite-jdbc:3.49.1.0
