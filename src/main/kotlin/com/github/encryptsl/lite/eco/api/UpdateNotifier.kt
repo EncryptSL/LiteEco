@@ -2,10 +2,16 @@ package com.github.encryptsl.lite.eco.api
 
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.objects.ModernText
-import com.google.gson.Gson
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.engine.java.*
+import io.ktor.client.plugins.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
+import io.ktor.serialization.gson.*
 import kotlinx.coroutines.launch
-import okhttp3.OkHttpClient
-import okhttp3.Request
 
 
 class UpdateNotifier(
@@ -17,31 +23,37 @@ class UpdateNotifier(
         private const val API_URL = "https://api.spiget.org/v2/resources/%s/versions/latest"
     }
 
-    private val httpClient = OkHttpClient()
-    private val gson = Gson()
-
     fun checkForUpdateAsync() {
+
+        val client = HttpClient(Java) {
+            install(HttpTimeout) {
+                requestTimeoutMillis = 5000
+                connectTimeoutMillis = 5000
+                socketTimeoutMillis = 5000
+            }
+            install(ContentNegotiation) {
+                gson {
+                    setPrettyPrinting()
+                }
+            }
+        }
+
         liteEco.pluginScope.launch {
             try {
-                val request = Request.Builder()
-                    .url(API_URL.format(resourceId))
-                    .build()
+                val response: HttpResponse = client.get(API_URL.format(resourceId))
 
-                val response = httpClient.newCall(request).execute()
-                response.use {
-                    if (!it.isSuccessful) {
-                        logError("Update check failed with HTTP ${it.code}")
-                        return@use
-                    }
-
-                    val responseBody = it.body?.string()
-                    if (responseBody == null) {
-                        logError("Update check returned empty response body.")
-                        return@use
-                    }
-                    val version = gson.fromJson(responseBody, Version::class.java)
-                    logUpdate(version)
+                if (response.status != HttpStatusCode.OK) {
+                    logError("Update check failed with HTTP ${response.status.value}")
+                    return@launch
                 }
+                val responseBody = response.bodyAsText()
+                if (responseBody.isBlank()) {
+                    logError("Update check returned empty response body.")
+                    return@launch
+                }
+
+                val version: Version = client.get(API_URL.format(resourceId)).body()
+                logUpdate(version)
             } catch (e: Exception) {
                 logError("Exception during update check: ${e.localizedMessage}")
             }
