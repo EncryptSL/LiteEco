@@ -132,7 +132,7 @@ class MoneyCMD(
             return sender.sendMessage(liteEco.locale.translation("messages.error.missing_currency_permission"))
 
         liteEco.pluginScope.launch {
-            liteEco.suspendApiWrapper.getUserByUUID(target.uniqueId, currency).orElse(null)?.let { user ->
+            liteEco.api.getUserByUUID(target.uniqueId, currency).orElse(null)?.let { user ->
                 val message = if (sender == target)
                     liteEco.locale.translation("messages.balance.format", helper.getComponentBal(user, currency))
                 else

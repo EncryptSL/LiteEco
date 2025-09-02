@@ -3,6 +3,8 @@ package com.github.encryptsl.lite.eco.common.hook.vault
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.PlayerAccount
 import com.github.encryptsl.lite.eco.common.extensions.isApproachingZero
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import net.milkbowl.vault.economy.EconomyResponse
 import org.bukkit.OfflinePlayer
 import java.util.*
@@ -21,7 +23,7 @@ class AdaptiveEconomyVaultAPI(private val liteEco: LiteEco) : DeprecatedEconomy(
 
     override fun fractionalDigits(): Int = -1
 
-    override fun format(amount: Double): String = liteEco.api.fullFormatting(amount.toBigDecimal())
+    override fun format(amount: Double): String = liteEco.currencyImpl.fullFormatting(amount.toBigDecimal())
 
     override fun currencyNamePlural(): String? {
         return null
@@ -43,7 +45,7 @@ class AdaptiveEconomyVaultAPI(private val liteEco: LiteEco) : DeprecatedEconomy(
         return try {
             player?.let {
                 if (PlayerAccount.isPlayerOnline(it.uniqueId)) {
-                    liteEco.api.getBalance(it.uniqueId).toDouble()
+                    runBlocking { liteEco.api.getBalance(it.uniqueId).toDouble() }
                 } else {
                     liteEco.databaseEcoModel.getBalance(it.uniqueId, liteEco.currencyImpl.defaultCurrency()).toDouble()
                 }
@@ -73,7 +75,9 @@ class AdaptiveEconomyVaultAPI(private val liteEco: LiteEco) : DeprecatedEconomy(
 
         return if (has(player, amount)) {
             liteEco.debugger.debug(AdaptiveEconomyVaultAPI::class.java, "successfully withdraw ${player.name} from his balance ${getBalance(player)} amount $amount")
-            liteEco.api.withDrawMoney(player.uniqueId, liteEco.currencyImpl.defaultCurrency(), amount.toBigDecimal())
+            liteEco.pluginScope.launch {
+                liteEco.api.withdraw(player.uniqueId, liteEco.currencyImpl.defaultCurrency(), amount.toBigDecimal())
+            }
             EconomyResponse(amount, getBalance(player), EconomyResponse.ResponseType.SUCCESS, null)
         } else {
             EconomyResponse(0.0, getBalance(player), EconomyResponse.ResponseType.FAILURE, null)
@@ -86,12 +90,14 @@ class AdaptiveEconomyVaultAPI(private val liteEco: LiteEco) : DeprecatedEconomy(
 
     override fun depositPlayer(player: OfflinePlayer?, amount: Double): EconomyResponse {
         liteEco.debugger.debug(AdaptiveEconomyVaultAPI::class.java, "try deposit to ${player?.name} amount $amount")
-        if (player == null || !hasAccount(player) || amount.toBigDecimal().isApproachingZero() || liteEco.api.getCheckBalanceLimit(player.uniqueId, getBalance(player).toBigDecimal(), amount = amount.toBigDecimal())) {
+        if (player == null || !hasAccount(player) || amount.toBigDecimal().isApproachingZero() || liteEco.currencyImpl.getCheckBalanceLimit(getBalance(player).toBigDecimal(), amount = amount.toBigDecimal())) {
             return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.FAILURE, null)
         }
 
         liteEco.debugger.debug(AdaptiveEconomyVaultAPI::class.java, "successfully deposit ${player.name} to his balance ${getBalance(player)} amount $amount")
-        liteEco.api.depositMoney(player.uniqueId, liteEco.currencyImpl.defaultCurrency(), amount.toBigDecimal())
+        liteEco.pluginScope.launch {
+            liteEco.api.deposit(player.uniqueId, liteEco.currencyImpl.defaultCurrency(), amount.toBigDecimal())
+        }
 
         return EconomyResponse(amount, getBalance(player), EconomyResponse.ResponseType.SUCCESS, null)
     }
@@ -101,7 +107,9 @@ class AdaptiveEconomyVaultAPI(private val liteEco: LiteEco) : DeprecatedEconomy(
     }
 
     override fun createPlayerAccount(player: OfflinePlayer?): Boolean {
-        return liteEco.api.createAccount(player!!, liteEco.currencyImpl.defaultCurrency(), liteEco.currencyImpl.defaultStartBalance())
+        return runBlocking {
+            liteEco.api.createOrUpdateAccount(player!!.uniqueId, player.name.toString(),liteEco.currencyImpl.defaultCurrency(), liteEco.currencyImpl.defaultStartBalance())
+        }
     }
 
     override fun createPlayerAccount(player: OfflinePlayer?, worldName: String?): Boolean {

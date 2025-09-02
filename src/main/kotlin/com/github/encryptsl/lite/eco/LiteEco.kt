@@ -3,7 +3,6 @@ package com.github.encryptsl.lite.eco
 import com.github.encryptsl.lite.eco.api.ConfigAPI
 import com.github.encryptsl.lite.eco.api.UpdateNotifier
 import com.github.encryptsl.lite.eco.api.economy.Currency
-import com.github.encryptsl.lite.eco.api.economy.ModernLiteEcoEconomyImpl
 import com.github.encryptsl.lite.eco.api.economy.SuspendLiteEcoEconomyWrapper
 import com.github.encryptsl.lite.eco.api.enums.ExportKeys
 import com.github.encryptsl.lite.eco.api.enums.PurgeKey
@@ -52,8 +51,7 @@ class LiteEco : JavaPlugin() {
 
     private var countTransactions: LinkedHashMap<String, Int> = LinkedHashMap()
 
-    val api: ModernLiteEcoEconomyImpl by lazy { ModernLiteEcoEconomyImpl() }
-    val suspendApiWrapper: SuspendLiteEcoEconomyWrapper by lazy { SuspendLiteEcoEconomyWrapper() }
+    val api: SuspendLiteEcoEconomyWrapper by lazy { SuspendLiteEcoEconomyWrapper() }
     val locale: Locales by lazy { Locales(this) }
     val databaseEcoModel: DatabaseEcoModel by lazy { DatabaseEcoModel() }
     val loggerModel: DatabaseMonologModel by lazy { DatabaseMonologModel(this) }

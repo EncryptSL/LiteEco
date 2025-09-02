@@ -4,6 +4,7 @@ import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.interfaces.EconomyImporter
 import com.github.encryptsl.lite.eco.common.hook.craftconomy3.CraftConomyHook
 import com.github.encryptsl.lite.eco.common.manager.importer.EconomyImportResults
+import kotlinx.coroutines.launch
 import org.bukkit.OfflinePlayer
 import java.math.BigDecimal
 
@@ -16,12 +17,14 @@ class CraftConomy3Importer : EconomyImporter {
         var balances = BigDecimal.ZERO
 
         try {
-            val craftConomy = CraftConomyHook(liteEco)
-            for (p in offlinePlayers) {
-                val balance = BigDecimal.valueOf(craftConomy.getBalance(p.name.toString()))  // Pozor na getName() vs. name
-                if (liteEco.api.createAccount(p, currency, balance)) {
-                    balances += balance
-                    converted++
+            liteEco.pluginScope.launch {
+                val craftConomy = CraftConomyHook(liteEco)
+                for (p in offlinePlayers) {
+                    val balance = BigDecimal.valueOf(craftConomy.getBalance(p.name.toString()))  // Pozor na getName() vs. name
+                    if (liteEco.api.createOrUpdateAccount(p.uniqueId, p.name.toString(), currency, balance)) {
+                        balances += balance
+                        converted++
+                    }
                 }
             }
         } catch (e: Exception) {

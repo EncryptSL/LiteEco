@@ -62,8 +62,8 @@ class DatabaseMonologModel(val plugin: Plugin) : TransactionLogger {
             Placeholder.parsed("sender", sender),
             Placeholder.parsed("target", target),
             Placeholder.parsed("currency", currency),
-            Placeholder.parsed("previous_balance", LiteEco.instance.api.fullFormatting(previousBalance)),
-            Placeholder.parsed("new_balance", LiteEco.instance.api.fullFormatting(newBalance)),
+            Placeholder.parsed("previous_balance", LiteEco.instance.currencyImpl.fullFormatting(previousBalance)),
+            Placeholder.parsed("new_balance", LiteEco.instance.currencyImpl.fullFormatting(newBalance)),
             Placeholder.parsed("timestamp", convertInstant(instant)),
         ))
     }

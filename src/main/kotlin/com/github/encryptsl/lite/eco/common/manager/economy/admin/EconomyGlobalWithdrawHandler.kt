@@ -26,7 +26,7 @@ class EconomyGlobalWithdrawHandler(
 
         liteEco.pluginScope.launch {
             players.forEach { player ->
-                val user = liteEco.suspendApiWrapper
+                val user = liteEco.api
                     .getUserByUUID(player.uniqueId, currency)
                     .getOrNull()
                 user?.also { u ->
@@ -39,7 +39,7 @@ class EconomyGlobalWithdrawHandler(
                             u.money,
                             u.money - money
                         )
-                        suspendApiWrapper.withdraw(u.uuid, currency, money)
+                        api.withdraw(u.uuid, currency, money)
                     }
                 }
             }
@@ -48,14 +48,14 @@ class EconomyGlobalWithdrawHandler(
 
             sender.sendMessage(liteEco.locale.translation("messages.global.withdraw_money",
                 TagResolver.resolver(
-                    Placeholder.parsed("money", liteEco.api.fullFormatting(money)),
+                    Placeholder.parsed("money", liteEco.currencyImpl.fullFormatting(money)),
                     Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
                 )
             ))
             if (liteEco.config.getBoolean("messages.global.notify_withdraw")) {
                 Bukkit.broadcast(liteEco.locale.translation("messages.broadcast.withdraw_money", TagResolver.resolver(
                     Placeholder.parsed("sender", sender.name),
-                    Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
+                    Placeholder.parsed("money", liteEco.currencyImpl.fullFormatting(money, currency)),
                     Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
                 )))
             }

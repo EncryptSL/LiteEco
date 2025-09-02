@@ -12,12 +12,12 @@ abstract class UnusedVaultUnlockedAPI : Economy {
         private const val PERMISSIONS_NOT_SUPPORTED_MESSAGE = "LiteEco does not support permissions operation!"
     }
 
-    @Deprecated("Deprecated in Java", ReplaceWith("createAccount(accountID: UUID, name: String, player: Boolean)"))
+    @Deprecated("Deprecated in Java")
     override fun createAccount(accountID: UUID, name: String): Boolean {
         return false
     }
 
-    @Deprecated("Deprecated in Java", ReplaceWith("createAccount(accountID: UUID, name: String, worldName: String, player: Boolean)"))
+    @Deprecated("Deprecated in Java")
     override fun createAccount(accountID: UUID, name: String, worldName: String): Boolean {
         return false
     }

@@ -20,24 +20,24 @@ class EconomyMoneySetHandler(
         currency: String,
         money: BigDecimal,
     ) {
-        if (liteEco.api.getCheckBalanceLimit(money) && !sender.hasPermission("lite.eco.admin.bypass.limit")) {
+        if (liteEco.currencyImpl.getCheckBalanceLimit(money) && !sender.hasPermission("lite.eco.admin.bypass.limit")) {
             sender.sendMessage(liteEco.locale.translation("messages.error.amount_above_limit"))
             return
         }
 
         liteEco.pluginScope.launch {
-            val user = liteEco.suspendApiWrapper.getUserByUUID(target.uniqueId, currency).getOrNull()
+            val user = liteEco.api.getUserByUUID(target.uniqueId, currency).getOrNull()
             if (user == null) {
                 sender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist", Placeholder.parsed("account", target.name.toString())))
                 return@launch
             }
             liteEco.loggerModel.logging(TypeLogger.SET, sender.name, target.name.toString(), currency, user.money, money)
             liteEco.increaseTransactions(1)
-            liteEco.suspendApiWrapper.set(target.uniqueId, currency, money)
+            liteEco.api.set(target.uniqueId, currency, money)
 
             if (sender.name == target.name) {
                 sender.sendMessage(liteEco.locale.translation("messages.self.set_money", TagResolver.resolver(
-                    Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
+                    Placeholder.parsed("money", liteEco.currencyImpl.fullFormatting(money, currency)),
                     Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
                 )))
                 return@launch
@@ -45,14 +45,14 @@ class EconomyMoneySetHandler(
 
             sender.sendMessage(liteEco.locale.translation("messages.sender.set_money", TagResolver.resolver(
                 Placeholder.parsed("target", target.name.toString()),
-                Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
+                Placeholder.parsed("money", liteEco.currencyImpl.fullFormatting(money, currency)),
                 Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
             )))
 
             if (target.isOnline && liteEco.config.getBoolean("messages.target.notify_set")) {
                 target.player?.sendMessage(liteEco.locale.translation("messages.target.set_money", TagResolver.resolver(
                     Placeholder.parsed("sender", sender.name),
-                    Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
+                    Placeholder.parsed("money", liteEco.currencyImpl.fullFormatting(money, currency)),
                     Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
                 )))
             }

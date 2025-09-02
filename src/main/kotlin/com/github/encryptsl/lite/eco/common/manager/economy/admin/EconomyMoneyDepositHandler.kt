@@ -21,18 +21,18 @@ class EconomyMoneyDepositHandler(
         money: BigDecimal,
         silent: Boolean,
     ) {
-        if (liteEco.api.getCheckBalanceLimit(money) && !sender.hasPermission("lite.eco.admin.bypass.limit")) {
+        if (liteEco.currencyImpl.getCheckBalanceLimit(money) && !sender.hasPermission("lite.eco.admin.bypass.limit")) {
             sender.sendMessage(liteEco.locale.translation("messages.error.amount_above_limit"))
             return
         }
 
         liteEco.pluginScope.launch {
-            val user = liteEco.suspendApiWrapper.getUserByUUID(target.uniqueId, currency).getOrNull()
+            val user = liteEco.api.getUserByUUID(target.uniqueId, currency).getOrNull()
             if (user == null) {
                 sender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist", Placeholder.parsed("account", target.name.toString())))
                 return@launch
             }
-            if (liteEco.api.getCheckBalanceLimit(target.uniqueId, user.money, currency, money) && !sender.hasPermission("lite.eco.admin.bypass.limit")) {
+            if (liteEco.currencyImpl.getCheckBalanceLimit(user.money, currency, money) && !sender.hasPermission("lite.eco.admin.bypass.limit")) {
                 sender.sendMessage(liteEco.locale.translation("messages.error.balance_above_limit",
                     Placeholder.parsed("account", target.name.toString())
                 ))
@@ -41,11 +41,11 @@ class EconomyMoneyDepositHandler(
 
             liteEco.increaseTransactions(1)
             liteEco.loggerModel.logging(TypeLogger.DEPOSIT, sender.name, user.userName, currency, user.money, user.money.plus(money))
-            liteEco.suspendApiWrapper.deposit(target.uniqueId, currency, money)
+            liteEco.api.deposit(target.uniqueId, currency, money)
 
             if (sender.name == target.name) {
                 sender.sendMessage(liteEco.locale.translation("messages.self.add_money", TagResolver.resolver(
-                    Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
+                    Placeholder.parsed("money", liteEco.currencyImpl.fullFormatting(money, currency)),
                     Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
                 )))
                 return@launch
@@ -53,7 +53,7 @@ class EconomyMoneyDepositHandler(
 
             sender.sendMessage(liteEco.locale.translation("messages.sender.add_money",
                 TagResolver.resolver(
-                    Placeholder.parsed("target", target.name.toString()), Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
+                    Placeholder.parsed("target", target.name.toString()), Placeholder.parsed("money", liteEco.currencyImpl.fullFormatting(money, currency)),
                     Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
                 )
             ))
@@ -62,13 +62,13 @@ class EconomyMoneyDepositHandler(
                 if (silent) {
                     target.player?.sendMessage(liteEco.locale.translation(
                         "messages.target.add_money_silent",
-                        Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency))
+                        Placeholder.parsed("money", liteEco.currencyImpl.fullFormatting(money, currency))
                     ))
                     return@launch
                 }
                 target.player?.sendMessage(liteEco.locale.translation("messages.target.add_money", TagResolver.resolver(
                     Placeholder.parsed("sender", sender.name),
-                    Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
+                    Placeholder.parsed("money", liteEco.currencyImpl.fullFormatting(money, currency)),
                     Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money)))
                 ))
             }

@@ -1,6 +1,10 @@
 package com.github.encryptsl.lite.eco.api.economy
 
 import com.github.encryptsl.lite.eco.LiteEco
+import com.github.encryptsl.lite.eco.api.objects.ModernText
+import com.github.encryptsl.lite.eco.common.extensions.compactFormat
+import com.github.encryptsl.lite.eco.common.extensions.moneyFormat
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import java.math.BigDecimal
 
 class Currency(private val liteEco: LiteEco) {
@@ -28,6 +32,14 @@ class Currency(private val liteEco: LiteEco) {
 
     fun getCurrencyLimit(currency: String): BigDecimal {
         return liteEco.config.getDouble("economy.currencies.$currency.balance_limit", 0.00).toBigDecimal()
+    }
+
+    fun getCheckBalanceLimit(amount: BigDecimal, currency: String = "dollars"): Boolean {
+        return (amount > getCurrencyLimit(currency)) && getCurrencyLimitEnabled(currency)
+    }
+
+    fun getCheckBalanceLimit(currentBalance: BigDecimal, currency: String = "dollars", amount: BigDecimal): Boolean {
+        return ((currentBalance.plus(amount) > getCurrencyLimit(currency)) && getCurrencyLimitEnabled(currency))
     }
 
     fun getCurrencyLimitEnabled(currency: String): Boolean {
@@ -61,4 +73,24 @@ class Currency(private val liteEco: LiteEco) {
         }
     }
 
+    fun compacted(amount: BigDecimal): String = amount.compactFormat(
+        liteEco.config.getString("formatting.currency_pattern").toString(),
+        liteEco.config.getString("formatting.compacted_pattern").toString(),
+        liteEco.config.getString("formatting.currency_locale").toString()
+    )
+
+    fun formatted(amount: BigDecimal): String = amount.moneyFormat(
+        liteEco.config.getString("formatting.currency_pattern").toString(),
+        liteEco.config.getString("formatting.currency_locale").toString()
+    )
+
+    fun fullFormatting(amount: BigDecimal, currency: String = "dollars"): String {
+        val value = when(isCurrencyDisplayCompactEnabled(currency)) {
+            true -> compacted(amount)
+            false -> formatted(amount)
+        }
+        return liteEco.locale.plainTextTranslation(
+            ModernText.miniModernText(getCurrencyFormat(currency), Placeholder.parsed("money", value))
+        )
+    }
 }

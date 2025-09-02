@@ -13,15 +13,15 @@ class PurgeManager(private val liteEco: LiteEco) {
             @Suppress("REDUNDANT_ELSE_IN_WHEN")
             when (purgeKey) {
                 PurgeKey.ACCOUNTS -> {
-                    liteEco.suspendApiWrapper.purgeAccounts(currency)
+                    liteEco.api.purgeAccounts(currency)
                     sender.sendMessage(liteEco.locale.translation("messages.admin.purge_accounts"))
                 }
                 PurgeKey.NULL_ACCOUNTS -> {
-                    liteEco.suspendApiWrapper.purgeInvalidAccounts(currency)
+                    liteEco.api.purgeInvalidAccounts(currency)
                     sender.sendMessage(liteEco.locale.translation("messages.admin.purge_null_accounts"))
                 }
                 PurgeKey.DEFAULT_ACCOUNTS -> {
-                    liteEco.suspendApiWrapper.purgeDefaultAccounts(currency,liteEco.currencyImpl.getCurrencyStartBalance(currency))
+                    liteEco.api.purgeDefaultAccounts(currency,liteEco.currencyImpl.getCurrencyStartBalance(currency))
                     sender.sendMessage(liteEco.locale.translation("messages.admin.purge_default_accounts"))
                 }
                 PurgeKey.MONO_LOG -> {

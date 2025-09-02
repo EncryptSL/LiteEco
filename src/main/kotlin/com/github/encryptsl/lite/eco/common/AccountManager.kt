@@ -11,14 +11,14 @@ class AccountManager(private val liteEco: LiteEco) {
             liteEco.currencyImpl.getCurrenciesKeys().map {
                 it to liteEco.currencyImpl.getCurrencyStartBalance(it)
             }.forEach { (currency, amount) ->
-                liteEco.suspendApiWrapper.createOrUpdateAndCache(uuid, username, currency, amount)
+                liteEco.api.createOrUpdateAndCache(uuid, username, currency, amount)
             }
         }
     }
 
     fun syncAccount(uuid: UUID) {
         liteEco.pluginScope.launch {
-            liteEco.suspendApiWrapper.syncAccount(uuid)
+            liteEco.api.syncAccount(uuid)
         }
     }
 }

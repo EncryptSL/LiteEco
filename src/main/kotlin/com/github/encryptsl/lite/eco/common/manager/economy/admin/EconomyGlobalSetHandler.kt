@@ -25,14 +25,14 @@ class EconomyGlobalSetHandler(
             return sender.sendMessage(liteEco.locale.translation("messages.error.database_exception", Placeholder.parsed("exception", "Collection is empty !")))
 
 
-        if (liteEco.api.getCheckBalanceLimit(money) && !sender.hasPermission("lite.eco.admin.bypass.limit")) {
+        if (liteEco.currencyImpl.getCheckBalanceLimit(money) && !sender.hasPermission("lite.eco.admin.bypass.limit")) {
             sender.sendMessage(liteEco.locale.translation("messages.error.amount_above_limit"))
             return
         }
 
         liteEco.pluginScope.launch {
             players.forEach { player ->
-                val user = liteEco.suspendApiWrapper
+                val user = liteEco.api
                     .getUserByUUID(player.uniqueId, currency)
                     .getOrNull()
 
@@ -46,7 +46,7 @@ class EconomyGlobalSetHandler(
                             u.money,
                             money
                         )
-                        suspendApiWrapper.set(player.uniqueId, currency, money)
+                        api.set(player.uniqueId, currency, money)
                     }
                 }
             }
@@ -54,14 +54,14 @@ class EconomyGlobalSetHandler(
             liteEco.increaseTransactions(players.size)
 
             sender.sendMessage(liteEco.locale.translation("messages.global.set_money", TagResolver.resolver(
-                Placeholder.parsed("money", liteEco.api.fullFormatting(money, currency)),
+                Placeholder.parsed("money", liteEco.currencyImpl.fullFormatting(money, currency)),
                 Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
             )))
 
             if (liteEco.config.getBoolean("messages.global.notify_set")) {
                 Bukkit.broadcast(liteEco.locale.translation("messages.broadcast.set_money", TagResolver.resolver(
                     Placeholder.parsed("sender", sender.name),
-                    Placeholder.parsed("money", liteEco.api.fullFormatting(money)),
+                    Placeholder.parsed("money", liteEco.currencyImpl.fullFormatting(money)),
                     Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
                 )))
             }
