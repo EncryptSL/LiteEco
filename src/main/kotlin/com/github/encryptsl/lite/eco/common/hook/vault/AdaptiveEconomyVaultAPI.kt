@@ -8,7 +8,6 @@ import kotlinx.coroutines.runBlocking
 import net.milkbowl.vault.economy.EconomyResponse
 import org.bukkit.OfflinePlayer
 import java.util.*
-import kotlin.jvm.optionals.getOrNull
 
 class AdaptiveEconomyVaultAPI(private val liteEco: LiteEco) : DeprecatedEconomy() {
 
