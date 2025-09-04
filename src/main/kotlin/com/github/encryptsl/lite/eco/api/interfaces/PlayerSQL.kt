@@ -14,9 +14,9 @@ interface PlayerSQL {
     fun getTopBalance(currency: String): MutableMap<String, User>
     fun getUUIDNameMap(currency: String): MutableMap<UUID, String>
     fun getPlayersIds(currency: String): MutableCollection<UUID>
-    fun depositMoney(uuid: UUID, currency: String, money: BigDecimal)
-    fun withdrawMoney(uuid: UUID, currency: String, money: BigDecimal)
-    fun setMoney(uuid: UUID, currency: String, money: BigDecimal)
+    fun deposit(uuid: UUID, currency: String, money: BigDecimal)
+    fun withdraw(uuid: UUID, currency: String, money: BigDecimal)
+    fun set(uuid: UUID, currency: String, money: BigDecimal)
     fun purgeAccounts(currency: String)
     fun purgeDefaultAccounts(defaultMoney: BigDecimal, currency: String)
     fun purgeInvalidAccounts(currency: String)

@@ -73,7 +73,7 @@ class SuspendLiteEcoEconomyWrapper : ModernLiteEcoEconomyImpl() {
         if (PlayerAccount.isPlayerOnline(uuid) && PlayerAccount.isAccountCached(uuid, currency)) {
             cacheAccount(uuid, currency, getBalance(uuid, currency).minus(amount))
         } else {
-            LiteEco.instance.databaseEcoModel.withdrawMoney(uuid, currency, amount)
+            LiteEco.instance.databaseEcoModel.withdraw(uuid, currency, amount)
         }
     }
 
@@ -81,7 +81,7 @@ class SuspendLiteEcoEconomyWrapper : ModernLiteEcoEconomyImpl() {
         if (PlayerAccount.isPlayerOnline(uuid) && PlayerAccount.isAccountCached(uuid, currency)) {
             cacheAccount(uuid, currency, getBalance(uuid, currency).plus(amount))
         } else {
-            LiteEco.instance.databaseEcoModel.depositMoney(uuid, currency, amount)
+            LiteEco.instance.databaseEcoModel.deposit(uuid, currency, amount)
         }
     }
 
@@ -89,7 +89,7 @@ class SuspendLiteEcoEconomyWrapper : ModernLiteEcoEconomyImpl() {
         if (PlayerAccount.isPlayerOnline(uuid)) {
             cacheAccount(uuid, currency, amount)
         } else {
-            LiteEco.instance.databaseEcoModel.setMoney(uuid, currency, amount)
+            LiteEco.instance.databaseEcoModel.set(uuid, currency, amount)
         }
     }
 

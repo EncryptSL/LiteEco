@@ -96,6 +96,7 @@ class LiteEco : JavaPlugin() {
     }
 
     override fun onDisable() {
+        hookManager.unregisterHooks()
         api.syncAccounts()
         pluginScope.cancel()
         databaseConnector.onDisable()

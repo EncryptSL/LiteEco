@@ -26,7 +26,7 @@ object PlayerAccount : AccountAPI {
 
     override fun syncAccount(uuid: UUID, currency: String, value: BigDecimal) {
         try {
-            databaseEcoModel.setMoney(uuid, currency, value)
+            databaseEcoModel.set(uuid, currency, value)
         } catch (e : Exception) {
             LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
         }
@@ -36,7 +36,7 @@ object PlayerAccount : AccountAPI {
         val userBalances = cache[uuid] ?: return
         try {
             userBalances.forEach { (currency, amount) ->
-                databaseEcoModel.setMoney(uuid, currency, amount)
+                databaseEcoModel.set(uuid, currency, amount)
             }
             cache.remove(uuid)
         } catch (e: Exception) {
@@ -47,7 +47,7 @@ object PlayerAccount : AccountAPI {
     override fun syncAccounts() {
         try {
             cache.entries.forEach { user -> user.value.forEach {
-                databaseEcoModel.setMoney(user.key, it.key, it.value) }
+                databaseEcoModel.set(user.key, it.key, it.value) }
             }
             cache.clear()
         } catch (e : Exception) {

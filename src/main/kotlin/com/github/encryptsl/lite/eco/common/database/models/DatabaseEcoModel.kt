@@ -120,7 +120,7 @@ class DatabaseEcoModel : PlayerSQL {
         }
     }
 
-    override fun depositMoney(uuid: UUID, currency: String, money: BigDecimal) {
+    override fun deposit(uuid: UUID, currency: String, money: BigDecimal) {
         loggedTransaction {
             try {
                 val table = Account(currency)
@@ -134,7 +134,7 @@ class DatabaseEcoModel : PlayerSQL {
             }
         }
     }
-    override fun withdrawMoney(uuid: UUID, currency: String, money: BigDecimal) {
+    override fun withdraw(uuid: UUID, currency: String, money: BigDecimal) {
         loggedTransaction {
             try {
                 val table = Account(currency)
@@ -148,7 +148,7 @@ class DatabaseEcoModel : PlayerSQL {
             }
         }
     }
-    override fun setMoney(uuid: UUID, currency: String, money: BigDecimal) {
+    override fun set(uuid: UUID, currency: String, money: BigDecimal) {
         loggedTransaction {
             try {
                 val table = Account(currency)
