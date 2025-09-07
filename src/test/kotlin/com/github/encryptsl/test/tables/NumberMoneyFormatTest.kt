@@ -86,7 +86,7 @@ class NumberMoneyFormatTest {
         assertEquals("100,000,000,000,000,000,000,000.00", formatted)
     }
 
-        private fun getLocale(localeStr: String): Locale {
+    private fun getLocale(localeStr: String): Locale {
         val parts = localeStr.split("-", "_")
         return when (parts.size) {
             1 -> Locale.of(parts[0])
