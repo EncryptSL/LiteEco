@@ -24,19 +24,16 @@ object PlayerAccount : AccountAPI {
         return cache[uuid]?.getOrDefault(currency, BigDecimal.ZERO) ?: BigDecimal.ZERO
     }
 
-    override fun syncAccount(uuid: UUID, currency: String, value: BigDecimal) {
-        try {
-            databaseEcoModel.set(uuid, currency, value)
-        } catch (e : Exception) {
-            LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
-        }
-    }
-
     override fun syncAccount(uuid: UUID) {
         val userBalances = cache[uuid] ?: return
         try {
             userBalances.forEach { (currency, amount) ->
-                databaseEcoModel.set(uuid, currency, amount)
+                val finalAmount = if (LiteEco.instance.currencyImpl.getCheckBalanceLimit(amount, currency)) {
+                    LiteEco.instance.currencyImpl.getCurrencyLimit(currency) // set maximum from configuration
+                } else {
+                    amount
+                }
+                databaseEcoModel.set(uuid, currency, finalAmount)
             }
             cache.remove(uuid)
         } catch (e: Exception) {
@@ -47,7 +44,12 @@ object PlayerAccount : AccountAPI {
     override fun syncAccounts() {
         try {
             cache.entries.forEach { user -> user.value.forEach {
-                databaseEcoModel.set(user.key, it.key, it.value) }
+                val finalAmount = if (LiteEco.instance.currencyImpl.getCheckBalanceLimit(it.value, it.key)) {
+                    LiteEco.instance.currencyImpl.getCurrencyLimit(it.key)
+                } else {
+                    it.value
+                }
+                databaseEcoModel.set(user.key, it.key, finalAmount) }
             }
             cache.clear()
         } catch (e : Exception) {

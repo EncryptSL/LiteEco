@@ -108,9 +108,8 @@ interface LiteEconomyAPI {
      * Synchronizes a single account between cache and database.
      *
      * @param uuid UUID of the player
-     * @param currency currency of the account
      */
-    suspend fun syncAccount(uuid: UUID, currency: String = "dollars")
+    suspend fun syncAccount(uuid: UUID)
 
     /** Synchronizes all accounts at once. */
     fun syncAccounts()

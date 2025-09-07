@@ -93,10 +93,7 @@ class SuspendLiteEcoEconomyWrapper : ModernLiteEcoEconomyImpl() {
         }
     }
 
-    override suspend fun syncAccount(uuid: UUID, currency: String) {
-        if (LiteEco.instance.currencyImpl.getCheckBalanceLimit(getBalance(uuid, currency), currency))
-            return PlayerAccount.syncAccount(uuid, currency, LiteEco.instance.currencyImpl.getCurrencyLimit(currency))
-
+    override suspend fun syncAccount(uuid: UUID) {
         PlayerAccount.syncAccount(uuid)
     }
 
