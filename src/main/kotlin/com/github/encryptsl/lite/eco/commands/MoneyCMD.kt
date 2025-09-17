@@ -4,7 +4,7 @@ import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.ComponentPaginator
 import com.github.encryptsl.lite.eco.commands.parsers.AmountValidatorParser
 import com.github.encryptsl.lite.eco.commands.parsers.CurrencyParser
-import com.github.encryptsl.lite.eco.common.extensions.runBlockingIO
+import com.github.encryptsl.lite.eco.common.extensions.io
 import com.github.encryptsl.lite.eco.common.manager.economy.PlayerEconomyPayHandler
 import com.github.encryptsl.lite.eco.utils.Helper
 import kotlinx.coroutines.launch
@@ -150,7 +150,7 @@ class MoneyCMD(
     fun balanceTopCommand(sender: CommandSender, page: Int, currency: String) {
         try {
             liteEco.pluginScope.launch {
-                val topPlayers = runBlockingIO {
+                val topPlayers = io {
                     helper.getTopBalancesFormatted(currency)
                 }
 

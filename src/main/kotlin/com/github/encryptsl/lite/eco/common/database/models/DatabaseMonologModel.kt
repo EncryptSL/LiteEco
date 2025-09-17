@@ -7,7 +7,7 @@ import com.github.encryptsl.lite.eco.common.database.entity.EconomyLog
 import com.github.encryptsl.lite.eco.common.database.tables.MonologTable
 import com.github.encryptsl.lite.eco.common.extensions.convertInstant
 import com.github.encryptsl.lite.eco.common.extensions.loggedTransaction
-import com.github.encryptsl.lite.eco.common.extensions.runBlockingIO
+import com.github.encryptsl.lite.eco.common.extensions.io
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
@@ -77,7 +77,7 @@ class DatabaseMonologModel(val plugin: Plugin) : TransactionLogger {
         newBalance: BigDecimal
     ) {
         if (!plugin.config.getBoolean("economy.monolog_activity", true)) return
-        runBlockingIO {
+        io {
             loggedTransaction {
                 try {
                     MonologTable.insert {
