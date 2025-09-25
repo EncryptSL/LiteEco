@@ -1,14 +1,14 @@
 libraries:
-  - com.tchristofferson:ConfigUpdater:2.2-SNAPSHOT
+  - com.tchristofferson:ConfigUpdater:2.2
   - com.zaxxer:HikariCP:7.0.1
   - io.ktor:ktor-client-core:3.2.3
   - org.apache.commons:commons-csv:1.14.0
   - org.flywaydb:flyway-core:11.11.2
   - org.flywaydb:flyway-mysql:11.11.2
-  - org.incendo:cloud-annotations:2.0.0-SNAPSHOT
+  - org.incendo:cloud-annotations:2.0.0
   - org.incendo:cloud-kotlin-extensions:2.0.0
   - org.incendo:cloud-minecraft-extras:2.0.0-SNAPSHOT
-  - org.incendo:cloud-paper:2.0.0-SNAPSHOT
+  - org.incendo:cloud-paper:2.0.0-beta.11
   - org.jetbrains.exposed:exposed-core:1.0.0-beta-5
   - org.jetbrains.exposed:exposed-jdbc:1.0.0-beta-5
   - org.jetbrains.exposed:exposed-kotlin-datetime:1.0.0-beta-5

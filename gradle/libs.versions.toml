@@ -1,7 +1,7 @@
 [versions]
 kotlin = "2.2.10"
 exposed = "1.0.0-beta-5"
-cloud = "2.0.0-SNAPSHOT"
+cloud = "2.0.0"
 flyway = "11.11.2"
 flyway-test = "11.11.2"
 hikari = "7.0.1"
@@ -9,7 +9,7 @@ vaultapi = "1.7"
 vaultunlocked = "2.15"
 ktor = "3.2.3"
 csv = "1.14.0"
-config-updater = "2.2-SNAPSHOT"
+config-updater = "2.2"
 miniplaceholders = "2.3.0"
 bstats = "3.0.1"
 junit-jupiter = "5.13.1"
@@ -47,8 +47,8 @@ config-updater = { module = "com.tchristofferson:ConfigUpdater", version.ref = "
 commons-csv = { module = "org.apache.commons:commons-csv", version.ref = "csv" }
 
 cloud-annotations = { module = "org.incendo:cloud-annotations", version.ref = "cloud" }
-cloud-paper = { module = "org.incendo:cloud-paper", version.ref = "cloud" }
-cloud-extras = { module = "org.incendo:cloud-minecraft-extras", version.ref = "cloud" }
+cloud-paper = { module = "org.incendo:cloud-paper", version = "2.0.0-beta.11" }
+cloud-extras = { module = "org.incendo:cloud-minecraft-extras", version = "2.0.0-SNAPSHOT" }
 cloud-kotlin = { module = "org.incendo:cloud-kotlin-extensions", version = "2.0.0" }
 
 bettereconomy = { module = "me.hsgamer:bettereconomy", version.ref = "bettereconomy" }
