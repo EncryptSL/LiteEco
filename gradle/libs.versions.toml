@@ -1,6 +1,6 @@
 [versions]
-kotlin = "2.2.10"
-exposed = "1.0.0-beta-5"
+kotlin = "2.2.20"
+exposed = "1.0.0-rc-1"
 cloud = "2.0.0"
 flyway = "11.11.2"
 flyway-test = "11.11.2"
@@ -32,7 +32,7 @@ placeholderapi = { module = "me.clip:placeholderapi", version.ref = "placeholder
 exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "exposed" }
 exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "exposed" }
 exposed-kotlin-datetime = { module = "org.jetbrains.exposed:exposed-kotlin-datetime", version.ref = "exposed" }
-exposed-migration = { module = "org.jetbrains.exposed:exposed-migration", version.ref = "exposed" }
+exposed-migration = { module = "org.jetbrains.exposed:exposed-migration", version = "1.0.0-beta-5" }
 
 hikaricp = { module = "com.zaxxer:HikariCP", version.ref = "hikari" }
 flyway-core = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }

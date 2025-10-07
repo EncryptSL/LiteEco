@@ -19,7 +19,7 @@ class EconomyGlobalDepositHandler(
         sender: CommandSender,
         currency: String,
         money: BigDecimal,
-        players:  MutableCollection<OfflinePlayer>
+        players: MutableCollection<OfflinePlayer>
     ) {
         if (liteEco.api.getUUIDNameMap(currency).isEmpty())
             return sender.sendMessage(liteEco.locale.translation("messages.error.database_exception", Placeholder.parsed("exception", "Collection is empty !")))

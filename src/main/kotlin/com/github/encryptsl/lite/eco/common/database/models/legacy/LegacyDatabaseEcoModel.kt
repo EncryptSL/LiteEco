@@ -4,14 +4,13 @@ import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.migrator.entity.PlayerBalances
 import com.github.encryptsl.lite.eco.common.database.tables.Account
 import com.github.encryptsl.lite.eco.common.database.tables.legacy.LegacyAccountTable
+import com.github.encryptsl.lite.eco.common.extensions.loggedTransaction
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.jetbrains.exposed.v1.core.ResultRow
 import org.jetbrains.exposed.v1.exceptions.ExposedSQLException
 import org.jetbrains.exposed.v1.jdbc.SchemaUtils
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.selectAll
-import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import java.util.*
 
 class LegacyDatabaseEcoModel(
@@ -22,14 +21,13 @@ class LegacyDatabaseEcoModel(
     private val playersBalances = mutableMapOf<UUID, PlayerBalances.PlayerBalance>()
 
     private fun getPlayerBalances(): MutableMap<UUID, PlayerBalances.PlayerBalance> {
-
-        transaction {
-            LegacyAccountTable.selectAll().forEach { resultRow: ResultRow ->
-                playersBalances[UUID.fromString(resultRow[LegacyAccountTable.uuid])] = PlayerBalances.PlayerBalance(
-                    resultRow[LegacyAccountTable.id].value.toInt(),
-                    UUID.fromString(resultRow[LegacyAccountTable.uuid]),
-                    resultRow[LegacyAccountTable.username],
-                    resultRow[LegacyAccountTable.money].toBigDecimal()
+        loggedTransaction {
+            LegacyAccountTable.selectAll().forEach { row ->
+                playersBalances[UUID.fromString(row[LegacyAccountTable.uuid])] = PlayerBalances.PlayerBalance(
+                    row[LegacyAccountTable.id].value.toInt(),
+                    UUID.fromString(row[LegacyAccountTable.uuid]),
+                    row[LegacyAccountTable.username],
+                    row[LegacyAccountTable.money].toBigDecimal()
                 )
             }
         }
@@ -39,7 +37,7 @@ class LegacyDatabaseEcoModel(
 
     suspend fun exportToLiteEcoDollarsTable() : Boolean {
         return withContext(Dispatchers.IO) {
-            transaction {
+            loggedTransaction {
                 try {
                     val table = Account(currency)
                     SchemaUtils.create(table)
@@ -50,10 +48,10 @@ class LegacyDatabaseEcoModel(
                             it[money] = eco.value.money
                         }
                     }
-                    return@transaction true
+                    true
                 } catch (e : ExposedSQLException) {
                     liteEco.logger.severe(e.sqlState)
-                    return@transaction false
+                    false
                 }
             }
         }

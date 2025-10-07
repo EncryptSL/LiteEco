@@ -7,11 +7,17 @@ import com.github.encryptsl.lite.eco.common.database.tables.Account
 import com.github.encryptsl.lite.eco.common.extensions.loggedTransaction
 import org.bukkit.Bukkit
 import org.jetbrains.exposed.v1.core.SortOrder
-import org.jetbrains.exposed.v1.core.SqlExpressionBuilder
-import org.jetbrains.exposed.v1.core.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.v1.core.SqlExpressionBuilder.notInList
+import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.core.minus
+import org.jetbrains.exposed.v1.core.notInList
+import org.jetbrains.exposed.v1.core.plus
 import org.jetbrains.exposed.v1.exceptions.ExposedSQLException
-import org.jetbrains.exposed.v1.jdbc.*
+import org.jetbrains.exposed.v1.jdbc.deleteAll
+import org.jetbrains.exposed.v1.jdbc.deleteWhere
+import org.jetbrains.exposed.v1.jdbc.insertIgnore
+import org.jetbrains.exposed.v1.jdbc.select
+import org.jetbrains.exposed.v1.jdbc.selectAll
+import org.jetbrains.exposed.v1.jdbc.update
 import java.math.BigDecimal
 import java.util.*
 
@@ -125,9 +131,7 @@ class DatabaseEcoModel : PlayerSQL {
             try {
                 val table = Account(currency)
                 table.update({ table.uuid eq uuid }) {
-                    with(SqlExpressionBuilder) {
-                        it[table.money] = table.money + money
-                    }
+                    it[table.money] = table.money + money
                 }
             } catch (e : ExposedSQLException) {
                 LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
@@ -139,9 +143,7 @@ class DatabaseEcoModel : PlayerSQL {
             try {
                 val table = Account(currency)
                 table.update({ table.uuid eq uuid }) {
-                    with(SqlExpressionBuilder) {
-                        it[table.money] = table.money - money
-                    }
+                    it[table.money] = table.money - money
                 }
             } catch (e : ExposedSQLException) {
                 LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
@@ -153,9 +155,7 @@ class DatabaseEcoModel : PlayerSQL {
             try {
                 val table = Account(currency)
                 table.update({ table.uuid eq uuid }) {
-                    with(SqlExpressionBuilder) {
-                        it[table.money] = money
-                    }
+                    it[table.money] = money
                 }
             } catch (e : ExposedSQLException) {
                 LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)

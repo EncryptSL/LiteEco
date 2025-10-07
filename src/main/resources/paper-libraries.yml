@@ -9,11 +9,11 @@ libraries:
   - org.incendo:cloud-kotlin-extensions:2.0.0
   - org.incendo:cloud-minecraft-extras:2.0.0-SNAPSHOT
   - org.incendo:cloud-paper:2.0.0-beta.11
-  - org.jetbrains.exposed:exposed-core:1.0.0-beta-5
-  - org.jetbrains.exposed:exposed-jdbc:1.0.0-beta-5
-  - org.jetbrains.exposed:exposed-kotlin-datetime:1.0.0-beta-5
-  - org.jetbrains.kotlin:kotlin-reflect:2.2.10
-  - org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.2.10
+  - org.jetbrains.exposed:exposed-core:1.0.0-rc-1
+  - org.jetbrains.exposed:exposed-jdbc:1.0.0-rc-1
+  - org.jetbrains.exposed:exposed-kotlin-datetime:1.0.0-rc-1
+  - org.jetbrains.kotlin:kotlin-reflect:2.2.20
+  - org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.2.20
   - org.mariadb.jdbc:mariadb-java-client:3.5.4
   - org.postgresql:postgresql:42.7.6
   - org.xerial:sqlite-jdbc:3.49.1.0
