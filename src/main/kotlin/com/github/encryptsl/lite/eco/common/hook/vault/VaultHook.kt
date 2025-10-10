@@ -2,11 +2,13 @@ package com.github.encryptsl.lite.eco.common.hook.vault
 
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.common.hook.HookListener
+import com.github.encryptsl.lite.eco.common.hook.vault.legacy.LegacyEconomyVaultAPI
 import com.github.encryptsl.lite.eco.common.hook.vault.unlocked.AdaptiveEconomyVaultUnlockedAPI
 import com.github.encryptsl.lite.eco.utils.ClassUtil
 import net.milkbowl.vault.economy.Economy
 import org.bukkit.plugin.ServicePriority
 
+@Suppress("DEPRECATION")
 class VaultHook(
     val liteEco: LiteEco
 ) : HookListener(
@@ -32,12 +34,13 @@ class VaultHook(
             liteEco.componentLogger.info("You can now use modern VaultUnlocked API.")
         }
 
-        liteEco.server.servicesManager.register(Economy::class.java, AdaptiveEconomyVaultAPI(liteEco), liteEco, ServicePriority.Highest)
+        liteEco.server.servicesManager.register(Economy::class.java,
+            LegacyEconomyVaultAPI(liteEco), liteEco, ServicePriority.Highest)
         registered = true
     }
 
     override fun unregister() {
-        liteEco.server.servicesManager.unregister(AdaptiveEconomyVaultAPI::class.java)
+        liteEco.server.servicesManager.unregister(LegacyEconomyVaultAPI::class.java)
 
         if (isVaultUnlocked()) {
             liteEco.server.servicesManager.unregister(AdaptiveEconomyVaultUnlockedAPI::class.java)
