@@ -2,8 +2,6 @@ package com.github.encryptsl.lite.eco.common.hook.scruffyboy13
 
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.common.hook.HookListener
-import com.github.encryptsl.lite.eco.common.hook.bettereconomy.BetterEconomyHook.Companion.isBetterEconomy
-import com.github.encryptsl.lite.eco.common.hook.placeholderapi.PlaceholderAPIHook
 import com.github.encryptsl.lite.eco.utils.ClassUtil
 import me.scruffyboy13.Economy.EconomyMain
 import me.scruffyboy13.Economy.eco.Economy
@@ -25,11 +23,11 @@ class ScruffyboyEconomyHook(
     }
 
     override fun canRegister(): Boolean {
-        return !registered && liteEco.pluginManager.isPluginEnabled(PlaceholderAPIHook.PLUGIN_NAME)
+        return !registered && liteEco.pluginManager.isPluginEnabled(PLUGIN_NAME)
     }
 
     override fun register() {
-        if (isBetterEconomy()) {
+        if (isScruffyboyEconomy()) {
             economy = EconomyMain.getEco()
         }
         registered = true
