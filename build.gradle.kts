@@ -26,6 +26,7 @@ repositories {
     maven("https://jitpack.io")
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
     maven("https://repo.codemc.io/repository/maven-public/")
+    maven("https://repo.codemc.io/repository/creatorfromhell/")
 }
 
 kotlin {
@@ -42,9 +43,6 @@ dependencies {
 
     // API & plugins
     compileOnly(libs.placeholderapi)
-    compileOnly(libs.vaultapi) {
-        exclude("org.bukkit", "bukkit")
-    }
     compileOnly(libs.vaultunlocked)
 
     // Databases & migrations
@@ -90,6 +88,7 @@ dependencies {
     // Implementations
     implementation(libs.bstats)
     implementation(libs.miniplaceholders)
+    implementation(libs.miniplaceholders.api)
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.client.java)
     implementation(libs.ktor.serialization.gson)
