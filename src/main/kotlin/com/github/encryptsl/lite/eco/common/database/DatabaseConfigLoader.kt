@@ -2,7 +2,9 @@ package com.github.encryptsl.lite.eco.common.database
 
 import org.bukkit.configuration.ConfigurationSection
 
-class DatabaseConfigLoader(private val config: ConfigurationSection) {
+class DatabaseConfigLoader(
+    private val config: ConfigurationSection
+) {
 
     data class DbConfig(
         val driver: String,

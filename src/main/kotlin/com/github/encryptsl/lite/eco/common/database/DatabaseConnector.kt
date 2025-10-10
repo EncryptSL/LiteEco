@@ -12,7 +12,9 @@ import org.jetbrains.exposed.v1.core.ExperimentalKeywordApi
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.SchemaUtils
 
-class DatabaseConnector(private val liteEco: LiteEco) : DatabaseConnectorProvider {
+class DatabaseConnector(
+    private val liteEco: LiteEco
+) : DatabaseConnectorProvider {
 
     private var hikari: HikariDataSource? = null
 

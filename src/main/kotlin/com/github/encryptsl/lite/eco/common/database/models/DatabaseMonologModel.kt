@@ -21,7 +21,9 @@ import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
 @OptIn(ExperimentalTime::class)
-class DatabaseMonologModel(val plugin: Plugin) : TransactionLogger {
+class DatabaseMonologModel(
+    val plugin: Plugin
+) : TransactionLogger {
 
     override suspend fun logging(
         typeLogger: TypeLogger,

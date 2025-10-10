@@ -10,7 +10,9 @@ import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
 
-class Locales(private val liteEco: LiteEco) {
+class Locales(
+    private val liteEco: LiteEco
+) {
 
     private lateinit var langYml: FileConfiguration
     private val config get() = liteEco.config
