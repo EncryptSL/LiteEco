@@ -1,4 +1,4 @@
-package com.github.encryptsl.lite.eco.common.hook.vault
+package com.github.encryptsl.lite.eco.common.hook.vault.legacy
 
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.PlayerAccount
@@ -7,9 +7,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import net.milkbowl.vault.economy.EconomyResponse
 import org.bukkit.OfflinePlayer
-import java.util.*
+import java.util.Collections
+import java.util.Optional
 
-class AdaptiveEconomyVaultAPI(private val liteEco: LiteEco) : DeprecatedEconomy() {
+@Suppress("DEPRECATION")
+class LegacyEconomyVaultAPI(private val liteEco: LiteEco) : LegacyDeprecatedEconomy() {
 
     companion object {
         private const val BANK_NOT_SUPPORTED_MESSAGE = "LiteEco does not support bank accounts!"
@@ -68,13 +70,13 @@ class AdaptiveEconomyVaultAPI(private val liteEco: LiteEco) : DeprecatedEconomy(
     }
 
     override fun withdrawPlayer(player: OfflinePlayer?, amount: Double): EconomyResponse {
-        liteEco.debugger.debug(AdaptiveEconomyVaultAPI::class.java, "try withdraw from ${player?.name} amount $amount")
+        liteEco.debugger.debug(LegacyEconomyVaultAPI::class.java, "try withdraw from ${player?.name} amount $amount")
         if (player == null || amount.toBigDecimal().isApproachingZero()) {
             return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.FAILURE, null)
         }
 
         return if (has(player, amount)) {
-            liteEco.debugger.debug(AdaptiveEconomyVaultAPI::class.java, "successfully withdraw ${player.name} from his balance ${getBalance(player)} amount $amount")
+            liteEco.debugger.debug(LegacyEconomyVaultAPI::class.java, "successfully withdraw ${player.name} from his balance ${getBalance(player)} amount $amount")
             liteEco.pluginScope.launch {
                 liteEco.api.withdraw(player.uniqueId, liteEco.currencyImpl.defaultCurrency(), amount.toBigDecimal())
             }
@@ -89,12 +91,12 @@ class AdaptiveEconomyVaultAPI(private val liteEco: LiteEco) : DeprecatedEconomy(
     }
 
     override fun depositPlayer(player: OfflinePlayer?, amount: Double): EconomyResponse {
-        liteEco.debugger.debug(AdaptiveEconomyVaultAPI::class.java, "try deposit to ${player?.name} amount $amount")
+        liteEco.debugger.debug(LegacyEconomyVaultAPI::class.java, "try deposit to ${player?.name} amount $amount")
         if (player == null || !hasAccount(player) || amount.toBigDecimal().isApproachingZero() || liteEco.currencyImpl.getCheckBalanceLimit(getBalance(player).toBigDecimal(), amount = amount.toBigDecimal())) {
             return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.FAILURE, null)
         }
 
-        liteEco.debugger.debug(AdaptiveEconomyVaultAPI::class.java, "successfully deposit ${player.name} to his balance ${getBalance(player)} amount $amount")
+        liteEco.debugger.debug(LegacyEconomyVaultAPI::class.java, "successfully deposit ${player.name} to his balance ${getBalance(player)} amount $amount")
         liteEco.pluginScope.launch {
             liteEco.api.deposit(player.uniqueId, liteEco.currencyImpl.defaultCurrency(), amount.toBigDecimal())
         }
@@ -108,7 +110,12 @@ class AdaptiveEconomyVaultAPI(private val liteEco: LiteEco) : DeprecatedEconomy(
 
     override fun createPlayerAccount(player: OfflinePlayer?): Boolean {
         return runBlocking {
-            liteEco.api.createOrUpdateAccount(player!!.uniqueId, player.name.toString(),liteEco.currencyImpl.defaultCurrency(), liteEco.currencyImpl.defaultStartBalance())
+            liteEco.api.createOrUpdateAccount(
+                player!!.uniqueId,
+                player.name.toString(),
+                liteEco.currencyImpl.defaultCurrency(),
+                liteEco.currencyImpl.defaultStartBalance()
+            )
         }
     }
 
