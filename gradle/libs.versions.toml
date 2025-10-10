@@ -1,21 +1,20 @@
 [versions]
 kotlin = "2.2.20"
-exposed = "1.0.0-rc-1"
+exposed = "1.0.0-rc-2"
 cloud = "2.0.0"
-flyway = "11.11.2"
-flyway-test = "11.11.2"
-hikari = "7.0.1"
-vaultapi = "1.7"
-vaultunlocked = "2.15"
+flyway = "11.14.0"
+flyway-test = "11.14.0"
+hikari = "7.0.2"
+vaultunlocked = "2.16"
 ktor = "3.2.3"
 csv = "1.14.0"
 config-updater = "2.2"
-miniplaceholders = "2.3.0"
+miniplaceholders = "3.0.1"
 bstats = "3.0.1"
 junit-jupiter = "5.13.1"
-sqlite = "3.49.1.0"
-mariadb = "3.5.4"
-postqres = "42.7.6"
+sqlite = "3.50.3.0"
+mariadb = "3.5.6"
+postqres = "42.7.8"
 placeholderapi = "2.11.6"
 bettereconomy = "3.1"
 scruffyeconomy = "2.0"
@@ -25,7 +24,6 @@ craftconomy = "3.3.3-SNAPSHOT"
 kotlin-stdlib-jdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
 kotlin-reflection = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin"}
 
-vaultapi = { module = "com.github.MilkBowl:VaultAPI", version.ref = "vaultapi" }
 vaultunlocked = { module = "net.milkbowl.vault:VaultUnlockedAPI", version.ref = "vaultunlocked" }
 placeholderapi = { module = "me.clip:placeholderapi", version.ref = "placeholderapi" }
 
@@ -57,6 +55,7 @@ craftconomy = { module = "com.greatmancode:Craftconomy3", version.ref = "craftco
 
 bstats = { module = "org.bstats:bstats-bukkit", version.ref = "bstats" }
 miniplaceholders = { module = "io.github.miniplaceholders:miniplaceholders-kotlin-ext", version.ref = "miniplaceholders" }
+miniplaceholders-api = { module = "io.github.miniplaceholders:miniplaceholders-api", version.ref = "miniplaceholders" }
 
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit-jupiter" }
 junit-launcher = { module = "org.junit.platform:junit-platform-launcher" }
