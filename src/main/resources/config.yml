@@ -34,26 +34,52 @@ economy:
       balance_limit_check: true
       # Convert large currency values into a more compact format (e.g., 1,000,000 to 1M).
       compact_display: false
+      # Top Leader Settings
+      top_balances:
+        # 'filtering' determines whether the 'blacklist' should be applied to exclude specific player names
+        # from the TOP balance leaderboards. Note: Names like 'NULL', 'CONSOLE', and 'SERVER' are always filtered out internally.
+        filtering: false
+
+        # A list of player names that will be EXCLUDED from the TOP leaderboards.
+        # This list is only applied if 'filtering' is set to 'true'.
+        # Names in this list are compared in a case-insensitive manner.
+        blacklist:
+          - ExamplePlayerName
+          - TestAccount123
+          - Notch
 
         # Example of an additional currency.
         # Do not change this currency key as it is integrated with Vault.
         # The key of each currency corresponds to its table name in the database.
         # Changing this value may result in data loss.
         # credits:
-        # currency_name: credits
-        # currency_plural_name: credits
-        # currency_singular_name: credit
-        # Format for displaying currency values.
-        # currency_format: '€ <money>'
-        # The initial amount granted to new players who do not have an existing account.
-        # starting_balance: 30
-        # The maximum allowed balance for a player.
-        # balance_limit: 1000000
-        # Enable or disable the balance limit check.
-        # If disabled, players can exceed the limit through paid amounts, or amounts given/set by administrators.
-        # balance_limit_check: true
-        # Convert large currency values into a more compact format (e.g., 1,000,000 to 1M).
-      # compact_display: false
+          # currency_name: credits
+          # currency_plural_name: credits
+          # currency_singular_name: credit
+          # Format for displaying currency values.
+          # currency_format: '€ <money>'
+          # The initial amount granted to new players who do not have an existing account.
+          # starting_balance: 30
+          # The maximum allowed balance for a player.
+          # balance_limit: 1000000
+          # Enable or disable the balance limit check.
+          # If disabled, players can exceed the limit through paid amounts, or amounts given/set by administrators.
+          # balance_limit_check: true
+          # Convert large currency values into a more compact format (e.g., 1,000,000 to 1M).
+          # compact_display: false
+          # Top Leader Settings
+          # top_balances:
+            # 'filtering' determines whether the 'blacklist' should be applied to exclude specific player names
+            # from the TOP balance leaderboards. Note: Names like 'NULL', 'CONSOLE', and 'SERVER' are always filtered out internally.
+            # filtering: false
+
+            # A list of player names that will be EXCLUDED from the TOP leaderboards.
+            # This list is only applied if 'filtering' is set to 'true'.
+            # Names in this list are compared in a case-insensitive manner.
+            # blacklist:
+            #  - ExamplePlayerName
+            #  - TestAccount123
+            #  - Notch
 
   # Enable logging of economic activities such as adding, setting, withdrawing, and paying money.
   # View logs using the command: /eco monolog [player]
