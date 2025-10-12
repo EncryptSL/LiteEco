@@ -32,7 +32,8 @@ class HookManager(private val liteEco: LiteEco) {
                 liteEco.pluginManager.disablePlugin(liteEco)
             }
         }
-        liteEco.componentLogger.warn("Blocked plugins are now ${plugins.size}")
+        liteEco.componentLogger.info("This plugins can't be used \n${plugins.toList()} (${plugins.size}) with LiteEco.")
+        liteEco.componentLogger.info("This is not a bug. Please don't report issue !!!")
     }
 
     fun registerHooks() {
