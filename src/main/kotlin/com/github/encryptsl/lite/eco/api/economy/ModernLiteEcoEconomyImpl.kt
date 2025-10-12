@@ -20,9 +20,18 @@ abstract class ModernLiteEcoEconomyImpl : LiteEconomyAPI {
     }
 
     override fun getTopBalance(currency: String): Map<String, BigDecimal> {
+        val isFilteringEnabled = LiteEco.instance.config.getBoolean("economy.currencies.$currency.top_balances.filtering")
+
+        val blackList = if (isFilteringEnabled) {
+            LiteEco.instance.config.getStringList("economy.currencies.$currency.top_balances.blacklist")
+        } else {
+            emptyList()
+        }
+        val combinedList = blackList.toSet().plus(setOf("NULL", "CONSOLE", "SERVER"))
+
         val database = LiteEco.instance.databaseEcoModel.getTopBalance(currency)
             .mapValues { e -> if (PlayerAccount.isAccountCached(e.value.uuid, currency)) PlayerAccount.getBalance(e.value.uuid, currency) else e.value.money}
-            .filterKeys { e -> !e.equals("NULL", true)  }.toList()
+            .filterKeys { e -> !combinedList.contains(e) }.toList()
 
         return database.sortedByDescending { (_, e) -> e }.toMap()
     }
