@@ -1,6 +1,7 @@
 package com.github.encryptsl.lite.eco.common.hook.vault.unlocked
 
 import com.github.encryptsl.lite.eco.LiteEco
+import com.github.encryptsl.lite.eco.api.enums.TypeLogger
 import com.github.encryptsl.lite.eco.common.extensions.isApproachingZero
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -26,7 +27,7 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
 
     override fun getName(): String = liteEco.name
 
-    override fun hasMultiCurrencySupport(): Boolean = false
+    override fun hasMultiCurrencySupport(): Boolean = liteEco.currencyImpl.getCurrenciesKeys().size > 1
 
     override fun fractionalDigits(pluginName: String): Int = -1
 
@@ -36,7 +37,7 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
 
     override fun format(pluginName: String, amount: BigDecimal, currency: String): String = liteEco.currencyImpl.formatted(amount)
 
-    override fun hasCurrency(currencyName: String): Boolean = false
+    override fun hasCurrency(currencyName: String): Boolean = currencies().contains(currencyName)
 
     override fun getDefaultCurrency(pluginName: String): String = liteEco.currencyImpl.defaultCurrency()
 
@@ -107,7 +108,7 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
     }
 
     override fun balance(pluginName: String, accountID: UUID, world: String, currency: String): BigDecimal {
-        return balance(pluginName, accountID)
+        return runBlocking { liteEco.api.getBalance(accountID, currency) }
     }
 
     @Deprecated("Deprecated in Java", ReplaceWith("balance(pluginName, accountID)"))
@@ -140,7 +141,7 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
         currency: String,
         amount: BigDecimal
     ): Boolean {
-        return has(pluginName, accountID, amount)
+        return liteEco.api.has(accountID, currency, amount)
     }
 
     override fun withdraw(pluginName: String, accountID: UUID, amount: BigDecimal): EconomyResponse {
@@ -153,6 +154,8 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
         return if (has(pluginName, accountID, amount)) {
             liteEco.debugger.debug(AdaptiveEconomyVaultUnlockedAPI::class.java, "$pluginName successfully withdraw ${accountID} from his balance ${balance(pluginName, accountID)} amount $amount")
             liteEco.pluginScope.launch {
+                val currentBalance = liteEco.api.getBalance(accountID, liteEco.currencyImpl.defaultCurrency())
+                liteEco.loggerModel.logging(TypeLogger.WITHDRAW, pluginName, Bukkit.getOfflinePlayer(accountID).name.toString(), liteEco.currencyImpl.defaultCurrency(), currentBalance, currentBalance - amount)
                 liteEco.api.withdraw(accountID, liteEco.currencyImpl.defaultCurrency(), amount)
             }
             EconomyResponse(amount, balance(pluginName, accountID), EconomyResponse.ResponseType.SUCCESS, SUCCESS_WITHDRAW)
@@ -173,14 +176,16 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
             return EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, AMOUNT_APPROACHING_ZERO)
         }
 
-        return if (has(pluginName, accountID, amount)) {
+        return if (has(pluginName, accountID, "", currency, amount)) {
             liteEco.debugger.debug(AdaptiveEconomyVaultUnlockedAPI::class.java, "$pluginName successfully withdraw ${accountID} from his balance ${balance(pluginName, accountID)} amount $amount")
             liteEco.pluginScope.launch {
+                val currentBalance = liteEco.api.getBalance(accountID, currency)
+                liteEco.loggerModel.logging(TypeLogger.WITHDRAW, pluginName, Bukkit.getOfflinePlayer(accountID).name.toString(), currency, currentBalance, currentBalance - amount)
                 liteEco.api.withdraw(accountID, currency, amount)
             }
-            EconomyResponse(amount, balance(pluginName, accountID), EconomyResponse.ResponseType.SUCCESS, SUCCESS_WITHDRAW)
+            EconomyResponse(amount, balance(pluginName, accountID, "", currency), EconomyResponse.ResponseType.SUCCESS, SUCCESS_WITHDRAW)
         } else {
-            EconomyResponse(amount, balance(pluginName, accountID), EconomyResponse.ResponseType.FAILURE, FAIL_WITHDRAW)
+            EconomyResponse(amount, balance(pluginName, accountID, "", currency), EconomyResponse.ResponseType.FAILURE, FAIL_WITHDRAW)
         }
     }
 
@@ -196,7 +201,10 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
         return if (has(pluginName, accountID, amount)) {
             liteEco.debugger.debug(AdaptiveEconomyVaultUnlockedAPI::class.java, "$pluginName successfully deposit $accountID to his balance ${balance(pluginName, accountID)} amount $amount")
             liteEco.pluginScope.launch {
-                liteEco.api.deposit(accountID, liteEco.currencyImpl.defaultCurrency(), amount)
+                val currencyName = liteEco.currencyImpl.defaultCurrency()
+                val currentBalance = liteEco.api.getBalance(accountID, currencyName)
+                liteEco.loggerModel.logging(TypeLogger.DEPOSIT, pluginName, Bukkit.getOfflinePlayer(accountID).name.toString(), currencyName, currentBalance, currentBalance + amount)
+                liteEco.api.deposit(accountID, currencyName, amount)
             }
             EconomyResponse(amount, balance(pluginName, accountID), EconomyResponse.ResponseType.SUCCESS, SUCCESS_DEPOSIT)
         } else {
@@ -220,14 +228,16 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
             return EconomyResponse(amount, balance(pluginName, accountID), EconomyResponse.ResponseType.FAILURE, AMOUNT_APPROACHING_ZERO)
         }
 
-        return if (has(pluginName, accountID, amount)) {
+        return if (has(pluginName, accountID, "", currency, amount)) {
             liteEco.debugger.debug(AdaptiveEconomyVaultUnlockedAPI::class.java, "$pluginName successfully deposit $accountID to his balance ${balance(pluginName, accountID)} amount $amount")
             liteEco.pluginScope.launch {
+                val currentBalance = liteEco.api.getBalance(accountID, currency)
+                liteEco.loggerModel.logging(TypeLogger.DEPOSIT, pluginName, Bukkit.getOfflinePlayer(accountID).name.toString(), currency, currentBalance, currentBalance + amount)
                 liteEco.api.deposit(accountID, currency, amount)
             }
-            EconomyResponse(amount, balance(pluginName, accountID), EconomyResponse.ResponseType.SUCCESS, SUCCESS_DEPOSIT)
+            EconomyResponse(amount, balance(pluginName, accountID, "", currency), EconomyResponse.ResponseType.SUCCESS, SUCCESS_DEPOSIT)
         } else {
-            EconomyResponse(amount, balance(pluginName, accountID), EconomyResponse.ResponseType.FAILURE, FAIL_DEPOSIT)
+            EconomyResponse(amount, balance(pluginName, accountID, "", currency), EconomyResponse.ResponseType.FAILURE, FAIL_DEPOSIT)
         }
     }
 
@@ -236,25 +246,19 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
         return if (hasAccount(accountID)) {
             liteEco.debugger.debug(AdaptiveEconomyVaultUnlockedAPI::class.java, "$pluginName successfully $accountID set his balance ${balance(pluginName, accountID)} to amount $amount")
             liteEco.pluginScope.launch {
-                liteEco.api.set(accountID, liteEco.currencyImpl.defaultCurrency(), amount)
+                val currencyName = liteEco.currencyImpl.defaultCurrency()
+                val currentBalance = liteEco.api.getBalance(accountID, currencyName)
+                liteEco.loggerModel.logging(TypeLogger.SET, pluginName, Bukkit.getOfflinePlayer(accountID).name.toString(), currencyName, currentBalance, amount)
+                liteEco.api.set(accountID, currencyName, amount)
             }
             EconomyResponse(amount, balance(pluginName, accountID), EconomyResponse.ResponseType.SUCCESS, SUCCESS_SET)
         } else {
-            EconomyResponse(amount, balance(pluginName, accountID), EconomyResponse.ResponseType.SUCCESS, FAIL_SET)
+            EconomyResponse(amount, balance(pluginName, accountID), EconomyResponse.ResponseType.FAILURE, FAIL_SET)
         }
     }
 
     override fun set(pluginName: String, accountID: UUID, worldName: String, amount: BigDecimal): EconomyResponse {
-        liteEco.debugger.debug(AdaptiveEconomyVaultUnlockedAPI::class.java, "$pluginName try set to $accountID amount $amount")
-       return if (hasAccount(accountID)) {
-           liteEco.debugger.debug(AdaptiveEconomyVaultUnlockedAPI::class.java, "$pluginName successfully $accountID set his balance ${balance(pluginName, accountID)} to amount $amount")
-           liteEco.pluginScope.launch {
-                liteEco.api.set(accountID, liteEco.currencyImpl.defaultCurrency(), amount)
-            }
-           EconomyResponse(amount, balance(pluginName, accountID), EconomyResponse.ResponseType.SUCCESS, SUCCESS_SET)
-       } else {
-           EconomyResponse(amount, balance(pluginName, accountID), EconomyResponse.ResponseType.SUCCESS, FAIL_SET)
-        }
+        return set(pluginName, accountID, amount)
     }
 
     override fun set(
@@ -268,11 +272,13 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
         return if (hasAccount(accountID)) {
             liteEco.debugger.debug(AdaptiveEconomyVaultUnlockedAPI::class.java, "$pluginName successfully $accountID set his balance ${balance(pluginName, accountID)} to amount $amount")
             liteEco.pluginScope.launch {
+                val currentBalance = liteEco.api.getBalance(accountID, currency)
+                liteEco.loggerModel.logging(TypeLogger.SET, pluginName, Bukkit.getOfflinePlayer(accountID).name.toString(), currency, currentBalance, amount)
                 liteEco.api.set(accountID, currency, amount)
             }
-            EconomyResponse(amount, balance(pluginName, accountID), EconomyResponse.ResponseType.SUCCESS, SUCCESS_SET)
+            EconomyResponse(amount, balance(pluginName, accountID, "", currency), EconomyResponse.ResponseType.SUCCESS, SUCCESS_SET)
         } else {
-            EconomyResponse(amount, balance(pluginName, accountID), EconomyResponse.ResponseType.SUCCESS, FAIL_SET)
+            EconomyResponse(amount, balance(pluginName, accountID, "", currency), EconomyResponse.ResponseType.FAILURE, FAIL_SET)
         }
     }
 }
