@@ -4,9 +4,8 @@ import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.migrator.entity.PlayerBalances
 import com.github.encryptsl.lite.eco.common.database.tables.Account
 import com.github.encryptsl.lite.eco.common.database.tables.legacy.LegacyAccountTable
+import com.github.encryptsl.lite.eco.common.extensions.io
 import com.github.encryptsl.lite.eco.common.extensions.loggedTransaction
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import org.jetbrains.exposed.v1.exceptions.ExposedSQLException
 import org.jetbrains.exposed.v1.jdbc.SchemaUtils
 import org.jetbrains.exposed.v1.jdbc.insert
@@ -36,7 +35,7 @@ class LegacyDatabaseEcoModel(
     }
 
     suspend fun exportToLiteEcoDollarsTable() : Boolean {
-        return withContext(Dispatchers.IO) {
+        return io {
             loggedTransaction {
                 try {
                     val table = Account(currency)
