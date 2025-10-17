@@ -16,9 +16,10 @@ sqlite = "3.50.3.0"
 mariadb = "3.5.6"
 postqres = "42.7.8"
 placeholderapi = "2.11.6"
-bettereconomy = "3.1"
+bettereconomy = "4.0"
 scruffyeconomy = "2.0"
 craftconomy = "3.3.3-SNAPSHOT"
+theosiseconomy = "1.45"
 
 [libraries]
 kotlin-stdlib-jdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
@@ -45,13 +46,14 @@ config-updater = { module = "com.tchristofferson:ConfigUpdater", version.ref = "
 commons-csv = { module = "org.apache.commons:commons-csv", version.ref = "csv" }
 
 cloud-annotations = { module = "org.incendo:cloud-annotations", version.ref = "cloud" }
-cloud-paper = { module = "org.incendo:cloud-paper", version = "2.0.0-beta.11" }
-cloud-extras = { module = "org.incendo:cloud-minecraft-extras", version = "2.0.0-SNAPSHOT" }
-cloud-kotlin = { module = "org.incendo:cloud-kotlin-extensions", version = "2.0.0" }
+cloud-paper = { module = "org.incendo:cloud-paper", version = "2.0.0-beta.13" }
+cloud-extras = { module = "org.incendo:cloud-minecraft-extras", version = "2.0.0-beta.13" }
+cloud-kotlin = { module = "org.incendo:cloud-kotlin-extensions", version.ref = "cloud" }
 
 bettereconomy = { module = "me.hsgamer:bettereconomy", version.ref = "bettereconomy" }
 scruffyeconomy = { module = "me.scruffyboy13:Economy", version.ref = "scruffyeconomy" }
 craftconomy = { module = "com.greatmancode:Craftconomy3", version.ref = "craftconomy" }
+theosiseconomy = { module = "me.Short.TheosisEconomy:TheosisEconomy" , version.ref = "theosiseconomy" }
 
 bstats = { module = "org.bstats:bstats-bukkit", version.ref = "bstats" }
 miniplaceholders = { module = "io.github.miniplaceholders:miniplaceholders-kotlin-ext", version.ref = "miniplaceholders" }
