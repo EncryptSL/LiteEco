@@ -4,8 +4,7 @@ import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.common.hook.HookListener
 import com.github.encryptsl.lite.eco.utils.ClassUtil
 import me.hsgamer.bettereconomy.BetterEconomy
-import me.hsgamer.bettereconomy.api.EconomyHandler
-import me.hsgamer.bettereconomy.provider.EconomyHandlerProvider
+import me.hsgamer.bettereconomy.holder.EconomyHolder
 import java.util.*
 
 class BetterEconomyHook(
@@ -14,7 +13,7 @@ class BetterEconomyHook(
     PLUGIN_NAME,
     "You can now export economy from plugin BetterEconomy to LiteEco with /eco database import BetterEconomy <your_currency>"
 ) {
-    private lateinit var economyHandler: EconomyHandler
+    private lateinit var economyHandler: EconomyHolder
 
     companion object {
         const val PLUGIN_NAME = "BetterEconomy"
@@ -28,7 +27,7 @@ class BetterEconomyHook(
 
     override fun register() {
         if (isBetterEconomy()) {
-            economyHandler = BetterEconomy().get(EconomyHandlerProvider::class.java).economyHandler
+            economyHandler = BetterEconomy().get(EconomyHolder::class.java)
         }
         registered = true
     }
