@@ -108,9 +108,9 @@ messages:
   admin-help:
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> LiteEco <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
     - " "
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>他のプレイヤーに資金を追加します。'>/eco add <yellow>[ユーザー名] <金額>"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>資金を他のプレイヤーに送金する。'>/eco set <yellow>[ユーザー名] <金額>"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>他のプレイヤーに資金を譲渡する。'>/eco withdraw <yellow>[ユーザー名] <#3EE84D><金額>"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>他のプレイヤーに資金を追加します。'>/eco add <yellow><ユーザー名> <金額>"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>資金を他のプレイヤーに送金する。'>/eco set <yellow><ユーザー名> <金額>"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>他のプレイヤーに資金を譲渡する。'>/eco withdraw <yellow><ユーザー名> <#3EE84D><金額>"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E>選択したデータを削除します。'>/eco database purge <#b37dc7><argument>"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E>他の経済プラグインのデータから移行します。'>/eco database export <#b37dc7><argument>"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E>他のエコノミープラグインからライトエコに変換。'>/eco database import <#b37dc7><argument>"
