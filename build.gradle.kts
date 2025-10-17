@@ -44,6 +44,7 @@ dependencies {
     // API & plugins
     compileOnly(libs.placeholderapi)
     compileOnly(libs.vaultunlocked)
+    compileOnly(libs.miniplaceholders.api)
 
     // Databases & migrations
     compileOnly(libs.hikaricp)
@@ -84,11 +85,11 @@ dependencies {
     compileOnly(libs.bettereconomy)
     compileOnly(libs.scruffyeconomy)
     compileOnly(libs.craftconomy)
+    compileOnly(libs.theosiseconomy)
 
     // Implementations
     implementation(libs.bstats)
     implementation(libs.miniplaceholders)
-    implementation(libs.miniplaceholders.api)
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.client.java)
     implementation(libs.ktor.serialization.gson)
@@ -133,6 +134,13 @@ tasks {
             relocate("org.bstats", "com.github.encryptsl.metrics")
             relocate("io.ktor", "com.github.encryptsl.ktor")
         }
+
+        mergeServiceFiles()
+        // Needed for mergeServiceFiles to work properly in Shadow 9+
+        filesMatching("META-INF/services/**") {
+            duplicatesStrategy = DuplicatesStrategy.INCLUDE
+        }
+
         exclude("kotlin/**")
         exclude("sqlite/**")
     }
