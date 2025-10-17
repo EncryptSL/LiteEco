@@ -6,6 +6,7 @@ import com.github.encryptsl.lite.eco.common.manager.importer.economies.BetterEco
 import com.github.encryptsl.lite.eco.common.manager.importer.economies.CraftConomy3Importer
 import com.github.encryptsl.lite.eco.common.manager.importer.economies.EssentialsXImporter
 import com.github.encryptsl.lite.eco.common.manager.importer.economies.ScruffyBoyImporter
+import com.github.encryptsl.lite.eco.common.manager.importer.economies.TheosisEconomyImporter
 import org.bukkit.Bukkit
 
 class ImportEconomy(private val liteEco: LiteEco) {
@@ -18,6 +19,7 @@ class ImportEconomy(private val liteEco: LiteEco) {
         registerImporter(BetterEconomyImporter())
         registerImporter(ScruffyBoyImporter())
         registerImporter(CraftConomy3Importer())
+        registerImporter(TheosisEconomyImporter())
     }
 
     private fun registerImporter(importer: EconomyImporter) {
