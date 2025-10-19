@@ -36,14 +36,14 @@
 
 ## 📘 Wiki & Configuration
 
-Find full documentation and configuration examples in the **[GitHub Wiki](https://github.com/EncryptSL/LiteEco/wiki)**.
+Find full documentation and configuration examples in the **[GitHub Wiki](https://liteeco.github.io/)**.
 
 Popular sections:
-- [Plugin Settings](https://github.com/EncryptSL/LiteEco/wiki/Plugin-Settings)
-- [Database Configuration](https://github.com/EncryptSL/LiteEco/wiki/Database-Settings)
-- [Economy & Currencies](https://github.com/EncryptSL/LiteEco/wiki/Economy-Settings)
-- [Commands & Overview](https://github.com/EncryptSL/LiteEco/wiki/Commands-&-Permissions)
-- [Placeholders](https://github.com/EncryptSL/LiteEco/wiki/Placeholders)
+- [Plugin Settings](https://liteeco.github.io/docs/user-guide/plugin-settings)
+- [Database Configuration](https://liteeco.github.io/docs/user-guide/database-settings)
+- [Economy & Currencies](https://liteeco.github.io/docs/user-guide/economy-settings)
+- [Commands & Overview](https://liteeco.github.io/docs/user-guide/commands-permissions)
+- [Placeholders](https://liteeco.github.io/docs/user-guide/placeholders)
 ---
 
 ## 🧪 bStats Metrics
