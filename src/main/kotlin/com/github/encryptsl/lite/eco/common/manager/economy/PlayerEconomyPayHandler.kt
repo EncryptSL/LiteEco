@@ -2,6 +2,8 @@ package com.github.encryptsl.lite.eco.common.manager.economy
 
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.enums.TypeLogger
+import com.github.encryptsl.lite.eco.common.extensions.mainThread
+import com.github.encryptsl.lite.eco.common.extensions.safeSendMessage
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
@@ -22,21 +24,24 @@ class PlayerEconomyPayHandler(
     ) {
         liteEco.pluginScope.launch {
             val user = liteEco.api.getUserByUUID(target.uniqueId, currency).getOrNull()
+
             if (user == null) {
-                sender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist",
+                sender.safeSendMessage(liteEco, liteEco.locale.translation("messages.error.account_not_exist",
                     Placeholder.parsed("account", target.name.toString())
                 ))
                 return@launch
             }
 
-            if (!liteEco.api.has(sender.uniqueId, currency, money))
-                return@launch sender.sendMessage(liteEco.locale.translation("messages.error.insufficient_funds"))
+            mainThread(liteEco) {
+                if (!liteEco.api.has(sender.uniqueId, currency, money))
+                    return@mainThread sender.sendMessage(liteEco.locale.translation("messages.error.insufficient_funds"))
 
-            if (liteEco.currencyImpl.getCheckBalanceLimit(user.money, currency, money)) {
-                sender.sendMessage(liteEco.locale.translation("messages.error.balance_above_limit",
-                    Placeholder.parsed("account", target.name.toString())
-                ))
-                return@launch
+                if (liteEco.currencyImpl.getCheckBalanceLimit(user.money, currency, money)) {
+                    sender.sendMessage(liteEco.locale.translation("messages.error.balance_above_limit",
+                        Placeholder.parsed("account", target.name.toString())
+                    ))
+                    return@mainThread
+                }
             }
 
             liteEco.loggerModel.logging(TypeLogger.TRANSFER,

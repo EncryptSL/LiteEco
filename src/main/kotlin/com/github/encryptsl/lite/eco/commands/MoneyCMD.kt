@@ -5,6 +5,7 @@ import com.github.encryptsl.lite.eco.api.ComponentPaginator
 import com.github.encryptsl.lite.eco.commands.parsers.AmountValidatorParser
 import com.github.encryptsl.lite.eco.commands.parsers.CurrencyParser
 import com.github.encryptsl.lite.eco.common.extensions.io
+import com.github.encryptsl.lite.eco.common.extensions.safeSendMessage
 import com.github.encryptsl.lite.eco.common.manager.economy.PlayerEconomyPayHandler
 import com.github.encryptsl.lite.eco.utils.Helper
 import kotlinx.coroutines.launch
@@ -137,8 +138,8 @@ class MoneyCMD(
                     liteEco.locale.translation("messages.balance.format", helper.getComponentBal(user, currency))
                 else
                     liteEco.locale.translation("messages.balance.format_target", helper.getComponentBal(user, currency))
-                sender.sendMessage(message)
-            } ?: sender.sendMessage(
+                sender.safeSendMessage(liteEco,message)
+            } ?: sender.safeSendMessage(liteEco,
                 liteEco.locale.translation(
                     "messages.error.account_not_exist",
                     Placeholder.parsed("account", target.name.toString())
@@ -162,7 +163,7 @@ class MoneyCMD(
                 }
 
                 if (pagination.isAboveMaxPage(page)) {
-                    sender.sendMessage(
+                    sender.safeSendMessage(liteEco,
                         liteEco.locale.translation("messages.error.maximum_page",
                             Placeholder.parsed("max_page", pagination.maxPages.toString())
                         )
@@ -170,11 +171,11 @@ class MoneyCMD(
                     return@launch
                 }
 
-                pagination.header("").let { sender.sendMessage(it) }
+                pagination.header("").let { sender.safeSendMessage(liteEco,it) }
                 pagination.display().forEach { content ->
-                    sender.sendMessage(content)
+                    sender.safeSendMessage(liteEco,content)
                 }
-                sender.sendMessage(pagination.navigationBar("money top", currency))
+                sender.safeSendMessage(liteEco,pagination.navigationBar("money top", currency))
             }
         } catch (e : Exception) {
             liteEco.logger.severe(e.message ?: e.localizedMessage)

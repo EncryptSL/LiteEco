@@ -1,6 +1,7 @@
 package com.github.encryptsl.lite.eco.commands
 
 import com.github.encryptsl.lite.eco.LiteEco
+import com.github.encryptsl.lite.eco.api.enums.CheckLevel
 import com.github.encryptsl.lite.eco.api.enums.ExportKeys
 import com.github.encryptsl.lite.eco.api.enums.PurgeKey
 import com.github.encryptsl.lite.eco.api.objects.ModernText
@@ -8,16 +9,12 @@ import com.github.encryptsl.lite.eco.commands.parsers.AmountValidatorParser
 import com.github.encryptsl.lite.eco.commands.parsers.CurrencyParser
 import com.github.encryptsl.lite.eco.commands.parsers.ImportEconomyParser
 import com.github.encryptsl.lite.eco.commands.parsers.LangParser
+import com.github.encryptsl.lite.eco.common.extensions.safeSendMessage
 import com.github.encryptsl.lite.eco.common.manager.ExportManager
 import com.github.encryptsl.lite.eco.common.manager.ImportManager
 import com.github.encryptsl.lite.eco.common.manager.MonologManager
 import com.github.encryptsl.lite.eco.common.manager.PurgeManager
-import com.github.encryptsl.lite.eco.common.manager.economy.admin.EconomyGlobalDepositHandler
-import com.github.encryptsl.lite.eco.common.manager.economy.admin.EconomyGlobalSetHandler
-import com.github.encryptsl.lite.eco.common.manager.economy.admin.EconomyGlobalWithdrawHandler
-import com.github.encryptsl.lite.eco.common.manager.economy.admin.EconomyMoneyDepositHandler
-import com.github.encryptsl.lite.eco.common.manager.economy.admin.EconomyMoneySetHandler
-import com.github.encryptsl.lite.eco.common.manager.economy.admin.EconomyMoneyWithdrawHandler
+import com.github.encryptsl.lite.eco.common.manager.economy.admin.*
 import com.github.encryptsl.lite.eco.common.manager.importer.ImportEconomy
 import com.github.encryptsl.lite.eco.utils.Helper
 import kotlinx.coroutines.launch
@@ -65,12 +62,14 @@ class EcoCMD(
     override fun execute(commandManager: PaperCommandManager<Source>) {
         commandManager.buildAndRegister("eco", Description.description(DESCRIPTION)) {
             permission("lite.eco.admin.eco")
-            commandManager.command(commandBuilder.literal("help").permission("lite.eco.admin.help").handler { ctx ->
-                val sender: CommandSender = ctx.sender().source()
-                liteEco.locale.translationList("messages.admin-help").forEach {
-                    sender.sendMessage(it)
-                }
-            })
+            handler { ctx -> helpMessage(ctx.sender().source())}
+
+            commandManager.command(commandBuilder.literal("help")
+                .permission("lite.eco.admin.help")
+                .handler { ctx ->
+                    helpMessage(ctx.sender().source())
+                })
+
             commandManager.command(commandBuilder.literal("add")
                 .commandDescription(Description.description(DESCRIPTION))
                 .permission("lite.eco.admin.add")
@@ -138,7 +137,7 @@ class EcoCMD(
                 )
                 .required(commandManager
                     .componentBuilder(BigDecimal::class.java, "amount")
-                    .parser(AmountValidatorParser())
+                    .parser(AmountValidatorParser(CheckLevel.ONLY_NEGATIVE))
                     .defaultValue(DefaultValue.constant(BigDecimal.ONE))
                 )
                 .optional(commandManager
@@ -265,7 +264,7 @@ class EcoCMD(
                         } else {
                             "messages.error.account_now_exist"
                         }
-                        sender.sendMessage(liteEco.locale.translation(message, Placeholder.parsed("account", target.name.toString())))
+                        sender.safeSendMessage(liteEco,liteEco.locale.translation(message, Placeholder.parsed("account", target.name.toString())))
                     }
                 })
             commandManager.command(commandBuilder.literal("delete")
@@ -292,7 +291,7 @@ class EcoCMD(
                         } else {
                             "messages.error.account_not_exist"
                         }
-                        sender.sendMessage(liteEco.locale.translation(message, Placeholder.parsed("account", target.name.toString())))
+                        sender.safeSendMessage(liteEco,liteEco.locale.translation(message, Placeholder.parsed("account", target.name.toString())))
                     }
                 })
             commandManager.command(commandBuilder.literal("monolog")
@@ -390,6 +389,12 @@ class EcoCMD(
                     ctx.sender().source().sendMessage(liteEco.locale.translation("messages.admin.config_reload"))
                     liteEco.componentLogger.info(ModernText.miniModernText("✅ config.yml & locale reloaded."))
                 })
+        }
+    }
+
+    private fun helpMessage(sender: CommandSender) {
+        liteEco.locale.translationList("messages.admin-help").forEach {
+            sender.sendMessage(it)
         }
     }
 
