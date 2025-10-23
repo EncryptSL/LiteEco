@@ -28,12 +28,13 @@ object PlayerAccount : AccountAPI {
         val userBalances = cache[uuid] ?: return
         try {
             userBalances.forEach { (currency, amount) ->
+                /* Please leave the code commented out in case a change improving BukkitAPI is rolled back...
                 val finalAmount = if (LiteEco.instance.currencyImpl.getCheckBalanceLimit(amount, currency)) {
                     LiteEco.instance.currencyImpl.getCurrencyLimit(currency) // set maximum from configuration
                 } else {
                     amount
-                }
-                databaseEcoModel.set(uuid, currency, finalAmount)
+                }*/
+                databaseEcoModel.set(uuid, currency, amount)
             }
             cache.remove(uuid)
         } catch (e: Exception) {
@@ -44,12 +45,13 @@ object PlayerAccount : AccountAPI {
     override fun syncAccounts() {
         try {
             cache.entries.forEach { user -> user.value.forEach {
+                /* Please leave the code commented out in case a change improving BukkitAPI is rolled back...
                 val finalAmount = if (LiteEco.instance.currencyImpl.getCheckBalanceLimit(it.value, it.key)) {
                     LiteEco.instance.currencyImpl.getCurrencyLimit(it.key)
                 } else {
                     it.value
-                }
-                databaseEcoModel.set(user.key, it.key, finalAmount) }
+                }*/
+                databaseEcoModel.set(user.key, it.key, it.value) }
             }
             cache.clear()
         } catch (e : Exception) {
