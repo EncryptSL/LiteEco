@@ -32,6 +32,21 @@ abstract class UnusedVaultUnlockedAPI : Economy {
         return format("pluginName", amount, currency)
     }
 
+    @Deprecated("Deprecated in Java", ReplaceWith("balance(pluginName, accountID)"))
+    override fun getBalance(pluginName: String, accountID: UUID): BigDecimal {
+        return balance(pluginName, accountID)
+    }
+
+    @Deprecated("Deprecated in Java", ReplaceWith("balance(pluginName, accountID)"))
+    override fun getBalance(pluginName: String, accountID: UUID, world: String): BigDecimal {
+        return balance(pluginName, accountID)
+    }
+
+    @Deprecated("Deprecated in Java", ReplaceWith("balance(pluginName, accountID, world, currency)"))
+    override fun getBalance(pluginName: String, accountID: UUID, world: String, currency: String): BigDecimal {
+        return balance(pluginName, accountID, world, currency)
+    }
+
     override fun createSharedAccount(pluginName: String, accountID: UUID, name: String, owner: UUID): Boolean {
         return EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.NOT_IMPLEMENTED, SHARED_ACCOUNTS_NOT_SUPPORTED_MESSAGE).transactionSuccess()
     }
