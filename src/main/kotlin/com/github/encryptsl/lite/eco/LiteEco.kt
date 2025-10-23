@@ -17,6 +17,7 @@ import com.github.encryptsl.lite.eco.common.database.models.DatabaseMonologModel
 import com.github.encryptsl.lite.eco.common.hook.HookManager
 import com.github.encryptsl.lite.eco.listeners.PlayerAsyncPreLoginListener
 import com.github.encryptsl.lite.eco.listeners.PlayerQuitListener
+import com.github.encryptsl.lite.eco.utils.BukkitDispatchers
 import com.github.encryptsl.lite.eco.utils.Debugger
 import com.tchristofferson.configupdater.ConfigUpdater
 import kotlinx.coroutines.CoroutineScope
@@ -49,6 +50,8 @@ class LiteEco : JavaPlugin() {
 
     val pluginManager: PluginManager = server.pluginManager
 
+    lateinit var bukkitDispatchers: BukkitDispatchers
+
     private var countTransactions: LinkedHashMap<String, Int> = LinkedHashMap()
 
     val api: SuspendLiteEcoEconomyWrapper by lazy { SuspendLiteEcoEconomyWrapper() }
@@ -78,6 +81,7 @@ class LiteEco : JavaPlugin() {
 
     override fun onEnable() {
         val timeTaken = measureTimeMillis {
+            bukkitDispatchers = BukkitDispatchers(this)
             blockPlugins()
             hookRegistration()
             setupMetrics()
