@@ -7,14 +7,14 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import net.milkbowl.vault.economy.EconomyResponse
 import org.bukkit.OfflinePlayer
-import java.util.Collections
-import java.util.Optional
+import java.util.*
 
 @Suppress("DEPRECATION")
 class LegacyEconomyVaultAPI(private val liteEco: LiteEco) : LegacyDeprecatedEconomy() {
 
     companion object {
         private const val BANK_NOT_SUPPORTED_MESSAGE = "LiteEco does not support bank accounts!"
+        private const val FAIL_REACHED_BALANCE_LIMIT = "LiteEco you reach limit of balance."
     }
 
     override fun isEnabled(): Boolean = liteEco.isEnabled
@@ -98,6 +98,14 @@ class LegacyEconomyVaultAPI(private val liteEco: LiteEco) : LegacyDeprecatedEcon
 
         liteEco.debugger.debug(LegacyEconomyVaultAPI::class.java, "successfully deposit ${player.name} to his balance ${getBalance(player)} amount $amount")
         liteEco.pluginScope.launch {
+            val currencyName = liteEco.currencyImpl.defaultCurrency()
+            val currentBalance = liteEco.api.getBalance(player.uniqueId, currencyName)
+
+            if (liteEco.currencyImpl.getCheckBalanceLimit(currentBalance, currencyName, amount.toBigDecimal())) {
+                EconomyResponse(amount, getBalance(player), EconomyResponse.ResponseType.FAILURE, FAIL_REACHED_BALANCE_LIMIT)
+                return@launch
+            }
+
             liteEco.api.deposit(player.uniqueId, liteEco.currencyImpl.defaultCurrency(), amount.toBigDecimal())
         }
 
