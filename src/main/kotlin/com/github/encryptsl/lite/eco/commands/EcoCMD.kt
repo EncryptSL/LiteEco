@@ -9,7 +9,6 @@ import com.github.encryptsl.lite.eco.commands.parsers.AmountValidatorParser
 import com.github.encryptsl.lite.eco.commands.parsers.CurrencyParser
 import com.github.encryptsl.lite.eco.commands.parsers.ImportEconomyParser
 import com.github.encryptsl.lite.eco.commands.parsers.LangParser
-import com.github.encryptsl.lite.eco.common.extensions.safeSendMessage
 import com.github.encryptsl.lite.eco.common.manager.ExportManager
 import com.github.encryptsl.lite.eco.common.manager.ImportManager
 import com.github.encryptsl.lite.eco.common.manager.MonologManager
@@ -264,7 +263,7 @@ class EcoCMD(
                         } else {
                             "messages.error.account_now_exist"
                         }
-                        sender.safeSendMessage(liteEco,liteEco.locale.translation(message, Placeholder.parsed("account", target.name.toString())))
+                        sender.sendMessage(liteEco.locale.translation(message, Placeholder.parsed("account", target.name.toString())))
                     }
                 })
             commandManager.command(commandBuilder.literal("delete")
@@ -291,7 +290,7 @@ class EcoCMD(
                         } else {
                             "messages.error.account_not_exist"
                         }
-                        sender.safeSendMessage(liteEco,liteEco.locale.translation(message, Placeholder.parsed("account", target.name.toString())))
+                        sender.sendMessage(liteEco.locale.translation(message, Placeholder.parsed("account", target.name.toString())))
                     }
                 })
             commandManager.command(commandBuilder.literal("monolog")

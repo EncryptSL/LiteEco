@@ -16,8 +16,8 @@ class BetterEconomyImporter : EconomyImporter {
         var balances = BigDecimal.ZERO
 
         try {
+            val betterEconomy = BetterEconomyHook(liteEco)
             liteEco.pluginScope.launch {
-                val betterEconomy = BetterEconomyHook(liteEco)
                 for (p in offlinePlayers) {
                     val balance = BigDecimal.valueOf(betterEconomy.getBalance(p.uniqueId))
                     if (liteEco.api.createOrUpdateAccount(p.uniqueId, p.name.toString(), currency, balance)) {

@@ -166,7 +166,7 @@ class LiteEco : JavaPlugin() {
     }
 
     private fun registerMinecraftExceptionHandler(commandManager: PaperCommandManager<Source>) {
-        MinecraftExceptionHandler.create<Source>(Source::source)
+        MinecraftExceptionHandler.create<Source> { source -> source.source() }
             .defaultHandlers()
             .decorator { component ->
                 ModernText.miniModernText(config.getString("plugin.prefix", "<red>[!]").toString()).appendSpace().append(component)

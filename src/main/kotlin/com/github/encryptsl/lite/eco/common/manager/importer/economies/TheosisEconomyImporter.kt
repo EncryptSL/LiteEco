@@ -22,8 +22,8 @@ class TheosisEconomyImporter : EconomyImporter {
         var balances = BigDecimal.ZERO
 
         try {
+            val theosisEconomyHook = TheosisEconomyHook(liteEco)
             liteEco.pluginScope.launch {
-                val theosisEconomyHook = TheosisEconomyHook(liteEco)
                 for (p in offlinePlayers) {
                     val balance = theosisEconomyHook.getBalance(p.uniqueId)
                     if (liteEco.api.createOrUpdateAccount(p.uniqueId, p.name.toString(), currency, balance)) {

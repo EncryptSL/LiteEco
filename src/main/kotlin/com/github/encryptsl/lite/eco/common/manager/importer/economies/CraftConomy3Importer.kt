@@ -20,7 +20,7 @@ class CraftConomy3Importer : EconomyImporter {
             liteEco.pluginScope.launch {
                 val craftConomy = CraftConomyHook(liteEco)
                 for (p in offlinePlayers) {
-                    val balance = BigDecimal.valueOf(craftConomy.getBalance(p.name.toString()))  // Pozor na getName() vs. name
+                    val balance = BigDecimal.valueOf(craftConomy.getBalance(p.name.toString()))
                     if (liteEco.api.createOrUpdateAccount(p.uniqueId, p.name.toString(), currency, balance)) {
                         balances += balance
                         converted++

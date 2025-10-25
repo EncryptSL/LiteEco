@@ -2,7 +2,6 @@ package com.github.encryptsl.lite.eco.common.manager
 
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.ComponentPaginator
-import com.github.encryptsl.lite.eco.common.extensions.safeSendMessage
 import com.github.encryptsl.lite.eco.utils.Helper
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
@@ -24,14 +23,14 @@ class MonologManager(
             }
 
             if (pagination.isAboveMaxPage(page))
-                return@launch sender.safeSendMessage(liteEco,liteEco.locale.translation("messages.error.maximum_page",
+                return@launch sender.sendMessage(liteEco.locale.translation("messages.error.maximum_page",
                     Placeholder.parsed("max_page", pagination.maxPages.toString()))
                 )
-            pagination.header("").let { sender.safeSendMessage(liteEco,it) }
+            pagination.header("").let { sender.sendMessage(it) }
             pagination.display().forEach {
-                sender.safeSendMessage(liteEco,it)
+                sender.sendMessage(it)
             }
-            pagination.navigationBar("eco monolog", parameter).let { sender.safeSendMessage(liteEco,it) }
+            pagination.navigationBar("eco monolog", parameter).let { sender.sendMessage(it) }
         }
     }
 }

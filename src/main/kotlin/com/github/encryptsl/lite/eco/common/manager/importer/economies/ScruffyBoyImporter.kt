@@ -16,8 +16,8 @@ class ScruffyBoyImporter : EconomyImporter {
         var balances = BigDecimal.ZERO
 
         try {
+            val scruffyboyEconomy = ScruffyboyEconomyHook(liteEco)
             liteEco.pluginScope.launch {
-                val scruffyboyEconomy = ScruffyboyEconomyHook(liteEco)
                 for (p in offlinePlayers) {
                     val balance = BigDecimal.valueOf(scruffyboyEconomy.getBalance(p.uniqueId))
                     if (liteEco.api.createOrUpdateAccount(p.uniqueId, p.name.toString(), currency, balance)) {

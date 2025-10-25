@@ -166,7 +166,7 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
             return EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, AMOUNT_APPROACHING_ZERO)
         }
 
-        return if (has(pluginName, accountID, "", currency, amount)) {
+        return if (has(pluginName, accountID, worldName, currency, amount)) {
             liteEco.debugger.debug(AdaptiveEconomyVaultUnlockedAPI::class.java, "$pluginName successfully withdraw ${accountID} from his balance ${balance(pluginName, accountID)} amount $amount")
             liteEco.pluginScope.launch {
                 val username = mainThread(liteEco) {

@@ -3,7 +3,6 @@ package com.github.encryptsl.lite.eco.common.manager.economy
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.enums.TypeLogger
 import com.github.encryptsl.lite.eco.common.extensions.mainThread
-import com.github.encryptsl.lite.eco.common.extensions.safeSendMessage
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
@@ -26,7 +25,7 @@ class PlayerEconomyPayHandler(
             val user = liteEco.api.getUserByUUID(target.uniqueId, currency).getOrNull()
 
             if (user == null) {
-                sender.safeSendMessage(liteEco, liteEco.locale.translation("messages.error.account_not_exist",
+                sender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist",
                     Placeholder.parsed("account", target.name.toString())
                 ))
                 return@launch
