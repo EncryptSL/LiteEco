@@ -85,6 +85,7 @@ dependencies {
     compileOnly(libs.bettereconomy)
     compileOnly(libs.scruffyeconomy)
     compileOnly(libs.craftconomy)
+    compileOnly(libs.simpleeconomy)
     compileOnly(libs.theosiseconomy)
 
     // Implementations
