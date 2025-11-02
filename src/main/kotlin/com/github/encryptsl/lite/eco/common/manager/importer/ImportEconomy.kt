@@ -2,12 +2,7 @@ package com.github.encryptsl.lite.eco.common.manager.importer
 
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.interfaces.EconomyImporter
-import com.github.encryptsl.lite.eco.common.manager.importer.economies.BetterEconomyImporter
-import com.github.encryptsl.lite.eco.common.manager.importer.economies.CraftConomy3Importer
-import com.github.encryptsl.lite.eco.common.manager.importer.economies.EssentialsXImporter
-import com.github.encryptsl.lite.eco.common.manager.importer.economies.ScruffyBoyImporter
-import com.github.encryptsl.lite.eco.common.manager.importer.economies.SimpleEconomyImporter
-import com.github.encryptsl.lite.eco.common.manager.importer.economies.TheosisEconomyImporter
+import com.github.encryptsl.lite.eco.common.manager.importer.economies.*
 import org.bukkit.Bukkit
 
 class ImportEconomy(private val liteEco: LiteEco) {

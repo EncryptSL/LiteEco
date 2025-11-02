@@ -4,11 +4,11 @@ import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.objects.ModernText
 import com.github.encryptsl.lite.eco.common.hook.economy.bettereconomy.BetterEconomyHook
 import com.github.encryptsl.lite.eco.common.hook.economy.craftconomy3.CraftConomyHook
-import com.github.encryptsl.lite.eco.common.hook.miniplaceholder.MiniPlaceholdersHook
-import com.github.encryptsl.lite.eco.common.hook.placeholderapi.PlaceholderAPIHook
 import com.github.encryptsl.lite.eco.common.hook.economy.scruffyboy13.ScruffyboyEconomyHook
 import com.github.encryptsl.lite.eco.common.hook.economy.simpleeconomy.SimpleEconomyHook
 import com.github.encryptsl.lite.eco.common.hook.economy.theosiseconomy.TheosisEconomyHook
+import com.github.encryptsl.lite.eco.common.hook.miniplaceholder.MiniPlaceholdersHook
+import com.github.encryptsl.lite.eco.common.hook.placeholderapi.PlaceholderAPIHook
 import com.github.encryptsl.lite.eco.common.hook.vault.VaultHook
 import kotlin.system.measureTimeMillis
 

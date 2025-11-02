@@ -6,8 +6,8 @@ import com.github.encryptsl.lite.eco.api.interfaces.TransactionLogger
 import com.github.encryptsl.lite.eco.common.database.entity.EconomyLog
 import com.github.encryptsl.lite.eco.common.database.tables.MonologTable
 import com.github.encryptsl.lite.eco.common.extensions.convertInstant
-import com.github.encryptsl.lite.eco.common.extensions.loggedTransaction
 import com.github.encryptsl.lite.eco.common.extensions.io
+import com.github.encryptsl.lite.eco.common.extensions.loggedTransaction
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
