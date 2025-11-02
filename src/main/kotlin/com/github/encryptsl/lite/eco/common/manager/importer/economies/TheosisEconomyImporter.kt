@@ -2,9 +2,10 @@ package com.github.encryptsl.lite.eco.common.manager.importer.economies
 
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.interfaces.EconomyImporter
-import com.github.encryptsl.lite.eco.common.hook.theosiseconomy.TheosisEconomyHook
+import com.github.encryptsl.lite.eco.common.hook.economy.theosiseconomy.TheosisEconomyHook
 import com.github.encryptsl.lite.eco.common.manager.importer.EconomyImportResults
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.bukkit.OfflinePlayer
 import java.math.BigDecimal
 import kotlin.plus
@@ -23,7 +24,7 @@ class TheosisEconomyImporter : EconomyImporter {
 
         try {
             val theosisEconomyHook = TheosisEconomyHook(liteEco)
-            liteEco.pluginScope.launch {
+            runBlocking {
                 for (p in offlinePlayers) {
                     val balance = theosisEconomyHook.getBalance(p.uniqueId)
                     if (liteEco.api.createOrUpdateAccount(p.uniqueId, p.name.toString(), currency, balance)) {

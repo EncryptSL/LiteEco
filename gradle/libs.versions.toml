@@ -19,6 +19,7 @@ placeholderapi = "2.11.6"
 bettereconomy = "4.0"
 scruffyeconomy = "2.0"
 craftconomy = "3.3.3-SNAPSHOT"
+simpleeconomy = "2.1"
 theosiseconomy = "1.45"
 
 [libraries]
@@ -53,6 +54,7 @@ cloud-kotlin = { module = "org.incendo:cloud-kotlin-extensions", version.ref = "
 bettereconomy = { module = "me.hsgamer:bettereconomy", version.ref = "bettereconomy" }
 scruffyeconomy = { module = "me.scruffyboy13:Economy", version.ref = "scruffyeconomy" }
 craftconomy = { module = "com.greatmancode:Craftconomy3", version.ref = "craftconomy" }
+simpleeconomy = { module = "it.alzy.simpleeconomy:SimpleEconomy", version.ref="simpleeconomy" }
 theosiseconomy = { module = "me.Short.TheosisEconomy:TheosisEconomy" , version.ref = "theosiseconomy" }
 
 bstats = { module = "org.bstats:bstats-bukkit", version.ref = "bstats" }

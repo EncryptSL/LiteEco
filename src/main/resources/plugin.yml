@@ -11,7 +11,7 @@ contributors: [LcyDev]
 website: https://encryptsl.github.io
 
 load: STARTUP
-softdepend: [PlaceholderAPI, Vault, MiniPlaceholders]
+softdepend: [PlaceholderAPI, Vault, MiniPlaceholders, BetterEconomy, TheosisEconomy, SimpleEconomy, Economy, CraftConomy3]
 libraries:
   - com.tchristofferson:ConfigUpdater:2.2
   - com.zaxxer:HikariCP:7.0.2

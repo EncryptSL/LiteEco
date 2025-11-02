@@ -1,4 +1,4 @@
-package com.github.encryptsl.lite.eco.common.hook.bettereconomy
+package com.github.encryptsl.lite.eco.common.hook.economy.bettereconomy
 
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.common.hook.HookListener
@@ -17,26 +17,33 @@ class BetterEconomyHook(
 
     companion object {
         const val PLUGIN_NAME = "BetterEconomy"
-        fun isBetterEconomy(): Boolean
+        fun isBetterEconomyPresent(): Boolean
             = ClassUtil.isValidClasspath("me.hsgamer.bettereconomy.BetterEconomy")
     }
 
     override fun canRegister(): Boolean {
-        return !registered && liteEco.pluginManager.isPluginEnabled(PLUGIN_NAME)
+        val plugin = liteEco.pluginManager.getPlugin(PLUGIN_NAME)
+        return !registered && plugin != null && isBetterEconomyPresent()
     }
 
     override fun register() {
-        if (isBetterEconomy()) {
-            economyHandler = BetterEconomy().get(EconomyHolder::class.java)
+        if (isBetterEconomyPresent()) {
+            registered = true
         }
-        registered = true
     }
 
     override fun unregister() {}
 
     fun getBalance(uuid: UUID): Double {
-        if (!isBetterEconomy())
-            throw Exception("Plugin BetterEconomy missing !")
-        return economyHandler.get(uuid)
+        return if (isBetterEconomyPresent()) {
+            val plugin = liteEco.pluginManager.getPlugin(PLUGIN_NAME) as? BetterEconomy
+            if (plugin == null) {
+                liteEco.logger.warning("$PLUGIN_NAME plugin not found or not of expected type.")
+                return 0.0
+            }
+            val handler = plugin.get(EconomyHolder::class.java)
+            economyHandler = handler
+            economyHandler.get(uuid)
+        } else 0.00
     }
 }

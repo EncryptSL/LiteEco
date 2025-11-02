@@ -1,4 +1,4 @@
-package com.github.encryptsl.lite.eco.common.hook.craftconomy3
+package com.github.encryptsl.lite.eco.common.hook.economy.craftconomy3
 
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.common.hook.HookListener
@@ -16,26 +16,28 @@ class CraftConomyHook(
 
     companion object {
         const val PLUGIN_NAME = "CraftConomy3"
-        fun isCraftEconomy(): Boolean
+        fun isCraftEconomyPresent(): Boolean
                 = ClassUtil.isValidClasspath("com.greatmancode.craftconomy3.Common")
     }
 
     override fun canRegister(): Boolean {
-        return !registered && liteEco.pluginManager.isPluginEnabled(PLUGIN_NAME)
+        val plugin = liteEco.pluginManager.getPlugin(PLUGIN_NAME)
+        return !registered && plugin != null && isCraftEconomyPresent()
     }
 
     override fun register() {
-        if (isCraftEconomy()) {
-            economyHandler = Common.getInstance().accountManager
+        if (isCraftEconomyPresent()) {
+            registered = true
         }
-        registered = true
     }
 
     override fun unregister() {}
 
     fun getBalance(name: String, currency: String = "Dollar"): Double {
-        if (!isCraftEconomy())
-            throw Exception("Plugin BetterEconomy missing !")
-        return economyHandler.getAccount(name, false).getBalance(null, currency)
+        return if (isCraftEconomyPresent()) {
+            val instance = Common.getInstance()
+            economyHandler = instance.accountManager
+            economyHandler.getAccount(name, false).getBalance(null, currency)
+        } else 0.00
     }
 }

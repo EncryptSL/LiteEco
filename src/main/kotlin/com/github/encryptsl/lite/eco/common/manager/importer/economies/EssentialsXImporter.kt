@@ -4,6 +4,7 @@ import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.interfaces.EconomyImporter
 import com.github.encryptsl.lite.eco.common.manager.importer.EconomyImportResults
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.bukkit.OfflinePlayer
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
@@ -21,7 +22,7 @@ class EssentialsXImporter : EconomyImporter {
         var converted = 0
         var balances = BigDecimal.ZERO
 
-        liteEco.pluginScope.launch {
+        runBlocking {
             for (p in offlinePlayers) {
                 val playerFile = File("plugins/Essentials/userdata/", "${p.uniqueId}.yml")
                 if (playerFile.exists()) {

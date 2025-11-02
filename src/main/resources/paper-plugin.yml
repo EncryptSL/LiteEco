@@ -21,6 +21,21 @@ dependencies:
       required: false
     MiniPlaceholders:
       required: false
+    BetterEconomy:
+      required: false
+      join-classpath: true
+    TheosisEconomy:
+      required: false
+      join-classpath: true
+    SimpleEconomy:
+      required: false
+      join-classpath: true
+    Economy:
+      required: false
+      join-classpath: true
+    CraftConomy3:
+      required: false
+      join-classpath: true
 
 
 description: ${description}

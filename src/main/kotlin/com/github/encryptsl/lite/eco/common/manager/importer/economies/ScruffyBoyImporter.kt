@@ -2,9 +2,10 @@ package com.github.encryptsl.lite.eco.common.manager.importer.economies
 
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.interfaces.EconomyImporter
-import com.github.encryptsl.lite.eco.common.hook.scruffyboy13.ScruffyboyEconomyHook
+import com.github.encryptsl.lite.eco.common.hook.economy.scruffyboy13.ScruffyboyEconomyHook
 import com.github.encryptsl.lite.eco.common.manager.importer.EconomyImportResults
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.bukkit.OfflinePlayer
 import java.math.BigDecimal
 
@@ -17,7 +18,7 @@ class ScruffyBoyImporter : EconomyImporter {
 
         try {
             val scruffyboyEconomy = ScruffyboyEconomyHook(liteEco)
-            liteEco.pluginScope.launch {
+            runBlocking {
                 for (p in offlinePlayers) {
                     val balance = BigDecimal.valueOf(scruffyboyEconomy.getBalance(p.uniqueId))
                     if (liteEco.api.createOrUpdateAccount(p.uniqueId, p.name.toString(), currency, balance)) {

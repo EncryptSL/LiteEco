@@ -2,9 +2,10 @@ package com.github.encryptsl.lite.eco.common.manager.importer.economies
 
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.interfaces.EconomyImporter
-import com.github.encryptsl.lite.eco.common.hook.craftconomy3.CraftConomyHook
+import com.github.encryptsl.lite.eco.common.hook.economy.craftconomy3.CraftConomyHook
 import com.github.encryptsl.lite.eco.common.manager.importer.EconomyImportResults
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.bukkit.OfflinePlayer
 import java.math.BigDecimal
 
@@ -17,7 +18,7 @@ class CraftConomy3Importer : EconomyImporter {
         var balances = BigDecimal.ZERO
 
         try {
-            liteEco.pluginScope.launch {
+            runBlocking {
                 val craftConomy = CraftConomyHook(liteEco)
                 for (p in offlinePlayers) {
                     val balance = BigDecimal.valueOf(craftConomy.getBalance(p.name.toString()))
