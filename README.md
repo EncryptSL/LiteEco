@@ -1,4 +1,4 @@
-<div align="center">
+<div style="text-align:center;">
 
 ![[liteeco]](https://github.com/user-attachments/assets/f58e36ab-a54f-4b93-bca1-518f3f2ce476)
 
@@ -8,7 +8,6 @@
 
 ![GitHub release](https://img.shields.io/github/v/release/EncryptSL/LiteEco?style=flat-square)
 ![GitHub issues](https://img.shields.io/github/issues/EncryptSL/LiteEco?style=flat-square)
-![bStats](https://img.shields.io/bstats/servers/16774?label=bStats&style=flat-square)
 ![License](https://img.shields.io/github/license/EncryptSL/LiteEco?style=flat-square)
 
 ---
@@ -53,6 +52,7 @@ LiteEco collects **anonymous usage statistics** via [bStats](https://bstats.org/
 - Online servers
 - Plugin version usage
 - Command usage
+- Transactions
 
 You can disable this in `config.yml` under `plugin.metrics`.
 
