@@ -176,9 +176,9 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
                 liteEco.loggerModel.logging(TypeLogger.WITHDRAW, pluginName, username, currency, currentBalance, currentBalance - amount)
                 liteEco.api.withdraw(accountID, currency, amount)
             }
-            EconomyResponse(amount, balance(pluginName, accountID, "", currency), EconomyResponse.ResponseType.SUCCESS, SUCCESS_WITHDRAW)
+            EconomyResponse(amount, balance(pluginName, accountID, worldName, currency), EconomyResponse.ResponseType.SUCCESS, SUCCESS_WITHDRAW)
         } else {
-            EconomyResponse(amount, balance(pluginName, accountID, "", currency), EconomyResponse.ResponseType.FAILURE, FAIL_WITHDRAW)
+            EconomyResponse(amount, balance(pluginName, accountID, worldName, currency), EconomyResponse.ResponseType.FAILURE, FAIL_WITHDRAW)
         }
     }
 
@@ -244,9 +244,9 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
                 liteEco.loggerModel.logging(TypeLogger.DEPOSIT, pluginName, username, currency, currentBalance, currentBalance + amount)
                 liteEco.api.deposit(accountID, currency, amount)
             }
-            EconomyResponse(amount, balance(pluginName, accountID, "", currency), EconomyResponse.ResponseType.SUCCESS, SUCCESS_DEPOSIT)
+            EconomyResponse(amount, balance(pluginName, accountID, worldName, currency), EconomyResponse.ResponseType.SUCCESS, SUCCESS_DEPOSIT)
         } else {
-            EconomyResponse(amount, balance(pluginName, accountID, "", currency), EconomyResponse.ResponseType.FAILURE, FAIL_DEPOSIT)
+            EconomyResponse(amount, balance(pluginName, accountID, worldName, currency), EconomyResponse.ResponseType.FAILURE, FAIL_DEPOSIT)
         }
     }
 
