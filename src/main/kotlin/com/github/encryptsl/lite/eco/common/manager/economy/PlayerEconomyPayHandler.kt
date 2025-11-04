@@ -2,7 +2,6 @@ package com.github.encryptsl.lite.eco.common.manager.economy
 
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.enums.TypeLogger
-import com.github.encryptsl.lite.eco.common.extensions.mainThread
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
@@ -31,16 +30,14 @@ class PlayerEconomyPayHandler(
                 return@launch
             }
 
-            mainThread(liteEco) {
-                if (!liteEco.api.has(sender.uniqueId, currency, money))
-                    return@mainThread sender.sendMessage(liteEco.locale.translation("messages.error.insufficient_funds"))
+            if (!liteEco.api.has(sender.uniqueId, currency, money))
+                return@launch sender.sendMessage(liteEco.locale.translation("messages.error.insufficient_funds"))
 
-                if (liteEco.currencyImpl.getCheckBalanceLimit(user.money, currency, money)) {
-                    sender.sendMessage(liteEco.locale.translation("messages.error.balance_above_limit",
-                        Placeholder.parsed("account", target.name.toString())
-                    ))
-                    return@mainThread
-                }
+            if (liteEco.currencyImpl.getCheckBalanceLimit(user.money, currency, money)) {
+                sender.sendMessage(liteEco.locale.translation("messages.error.balance_above_limit",
+                    Placeholder.parsed("account", target.name.toString())
+                ))
+                return@launch
             }
 
             liteEco.loggerModel.logging(TypeLogger.TRANSFER,

@@ -3,7 +3,6 @@ package com.github.encryptsl.lite.eco.common.hook.vault.unlocked
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.enums.TypeLogger
 import com.github.encryptsl.lite.eco.common.extensions.isApproachingZero
-import com.github.encryptsl.lite.eco.common.extensions.mainThread
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import net.milkbowl.vault2.economy.EconomyResponse
@@ -141,9 +140,7 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
         return if (has(pluginName, accountID, amount)) {
             liteEco.debugger.debug(AdaptiveEconomyVaultUnlockedAPI::class.java, "$pluginName successfully withdraw ${accountID} from his balance ${balance(pluginName, accountID)} amount $amount")
             liteEco.pluginScope.launch {
-                val username = mainThread(liteEco) {
-                    Bukkit.getOfflinePlayer(accountID).name.toString()
-                }
+                val username = Bukkit.getOfflinePlayer(accountID).name.toString()
                 val currentBalance = liteEco.api.getBalance(accountID, liteEco.currencyImpl.defaultCurrency())
                 liteEco.loggerModel.logging(TypeLogger.WITHDRAW, pluginName, username, liteEco.currencyImpl.defaultCurrency(), currentBalance, currentBalance - amount)
                 liteEco.api.withdraw(accountID, liteEco.currencyImpl.defaultCurrency(), amount)
@@ -169,9 +166,7 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
         return if (has(pluginName, accountID, worldName, currency, amount)) {
             liteEco.debugger.debug(AdaptiveEconomyVaultUnlockedAPI::class.java, "$pluginName successfully withdraw ${accountID} from his balance ${balance(pluginName, accountID)} amount $amount")
             liteEco.pluginScope.launch {
-                val username = mainThread(liteEco) {
-                    Bukkit.getOfflinePlayer(accountID).name.toString()
-                }
+                val username = Bukkit.getOfflinePlayer(accountID).name.toString()
                 val currentBalance = liteEco.api.getBalance(accountID, currency)
                 liteEco.loggerModel.logging(TypeLogger.WITHDRAW, pluginName, username, currency, currentBalance, currentBalance - amount)
                 liteEco.api.withdraw(accountID, currency, amount)
@@ -194,9 +189,7 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
         return if (has(pluginName, accountID, amount)) {
             liteEco.debugger.debug(AdaptiveEconomyVaultUnlockedAPI::class.java, "$pluginName successfully deposit $accountID to his balance ${balance(pluginName, accountID)} amount $amount")
             liteEco.pluginScope.launch {
-                val username = mainThread(liteEco) {
-                    Bukkit.getOfflinePlayer(accountID).name.toString()
-                }
+                val username = Bukkit.getOfflinePlayer(accountID).name.toString()
                 val currencyName = liteEco.currencyImpl.defaultCurrency()
                 val currentBalance = liteEco.api.getBalance(accountID, currencyName)
                 if (liteEco.currencyImpl.getCheckBalanceLimit(currentBalance, currencyName, amount)) {
@@ -232,9 +225,7 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
         return if (has(pluginName, accountID, worldName, currency, amount)) {
             liteEco.debugger.debug(AdaptiveEconomyVaultUnlockedAPI::class.java, "$pluginName successfully deposit $accountID to his balance ${balance(pluginName, accountID)} amount $amount")
             liteEco.pluginScope.launch {
-                val username = mainThread(liteEco) {
-                    Bukkit.getOfflinePlayer(accountID).name.toString()
-                }
+                val username = Bukkit.getOfflinePlayer(accountID).name.toString()
                 val currentBalance = liteEco.api.getBalance(accountID, currency)
                 if (liteEco.currencyImpl.getCheckBalanceLimit(currentBalance, currency, amount)) {
                     EconomyResponse(amount, balance(pluginName, accountID), EconomyResponse.ResponseType.FAILURE, FAIL_REACHED_BALANCE_LIMIT)
@@ -255,9 +246,7 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
         return if (hasAccount(accountID)) {
             liteEco.debugger.debug(AdaptiveEconomyVaultUnlockedAPI::class.java, "$pluginName successfully $accountID set his balance ${balance(pluginName, accountID)} to amount $amount")
             liteEco.pluginScope.launch {
-                val username = mainThread(liteEco) {
-                    Bukkit.getOfflinePlayer(accountID).name.toString()
-                }
+                val username = Bukkit.getOfflinePlayer(accountID).name.toString()
                 val currencyName = liteEco.currencyImpl.defaultCurrency()
                 val currentBalance = liteEco.api.getBalance(accountID, currencyName)
 
@@ -290,9 +279,7 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
         return if (hasAccount(accountID)) {
             liteEco.debugger.debug(AdaptiveEconomyVaultUnlockedAPI::class.java, "$pluginName successfully $accountID set his balance ${balance(pluginName, accountID)} to amount $amount")
             liteEco.pluginScope.launch {
-                val username = mainThread(liteEco) {
-                    Bukkit.getOfflinePlayer(accountID).name.toString()
-                }
+                val username = Bukkit.getOfflinePlayer(accountID).name.toString()
                 val currentBalance = liteEco.api.getBalance(accountID, currency)
 
                 if (liteEco.currencyImpl.getCheckBalanceLimit(amount, currency)) {
