@@ -7,8 +7,9 @@ import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import org.jetbrains.exposed.v1.jdbc.transactions.transactionManager
 
 fun <T> loggedTransaction(db: Database? = null, statement: Transaction.() -> T): T {
-    return transaction(db.transactionManager.defaultIsolationLevel, db.transactionManager.defaultReadOnly, db
-    ) {
+    val isolationLevel = db?.transactionManager?.defaultIsolationLevel
+    val readOnly = db?.transactionManager?.defaultReadOnly
+    return transaction(db, isolationLevel, readOnly) {
         addLogger(SqlPluginLogger())
         statement.invoke(this)
     }
