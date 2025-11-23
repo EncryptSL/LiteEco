@@ -5,15 +5,13 @@ import com.github.encryptsl.lite.eco.common.hook.HookListener
 import com.github.encryptsl.lite.eco.utils.ClassUtil
 import it.alzy.simpleeconomy.plugin.SimpleEconomy
 import it.alzy.simpleeconomy.plugin.storage.Storage
-import java.util.*
-import java.util.concurrent.CompletableFuture
 
 class SimpleEconomyHook(private val liteEco: LiteEco) : HookListener(
     PLUGIN_NAME,
     "You can now export economy from plugin SimpleEconomy to LiteEco with /eco database import SimpleEconomy <your_currency>"
 ) {
 
-    private lateinit var economyHandler: Storage
+    private var economyHandler: Storage? = null
 
     companion object {
         const val PLUGIN_NAME = "SimpleEconomy"
@@ -36,19 +34,10 @@ class SimpleEconomyHook(private val liteEco: LiteEco) : HookListener(
 
     override fun unregister() {}
 
-    fun getBalance(uuid: UUID): CompletableFuture<Double> {
-        return if (isSimpleEconomyPresent()) {
-            val instance = SimpleEconomy.getInstance()
-            economyHandler = instance.storage
-            economyHandler.getBalance(uuid)
-        } else CompletableFuture.completedFuture(0.00)
-    }
-
     fun getAccounts(): MutableMap<String, Double> {
         return if (isSimpleEconomyPresent()) {
-            val instance = SimpleEconomy.getInstance()
-            economyHandler = instance.storage
-            economyHandler.allBalances
+            economyHandler = SimpleEconomy.getInstance().storage
+            economyHandler?.allBalances ?: mutableMapOf()
         } else mutableMapOf()
     }
 }

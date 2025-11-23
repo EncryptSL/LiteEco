@@ -12,7 +12,7 @@ class CraftConomyHook(
     PLUGIN_NAME,
     "You can now export economy from plugin CraftConomy3 to LiteEco with /eco database import CraftConomy3 <your_currency>"
 ) {
-    private lateinit var economyHandler: AccountManager
+    private var economyHandler: AccountManager? = null
 
     companion object {
         const val PLUGIN_NAME = "CraftConomy3"
@@ -35,9 +35,8 @@ class CraftConomyHook(
 
     fun getBalance(name: String, currency: String = "Dollar"): Double {
         return if (isCraftEconomyPresent()) {
-            val instance = Common.getInstance()
-            economyHandler = instance.accountManager
-            economyHandler.getAccount(name, false).getBalance(null, currency)
+            economyHandler = Common.getInstance().accountManager
+            economyHandler?.getAccount(name, false)?.getBalance(null, currency) ?: 0.00
         } else 0.00
     }
 }

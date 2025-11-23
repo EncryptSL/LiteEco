@@ -13,7 +13,7 @@ class BetterEconomyHook(
     PLUGIN_NAME,
     "You can now export economy from plugin BetterEconomy to LiteEco with /eco database import BetterEconomy <your_currency>"
 ) {
-    private lateinit var economyHandler: EconomyHolder
+    private var economyHandler: EconomyHolder? = null
 
     companion object {
         const val PLUGIN_NAME = "BetterEconomy"
@@ -43,7 +43,7 @@ class BetterEconomyHook(
             }
             val handler = plugin.get(EconomyHolder::class.java)
             economyHandler = handler
-            economyHandler.get(uuid)
+            economyHandler?.get(uuid) ?: 0.00
         } else 0.00
     }
 }
