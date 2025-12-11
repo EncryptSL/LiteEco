@@ -1,19 +1,19 @@
 libraries:
   - com.tchristofferson:ConfigUpdater:2.2
   - com.zaxxer:HikariCP:7.0.2
-  - io.ktor:ktor-client-core:3.2.3
-  - org.apache.commons:commons-csv:1.14.0
-  - org.flywaydb:flyway-core:11.17.1
-  - org.flywaydb:flyway-mysql:11.17.1
+  - io.ktor:ktor-client-core:3.3.3
+  - org.apache.commons:commons-csv:1.14.1
+  - org.flywaydb:flyway-core:11.19.0
+  - org.flywaydb:flyway-mysql:11.19.0
   - org.incendo:cloud-annotations:2.0.0
   - org.incendo:cloud-kotlin-extensions:2.0.0
-  - org.incendo:cloud-minecraft-extras:2.0.0-beta.13
-  - org.incendo:cloud-paper:2.0.0-beta.13
-  - org.jetbrains.exposed:exposed-core:1.0.0-rc-3
-  - org.jetbrains.exposed:exposed-jdbc:1.0.0-rc-3
-  - org.jetbrains.exposed:exposed-kotlin-datetime:1.0.0-rc-3
+  - org.incendo:cloud-minecraft-extras:2.0.0-beta.14
+  - org.incendo:cloud-paper:2.0.0-beta.14
+  - org.jetbrains.exposed:exposed-core:1.0.0-rc-4
+  - org.jetbrains.exposed:exposed-jdbc:1.0.0-rc-4
+  - org.jetbrains.exposed:exposed-kotlin-datetime:1.0.0-rc-4
   - org.jetbrains.kotlin:kotlin-reflect:2.2.21
   - org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.2.21
   - org.mariadb.jdbc:mariadb-java-client:3.5.6
   - org.postgresql:postgresql:42.7.8
-  - org.xerial:sqlite-jdbc:3.51.0.0
+  - org.xerial:sqlite-jdbc:3.51.1.0
