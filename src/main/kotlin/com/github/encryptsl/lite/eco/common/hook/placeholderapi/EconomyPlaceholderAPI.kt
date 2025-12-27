@@ -1,11 +1,8 @@
 package com.github.encryptsl.lite.eco.common.hook.placeholderapi
 
 import com.github.encryptsl.lite.eco.LiteEco
-import kotlinx.coroutines.runBlocking
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import org.bukkit.OfflinePlayer
-import java.math.BigDecimal
-import java.util.*
 
 class EconomyPlaceholderAPI(private val liteEco: LiteEco, private val extVersion: String) : PlaceholderExpansion() {
 
@@ -26,92 +23,56 @@ class EconomyPlaceholderAPI(private val liteEco: LiteEco, private val extVersion
     override fun onRequest(player: OfflinePlayer?, identifier: String): String? {
         if (player == null) return null
         val args = identifier.split("_")
-        val rank = args.getOrNull(2)?.toIntOrNull()
+        val helper = liteEco.placeholderHelper
 
-        return when (identifier) {
-            "balance" -> runBlocking { liteEco.api.getBalance(player.uniqueId, liteEco.currencyImpl.defaultCurrency()).toString() }
-            "balance_formatted" -> runBlocking { liteEco.currencyImpl.fullFormatting(liteEco.api.getBalance(player.uniqueId, liteEco.currencyImpl.defaultCurrency())) }
-            "balance_compacted" -> runBlocking { liteEco.currencyImpl.compacted(liteEco.api.getBalance(player.uniqueId, liteEco.currencyImpl.defaultCurrency())) }
-            "top_rank_player" -> nameByRank(1, liteEco.currencyImpl.defaultCurrency())
-            else -> {
+        return when {
+
+            // Format: total_balance_dollars
+            identifier.startsWith("total_balance") -> {
+                val curr = helper.parseCurrency(args, 2)
+                liteEco.currencyImpl.formatted(helper.getTotalBalance(curr))
+            }
+
+            // Formats: liteeco_balance, liteeco_balance_formatted, liteeco_balance_compacted
+            identifier.startsWith("balance") -> {
+                val isFormatted = identifier.contains("formatted")
+                val isCompacted = identifier.contains("compacted")
+
+                // Currency index shifts based on the prefix length
+                // e.g., liteeco_balance_dollars (index 1) vs liteeco_balance_formatted_dollars (index 2)
+                val currencyIndex = if (isFormatted || isCompacted) 2 else 1
+                val curr = helper.parseCurrency(args, currencyIndex)
+                val bal = helper.getBalance(player.uniqueId, curr)
+
                 when {
-                    identifier.startsWith("balance_") -> {
-                        if (identifier.startsWith("balance_formatted_")) {
-                            val currency = extractPlaceholderIdentifierName(2, args)
-                            return runBlocking { liteEco.currencyImpl.fullFormatting(liteEco.api.getBalance(player.uniqueId, currency), currency) }
-                        }
-
-                        if (identifier.startsWith("balance_compacted_")) {
-                            val currency = extractPlaceholderIdentifierName(2, args)
-                            return runBlocking { liteEco.currencyImpl.compacted(liteEco.api.getBalance(player.uniqueId, currency)) }
-                        }
-                        val currency = extractPlaceholderIdentifierName(1, args)
-
-                        return runBlocking { liteEco.api.getBalance(player.uniqueId, currency).toString() }
-                    }
-                    identifier.startsWith("top_rank_player_") -> {
-                        val currency = extractPlaceholderIdentifierName(3, args)
-                        return nameByRank(1, currency)
-                    }
-                    identifier.startsWith("total_balance_") -> {
-                        val currency = extractPlaceholderIdentifierName(2, args)
-                        return liteEco.currencyImpl.getCurrencyFormat(totalBalanceOfServerByCurrency(currency))
-                    }
-                }
-                return rank?.let {
-                    when {
-                        identifier.startsWith("top_formatted_") -> {
-                            val currency = extractPlaceholderIdentifierName(3, args)
-                            return liteEco.currencyImpl.fullFormatting(balanceByRank(rank, currency), currency)
-                        }
-                        identifier.startsWith("top_compacted_") -> {
-                            val currency = extractPlaceholderIdentifierName(3, args)
-                            return liteEco.currencyImpl.compacted(balanceByRank(rank, currency))
-                        }
-                        identifier.startsWith("top_balance_") -> {
-                            val currency = extractPlaceholderIdentifierName(3, args)
-                            return balanceByRank(rank, currency).toString()
-                        }
-                        identifier.startsWith("top_player_") -> {
-                            val currency = extractPlaceholderIdentifierName(3, args)
-                            return nameByRank(rank, currency)
-                        }
-                        else -> null
-                    }
+                    isFormatted -> liteEco.currencyImpl.fullFormatting(bal, curr)
+                    isCompacted -> liteEco.currencyImpl.compacted(bal)
+                    else -> bal.toPlainString()
                 }
             }
+            // Formats: liteeco_top_formatted_1_dollars, liteeco_top_compacted_1_dollars, liteeco_top_balance_1_dollars
+            identifier.startsWith("top_") -> {
+                val rank = helper.parseRank(args, 2) ?: return null
+                val curr = helper.parseCurrency(args, 3)
+                val bal = helper.getBalanceByRank(rank, curr)
+
+                when {
+                    identifier.startsWith("top_formatted") -> liteEco.currencyImpl.fullFormatting(bal, curr)
+                    identifier.startsWith("top_compacted") -> liteEco.currencyImpl.compacted(bal)
+                    identifier.startsWith("top_balance") -> bal.toPlainString()
+                    identifier.startsWith("top_player") -> helper.getNameByRank(rank, curr)
+                    else -> null
+                }
+            }
+
+            // --- 4. TOP RANK PLAYER (Special Case) ---
+            // Format: %liteeco_top_rank_player_dollars%
+            identifier.startsWith("top_rank_player") -> {
+                val curr = helper.parseCurrency(args, 3)
+                helper.getNameByRank(1, curr)
+            }
+
+            else -> null
         }
-    }
-
-    private fun extractPlaceholderIdentifierName(position: Int, args: List<String>): String {
-        return Optional.ofNullable(args.getOrNull(position))
-            .orElse(liteEco.currencyImpl.defaultCurrency())
-    }
-
-    private fun nameByRank(rank: Int, currency: String): String {
-        val topBalance = topBalance(currency)
-        return if (rank in 1..topBalance.size) {
-            val name = topBalance.keys.elementAt(rank - 1)
-            Optional.ofNullable(name).orElse("UNKNOWN")
-        } else {
-            liteEco.config.getString("formatting.placeholders.empty-name", "EMPTY").toString()
-        }
-    }
-
-    private fun balanceByRank(rank: Int, currency: String): BigDecimal {
-        val topBalance = topBalance(currency)
-        return if (rank in 1..topBalance.size) {
-            topBalance.values.elementAt(rank - 1)
-        } else {
-            BigDecimal.ZERO
-        }
-    }
-
-    private fun totalBalanceOfServerByCurrency(currency: String): String {
-        return topBalance(currency).values.sumOf { it }.toString()
-    }
-
-    private fun topBalance(currency: String): Map<String, BigDecimal> {
-        return liteEco.api.getTopBalance(currency)
     }
 }
