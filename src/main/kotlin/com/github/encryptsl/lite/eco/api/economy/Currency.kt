@@ -22,7 +22,7 @@ class Currency(private val liteEco: LiteEco) {
         return liteEco.config.getString("economy.currencies.$currency.currency_singular_name").toString()
     }
 
-    fun getCurrencyFormat(currency: String): String {
+    private fun getCurrencyFormat(currency: String): String {
         return liteEco.config.getString("economy.currencies.$currency.currency_format").toString()
     }
 
@@ -51,14 +51,6 @@ class Currency(private val liteEco: LiteEco) {
 
     fun getCurrencyNameExist(currency: String): Boolean {
         return getCurrenciesKeys().contains(currency)
-    }
-
-    private fun getCurrenciesNames(): List<String> = getCurrenciesKeys().map {
-        liteEco.config.getString("economy.currencies.$it.currency_name").toString()
-    }
-
-    fun getKeyOfCurrency(currency: String): String {
-        return getCurrenciesKeys().singleOrNull { it.contains(currency) } ?: defaultCurrency()
     }
 
     fun getCurrenciesKeys(): MutableSet<String> {
