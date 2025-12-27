@@ -19,6 +19,7 @@ import com.github.encryptsl.lite.eco.listeners.PlayerAsyncPreLoginListener
 import com.github.encryptsl.lite.eco.listeners.PlayerQuitListener
 import com.github.encryptsl.lite.eco.utils.BukkitDispatchers
 import com.github.encryptsl.lite.eco.utils.Debugger
+import com.github.encryptsl.lite.eco.utils.PlaceholderHelper
 import com.tchristofferson.configupdater.ConfigUpdater
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -62,6 +63,7 @@ class LiteEco : JavaPlugin() {
     val databaseConnector: DatabaseConnector by lazy { DatabaseConnector(this) }
     val accountManager: AccountManager by lazy { AccountManager(this) }
     val debugger: Debugger by lazy { Debugger(this) }
+    val placeholderHelper by lazy { PlaceholderHelper(this) }
 
     val pluginScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
