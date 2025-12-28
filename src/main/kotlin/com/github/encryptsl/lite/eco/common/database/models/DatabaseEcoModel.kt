@@ -10,9 +10,14 @@ import org.jetbrains.exposed.v1.core.*
 import org.jetbrains.exposed.v1.exceptions.ExposedSQLException
 import org.jetbrains.exposed.v1.jdbc.*
 import java.math.BigDecimal
+import java.sql.SQLException
 import java.util.*
 
 class DatabaseEcoModel : PlayerSQL {
+
+    companion object {
+        var debugFailMode: Boolean = false
+    }
 
     override fun createPlayerAccount(username: String, uuid: UUID, currency: String, money: BigDecimal) {
         loggedTransaction {
@@ -44,14 +49,11 @@ class DatabaseEcoModel : PlayerSQL {
 
     override fun getUserByUUID(uuid: UUID, currency: String): User? {
         return loggedTransaction {
-            try {
-                val table = Account(currency)
-                val row = table.select(table.uuid, table.username, table.money).where(table.uuid eq uuid).single()
-                User(row[table.username], row[table.uuid], row[table.money])
-            } catch (e : Exception) {
-                LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
-                null
-            }
+            val table = Account(currency)
+            table.select(table.uuid, table.username, table.money)
+                .where(table.uuid eq uuid).singleOrNull()?.let {
+                    User(it[table.username], it[table.uuid], it[table.money])
+                }
         }
     }
 
@@ -59,10 +61,11 @@ class DatabaseEcoModel : PlayerSQL {
         return loggedTransaction {
             try {
                 val table = Account(currency)
-                table.select(table.uuid, table.money).where { table.uuid eq uuid }.single()[table.money]
+                val row = table.select(table.uuid, table.money).where { table.uuid eq uuid }.singleOrNull()
+                row?.getOrNull(table.money) ?: BigDecimal.ZERO
             } catch (e : ExposedSQLException) {
                 LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
-                BigDecimal.ZERO
+                throw e
             }
         }
     }
@@ -142,6 +145,12 @@ class DatabaseEcoModel : PlayerSQL {
         }
     }
     override fun set(uuid: UUID, currency: String, money: BigDecimal) {
+
+        if (debugFailMode) {
+            println("[DEBUG] I am throwing out a false error for $uuid") // Toto uvidíš vždycky
+            throw SQLException("DEBUG: Database is currently in fail-mode.")
+        }
+
         loggedTransaction {
             try {
                 val table = Account(currency)
