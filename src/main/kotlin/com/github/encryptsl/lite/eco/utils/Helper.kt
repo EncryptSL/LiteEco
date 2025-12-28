@@ -1,3 +1,4 @@
+@file:Suppress("DEPRECATION")
 package com.github.encryptsl.lite.eco.utils
 
 import com.github.encryptsl.lite.eco.LiteEco
