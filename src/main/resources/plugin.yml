@@ -17,8 +17,8 @@ libraries:
   - com.zaxxer:HikariCP:7.0.2
   - io.ktor:ktor-client-core:3.3.3
   - org.apache.commons:commons-csv:1.14.1
-  - org.flywaydb:flyway-core:11.19.0
-  - org.flywaydb:flyway-mysql:11.19.0
+  - org.flywaydb:flyway-core:11.20.0
+  - org.flywaydb:flyway-mysql:11.20.0
   - org.incendo:cloud-annotations:2.0.0
   - org.incendo:cloud-kotlin-extensions:2.0.0
   - org.incendo:cloud-minecraft-extras:2.0.0-beta.14
@@ -59,15 +59,23 @@ permissions:
       lite.eco.admin.global.add: true
       lite.eco.admin.set: true
       lite.eco.admin.global.set: true
-      lite.eco.admin.remove: true
       lite.eco.admin.withdraw: true
       lite.eco.admin.global.withdraw: true
+      lite.eco.admin.create: true
+      lite.eco.admin.delete: true
       lite.eco.admin.monolog: true
       lite.eco.admin.lang: true
       lite.eco.admin.purge: true
       lite.eco.admin.export: true
       lite.eco.admin.import: true
       lite.eco.admin.reload: true
+      # Debugging permissions
+      lite.eco.admin.debug.failmode: true
+      lite.eco.admin.debug.testjanitor: true
+      lite.eco.admin.debug.janitor: true
+      lite.eco.admin.debug.inspect: true
+      lite.eco.admin.debug.stress: true
+      # Bypass and player permissions
       lite.eco.admin.bypass.limit: true
       lite.eco.pay.*: true
       lite.eco.balance.others: true

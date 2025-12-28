@@ -3,8 +3,8 @@ libraries:
   - com.zaxxer:HikariCP:7.0.2
   - io.ktor:ktor-client-core:3.3.3
   - org.apache.commons:commons-csv:1.14.1
-  - org.flywaydb:flyway-core:11.19.0
-  - org.flywaydb:flyway-mysql:11.19.0
+  - org.flywaydb:flyway-core:11.20.0
+  - org.flywaydb:flyway-mysql:11.20.0
   - org.incendo:cloud-annotations:2.0.0
   - org.incendo:cloud-kotlin-extensions:2.0.0
   - org.incendo:cloud-minecraft-extras:2.0.0-beta.14
