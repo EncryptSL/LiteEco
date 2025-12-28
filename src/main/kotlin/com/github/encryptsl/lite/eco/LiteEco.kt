@@ -1,6 +1,7 @@
 package com.github.encryptsl.lite.eco
 
 import com.github.encryptsl.lite.eco.api.ConfigAPI
+import com.github.encryptsl.lite.eco.api.PlayerAccount
 import com.github.encryptsl.lite.eco.api.UpdateNotifier
 import com.github.encryptsl.lite.eco.api.economy.Currency
 import com.github.encryptsl.lite.eco.api.economy.SuspendLiteEcoEconomyWrapper
@@ -97,11 +98,13 @@ class LiteEco : JavaPlugin() {
         } catch (e : Exception) {
             logger.severe(e.message ?: e.localizedMessage)
         }
+        PlayerAccount.startJanitor(this)
         componentLogger.info(ModernText.miniModernText("Contribute to other updates <yellow>https://ko-fi.com/encryptsl"))
         componentLogger.info(ModernText.miniModernText("<green>Plugin enabled in time $timeTaken ms"))
     }
 
     override fun onDisable() {
+        Bukkit.getScheduler().cancelTasks(this) // Needed we must cancel all tasks because janitor can corrupt final saving.
         hookManager.unregisterHooks()
         api.syncAccounts()
         pluginScope.cancel()
