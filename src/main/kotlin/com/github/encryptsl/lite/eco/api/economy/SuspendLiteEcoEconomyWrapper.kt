@@ -11,11 +11,17 @@ import java.util.*
 class SuspendLiteEcoEconomyWrapper : ModernLiteEcoEconomyImpl() {
 
     override suspend fun getUserByUUID(uuid: UUID, currency: String): Optional<User> = io {
-        if (PlayerAccount.isPlayerOnline(uuid) || PlayerAccount.isAccountCached(uuid, currency)) {
-            val name = Bukkit.getPlayer(uuid)?.name.toString()
-            Optional.of(User(name, uuid, PlayerAccount.getBalance(uuid, currency)))
-        } else {
-            Optional.ofNullable(LiteEco.instance.databaseEcoModel.getUserByUUID(uuid, currency))
+        try {
+            if (PlayerAccount.isPlayerOnline(uuid) || PlayerAccount.isAccountCached(uuid, currency)) {
+                val offlinePlayer = Bukkit.getOfflinePlayer(uuid)
+                val name = offlinePlayer.name ?: "Unknown"
+                Optional.of(User(name, uuid, PlayerAccount.getBalance(uuid, currency)))
+            } else {
+                Optional.ofNullable(LiteEco.instance.databaseEcoModel.getUserByUUID(uuid, currency))
+            }
+        } catch (e: Exception) {
+            LiteEco.instance.logger.severe("Error in getUserByUUID for $uuid: ${e.message}")
+            Optional.empty()
         }
     }
 
@@ -99,8 +105,13 @@ class SuspendLiteEcoEconomyWrapper : ModernLiteEcoEconomyImpl() {
         deposit(target, currency, amount)
     }
 
-    override suspend fun getBalance(uuid: UUID, currency: String): BigDecimal
-        = getUserByUUID(uuid, currency).map { it.money }.orElse(BigDecimal.ZERO)
+    override suspend fun getBalance(uuid: UUID, currency: String): BigDecimal {
+        val userOpt = getUserByUUID(uuid, currency)
+        if (userOpt.isPresent) {
+            return userOpt.get().money
+        }
+        return BigDecimal.ZERO
+    }
 
     private fun cacheAccount(uuid: UUID, currency: String, amount: BigDecimal) {
         PlayerAccount.cacheAccount(uuid, currency, amount)
