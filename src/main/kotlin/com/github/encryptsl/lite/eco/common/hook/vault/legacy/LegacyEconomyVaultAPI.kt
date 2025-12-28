@@ -44,16 +44,15 @@ class LegacyEconomyVaultAPI(private val liteEco: LiteEco) : LegacyDeprecatedEcon
     }
 
     override fun getBalance(player: OfflinePlayer?): Double {
+        if (player == null) return 0.0
+
         return try {
-            player?.let {
-                if (PlayerAccount.isPlayerOnline(it.uniqueId)) {
-                    runBlocking { liteEco.api.getBalance(it.uniqueId).toDouble() }
-                } else {
-                    liteEco.databaseEcoModel.getBalance(it.uniqueId, liteEco.currencyImpl.defaultCurrency()).toDouble()
-                }
-            } ?: 0.0
-        } catch (_ : Exception) {
-            return player?.let { Optional.ofNullable(liteEco.databaseEcoModel.getBalance(it.uniqueId, liteEco.currencyImpl.defaultCurrency()).toDouble()).orElse(0.0) } ?: 0.0
+            runBlocking {
+                liteEco.api.getBalance(player.uniqueId, liteEco.currencyImpl.defaultCurrency()).toDouble()
+            }
+        } catch (e: Exception) {
+            liteEco.debugger.debug(LegacyEconomyVaultAPI::class.java, "Error getting balance for ${player.name}: ${e.message}")
+            0.0
         }
     }
 
@@ -77,7 +76,7 @@ class LegacyEconomyVaultAPI(private val liteEco: LiteEco) : LegacyDeprecatedEcon
 
         return if (has(player, amount)) {
             liteEco.debugger.debug(LegacyEconomyVaultAPI::class.java, "successfully withdraw ${player.name} from his balance ${getBalance(player)} amount $amount")
-            liteEco.pluginScope.launch {
+            runBlocking {
                 liteEco.api.withdraw(player.uniqueId, liteEco.currencyImpl.defaultCurrency(), amount.toBigDecimal())
             }
             EconomyResponse(amount, getBalance(player), EconomyResponse.ResponseType.SUCCESS, null)
@@ -97,18 +96,17 @@ class LegacyEconomyVaultAPI(private val liteEco: LiteEco) : LegacyDeprecatedEcon
         }
 
         liteEco.debugger.debug(LegacyEconomyVaultAPI::class.java, "successfully deposit ${player.name} to his balance ${getBalance(player)} amount $amount")
-        liteEco.pluginScope.launch {
-            val currencyName = liteEco.currencyImpl.defaultCurrency()
-            val currentBalance = liteEco.api.getBalance(player.uniqueId, currencyName)
 
-            if (liteEco.currencyImpl.getCheckBalanceLimit(currentBalance, currencyName, amount.toBigDecimal())) {
-                EconomyResponse(amount, getBalance(player), EconomyResponse.ResponseType.FAILURE, FAIL_REACHED_BALANCE_LIMIT)
-                return@launch
-            }
+        val currencyName = liteEco.currencyImpl.defaultCurrency()
+        val currentBalance = this.getBalance(player, currencyName).toBigDecimal()
 
-            liteEco.api.deposit(player.uniqueId, liteEco.currencyImpl.defaultCurrency(), amount.toBigDecimal())
+        if (liteEco.currencyImpl.getCheckBalanceLimit(currentBalance, currencyName, amount.toBigDecimal())) {
+            return EconomyResponse(amount, getBalance(player), EconomyResponse.ResponseType.FAILURE, FAIL_REACHED_BALANCE_LIMIT)
         }
 
+        runBlocking {
+            liteEco.api.deposit(player.uniqueId, liteEco.currencyImpl.defaultCurrency(), amount.toBigDecimal())
+        }
         return EconomyResponse(amount, getBalance(player), EconomyResponse.ResponseType.SUCCESS, null)
     }
 
