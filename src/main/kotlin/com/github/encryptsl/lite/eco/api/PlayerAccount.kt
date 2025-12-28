@@ -10,7 +10,21 @@ import java.util.*
 object PlayerAccount : AccountAPI {
 
     private val databaseEcoModel: DatabaseEcoModel by lazy { DatabaseEcoModel() }
-    private val cache = mutableMapOf<UUID, MutableMap<String, BigDecimal>>()
+    internal val cache = mutableMapOf<UUID, MutableMap<String, BigDecimal>>()
+
+    override fun startJanitor(liteEco: LiteEco) {
+        Bukkit.getScheduler().runTaskTimerAsynchronously(liteEco, Runnable {
+            if (cache.isEmpty()) return@Runnable
+
+            val offlineUUIDs = cache.keys.filter { uuid -> Bukkit.getPlayer(uuid) == null }
+
+            offlineUUIDs.forEach { uuid ->
+                if (Bukkit.getPlayer(uuid) == null) {
+                    syncAccount(uuid)
+                }
+            }
+        }, 20L * 300, 20L * 300)
+    }
 
     override fun cacheAccount(uuid: UUID, currency: String, value: BigDecimal) {
         if (!isAccountCached(uuid, currency)) {
@@ -25,38 +39,46 @@ object PlayerAccount : AccountAPI {
     }
 
     override fun syncAccount(uuid: UUID) {
-        val userBalances = cache[uuid] ?: return
-        try {
-            userBalances.forEach { (currency, amount) ->
-                /* Please leave the code commented out in case a change improving BukkitAPI is rolled back...
-                val finalAmount = if (LiteEco.instance.currencyImpl.getCheckBalanceLimit(amount, currency)) {
-                    LiteEco.instance.currencyImpl.getCurrencyLimit(currency) // set maximum from configuration
-                } else {
-                    amount
-                }*/
+        LiteEco.instance.logger.info("Attempting synchronization for UUID: $uuid")
+        val userBalances = cache[uuid] ?: run {
+            LiteEco.instance.logger.info("Cache for $uuid is empty, nothing to synchronize.")
+            return
+        }
+        val failedCurrencies = mutableListOf<String>()
+
+        userBalances.forEach { (currency, amount) ->
+            try {
                 databaseEcoModel.set(uuid, currency, amount)
+                LiteEco.instance.debugger.debug(PlayerAccount::class.java, "Sync OK: $uuid -> $currency ($amount)")
+            } catch (e: Exception) {
+                failedCurrencies.add(currency)
+                LiteEco.instance.logger.severe("Sync FAIL: $uuid -> $currency. Data preserved in cache for next cycle. Error: ${e.message}")
             }
+        }
+
+        if (failedCurrencies.isEmpty()) {
             cache.remove(uuid)
-        } catch (e: Exception) {
-            LiteEco.instance.logger.severe("Error while sync cache with database for $uuid: ${e.localizedMessage}")
+        } else {
+            userBalances.keys.retainAll(failedCurrencies.toSet())
+            if (userBalances.isEmpty()) {
+                cache.remove(uuid)
+            }
         }
     }
 
     override fun syncAccounts() {
-        try {
-            cache.entries.forEach { user -> user.value.forEach {
-                /* Please leave the code commented out in case a change improving BukkitAPI is rolled back...
-                val finalAmount = if (LiteEco.instance.currencyImpl.getCheckBalanceLimit(it.value, it.key)) {
-                    LiteEco.instance.currencyImpl.getCurrencyLimit(it.key)
-                } else {
-                    it.value
-                }*/
-                databaseEcoModel.set(user.key, it.key, it.value) }
+        val uuids = cache.keys.toList()
+        for (uuid in uuids) {
+            val data = cache[uuid] ?: continue
+            data.forEach { (currency, amount) ->
+                try {
+                    databaseEcoModel.set(uuid, currency, amount)
+                } catch (_: Exception) {
+                    LiteEco.instance.logger.severe("CRITICAL LOSS: Could not save $uuid during shutdown!")
+                }
             }
-            cache.clear()
-        } catch (e : Exception) {
-            LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
         }
+        cache.clear()
     }
 
     override fun clearFromCache(uuid: UUID) {
