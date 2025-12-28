@@ -11,6 +11,7 @@ fun <T> loggedTransaction(db: Database? = null, statement: Transaction.() -> T):
     val readOnly = db?.transactionManager?.defaultReadOnly
     return transaction(db, isolationLevel, readOnly) {
         addLogger(SqlPluginLogger())
+        maxAttempts = 3
         statement.invoke(this)
     }
 }
