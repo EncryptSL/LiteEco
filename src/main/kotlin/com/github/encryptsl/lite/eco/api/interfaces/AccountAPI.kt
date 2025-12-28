@@ -1,5 +1,6 @@
 package com.github.encryptsl.lite.eco.api.interfaces
 
+import com.github.encryptsl.lite.eco.LiteEco
 import java.math.BigDecimal
 import java.util.*
 
@@ -11,6 +12,18 @@ import java.util.*
  * without constantly hitting the main database (SQL).
  */
 interface AccountAPI {
+
+    /**
+     * Starts the Janitor service task that periodically synchronizes offline players' data.
+     * * This service iterates through the [com.github.encryptsl.lite.eco.api.PlayerAccount.cache] and identifies players
+     * who are no longer online. It attempts to synchronize their cached balances
+     * (including failed transactions from previous database outages) back to the database.
+     * * The task runs asynchronously to prevent blocking the main server thread during
+     * database operations.
+     *
+     * @param liteEco The plugin instance used to schedule the task and access the logger.
+     */
+    fun startJanitor(liteEco: LiteEco)
 
     /**
      * Caches the player's account balance in memory or a fast storage layer.
