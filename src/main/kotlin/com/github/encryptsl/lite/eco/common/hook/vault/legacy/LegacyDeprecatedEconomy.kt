@@ -1,3 +1,4 @@
+@file:Suppress("DEPRECATION")
 package com.github.encryptsl.lite.eco.common.hook.vault.legacy
 
 import net.milkbowl.vault.economy.Economy

@@ -1,3 +1,4 @@
+@file:Suppress("DEPRECATION")
 package com.github.encryptsl.lite.eco.common.hook.vault
 
 import com.github.encryptsl.lite.eco.LiteEco
