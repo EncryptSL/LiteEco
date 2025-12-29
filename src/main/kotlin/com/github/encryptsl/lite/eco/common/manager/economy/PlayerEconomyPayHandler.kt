@@ -8,7 +8,6 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import java.math.BigDecimal
-import kotlin.jvm.optionals.getOrNull
 
 class PlayerEconomyPayHandler(
     private val liteEco: LiteEco
@@ -21,45 +20,39 @@ class PlayerEconomyPayHandler(
         currency: String
     ) {
         liteEco.pluginScope.launch {
-            val user = liteEco.api.getUserByUUID(target.uniqueId, currency).getOrNull()
+            liteEco.api.getUserByUUID(target.uniqueId, currency).orElse(null)?.let { user ->
+                if (!liteEco.api.has(sender.uniqueId, currency, money))
+                    return@launch sender.sendMessage(liteEco.locale.translation("messages.error.insufficient_funds"))
 
-            if (user == null) {
-                sender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist",
-                    Placeholder.parsed("account", target.name.toString())
-                ))
-                return@launch
-            }
+                if (liteEco.currencyImpl.getCheckBalanceLimit(user.money, currency, money)) {
+                    sender.sendMessage(liteEco.locale.translation("messages.error.balance_above_limit",
+                        Placeholder.parsed("account", target.name.toString())
+                    ))
+                    return@launch
+                }
+                liteEco.loggerModel.logging(TypeLogger.TRANSFER,
+                    sender.name, target.name.toString(), currency, user.money, user.money.plus(money)
+                )
+                liteEco.api.transfer(sender.uniqueId, target.uniqueId, currency, money)
 
-            if (!liteEco.api.has(sender.uniqueId, currency, money))
-                return@launch sender.sendMessage(liteEco.locale.translation("messages.error.insufficient_funds"))
+                sender.sendMessage(liteEco.locale.translation("messages.sender.add_money", TagResolver.resolver(
+                    Placeholder.parsed("target", target.name.toString()),
+                    Placeholder.parsed("money", liteEco.currencyImpl.fullFormatting(money, currency)),
+                    Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
+                )))
 
-            if (liteEco.currencyImpl.getCheckBalanceLimit(user.money, currency, money)) {
-                sender.sendMessage(liteEco.locale.translation("messages.error.balance_above_limit",
-                    Placeholder.parsed("account", target.name.toString())
-                ))
-                return@launch
-            }
+                liteEco.increaseTransactions(1)
 
-            liteEco.loggerModel.logging(TypeLogger.TRANSFER,
-                sender.name, target.name.toString(), currency, user.money, user.money.plus(money)
-            )
-            liteEco.api.transfer(sender.uniqueId, target.uniqueId, currency, money)
-        }
-
-        sender.sendMessage(liteEco.locale.translation("messages.sender.add_money", TagResolver.resolver(
-            Placeholder.parsed("target", target.name.toString()),
-            Placeholder.parsed("money", liteEco.currencyImpl.fullFormatting(money, currency)),
-            Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
-        )))
-
-        liteEco.increaseTransactions(1)
-
-        if (target.isOnline) {
-            target.player?.sendMessage(liteEco.locale.translation("messages.target.add_money", TagResolver.resolver(
-                Placeholder.parsed("sender", sender.name),
-                Placeholder.parsed("money", liteEco.currencyImpl.fullFormatting(money, currency)),
-                Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
-            )))
+                if (target.isOnline) {
+                    target.player?.sendMessage(liteEco.locale.translation("messages.target.add_money", TagResolver.resolver(
+                        Placeholder.parsed("sender", sender.name),
+                        Placeholder.parsed("money", liteEco.currencyImpl.fullFormatting(money, currency)),
+                        Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
+                    )))
+                }
+            } ?: sender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist",
+                Placeholder.parsed("account", target.name.toString())
+            ))
         }
     }
 
