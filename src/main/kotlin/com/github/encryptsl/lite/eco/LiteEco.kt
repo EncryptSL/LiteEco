@@ -1,6 +1,7 @@
 package com.github.encryptsl.lite.eco
 
 import com.github.encryptsl.lite.eco.api.ConfigAPI
+import com.github.encryptsl.lite.eco.api.MetricsCollector
 import com.github.encryptsl.lite.eco.api.PlayerAccount
 import com.github.encryptsl.lite.eco.api.UpdateNotifier
 import com.github.encryptsl.lite.eco.api.economy.Currency
@@ -27,7 +28,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import org.bstats.bukkit.Metrics
-import org.bstats.charts.SingleLineChart
 import org.bukkit.Bukkit
 import org.bukkit.plugin.PluginManager
 import org.bukkit.plugin.java.JavaPlugin
@@ -39,6 +39,7 @@ import org.incendo.cloud.paper.util.sender.Source
 import org.incendo.cloud.suggestion.Suggestion
 import java.io.File
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.system.measureTimeMillis
 
 
@@ -54,7 +55,7 @@ class LiteEco : JavaPlugin() {
 
     lateinit var bukkitDispatchers: BukkitDispatchers
 
-    private var countTransactions: LinkedHashMap<String, Int> = LinkedHashMap()
+    private val countTransactions = ConcurrentHashMap<String, Int>()
 
     val api: SuspendLiteEcoEconomyWrapper by lazy { SuspendLiteEcoEconomyWrapper() }
     val locale: Locales by lazy { Locales(this) }
@@ -117,7 +118,7 @@ class LiteEco : JavaPlugin() {
     }
 
     fun increaseTransactions(value: Int) {
-        countTransactions["transactions"] = countTransactions.getOrDefault("transactions", 0) + value
+        countTransactions["transactions"] = (countTransactions["transactions"] ?: 0) + value
     }
 
     private fun blockPlugins() {
@@ -131,9 +132,8 @@ class LiteEco : JavaPlugin() {
     private fun setupMetrics() {
         if (config.getBoolean("plugin.metrics", true)) {
             val metrics = Metrics(this, 15144)
-            metrics.addCustomChart(SingleLineChart("transactions") {
-                countTransactions["transactions"]
-            })
+            val collector = MetricsCollector(metrics, this, countTransactions)
+            collector.registerCharts()
         }
     }
 
