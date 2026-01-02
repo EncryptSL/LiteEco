@@ -1,6 +1,6 @@
 package com.github.encryptsl.lite.eco.api.interfaces
 
-import com.github.encryptsl.lite.eco.common.database.entity.User
+import com.github.encryptsl.lite.eco.common.database.entity.UserEntity
 import java.math.BigDecimal
 import java.util.*
 
@@ -19,7 +19,7 @@ interface LiteEconomyAPI {
      * @param currency currency name (default "dollars")
      * @return [Optional] containing the user if found, otherwise empty
      */
-    suspend fun getUserByUUID(uuid: UUID, currency: String = "dollars"): Optional<User>
+    suspend fun getUserByUUID(uuid: UUID, currency: String = "dollars"): Optional<UserEntity>
 
     /**
      * Creates or updates a player account.

@@ -1,7 +1,7 @@
 package com.github.encryptsl.lite.eco.api.economy
 
 import com.github.encryptsl.lite.eco.LiteEco
-import com.github.encryptsl.lite.eco.api.PlayerAccount
+import com.github.encryptsl.lite.eco.api.account.PlayerAccount
 import com.github.encryptsl.lite.eco.api.interfaces.LiteEconomyAPI
 import kotlinx.coroutines.runBlocking
 import java.math.BigDecimal

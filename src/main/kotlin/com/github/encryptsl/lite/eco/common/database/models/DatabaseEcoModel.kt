@@ -2,7 +2,7 @@ package com.github.encryptsl.lite.eco.common.database.models
 
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.interfaces.PlayerSQL
-import com.github.encryptsl.lite.eco.common.database.entity.User
+import com.github.encryptsl.lite.eco.common.database.entity.UserEntity
 import com.github.encryptsl.lite.eco.common.database.tables.Account
 import com.github.encryptsl.lite.eco.common.extensions.loggedTransaction
 import org.bukkit.Bukkit
@@ -47,12 +47,12 @@ class DatabaseEcoModel : PlayerSQL {
         }
     }
 
-    override fun getUserByUUID(uuid: UUID, currency: String): User? {
+    override fun getUserByUUID(uuid: UUID, currency: String): UserEntity? {
         return loggedTransaction {
             val table = Account(currency)
             table.select(table.uuid, table.username, table.money)
                 .where(table.uuid eq uuid).singleOrNull()?.let {
-                    User(it[table.username], it[table.uuid], it[table.money])
+                    UserEntity(it[table.username], it[table.uuid], it[table.money])
                 }
         }
     }
@@ -93,11 +93,11 @@ class DatabaseEcoModel : PlayerSQL {
         }
     }
 
-    override fun getTopBalance(currency: String): MutableMap<String, User> = loggedTransaction {
+    override fun getTopBalance(currency: String): MutableMap<String, UserEntity> = loggedTransaction {
         val table = Account(currency)
 
         table.selectAll().orderBy(table.money, SortOrder.DESC).associate {
-            it[table.username] to User(it[table.username], it[table.uuid], it[table.money])
+            it[table.username] to UserEntity(it[table.username], it[table.uuid], it[table.money])
         }.toMutableMap()
     }
 

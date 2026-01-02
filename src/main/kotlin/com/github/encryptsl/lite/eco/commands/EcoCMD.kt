@@ -12,7 +12,7 @@ import com.github.encryptsl.lite.eco.commands.parsers.LangParser
 import com.github.encryptsl.lite.eco.common.database.models.DatabaseEcoModel
 import com.github.encryptsl.lite.eco.common.manager.ExportManager
 import com.github.encryptsl.lite.eco.common.manager.ImportManager
-import com.github.encryptsl.lite.eco.common.manager.MonologManager
+import com.github.encryptsl.lite.eco.common.manager.monolog.MonologManager
 import com.github.encryptsl.lite.eco.common.manager.PurgeManager
 import com.github.encryptsl.lite.eco.common.manager.economy.admin.*
 import com.github.encryptsl.lite.eco.common.manager.importer.ImportEconomy
