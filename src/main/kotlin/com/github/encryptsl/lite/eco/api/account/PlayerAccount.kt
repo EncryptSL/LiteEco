@@ -1,16 +1,17 @@
-package com.github.encryptsl.lite.eco.api
+package com.github.encryptsl.lite.eco.api.account
 
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.interfaces.AccountAPI
 import com.github.encryptsl.lite.eco.common.database.models.DatabaseEcoModel
 import org.bukkit.Bukkit
 import java.math.BigDecimal
-import java.util.*
+import java.util.UUID
+import kotlin.jvm.java
 
 object PlayerAccount : AccountAPI {
 
     private val databaseEcoModel: DatabaseEcoModel by lazy { DatabaseEcoModel() }
-    internal val cache = mutableMapOf<UUID, MutableMap<String, BigDecimal>>()
+    internal val cache = mutableMapOf<UUID, CachedAccount>()
 
     override fun startJanitor(liteEco: LiteEco) {
         Bukkit.getScheduler().runTaskTimerAsynchronously(liteEco, Runnable {
@@ -27,27 +28,30 @@ object PlayerAccount : AccountAPI {
     }
 
     override fun cacheAccount(uuid: UUID, currency: String, value: BigDecimal) {
-        if (!isAccountCached(uuid, currency)) {
-            cache.computeIfAbsent(uuid) { mutableMapOf() } [currency] = value
-        } else {
-            cache[uuid]?.computeIfPresent(currency) { _, _ -> value }
-        }
+        val account = cache.getOrPut(uuid) { CachedAccount() }
+        account.balances[currency] = value
+        account.isSuccessfullyLoaded = true
     }
 
     override fun getBalance(uuid: UUID, currency: String): BigDecimal {
-        return cache[uuid]?.getOrDefault(currency, BigDecimal.ZERO) ?: BigDecimal.ZERO
+        return cache[uuid]?.balances?.getOrDefault(currency, BigDecimal.ZERO) ?: BigDecimal.ZERO
     }
 
     override fun syncAccount(uuid: UUID) {
         LiteEco.instance.logger.info("Attempting synchronization for UUID: $uuid")
-        val userBalances = cache[uuid] ?: run {
-            LiteEco.instance.logger.info("Cache for $uuid is empty, nothing to synchronize.")
+        val account = cache[uuid] ?: return
+
+        if (!account.isSuccessfullyLoaded) {
+            LiteEco.instance.logger.severe("Sync BLOCKED for $uuid: Data integrity risk (isSuccessfullyLoaded = false).")
             return
         }
+
         val failedCurrencies = mutableListOf<String>()
 
-        userBalances.forEach { (currency, amount) ->
+        account.balances.forEach { (currency, amount) ->
             try {
+                if (amount < BigDecimal.ZERO) return@forEach
+
                 databaseEcoModel.set(uuid, currency, amount)
                 LiteEco.instance.debugger.debug(PlayerAccount::class.java, "Sync OK: $uuid -> $currency ($amount)")
             } catch (e: Exception) {
@@ -59,22 +63,24 @@ object PlayerAccount : AccountAPI {
         if (failedCurrencies.isEmpty()) {
             cache.remove(uuid)
         } else {
-            userBalances.keys.retainAll(failedCurrencies.toSet())
-            if (userBalances.isEmpty()) {
-                cache.remove(uuid)
-            }
+            account.balances.keys.retainAll(failedCurrencies.toSet())
         }
     }
 
     override fun syncAccounts() {
         val uuids = cache.keys.toList()
         for (uuid in uuids) {
-            val data = cache[uuid] ?: continue
-            data.forEach { (currency, amount) ->
+            val account = cache[uuid] ?: continue
+
+            if (!account.isSuccessfullyLoaded) {
+                LiteEco.instance.logger.warning("Skipping shutdown sync for $uuid: Data integrity flag is FALSE.")
+                continue
+            }
+            account.balances.forEach { (currency, amount) ->
                 try {
                     databaseEcoModel.set(uuid, currency, amount)
-                } catch (_: Exception) {
-                    LiteEco.instance.logger.severe("CRITICAL LOSS: Could not save $uuid during shutdown!")
+                } catch (e: Exception) {
+                    LiteEco.instance.logger.severe("CRITICAL LOSS: Could not save $uuid ($currency) during shutdown! Error: ${e.message}")
                 }
             }
         }
@@ -88,7 +94,9 @@ object PlayerAccount : AccountAPI {
     }
 
     override fun isAccountCached(uuid: UUID, currency: String?): Boolean {
-       return cache.containsKey(uuid) && cache[uuid]?.containsKey(currency) == true
+        val account = cache[uuid] ?: return false
+        if (currency == null) return true
+        return account.balances.containsKey(currency)
     }
 
     override fun isPlayerOnline(uuid: UUID): Boolean {
