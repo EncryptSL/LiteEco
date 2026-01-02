@@ -2,7 +2,7 @@ package com.github.encryptsl.lite.eco
 
 import com.github.encryptsl.lite.eco.api.ConfigAPI
 import com.github.encryptsl.lite.eco.api.MetricsCollector
-import com.github.encryptsl.lite.eco.api.PlayerAccount
+import com.github.encryptsl.lite.eco.api.account.PlayerAccount
 import com.github.encryptsl.lite.eco.api.UpdateNotifier
 import com.github.encryptsl.lite.eco.api.economy.Currency
 import com.github.encryptsl.lite.eco.api.economy.SuspendLiteEcoEconomyWrapper
@@ -17,8 +17,7 @@ import com.github.encryptsl.lite.eco.common.database.DatabaseConnector
 import com.github.encryptsl.lite.eco.common.database.models.DatabaseEcoModel
 import com.github.encryptsl.lite.eco.common.database.models.DatabaseMonologModel
 import com.github.encryptsl.lite.eco.common.hook.HookManager
-import com.github.encryptsl.lite.eco.listeners.PlayerAsyncPreLoginListener
-import com.github.encryptsl.lite.eco.listeners.PlayerQuitListener
+import com.github.encryptsl.lite.eco.listeners.PlayerListeners
 import com.github.encryptsl.lite.eco.utils.BukkitDispatchers
 import com.github.encryptsl.lite.eco.utils.Debugger
 import com.github.encryptsl.lite.eco.utils.PlaceholderHelper
@@ -144,8 +143,7 @@ class LiteEco : JavaPlugin() {
 
     private fun registerListeners() {
         val listeners = arrayOf(
-            PlayerAsyncPreLoginListener(this),
-            PlayerQuitListener(this)
+            PlayerListeners(this),
         )
         val timeTaken = measureTimeMillis {
             for (listener in listeners) {
