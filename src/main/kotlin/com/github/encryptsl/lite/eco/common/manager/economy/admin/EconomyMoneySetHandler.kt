@@ -2,6 +2,7 @@ package com.github.encryptsl.lite.eco.common.manager.economy.admin
 
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.enums.TypeLogger
+import com.github.encryptsl.lite.eco.common.database.entity.TransactionContextEntity
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
@@ -9,11 +10,13 @@ import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import java.math.BigDecimal
 import kotlin.jvm.optionals.getOrNull
+import kotlin.time.ExperimentalTime
 
 class EconomyMoneySetHandler(
     private val liteEco: LiteEco
 ) {
 
+    @OptIn(ExperimentalTime::class)
     fun onAdminSetMoney(
         sender: CommandSender,
         target: OfflinePlayer,
@@ -31,7 +34,7 @@ class EconomyMoneySetHandler(
                 sender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist", Placeholder.parsed("account", target.name.toString())))
                 return@launch
             }
-            liteEco.loggerModel.logging(TypeLogger.SET, sender.name, target.name.toString(), currency, user.money, money)
+            liteEco.loggerModel.logging(TransactionContextEntity(TypeLogger.SET, sender.name, target.name.toString(), currency, user.money, money))
             liteEco.increaseTransactions(1)
             liteEco.api.set(target.uniqueId, currency, money)
 

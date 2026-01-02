@@ -20,7 +20,9 @@ class ComponentPaginator(
 
     private val paginationOptions = PaginationOptions().apply(options)
 
-    val maxPages get() = ceil(components.size.toDouble() / paginationOptions.itemsPerPage).toInt()
+    val maxPages get() = paginationOptions.manualMaxPages
+        ?: ceil(components.size.toDouble() / paginationOptions.itemsPerPage).toInt()
+
     fun currentPage() = paginationOptions.selectedPage
 
     fun isAboveMaxPage(page: Int) = page > maxPages
@@ -111,6 +113,7 @@ class ComponentPaginator(
     inner class PaginationOptions(
         var selectedPage: Int = 1,
         var itemsPerPage: Int = 10,
+        var manualMaxPages: Int? = null,
         var navigationFormat: String = "<gray><st>─━━━━━━─</st> <blue>[ <yellow><pagination><blue> ] <gray><st>─━━━━━━─</st>",
         var headerFormat: String = "<gray><st>─━━━━━━─</st> <blue>[ <yellow>LiteEco<blue> ] <gray><st>─━━━━━━─</st>"
     )

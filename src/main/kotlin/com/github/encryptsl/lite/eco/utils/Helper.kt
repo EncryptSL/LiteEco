@@ -2,11 +2,13 @@
 package com.github.encryptsl.lite.eco.utils
 
 import com.github.encryptsl.lite.eco.LiteEco
-import com.github.encryptsl.lite.eco.api.PlayerAccount
-import com.github.encryptsl.lite.eco.api.enums.TypeLogger
-import com.github.encryptsl.lite.eco.common.database.entity.User
+import com.github.encryptsl.lite.eco.api.account.PlayerAccount
+import com.github.encryptsl.lite.eco.common.database.entity.TransactionContextEntity
+import com.github.encryptsl.lite.eco.common.database.entity.UserEntity
 import com.github.encryptsl.lite.eco.common.database.models.DatabaseEcoModel
+import com.github.encryptsl.lite.eco.common.extensions.convertInstant
 import com.github.encryptsl.lite.eco.common.extensions.positionIndexed
+import com.github.encryptsl.lite.eco.common.manager.monolog.MonologPageResult
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
@@ -20,21 +22,14 @@ import kotlin.time.ExperimentalTime
 class Helper(private val liteEco: LiteEco) {
 
     @OptIn(ExperimentalTime::class)
-    suspend fun validateLog(parameter: String): List<Component> {
-        val log = liteEco.loggerModel.getLog()
-            .let { if (parameter != "all") it.filter { p -> p.target == parameter } else it }
+    suspend fun validateLog(parameter: String, page: Int): MonologPageResult {
+        val pageSize = 10
+        val (logs, totalPages) = liteEco.loggerModel.getLogPage(parameter, page, pageSize)
 
-        return log.map { el ->
-            liteEco.loggerModel.message("messages.monolog.formatting",
-                TypeLogger.valueOf(el.action),
-                el.sender,
-                el.target,
-                el.currency,
-                el.previousBalance,
-                el.newBalance,
-                el.timestamp
-            )
-        }
+        return MonologPageResult(
+            components = logs.map { it.toComponent("messages.monolog.formatting") },
+            totalPages = totalPages
+        )
     }
 
     fun getTopBalancesFormatted(currency: String): List<Component> {
@@ -48,7 +43,7 @@ class Helper(private val liteEco: LiteEco) {
         }
     }
 
-    fun getComponentBal(user: User, currency: String): TagResolver {
+    fun getComponentBal(user: UserEntity, currency: String): TagResolver {
         return TagResolver.resolver(
             Placeholder.parsed("target", user.userName),
             Placeholder.parsed("money", liteEco.currencyImpl.fullFormatting(user.money, currency)),
@@ -56,17 +51,36 @@ class Helper(private val liteEco: LiteEco) {
         )
     }
 
+    @OptIn(ExperimentalTime::class)
+    internal fun TransactionContextEntity.toComponent(translation: String): Component {
+        val locale = LiteEco.instance.locale
+        val formatter = LiteEco.instance.currencyImpl
+
+        return locale.translation(translation, TagResolver.resolver(
+            Placeholder.unparsed("action", type.name), // type je nyní Enum v entitě
+            Placeholder.unparsed("sender", sender),
+            Placeholder.unparsed("target", target),
+            Placeholder.unparsed("currency", currency),
+            Placeholder.unparsed("previous_balance", formatter.fullFormatting(previousBalance, currency)),
+            Placeholder.unparsed("new_balance", formatter.fullFormatting(newBalance, currency)),
+            Placeholder.unparsed("timestamp", convertInstant(timestamp))
+        ))
+    }
+
     internal fun inspectCache(sender: CommandSender, uuid: UUID) {
-        val userCache = PlayerAccount.cache[uuid]
+        val account = PlayerAccount.cache[uuid]
 
         sender.sendMessage("§8--- §bInspecting cache for: §f$uuid §8---")
 
-        if (userCache.isNullOrEmpty() || userCache.isEmpty()) {
+        if (account == null || account.balances.isEmpty()) {
             sender.sendMessage("§cCache is empty for this player.")
             return
         }
 
-        userCache.forEach { (currency, amount) ->
+        val statusColor = if (account.isSuccessfullyLoaded) "§aVALID (Loaded)" else "§cINVALID (Not Loaded)"
+        sender.sendMessage("§7Data Integrity: $statusColor")
+
+        account.balances.forEach { (currency, amount) ->
             sender.sendMessage("§7Currency: §e$currency §7| Amount: §a$amount")
         }
 

@@ -1,8 +1,7 @@
 package com.github.encryptsl.lite.eco.api.interfaces
 
 import com.github.encryptsl.lite.eco.api.enums.TypeLogger
-import com.github.encryptsl.lite.eco.common.database.entity.EconomyLog
-import java.math.BigDecimal
+import com.github.encryptsl.lite.eco.common.database.entity.TransactionContextEntity
 
 /**
  * Interface defining the contract for logging economic transactions.
@@ -15,33 +14,31 @@ interface TransactionLogger {
     /**
      * Asynchronously records a financial transaction log entry.
      *
-     * @param typeLogger The type of transaction that occurred (e.g., deposit, withdraw, set).
-     * @param sender The identifier of the entity initiating the transaction (maybe a player UUID or a system name).
-     * @param target The identifier of the entity whose balance was affected (e.g., a player UUID).
-     * @param currency The key/name of the currency involved in the transaction.
-     * @param previousBalance The account balance immediately before the transaction occurred.
-     * @param newBalance The account balance immediately after the transaction completed.
+     * @param ctx The [TransactionContextEntity] containing all details of the transaction,
+     * including [TypeLogger], parties involved, currency, and balance changes.
      */
     suspend fun logging(
-        typeLogger: TypeLogger,
-        sender: String,
-        target: String,
-        currency: String,
-        previousBalance: BigDecimal,
-        newBalance: BigDecimal
+        ctx: TransactionContextEntity
     )
 
     /**
      * Clears and permanently deletes all recorded transaction logs from the storage.
      *
-     * *Note: This operation is synchronous, implying a quick, non-blocking clean-up, or a blocking operation is acceptable.*
+     * **Warning:** This operation is irreversible and should be used with caution.
      */
     fun clearLogs()
 
+    suspend fun hasLogs(targetFilter: String?): Boolean
+
     /**
-     * Asynchronously retrieves all stored transaction logs.
+     * Asynchronously retrieves stored transaction logs, optionally filtered by a target identifier.
      *
-     * @return A list of [EconomyLog] objects representing the complete transaction history.
+     * @param targetFilter The identifier (e.g., player UUID) to filter logs by.
+     * If null or "all", retrieves logs for all entities.
+     * @return A list of [TransactionContextEntity] objects representing the transaction history,
+     * typically ordered from newest to oldest.
      */
-    suspend fun getLog(): List<EconomyLog>
+    suspend fun getLog(targetFilter: String? = null): List<TransactionContextEntity>
+
+    suspend fun getLogPage(targetFilter: String?, page: Int, pageSize: Int): Pair<List<TransactionContextEntity>, Int>
 }

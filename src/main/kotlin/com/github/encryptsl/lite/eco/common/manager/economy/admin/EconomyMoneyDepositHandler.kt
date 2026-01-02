@@ -2,6 +2,7 @@ package com.github.encryptsl.lite.eco.common.manager.economy.admin
 
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.enums.TypeLogger
+import com.github.encryptsl.lite.eco.common.database.entity.TransactionContextEntity
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
@@ -9,11 +10,13 @@ import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import java.math.BigDecimal
 import kotlin.jvm.optionals.getOrNull
+import kotlin.time.ExperimentalTime
 
 class EconomyMoneyDepositHandler(
     private val liteEco: LiteEco
 ) {
 
+    @OptIn(ExperimentalTime::class)
     fun onAdminDepositMoney(
         sender: CommandSender,
         target: OfflinePlayer,
@@ -40,7 +43,7 @@ class EconomyMoneyDepositHandler(
             }
 
             liteEco.increaseTransactions(1)
-            liteEco.loggerModel.logging(TypeLogger.DEPOSIT, sender.name, user.userName, currency, user.money, user.money.plus(money))
+            liteEco.loggerModel.logging(TransactionContextEntity(TypeLogger.DEPOSIT, sender.name, user.userName, currency, user.money, user.money.plus(money)))
             liteEco.api.deposit(target.uniqueId, currency, money)
 
             if (sender.name == target.name) {

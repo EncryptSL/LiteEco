@@ -1,4 +1,4 @@
-package com.github.encryptsl.lite.eco.common.manager
+package com.github.encryptsl.lite.eco.common.manager.monolog
 
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.ComponentPaginator
@@ -14,23 +14,28 @@ class MonologManager(
 
     fun displayMonolog(sender: CommandSender, parameter: String, page: Int) {
         liteEco.pluginScope.launch {
-            val log = helper.validateLog(parameter)
-            val pagination = ComponentPaginator(log) {
+            val result = helper.validateLog(parameter, page)
+
+            val pagination = ComponentPaginator(result.components) {
                 selectedPage = page
                 itemsPerPage = 10
+                manualMaxPages = result.totalPages
                 headerFormat = liteEco.locale.getMessage("messages.monolog.header")
                 navigationFormat = liteEco.locale.getMessage("messages.monolog.footer")
             }
 
-            if (pagination.isAboveMaxPage(page))
-                return@launch sender.sendMessage(liteEco.locale.translation("messages.error.maximum_page",
-                    Placeholder.parsed("max_page", pagination.maxPages.toString()))
+            if (page > result.totalPages || result.components.isEmpty()) {
+                sender.sendMessage(liteEco.locale.translation("messages.error.maximum_page",
+                    Placeholder.parsed("max_page", result.totalPages.toString()))
                 )
-            pagination.header("").let { sender.sendMessage(it) }
-            pagination.display().forEach {
-                sender.sendMessage(it)
+                return@launch
             }
-            pagination.navigationBar("eco monolog", parameter).let { sender.sendMessage(it) }
+
+            sender.sendMessage(pagination.header(""))
+
+            result.components.forEach { sender.sendMessage(it) }
+
+            sender.sendMessage(pagination.navigationBar("eco monolog", parameter))
         }
     }
 }

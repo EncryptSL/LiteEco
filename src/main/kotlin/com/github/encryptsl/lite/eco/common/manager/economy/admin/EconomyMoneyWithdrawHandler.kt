@@ -2,6 +2,7 @@ package com.github.encryptsl.lite.eco.common.manager.economy.admin
 
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.enums.TypeLogger
+import com.github.encryptsl.lite.eco.common.database.entity.TransactionContextEntity
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
@@ -9,11 +10,13 @@ import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import java.math.BigDecimal
 import kotlin.jvm.optionals.getOrNull
+import kotlin.time.ExperimentalTime
 
 class EconomyMoneyWithdrawHandler(
     private val liteEco: LiteEco
 ) {
 
+    @OptIn(ExperimentalTime::class)
     fun onAdminWithdrawMoney(
         sender: CommandSender,
         target: OfflinePlayer,
@@ -35,7 +38,7 @@ class EconomyMoneyWithdrawHandler(
                 return@launch
             }
 
-            liteEco.loggerModel.logging(TypeLogger.WITHDRAW, sender.name, target.name.toString(), currency, userOpt.money, userOpt.money.minus(money))
+            liteEco.loggerModel.logging(TransactionContextEntity(TypeLogger.WITHDRAW, sender.name, target.name.toString(), currency, userOpt.money, userOpt.money.minus(money)))
 
             liteEco.increaseTransactions(1)
             liteEco.api.withdraw(target.uniqueId, currency, money)

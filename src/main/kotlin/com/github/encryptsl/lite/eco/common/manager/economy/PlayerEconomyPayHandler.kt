@@ -2,17 +2,20 @@ package com.github.encryptsl.lite.eco.common.manager.economy
 
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.enums.TypeLogger
+import com.github.encryptsl.lite.eco.common.database.entity.TransactionContextEntity
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import java.math.BigDecimal
+import kotlin.time.ExperimentalTime
 
 class PlayerEconomyPayHandler(
     private val liteEco: LiteEco
 ) {
 
+    @OptIn(ExperimentalTime::class)
     fun onPlayerPay(
         sender: Player,
         target: OfflinePlayer,
@@ -30,8 +33,7 @@ class PlayerEconomyPayHandler(
                     ))
                     return@launch
                 }
-                liteEco.loggerModel.logging(TypeLogger.TRANSFER,
-                    sender.name, target.name.toString(), currency, user.money, user.money.plus(money)
+                liteEco.loggerModel.logging(TransactionContextEntity(TypeLogger.TRANSFER, sender.name, target.name.toString(), currency, user.money, user.money.plus(money))
                 )
                 liteEco.api.transfer(sender.uniqueId, target.uniqueId, currency, money)
 

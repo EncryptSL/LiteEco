@@ -3,6 +3,7 @@ package com.github.encryptsl.lite.eco.common.hook.vault.unlocked
 
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.enums.TypeLogger
+import com.github.encryptsl.lite.eco.common.database.entity.TransactionContextEntity
 import com.github.encryptsl.lite.eco.common.extensions.isApproachingZero
 import kotlinx.coroutines.runBlocking
 import net.milkbowl.vault2.economy.EconomyResponse
@@ -10,6 +11,7 @@ import org.bukkit.Bukkit
 import java.math.BigDecimal
 import java.util.*
 import kotlin.jvm.optionals.getOrNull
+import kotlin.time.ExperimentalTime
 
 class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaultUnlockedAPI() {
 
@@ -138,6 +140,7 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
         return withdraw(pluginName, accountID, worldName, liteEco.currencyImpl.defaultCurrency(), amount)
     }
 
+    @OptIn(ExperimentalTime::class)
     override fun withdraw(pluginName: String, accountID: UUID, worldName: String, currency: String, amount: BigDecimal): EconomyResponse {
         liteEco.debugger.debug(AdaptiveEconomyVaultUnlockedAPI::class.java, "$pluginName try withdraw from $accountID amount $amount ($currency)")
 
@@ -155,7 +158,7 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
 
                     val balanceAfter = balanceBefore.subtract(amount)
 
-                    liteEco.loggerModel.logging(TypeLogger.WITHDRAW, pluginName, username, currency, balanceBefore, balanceAfter)
+                    liteEco.loggerModel.logging(TransactionContextEntity(TypeLogger.WITHDRAW, pluginName, username, currency, balanceBefore, balanceAfter))
 
                     liteEco.debugger.debug(AdaptiveEconomyVaultUnlockedAPI::class.java, "$pluginName successfully withdraw $accountID. New balance: $balanceAfter")
                     EconomyResponse(amount, balanceAfter, EconomyResponse.ResponseType.SUCCESS, SUCCESS_WITHDRAW)
@@ -177,6 +180,7 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
         return deposit(pluginName, accountID, worldName, liteEco.currencyImpl.defaultCurrency(), amount)
     }
 
+    @OptIn(ExperimentalTime::class)
     override fun deposit(pluginName: String, accountID: UUID, worldName: String, currency: String, amount: BigDecimal): EconomyResponse {
         liteEco.debugger.debug(AdaptiveEconomyVaultUnlockedAPI::class.java, "$pluginName try deposit to $accountID amount $amount ($currency)")
 
@@ -198,7 +202,7 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
 
                     val balanceAfter = balanceBefore.add(amount)
 
-                    liteEco.loggerModel.logging(TypeLogger.DEPOSIT, pluginName, username, currency, balanceBefore, balanceAfter)
+                    liteEco.loggerModel.logging(TransactionContextEntity(TypeLogger.DEPOSIT, pluginName, username, currency, balanceBefore, balanceAfter))
 
                     liteEco.debugger.debug(AdaptiveEconomyVaultUnlockedAPI::class.java, "$pluginName successfully deposit to $accountID. New balance: $balanceAfter")
                     EconomyResponse(amount, balanceAfter, EconomyResponse.ResponseType.SUCCESS, SUCCESS_DEPOSIT)
@@ -220,6 +224,7 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
         return set(pluginName, accountID, worldName, liteEco.currencyImpl.defaultCurrency(), amount)
     }
 
+    @OptIn(ExperimentalTime::class)
     override fun set(pluginName: String, accountID: UUID, worldName: String, currency: String, amount: BigDecimal): EconomyResponse {
         liteEco.debugger.debug(AdaptiveEconomyVaultUnlockedAPI::class.java, "$pluginName try set $accountID amount $amount ($currency)")
 
@@ -235,7 +240,7 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
 
                     liteEco.api.set(accountID, currency, amount)
 
-                    liteEco.loggerModel.logging(TypeLogger.SET, pluginName, username, currency, balanceBefore, amount)
+                    liteEco.loggerModel.logging(TransactionContextEntity(TypeLogger.SET, pluginName, username, currency, balanceBefore, amount))
 
                     liteEco.debugger.debug(AdaptiveEconomyVaultUnlockedAPI::class.java, "$pluginName successfully set $accountID balance to $amount")
                     EconomyResponse(amount, amount, EconomyResponse.ResponseType.SUCCESS, SUCCESS_SET)
