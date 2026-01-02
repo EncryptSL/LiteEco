@@ -1,8 +1,8 @@
 package com.github.encryptsl.lite.eco.api.economy
 
 import com.github.encryptsl.lite.eco.LiteEco
-import com.github.encryptsl.lite.eco.api.PlayerAccount
-import com.github.encryptsl.lite.eco.common.database.entity.User
+import com.github.encryptsl.lite.eco.api.account.PlayerAccount
+import com.github.encryptsl.lite.eco.common.database.entity.UserEntity
 import com.github.encryptsl.lite.eco.common.extensions.io
 import org.bukkit.Bukkit
 import java.math.BigDecimal
@@ -10,12 +10,12 @@ import java.util.*
 
 class SuspendLiteEcoEconomyWrapper : ModernLiteEcoEconomyImpl() {
 
-    override suspend fun getUserByUUID(uuid: UUID, currency: String): Optional<User> = io {
+    override suspend fun getUserByUUID(uuid: UUID, currency: String): Optional<UserEntity> = io {
         try {
             if (PlayerAccount.isPlayerOnline(uuid) || PlayerAccount.isAccountCached(uuid, currency)) {
                 val offlinePlayer = Bukkit.getOfflinePlayer(uuid)
                 val name = offlinePlayer.name ?: "Unknown"
-                Optional.of(User(name, uuid, PlayerAccount.getBalance(uuid, currency)))
+                Optional.of(UserEntity(name, uuid, PlayerAccount.getBalance(uuid, currency)))
             } else {
                 Optional.ofNullable(LiteEco.instance.databaseEcoModel.getUserByUUID(uuid, currency))
             }
