@@ -1,6 +1,6 @@
 package com.github.encryptsl.lite.eco.api.interfaces
 
-import com.github.encryptsl.lite.eco.common.database.entity.User
+import com.github.encryptsl.lite.eco.common.database.entity.UserEntity
 import java.math.BigDecimal
 import java.util.*
 
@@ -35,13 +35,13 @@ interface PlayerSQL {
     fun updatePlayerName(uuid: UUID, username: String, currency: String)
 
     /**
-     * Retrieves user data (a [User] object) by the player's UUID and currency.
+     * Retrieves user data (a [UserEntity] object) by the player's UUID and currency.
      *
      * @param uuid The unique identifier (UUID) of the player.
      * @param currency The key/name of the currency the account belongs to.
-     * @return The [User] object containing player data, or `null` if the account does not exist.
+     * @return The [UserEntity] object containing player data, or `null` if the account does not exist.
      */
-    fun getUserByUUID(uuid: UUID, currency: String): User?
+    fun getUserByUUID(uuid: UUID, currency: String): UserEntity?
 
     /**
      * Retrieves the current monetary balance of a player.
@@ -74,9 +74,9 @@ interface PlayerSQL {
      *
      * @param currency The key/name of the currency to check the balance for.
      * @return A mutable map where the key is the player's name ([String])
-     * and the value is the [User] object.
+     * and the value is the [UserEntity] object.
      */
-    fun getTopBalance(currency: String): MutableMap<String, User>
+    fun getTopBalance(currency: String): MutableMap<String, UserEntity>
 
     /**
      * Retrieves a map of UUIDs and names for all players who have an account in the given currency.
