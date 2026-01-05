@@ -1,8 +1,9 @@
-val generatePaperLibrariesYaml by tasks.registering {
+tasks.register("generatePaperLibrariesYaml") {
     group = "build setup"
     description = "Generates paper-libraries.yml from all declared dependencies"
 
-    val outputFile = file("src/main/resources/paper-libraries.yml")
+    val outputFile = project.layout.projectDirectory.file("src/main/resources/paper-libraries.yml").asFile
+    val compileClasspath = project.configurations.named("compileClasspath")
 
     val allowedDependencies = setOf(
         "com.zaxxer:HikariCP",
@@ -26,22 +27,16 @@ val generatePaperLibrariesYaml by tasks.registering {
         "org.incendo:cloud-paper"
     )
 
-    doLast {
-        val includedScopes = listOf("compileOnly", "implementation", "api", "runtimeOnly")
+    inputs.files(compileClasspath).withPropertyName("compileClasspath")
+    outputs.file(outputFile).withPropertyName("outputFile")
 
-        val dependencies = configurations
-            .matching { it.name in includedScopes }
-            .flatMap { config ->
-                config.dependencies
-            }
-            .filterIsInstance<ModuleDependency>()
-            .mapNotNull {
-                val group = it.group ?: return@mapNotNull null
-                val name = it.name
-                val version = it.version ?: return@mapNotNull null
-                val ga = "$group:$name"
-                if (ga in allowedDependencies) "$group:$name:$version" else null
-            }
+    doLast {
+        val configuration = compileClasspath.get()
+
+        val dependencies = configuration.resolvedConfiguration.lenientConfiguration.allModuleDependencies
+            .map { it.module.id }
+            .filter { id -> "${id.group}:${id.name}" in allowedDependencies }
+            .map { id -> "${id.group}:${id.name}:${id.version}" }
             .distinct()
             .sorted()
 
@@ -52,7 +47,10 @@ val generatePaperLibrariesYaml by tasks.registering {
             }
         }
 
-        outputFile.parentFile.mkdirs()
+        if (!outputFile.parentFile.exists()) {
+            outputFile.parentFile.mkdirs()
+        }
+
         outputFile.writeText(content)
         println("✅ paper-libraries.yml generated with ${dependencies.size} libraries")
     }
