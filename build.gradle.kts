@@ -4,9 +4,9 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 apply(from = "generatePaperLibrariesYaml.gradle.kts")
 
 plugins {
-    kotlin("jvm") version "2.2.21"
-    id("com.gradleup.shadow") version "9.2.2"
-    id("io.papermc.paperweight.userdev") version "2.0.0-beta.19"
+    kotlin("jvm") version "2.3.0"
+    alias(libs.plugins.gradleup.shadow)
+    alias(libs.plugins.paperweight)
 }
 
 group = "com.github.encryptsl"
@@ -48,63 +48,43 @@ dependencies {
 
     // Databases & migrations
     compileOnly(libs.hikaricp)
-    compileOnly(libs.exposed.core)
-    compileOnly(libs.exposed.jdbc)
-    compileOnly(libs.exposed.kotlin.datetime)
-    compileOnly(libs.mariadb)
-    compileOnly(libs.postqresql)
-    compileOnly(libs.sqlite)
+    compileOnly(libs.bundles.exposed)
+    compileOnly(libs.bundles.database.drivers)
 
     // ⚠️ Flyway
-    compileOnly(libs.flyway.core)
-    compileOnly(libs.flyway.mysql) // pokud používáš MySQL/MariaDB
+    compileOnly(libs.bundles.flyway)
 
     // Kotlin
-    compileOnly(libs.kotlin.reflection)
-    compileOnly(libs.kotlin.stdlib.jdk8)
+    compileOnly(libs.bundles.kotlin)
 
     // Cloud Command Framework
-    compileOnly(libs.cloud.annotations) {
-        exclude("org.incendo", "cloud-core")
-    }
-    compileOnly(libs.cloud.extras) {
-        exclude("org.incendo", "cloud-core")
+    compileOnly(libs.bundles.cloud) {
         exclude("net.kyori", "adventure-text-api")
         exclude("net.kyori", "adventure-text-minimessage")
         exclude("net.kyori", "adventure-text-serializer-plain")
     }
-    compileOnly(libs.cloud.kotlin)
-    compileOnly(libs.cloud.paper)
 
     // Misc
     compileOnly(libs.commons.csv)
     compileOnly(libs.config.updater)
-    compileOnly(libs.ktor.client.core)
+    compileOnly(libs.ktor.client.core) {
+        exclude("org.jetbrains.kotlinx", "kotlinx-io-core")
+    }
 
     // Economy plugins
-    compileOnly(libs.bettereconomy)
-    compileOnly(libs.scruffyeconomy)
-    compileOnly(libs.craftconomy)
-    compileOnly(libs.simpleeconomy)
-    compileOnly(libs.theosiseconomy)
+    compileOnly(libs.bundles.economy.plugins)
 
     // Implementations
     implementation(libs.bstats)
     implementation(libs.miniplaceholders)
-    implementation(libs.ktor.client.content.negotiation)
-    implementation(libs.ktor.client.java)
-    implementation(libs.ktor.serialization.gson)
+    implementation(libs.bundles.ktor)
 
 
     // Test
     testImplementation(libs.junit.jupiter)
-    testImplementation(libs.exposed.core)
-    testImplementation(libs.exposed.jdbc)
-    testImplementation(libs.exposed.kotlin.datetime)
-    testImplementation(libs.exposed.migration)
+    testImplementation(libs.bundles.exposed)
     testImplementation(libs.hikaricp)
-    testImplementation(libs.mariadb)
-    testImplementation(libs.sqlite)
+    testImplementation(libs.bundles.database.drivers)
 
     testRuntimeOnly(libs.junit.launcher)
     testImplementation(libs.flyway.core.test)

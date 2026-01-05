@@ -1,5 +1,5 @@
 [versions]
-kotlin = "2.2.21"
+kotlin = "2.3.0"
 exposed = "1.0.0-rc-4"
 cloud = "2.0.0"
 flyway = "11.20.0"
@@ -21,6 +21,10 @@ scruffyeconomy = "2.0"
 craftconomy = "3.3.3-SNAPSHOT"
 simpleeconomy = "2.1"
 theosiseconomy = "1.45"
+
+[plugins]
+gradleup-shadow = { id = "com.gradleup.shadow", version = "9.2.2" }
+paperweight = { id = "io.papermc.paperweight.userdev", version = "2.0.0-beta.19" }
 
 [libraries]
 kotlin-stdlib-jdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
@@ -66,3 +70,12 @@ junit-launcher = { module = "org.junit.platform:junit-platform-launcher" }
 sqlite = { module = "org.xerial:sqlite-jdbc", version.ref = "sqlite" }
 mariadb = { module = "org.mariadb.jdbc:mariadb-java-client", version.ref = "mariadb" }
 postqresql = { module = "org.postgresql:postgresql", version.ref = "postqres" }
+
+[bundles]
+kotlin = ["kotlin-reflection", "kotlin-stdlib-jdk8"]
+exposed = ["exposed-core", "exposed-jdbc", "exposed-kotlin-datetime", "exposed-migration"]
+flyway = ["flyway-core", "flyway-mysql"]
+ktor = ["ktor-client-content-negotiation", "ktor-client-java", "ktor-serialization-gson"]
+cloud = ["cloud-annotations", "cloud-paper", "cloud-extras", "cloud-kotlin"]
+database-drivers = ["sqlite", "mariadb", "postqresql"]
+economy-plugins = ["bettereconomy", "scruffyeconomy", "craftconomy", "simpleeconomy", "theosiseconomy"]
