@@ -1,65 +1,46 @@
 package com.github.encryptsl.lite.eco.api.migrator
 
 import com.github.encryptsl.lite.eco.api.migrator.entity.PlayerBalances
+import com.github.encryptsl.lite.eco.api.migrator.interfaces.Export
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.bukkit.plugin.Plugin
-import java.io.BufferedWriter
 import java.io.File
-import java.io.FileWriter
-import java.io.IOException
 
-class SQLFileExporter(private val plugin: Plugin, private val fileName: String, private val currency: String) : Export() {
+class SQLFileExporter(
+    private val plugin: Plugin,
+    private val fileName: String,
+    private val currency: String,
+    private val dialect: Export.SQLDialect,
+) : Export {
 
-    suspend fun exportToSQLFile(balances: List<PlayerBalances.PlayerBalance>) : Boolean {
+    override suspend fun export(balances: List<PlayerBalances.PlayerBalance>): Boolean = withContext(Dispatchers.IO) {
         val file = File("${plugin.dataFolder}/migration/", "${fileName}_${currency}_${timestamp}.sql")
+        val tableName = "lite_eco_$currency"
 
-        return withContext(Dispatchers.IO) {
-            try {
-                file.parentFile.mkdirs()
+        if (balances.isEmpty()) return@withContext false
 
-                val insertStatement = balances.joinToString {
-                    "\n(${it.id}, '${it.username}', 0x${it.uuid.toString().replace("-", "")}, ${it.money})"
+        try {
+            file.parentFile.mkdirs()
+            file.bufferedWriter().use { writer ->
+                if (dialect == Export.SQLDialect.MARIADB) {
+                    writer.write("DROP TABLE IF EXISTS $tableName;\n")
                 }
+                writer.write("CREATE TABLE IF NOT EXISTS $tableName (id INT PRIMARY KEY, username VARCHAR(36), uuid BINARY(16), money DECIMAL(18,9));\n")
 
-                BufferedWriter(FileWriter(file)).use { writer ->
-                    writer.write("DROP TABLE IF EXISTS lite_eco_$currency;\n")
-                    writer.write("CREATE TABLE lite_eco_$currency (id INT(11), username VARCHAR(36), uuid BINARY(16), money DECIMAL(18,9));")
-                    writer.write("\nINSERT INTO lite_eco_$currency (id, username, uuid, money) VALUES $insertStatement;")
-                    writer.write("\nALTER TABLE `lite_eco_$currency` ADD PRIMARY KEY(`id`);")
-                    writer.flush()
-                    writer.close()
-                }
-                true
-            } catch (e : IOException) {
-                plugin.logger.severe("Error while migrating to SQL file: ${e.message}")
-                e.printStackTrace()
-                false
-            }
-        }
-
-    }
-
-    suspend fun exportToSQLFileLite(balances: List<PlayerBalances.PlayerBalance>) : Boolean {
-        val file = File("${plugin.dataFolder}/migration/", "${fileName}_${currency}_${timestamp}.sql")
-        return withContext(Dispatchers.IO) {
-            try {
-                file.parentFile.mkdirs()
-                BufferedWriter(FileWriter(file)).use { writer ->
-                    writer.write("CREATE TABLE lite_eco_$currency (id INT(11), username VARCHAR(36), uuid BINARY(16), money DECIMAL(18,9));")
-                    val insertStatements = balances.joinToString {
-                        "\n(${it.id}, '${it.username}', X'${it.uuid.toString().replace("-", "")}', ${it.money})"
+                balances.chunked(500).forEach { batch ->
+                    val values = batch.joinToString(",\n") {
+                        val formattedUUID = dialect.formatHex(it.uuid.toString())
+                        val safeName = it.username?.replace("'", "''") ?: "Unknown"
+                        "(${it.id}, '$safeName', $formattedUUID, ${it.money.toPlainString()})"
                     }
-                    writer.write("INSERT INTO lite_eco_$currency (id, username, uuid, money) VALUES $insertStatements;")
-                    writer.flush()
-                    writer.close()
+                    writer.write("INSERT INTO $tableName (id, username, uuid, money) VALUES $values;\n")
                 }
-                true
-            } catch (e : IOException) {
-                plugin.logger.severe("Error while migrating to SQL file: ${e.message}")
-                e.printStackTrace()
-                false
             }
+            true
+        } catch (e: Exception) {
+            plugin.logger.severe("SQL Export failed: ${e.message}")
+            false
         }
     }
 }
