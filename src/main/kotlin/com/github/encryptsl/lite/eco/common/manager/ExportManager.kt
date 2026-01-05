@@ -19,7 +19,6 @@ import kotlin.system.measureTimeMillis
 class ExportManager(
     private val liteEco: LiteEco
 ) {
-    private val legacyDatabaseModel by lazy { LegacyDatabaseEcoModel(liteEco) }
 
     fun export(sender: CommandSender, exportKeys: ExportKeys, currency: String) {
         liteEco.pluginScope.launch {
