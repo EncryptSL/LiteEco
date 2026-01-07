@@ -364,7 +364,9 @@ class EcoCMD(
                     val sender: CommandSender = ctx.sender().source()
                     val economy: String = ctx.get("economy")
                     val currency: String = ctx.get("currency")
-                    importManager.importEconomy(sender, economy, currency)
+                    liteEco.pluginScope.launch {
+                        importManager.importEconomy(sender, economy, currency)
+                    }
                 })
             val configSubCommand = commandBuilder.literal("config", "c")
 
