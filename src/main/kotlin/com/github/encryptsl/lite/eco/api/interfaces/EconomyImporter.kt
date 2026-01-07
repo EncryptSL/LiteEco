@@ -28,5 +28,5 @@ interface EconomyImporter {
      * @param offlinePlayers An array of all [OfflinePlayer]s whose data should be checked and imported.
      * @return An [EconomyImportResults] object detailing the outcome of the import operation.
      */
-    fun import(currency: String, liteEco: LiteEco, offlinePlayers: Array<OfflinePlayer>): EconomyImportResults
+    suspend fun import(currency: String, liteEco: LiteEco, offlinePlayers: Array<OfflinePlayer>): EconomyImportResults
 }
