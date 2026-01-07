@@ -2,14 +2,12 @@ package com.github.encryptsl.lite.eco.common.manager.importer.economies
 
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.interfaces.EconomyImporter
-import com.github.encryptsl.lite.eco.common.hook.economy.scruffyboy13.ScruffyboyEconomyHook
 import com.github.encryptsl.lite.eco.common.hook.economy.simpleeconomy.SimpleEconomyHook
 import com.github.encryptsl.lite.eco.common.manager.importer.EconomyImportResults
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.runBlocking
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import java.math.BigDecimal
@@ -22,7 +20,7 @@ class SimpleEconomyImporter : EconomyImporter {
     override suspend fun import(
         currency: String,
         liteEco: LiteEco,
-        offlinePlayers: Array<OfflinePlayer> // V tomto případě nevyužito, jdeme přímo přes getAccounts()
+        offlinePlayers: Array<OfflinePlayer>
     ): EconomyImportResults = coroutineScope {
         var converted = 0
         var totalBalances = BigDecimal.ZERO
