@@ -27,6 +27,7 @@ repositories {
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
     maven("https://repo.codemc.io/repository/maven-public/")
     maven("https://repo.codemc.io/repository/creatorfromhell/")
+    maven("https://repo.rosewooddev.io/repository/public/")
 }
 
 kotlin {
