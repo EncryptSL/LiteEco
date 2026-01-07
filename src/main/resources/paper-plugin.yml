@@ -36,6 +36,9 @@ dependencies:
     CraftConomy3:
       required: false
       join-classpath: true
+    PlayerPoints:
+      required: false
+      join-classpath: true
 
 
 description: ${description}
