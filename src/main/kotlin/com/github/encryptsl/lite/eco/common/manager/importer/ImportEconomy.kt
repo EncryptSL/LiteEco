@@ -12,6 +12,7 @@ class ImportEconomy(private val liteEco: LiteEco) {
 
     init {
         registerImporter(EssentialsXImporter())
+        registerImporter(PlayerPointsImporter())
         registerImporter(BetterEconomyImporter())
         registerImporter(ScruffyBoyImporter())
         registerImporter(CraftConomy3Importer())
@@ -23,7 +24,7 @@ class ImportEconomy(private val liteEco: LiteEco) {
         importers[importer.name] = importer
     }
 
-    fun import(pluginName: String, currency: String): EconomyImportResults {
+    suspend fun import(pluginName: String, currency: String): EconomyImportResults {
         val importer = importers[pluginName] ?: throw IllegalArgumentException("Importer $pluginName not found")
         return importer.import(currency, liteEco, offlinePlayers)
     }

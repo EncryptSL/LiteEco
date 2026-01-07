@@ -11,7 +11,7 @@ class ImportManager(
     private val importEconomy: ImportEconomy
 ) {
 
-    fun importEconomy(sender: CommandSender, economyName: String, currency: String) {
+    suspend fun importEconomy(sender: CommandSender, economyName: String, currency: String) {
         val (converted, balances) = try {
             importEconomy.import(economyName, currency)
         } catch (_: IllegalArgumentException) {
