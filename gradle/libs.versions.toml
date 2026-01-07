@@ -21,6 +21,7 @@ scruffyeconomy = "2.0"
 craftconomy = "3.3.3-SNAPSHOT"
 simpleeconomy = "2.1"
 theosiseconomy = "1.45"
+playerpoints = "3.3.3"
 
 [plugins]
 gradleup-shadow = { id = "com.gradleup.shadow", version = "9.2.2" }
@@ -60,6 +61,7 @@ scruffyeconomy = { module = "me.scruffyboy13:Economy", version.ref = "scruffyeco
 craftconomy = { module = "com.greatmancode:Craftconomy3", version.ref = "craftconomy" }
 simpleeconomy = { module = "it.alzy.simpleeconomy:SimpleEconomy", version.ref="simpleeconomy" }
 theosiseconomy = { module = "me.Short.TheosisEconomy:TheosisEconomy" , version.ref = "theosiseconomy" }
+playerpoints = { module = "org.black_ixx:playerpoints", version.ref = "playerpoints" }
 
 bstats = { module = "org.bstats:bstats-bukkit", version.ref = "bstats" }
 miniplaceholders = { module = "io.github.miniplaceholders:miniplaceholders-kotlin-ext", version.ref = "miniplaceholders" }
@@ -78,4 +80,4 @@ flyway = ["flyway-core", "flyway-mysql"]
 ktor = ["ktor-client-content-negotiation", "ktor-client-java", "ktor-serialization-gson"]
 cloud = ["cloud-annotations", "cloud-paper", "cloud-extras", "cloud-kotlin"]
 database-drivers = ["sqlite", "mariadb", "postqresql"]
-economy-plugins = ["bettereconomy", "scruffyeconomy", "craftconomy", "simpleeconomy", "theosiseconomy"]
+economy-plugins = ["bettereconomy", "scruffyeconomy", "craftconomy", "simpleeconomy", "theosiseconomy", "playerpoints"]
