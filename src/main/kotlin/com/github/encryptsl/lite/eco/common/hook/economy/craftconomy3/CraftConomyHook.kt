@@ -12,7 +12,8 @@ class CraftConomyHook(
     PLUGIN_NAME,
     "You can now export economy from plugin CraftConomy3 to LiteEco with /eco database import CraftConomy3 <your_currency>"
 ) {
-    private var economyHandler: AccountManager? = null
+    private val economyHandler: AccountManager?
+        get() = if (isCraftEconomyPresent()) Common.getInstance().accountManager else null
 
     companion object {
         const val PLUGIN_NAME = "CraftConomy3"
@@ -26,17 +27,18 @@ class CraftConomyHook(
     }
 
     override fun register() {
-        if (isCraftEconomyPresent()) {
-            registered = true
-        }
+        registered = (economyHandler != null)
     }
 
     override fun unregister() {}
 
-    fun getBalance(name: String, currency: String = "Dollar"): Double {
-        return if (isCraftEconomyPresent()) {
-            economyHandler = Common.getInstance().accountManager
-            economyHandler?.getAccount(name, false)?.getBalance(null, currency) ?: 0.00
-        } else 0.00
+    // Still needs more testing, because for some reason balance can't be imported !
+    fun getBalance(name: String, currency: String = "dollar"): Double {
+        return try {
+            economyHandler?.getAccount(name, false)?.getBalance(null, currency) ?: 0.0
+        } catch (e: Exception) {
+            liteEco.componentLogger.warn("Failed to get $PLUGIN_NAME balance for $name: ${e.message}")
+            0.0
+        }
     }
 }
