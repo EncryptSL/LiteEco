@@ -34,7 +34,7 @@ class ConfigAPI(private val liteEco: LiteEco) : ConfigAPIProvider {
         try {
             liteEco.saveResource(configName, replace)
         } catch (e : Exception) {
-            liteEco.logger.severe(e.message ?: e.localizedMessage)
+            liteEco.logger.error(e.message ?: e.localizedMessage)
         }
     }
 }

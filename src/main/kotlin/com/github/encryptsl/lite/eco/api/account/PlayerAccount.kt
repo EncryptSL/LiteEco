@@ -42,7 +42,7 @@ object PlayerAccount : AccountAPI {
         val account = cache[uuid] ?: return
 
         if (!account.isSuccessfullyLoaded) {
-            LiteEco.instance.logger.severe("Sync BLOCKED for $uuid: Data integrity risk (isSuccessfullyLoaded = false).")
+            LiteEco.instance.logger.error("Sync BLOCKED for $uuid: Data integrity risk (isSuccessfullyLoaded = false).")
             return
         }
 
@@ -56,7 +56,7 @@ object PlayerAccount : AccountAPI {
                 LiteEco.instance.debugger.debug(PlayerAccount::class.java, "Sync OK: $uuid -> $currency ($amount)")
             } catch (e: Exception) {
                 failedCurrencies.add(currency)
-                LiteEco.instance.logger.severe("Sync FAIL: $uuid -> $currency. Data preserved in cache for next cycle. Error: ${e.message}")
+                LiteEco.instance.logger.error("Sync FAIL: $uuid -> $currency. Data preserved in cache for next cycle. Error: ${e.message}")
             }
         }
 
@@ -73,14 +73,14 @@ object PlayerAccount : AccountAPI {
             val account = cache[uuid] ?: continue
 
             if (!account.isSuccessfullyLoaded) {
-                LiteEco.instance.logger.warning("Skipping shutdown sync for $uuid: Data integrity flag is FALSE.")
+                LiteEco.instance.logger.warn("Skipping shutdown sync for $uuid: Data integrity flag is FALSE.")
                 continue
             }
             account.balances.forEach { (currency, amount) ->
                 try {
                     databaseEcoModel.set(uuid, currency, amount)
                 } catch (e: Exception) {
-                    LiteEco.instance.logger.severe("CRITICAL LOSS: Could not save $uuid ($currency) during shutdown! Error: ${e.message}")
+                    LiteEco.instance.logger.error("CRITICAL LOSS: Could not save $uuid ($currency) during shutdown! Error: ${e.message}")
                 }
             }
         }

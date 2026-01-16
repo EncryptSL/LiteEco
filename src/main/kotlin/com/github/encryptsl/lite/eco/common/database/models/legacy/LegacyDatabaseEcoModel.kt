@@ -26,7 +26,7 @@ class LegacyDatabaseEcoModel(
                     )
                 }
             } else {
-                liteEco.logger.warning("Legacy table does not exist, skipping migration.")
+                liteEco.logger.error("Legacy table does not exist, skipping migration.")
             }
         }
         return playersBalances

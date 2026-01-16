@@ -20,7 +20,7 @@ class SuspendLiteEcoEconomyWrapper : ModernLiteEcoEconomyImpl() {
                 Optional.ofNullable(LiteEco.instance.databaseEcoModel.getUserByUUID(uuid, currency))
             }
         } catch (e: Exception) {
-            LiteEco.instance.logger.severe("Error in getUserByUUID for $uuid: ${e.message}")
+            LiteEco.instance.logger.error("Error in getUserByUUID for $uuid: ${e.message}")
             Optional.empty()
         }
     }

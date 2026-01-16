@@ -166,7 +166,7 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
                     EconomyResponse(amount, balance(pluginName, accountID, worldName, currency), EconomyResponse.ResponseType.FAILURE, FAIL_WITHDRAW)
                 }
             } catch (e: Exception) {
-                liteEco.logger.severe("VaultUnlocked withdraw error: ${e.message}")
+                liteEco.logger.error("VaultUnlocked withdraw error: ${e.message}")
                 EconomyResponse(BigDecimal.ZERO, balance(pluginName, accountID, worldName, currency), EconomyResponse.ResponseType.FAILURE, FAIL_WITHDRAW)
             }
         }
@@ -210,7 +210,7 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
                     EconomyResponse(amount, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, FAIL_DEPOSIT)
                 }
             } catch (e: Exception) {
-                liteEco.logger.severe("VaultUnlocked deposit error: ${e.message}")
+                liteEco.logger.error("VaultUnlocked deposit error: ${e.message}")
                 EconomyResponse(BigDecimal.ZERO, balance(pluginName, accountID, worldName, currency), EconomyResponse.ResponseType.FAILURE, FAIL_DEPOSIT)
             }
         }
@@ -248,7 +248,7 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
                     EconomyResponse(amount, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, FAIL_SET)
                 }
             } catch (e: Exception) {
-                liteEco.logger.severe("VaultUnlocked set error: ${e.message}")
+                liteEco.logger.error("VaultUnlocked set error: ${e.message}")
                 EconomyResponse(BigDecimal.ZERO, balance(pluginName, accountID, worldName, currency), EconomyResponse.ResponseType.FAILURE, FAIL_SET)
             }
         }

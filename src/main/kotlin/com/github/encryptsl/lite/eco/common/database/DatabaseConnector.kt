@@ -26,7 +26,7 @@ class DatabaseConnector(
             initConnect(driver, jdbcUrl, username, password)
             liteEco.logger.info("✅ Database connection established successfully.")
         } catch (e: Exception) {
-            liteEco.logger.severe("❌ Database failed to initialize: ${e.message}")
+            liteEco.logger.error("❌ Database failed to initialize: ${e.message}")
             liteEco.pluginManager.disablePlugin(liteEco)
         }
     }
@@ -64,7 +64,7 @@ class DatabaseConnector(
                 SchemaUtils.create(*tables, MonologTable)
             }
         } catch (e: Exception) {
-            liteEco.logger.severe("Database initialization failed: ${e.message}")
+            liteEco.logger.error("Database initialization failed: ${e.message}")
         }
     }
 
@@ -73,7 +73,7 @@ class DatabaseConnector(
             hikari?.close()
             liteEco.logger.info("✅ Database connection closed cleanly.")
         } catch (e: Exception) {
-            liteEco.logger.warning("⚠️ Failed to close database connection: ${e.message}")
+            liteEco.logger.error("⚠️ Failed to close database connection: ${e.message}")
         } finally {
             hikari = null
         }

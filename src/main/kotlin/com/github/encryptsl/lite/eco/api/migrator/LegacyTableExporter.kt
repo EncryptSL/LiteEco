@@ -38,7 +38,7 @@ class LegacyTableExporter(
             }
             true
         } catch (e: Exception) {
-            liteEco.logger.severe("Legacy Table Export failed: ${e.message}")
+            liteEco.logger.error("Legacy Table Export failed: ${e.message}")
             false
         }
     }

@@ -43,7 +43,7 @@ class PlayerListeners(
         }
 
         if (event.reason == PlayerQuitEvent.QuitReason.ERRONEOUS_STATE) {
-            liteEco.logger.warning("Skipping account sync for ${player.name} (Erroneous connection state).")
+            liteEco.logger.warn("Skipping account sync for ${player.name} (Erroneous connection state).")
             return
         }
 
