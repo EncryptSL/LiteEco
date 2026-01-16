@@ -11,7 +11,8 @@ class SimpleEconomyHook(private val liteEco: LiteEco) : HookListener(
     "You can now export economy from plugin SimpleEconomy to LiteEco with /eco database import SimpleEconomy <your_currency>"
 ) {
 
-    private var economyHandler: Storage? = null
+    private val economyHandler: Storage?
+        get() = if (isSimpleEconomyPresent()) SimpleEconomy.getInstance().storage else null
 
     companion object {
         const val PLUGIN_NAME = "SimpleEconomy"
@@ -27,16 +28,13 @@ class SimpleEconomyHook(private val liteEco: LiteEco) : HookListener(
     }
 
     override fun register() {
-        if (isSimpleEconomyPresent()) {
-            registered = true
-        }
+        registered = (economyHandler != null)
     }
 
     override fun unregister() {}
 
     fun getAccounts(): MutableMap<String, Double> {
         return if (isSimpleEconomyPresent()) {
-            economyHandler = SimpleEconomy.getInstance().storage
             economyHandler?.allBalances ?: mutableMapOf()
         } else mutableMapOf()
     }

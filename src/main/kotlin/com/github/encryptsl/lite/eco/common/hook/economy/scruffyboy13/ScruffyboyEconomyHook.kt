@@ -13,7 +13,8 @@ class ScruffyboyEconomyHook(
     PLUGIN_NAME,
     "You can now export economy from plugin Economy to LiteEco with /eco database import ScruffyboyEconomy <your_currency>"
 ) {
-    private var economy: Economy? = null
+    private val economyHandler: Economy?
+        get() = if (isScruffyBoyEconomyPresent()) EconomyMain.getEco() else null
 
     companion object {
         const val PLUGIN_NAME = "Economy"
@@ -27,17 +28,14 @@ class ScruffyboyEconomyHook(
     }
 
     override fun register() {
-        if (isScruffyBoyEconomyPresent()) {
-            registered = true
-        }
+        registered = (economyHandler != null)
     }
 
     override fun unregister() {}
 
     fun getBalance(uuid: UUID): Double {
         return if (isScruffyBoyEconomyPresent()) {
-            economy = EconomyMain.getEco()
-            economy?.getBalance(uuid)?.balance ?: 0.00
+            economyHandler?.getBalance(uuid)?.balance ?: 0.00
         } else 0.00
     }
 

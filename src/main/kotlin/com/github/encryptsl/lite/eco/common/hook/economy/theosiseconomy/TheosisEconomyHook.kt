@@ -12,7 +12,11 @@ class TheosisEconomyHook(private val liteEco: LiteEco) : HookListener(
     PLUGIN_NAME,
     "You can now export economy from plugin TheosisEconomy to LiteEco with /eco database import TheosisEconomy <your_currency>"
 ) {
-    private var economyHandler: Map<UUID, PlayerAccount>? = null
+    private val economyHandler: Map<UUID, PlayerAccount>?
+        get() = if (isTheosisEconomyPresent()) {
+            val instance = liteEco.pluginManager.getPlugin(PLUGIN_NAME) as? TheosisEconomy
+            instance?.playerAccounts
+        } else null
 
     companion object {
         const val PLUGIN_NAME = "TheosisEconomy"
@@ -25,17 +29,12 @@ class TheosisEconomyHook(private val liteEco: LiteEco) : HookListener(
     }
 
     override fun register() {
-        if (isTheosisEconomyPresent()) {
-            val instance = liteEco.pluginManager.getPlugin(PLUGIN_NAME) as? TheosisEconomy
-            economyHandler = instance?.playerAccounts
-            registered = true
-        }
+        registered = (economyHandler != null)
     }
 
     override fun unregister() {}
 
     fun getBalance(uuid: UUID): BigDecimal {
-        val handler = economyHandler ?: throw IllegalStateException("$PLUGIN_NAME handler is not initialized.")
-        return handler[uuid]?.balance ?: BigDecimal.ZERO
+        return economyHandler?.get(uuid)?.balance ?: BigDecimal.ZERO
     }
 }

@@ -13,7 +13,8 @@ class PlayerPointsHook(
     PLUGIN_NAME,
     "You can now export economy from plugin PlayerPoints to LiteEco with /eco database import PlayerPoints <your_currency>"
 ) {
-    private var playerPointsAPI: PlayerPointsAPI? = null
+    private val economyHandler: PlayerPointsAPI?
+        get() = if (isPlayerPointsPresent()) PlayerPoints.getInstance().api else null
 
     companion object {
         const val PLUGIN_NAME = "PlayerPoints"
@@ -27,17 +28,17 @@ class PlayerPointsHook(
     }
 
     override fun register() {
-        if (!isPlayerPointsPresent()) {
-            registered = true
-        }
+        registered = (economyHandler != null)
     }
 
     override fun unregister() {}
 
     fun getBalance(uuid: UUID): Int {
-        return if (isPlayerPointsPresent()) {
-            playerPointsAPI = PlayerPoints.getInstance().api
-            playerPointsAPI?.look(uuid) ?: 0
-        } else 0
+        return try {
+            economyHandler?.look(uuid) ?: 0
+        } catch (e: Exception) {
+            liteEco.componentLogger.warn("Failed to get $PLUGIN_NAME balance for $uuid: ${e.message}")
+            0
+        }
     }
 }

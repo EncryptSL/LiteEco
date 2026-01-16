@@ -13,7 +13,11 @@ class BetterEconomyHook(
     PLUGIN_NAME,
     "You can now export economy from plugin BetterEconomy to LiteEco with /eco database import BetterEconomy <your_currency>"
 ) {
-    private var economyHandler: EconomyHolder? = null
+    private val economyHandler: EconomyHolder?
+        get() = (if (isBetterEconomyPresent()) {
+            val instance = liteEco.pluginManager.getPlugin(PLUGIN_NAME) as? BetterEconomy
+            instance?.get(EconomyHolder::class.java)
+        } else null)
 
     companion object {
         const val PLUGIN_NAME = "BetterEconomy"
@@ -27,23 +31,17 @@ class BetterEconomyHook(
     }
 
     override fun register() {
-        if (isBetterEconomyPresent()) {
-            registered = true
-        }
+        registered = (economyHandler != null)
     }
 
     override fun unregister() {}
 
     fun getBalance(uuid: UUID): Double {
-        return if (isBetterEconomyPresent()) {
-            val plugin = liteEco.pluginManager.getPlugin(PLUGIN_NAME) as? BetterEconomy
-            if (plugin == null) {
-                liteEco.logger.warning("$PLUGIN_NAME plugin not found or not of expected type.")
-                return 0.0
-            }
-            val handler = plugin.get(EconomyHolder::class.java)
-            economyHandler = handler
-            economyHandler?.get(uuid) ?: 0.00
-        } else 0.00
+        return try {
+            economyHandler?.get(uuid) ?: 0.0
+        } catch (e: Exception) {
+            liteEco.componentLogger.warn("Failed to get $PLUGIN_NAME balance for $uuid: ${e.message}")
+            0.0
+        }
     }
 }
