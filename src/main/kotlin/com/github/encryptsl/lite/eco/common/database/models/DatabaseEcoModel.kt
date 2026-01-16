@@ -29,7 +29,7 @@ class DatabaseEcoModel : PlayerSQL {
                     it[table.money] = money
                 }
             } catch (e : ExposedSQLException) {
-                LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
+                LiteEco.instance.componentLogger.error(e.message ?: e.localizedMessage)
             }
         }
     }
@@ -42,7 +42,7 @@ class DatabaseEcoModel : PlayerSQL {
                     it[table.username] = username
                 }
             } catch (e : ExposedSQLException) {
-                LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
+                LiteEco.instance.componentLogger.error(e.message ?: e.localizedMessage)
             }
         }
     }
@@ -64,7 +64,7 @@ class DatabaseEcoModel : PlayerSQL {
                 val row = table.select(table.uuid, table.money).where { table.uuid eq uuid }.singleOrNull()
                 row?.getOrNull(table.money) ?: BigDecimal.ZERO
             } catch (e : ExposedSQLException) {
-                LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
+                LiteEco.instance.componentLogger.error(e.message ?: e.localizedMessage)
                 throw e
             }
         }
@@ -76,7 +76,7 @@ class DatabaseEcoModel : PlayerSQL {
                 val table = Account(currency)
                 table.deleteWhere { table.uuid eq uuid }
             } catch (e : ExposedSQLException) {
-                LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
+                LiteEco.instance.componentLogger.error(e.message ?: e.localizedMessage)
             }
         }
     }
@@ -87,7 +87,7 @@ class DatabaseEcoModel : PlayerSQL {
                 val table = Account(currency)
                 !table.select(table.uuid).where(table.uuid eq uuid).empty()
             } catch (e : ExposedSQLException) {
-                LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
+                LiteEco.instance.componentLogger.error(e.message ?: e.localizedMessage)
                 false
             }
         }
@@ -114,7 +114,7 @@ class DatabaseEcoModel : PlayerSQL {
                 val table = Account(currency)
                 table.selectAll().map {it[table.uuid] }.toMutableList()
             } catch (e : ExposedSQLException) {
-                LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
+                LiteEco.instance.componentLogger.error(e.message ?: e.localizedMessage)
                 mutableListOf()
             }
         }
@@ -128,7 +128,7 @@ class DatabaseEcoModel : PlayerSQL {
                     it[table.money] = table.money + money
                 }
             } catch (e : ExposedSQLException) {
-                LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
+                LiteEco.instance.componentLogger.error(e.message ?: e.localizedMessage)
             }
         }
     }
@@ -140,14 +140,14 @@ class DatabaseEcoModel : PlayerSQL {
                     it[table.money] = table.money - money
                 }
             } catch (e : ExposedSQLException) {
-                LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
+                LiteEco.instance.componentLogger.error(e.message ?: e.localizedMessage)
             }
         }
     }
     override fun set(uuid: UUID, currency: String, money: BigDecimal) {
 
         if (debugFailMode) {
-            println("[DEBUG] I am throwing out a false error for $uuid") // Toto uvidíš vždycky
+            println("[DEBUG] I am throwing out a false error for $uuid")
             throw SQLException("DEBUG: Database is currently in fail-mode.")
         }
 
@@ -158,7 +158,7 @@ class DatabaseEcoModel : PlayerSQL {
                     it[table.money] = money
                 }
             } catch (e : ExposedSQLException) {
-                LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
+                LiteEco.instance.componentLogger.error(e.message ?: e.localizedMessage)
             }
         }
     }
@@ -168,7 +168,7 @@ class DatabaseEcoModel : PlayerSQL {
             try {
                 Account(currency).deleteAll()
             } catch (e : ExposedSQLException) {
-                LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
+                LiteEco.instance.componentLogger.error(e.message ?: e.localizedMessage)
             }
         }
     }
@@ -178,7 +178,7 @@ class DatabaseEcoModel : PlayerSQL {
             try {
                 Account(currency).deleteWhere { money eq defaultMoney }
             } catch (e : ExposedSQLException) {
-                LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
+                LiteEco.instance.componentLogger.error(e.message ?: e.localizedMessage)
             }
         }
     }
@@ -190,7 +190,22 @@ class DatabaseEcoModel : PlayerSQL {
                     uuid notInList Bukkit.getOfflinePlayers().map { it.uniqueId }
                 }
             } catch (e : ExposedSQLException) {
-                LiteEco.instance.logger.severe(e.message ?: e.localizedMessage)
+                LiteEco.instance.componentLogger.error(e.message ?: e.localizedMessage)
+            }
+        }
+    }
+
+    override fun batchInsert(importData: List<Triple<UUID, String, BigDecimal>>, currency: String) {
+        loggedTransaction {
+            try {
+                val table = Account(currency)
+                table.batchInsert(importData) { (uuid, username, money) ->
+                    this[table.uuid] = uuid
+                    this[table.username] = username
+                    this[table.money] = money
+                }
+            } catch (e : ExposedSQLException) {
+                LiteEco.instance.componentLogger.error(e.message ?: e.localizedMessage)
             }
         }
     }

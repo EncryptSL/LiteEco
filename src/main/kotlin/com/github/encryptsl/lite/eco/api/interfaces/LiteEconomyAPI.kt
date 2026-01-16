@@ -153,6 +153,16 @@ interface LiteEconomyAPI {
     fun has(uuid: UUID, currency: String = "dollars", requiredAmount: BigDecimal): Boolean
 
     /**
+     * Performs a high-performance batch insertion or update of multiple accounts.
+     * * This method is designed for large-scale data migrations (e.g., importing from other plugins).
+     * It sends multiple records in a single SQL query, significantly reducing database latency.
+     *
+     * @param importData a list of [Triple] containing player UUID, username, and balance
+     * @param currency currency name (default "dollars")
+     */
+    fun batchInsert(importData: List<Triple<UUID, String, BigDecimal>>, currency: String = "dollars")
+
+    /**
      * Returns the top balances in the given currency.
      *
      * @param currency currency of the accounts

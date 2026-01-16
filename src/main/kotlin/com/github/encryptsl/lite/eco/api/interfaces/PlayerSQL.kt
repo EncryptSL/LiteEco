@@ -149,4 +149,15 @@ interface PlayerSQL {
      * @param currency The key/name of the currency the accounts belong to.
      */
     fun purgeInvalidAccounts(currency: String)
+
+    /**
+     * Executes a batch insertion or replacement of player records directly in the database.
+     *
+     * This method leverages SQL batching to process multiple records (UUID, username, balance)
+     * in a single transaction, minimizing overhead and maximizing throughput.
+     *
+     * @param importData A list of [Triple] containing the player's UUID, username, and balance.
+     * @param currency The key/name of the currency the accounts belong to.
+     */
+    fun batchInsert(importData: List<Triple<UUID, String, BigDecimal>>, currency: String)
 }
