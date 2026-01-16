@@ -27,7 +27,7 @@ class ScruffyBoyImporter : EconomyImporter {
             liteEco.logger.info("Starting $name data import for ${offlinePlayers.size} players...")
 
             offlinePlayers.asIterable().chunked(100).forEach { chunk ->
-                val results = chunk.map { p ->
+                val dataToImport = chunk.map { p ->
                     async(Dispatchers.IO) {
                         try {
                             val uuid = p.uniqueId
@@ -38,25 +38,27 @@ class ScruffyBoyImporter : EconomyImporter {
                                 return@async null
                             }
 
-                            val success = liteEco.api.createOrUpdateAccount(uuid, name, currency, balance)
-
-                            if (success) balance else null
+                            Triple(uuid, name, balance)
                         } catch (e: Exception) {
-                            liteEco.logger.warning("Failed to migrate $name data for player ${p.name}: ${e.message}")
+                            liteEco.logger.warn("Failed to migrate $name for ${p.name}: ${e.message}")
                             null
                         }
                     }
-                }.awaitAll()
+                }.awaitAll().filterNotNull()
 
-                results.filterNotNull().forEach { balance ->
-                    totalBalances = totalBalances.add(balance)
-                    converted++
+                if (dataToImport.isNotEmpty()) {
+                    liteEco.api.batchInsert(dataToImport, currency)
+
+                    dataToImport.forEach { (_, _, balance) ->
+                        totalBalances = totalBalances.add(balance)
+                        converted++
+                    }
                 }
 
                 liteEco.logger.info("Import in progress: $converted accounts migrated...")
             }
         } catch (e: Exception) {
-            liteEco.logger.severe("Critical error during the $name import process: ${e.message}")
+            liteEco.logger.error("Critical error during the $name import process: ${e.message}")
         }
 
         liteEco.logger.info("$name import completed. Total accounts migrated: $converted.")

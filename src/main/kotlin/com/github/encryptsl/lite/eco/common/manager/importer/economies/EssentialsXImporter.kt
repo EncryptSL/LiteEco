@@ -28,12 +28,12 @@ class EssentialsXImporter : EconomyImporter {
         liteEco.logger.info("Starting EssentialsX import. Scanning user data files...")
 
         if (!userDataFolder.exists() || !userDataFolder.isDirectory) {
-            liteEco.logger.severe("EssentialsX userdata folder not found! Path: ${userDataFolder.absolutePath}")
+            liteEco.logger.error("EssentialsX userdata folder not found! Path: ${userDataFolder.absolutePath}")
             return@coroutineScope EconomyImportResults(0, BigDecimal.ZERO)
         }
 
         offlinePlayers.asIterable().chunked(100).forEach { chunk ->
-            val results = chunk.map { p ->
+            val dataToImport = chunk.map { p ->
                 async(Dispatchers.IO) {
                     try {
                         val playerFile = File(userDataFolder, "${p.uniqueId}.yml")
@@ -48,22 +48,23 @@ class EssentialsXImporter : EconomyImporter {
                             }
 
                             val name = p.name ?: "Unknown"
-
-                            val success = liteEco.api.createOrUpdateAccount(p.uniqueId, name, currency, balance)
-                            if (success) balance else null
+                            Triple(p.uniqueId, name, balance)
                         } else {
                             null
                         }
                     } catch (e: Exception) {
-                        liteEco.logger.warning("Could not import EssentialsX data for ${p.name}: ${e.message}")
+                        liteEco.logger.error("Could not import EssentialsX data for ${p.name}: ${e.message}")
                         null
                     }
                 }
-            }.awaitAll()
+            }.awaitAll().filterNotNull()
 
-            results.filterNotNull().forEach { balance ->
-                totalBalances = totalBalances.add(balance)
-                converted++
+            if (dataToImport.isNotEmpty()) {
+                liteEco.api.batchInsert(dataToImport, currency)
+                dataToImport.forEach { (_, _, balance) ->
+                    totalBalances = totalBalances.add(balance)
+                    converted++
+                }
             }
 
             if (converted % 500 == 0 && converted > 0) {

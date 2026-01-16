@@ -32,7 +32,7 @@ class SimpleEconomyImporter : EconomyImporter {
             val accounts = simpleEconomy.getAccounts()
 
             accounts.asIterable().chunked(100).forEach { chunk ->
-                val results = chunk.map { entry ->
+                val dataToImport = chunk.map { entry ->
                     async(Dispatchers.IO) {
                         try {
                             val uuid = UUID.fromString(entry.key)
@@ -44,25 +44,27 @@ class SimpleEconomyImporter : EconomyImporter {
                                 return@async null
                             }
 
-                            val success = liteEco.api.createOrUpdateAccount(uuid, name, currency, balance)
-
-                            if (success) balance else null
+                            Triple(uuid, name, balance)
                         } catch (e: Exception) {
-                            liteEco.logger.warning("Failed to migrate account ${entry.key}: ${e.message}")
+                            liteEco.logger.warn("Failed to migrate account ${entry.key}: ${e.message}")
                             null
                         }
                     }
-                }.awaitAll()
+                }.awaitAll().filterNotNull()
 
-                results.filterNotNull().forEach { balance ->
-                    totalBalances = totalBalances.add(balance)
-                    converted++
+                if (dataToImport.isNotEmpty()) {
+                    liteEco.api.batchInsert(dataToImport, currency)
+
+                    dataToImport.forEach { (_, _, balance) ->
+                        totalBalances = totalBalances.add(balance)
+                        converted++
+                    }
                 }
 
                 liteEco.logger.info("Import in progress: $converted accounts migrated...")
             }
         } catch (e: Exception) {
-            liteEco.logger.severe("Critical error during the $name import process: ${e.message}")
+            liteEco.logger.error("Critical error during the $name import process: ${e.message}")
         }
 
         liteEco.logger.info("$name import completed. Total accounts migrated: $converted.")
