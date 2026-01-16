@@ -25,6 +25,9 @@ class ImportEconomy(private val liteEco: LiteEco) {
     }
 
     suspend fun import(pluginName: String, currency: String): EconomyImportResults {
+        if (liteEco.databaseEcoModel.getUUIDNameMap(currency).isNotEmpty())
+            throw Exception("lite_eco_$currency table is not empty !")
+
         val importer = importers[pluginName] ?: throw IllegalArgumentException("Importer $pluginName not found")
         return importer.import(currency, liteEco, offlinePlayers)
     }
