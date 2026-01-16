@@ -39,6 +39,7 @@ import org.incendo.cloud.suggestion.Suggestion
 import java.io.File
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
+import java.util.logging.Logger
 import kotlin.system.measureTimeMillis
 
 
@@ -51,6 +52,8 @@ class LiteEco : JavaPlugin() {
     }
 
     val pluginManager: PluginManager = server.pluginManager
+
+    val logger = componentLogger
 
     lateinit var bukkitDispatchers: BukkitDispatchers
 
@@ -100,7 +103,7 @@ class LiteEco : JavaPlugin() {
             )
             componentLogger.info(ModernText.miniModernText("<green>Config was updated on current version !"))
         } catch (e : Exception) {
-            logger.severe(e.message ?: e.localizedMessage)
+            logger.error(e.message ?: e.localizedMessage)
         }
         PlayerAccount.startJanitor(this)
         componentLogger.info(ModernText.miniModernText("Contribute to other updates <yellow>https://ko-fi.com/encryptsl"))
