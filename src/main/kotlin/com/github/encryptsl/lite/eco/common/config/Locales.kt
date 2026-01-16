@@ -70,7 +70,7 @@ class Locales(
                 if (liteEco.getResource(resourcePath) != null) {
                     liteEco.saveResource(resourcePath, false)
                 } else {
-                    logger.warning("⚠️ Translation resource '$resourcePath' not found. Falling back to en_us.")
+                    logger.warn("⚠️ Translation resource '$resourcePath' not found. Falling back to en_us.")
                     return if (normalizedLocale != "en_us") setLocale("en_us") else false
                 }
             }
@@ -84,8 +84,8 @@ class Locales(
             logger.info("✅ Translation loaded: $fileName")
             true
         } catch (ex: Exception) {
-            logger.warning("⚠️ Failed to load translation for $localeCode")
-            logger.severe(ex.message ?: ex.toString())
+            logger.warn("⚠️ Failed to load translation for $localeCode")
+            logger.warn(ex.message ?: ex.toString())
             false
         }
     }
