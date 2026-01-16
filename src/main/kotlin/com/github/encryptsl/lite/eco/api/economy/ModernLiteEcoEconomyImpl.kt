@@ -19,6 +19,10 @@ abstract class ModernLiteEcoEconomyImpl : LiteEconomyAPI {
         PlayerAccount.syncAccounts()
     }
 
+    override fun batchInsert(importData: List<Triple<UUID, String, BigDecimal>>, currency: String) {
+        LiteEco.instance.databaseEcoModel.batchInsert(importData, currency)
+    }
+
     override fun getTopBalance(currency: String): Map<String, BigDecimal> {
         val isFilteringEnabled = LiteEco.instance.config.getBoolean("economy.currencies.$currency.top_balances.filtering")
 
