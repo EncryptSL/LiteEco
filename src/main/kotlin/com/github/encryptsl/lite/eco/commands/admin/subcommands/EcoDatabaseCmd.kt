@@ -89,15 +89,22 @@ class EcoDatabaseCmd(
                 )
                 .optional(
                     commandManager
+                        .componentBuilder(String::class.java, "currencyForImport")
+                        .parser(CurrencyParser())
+                        .defaultValue(DefaultValue.parsed("dollars"))
+                )
+                .optional(
+                    commandManager
                         .componentBuilder(String::class.java, "currency")
                         .parser(CurrencyParser())
                         .defaultValue(DefaultValue.parsed("dollars"))
                 ).handler { ctx ->
                     val sender: CommandSender = ctx.sender().source()
                     val economy: String = ctx.get("economy")
+                    val currencyForImport: String = ctx.get("currencyForImport")
                     val currency: String = ctx.get("currency")
                     liteEco.pluginScope.launch {
-                        importManager.importEconomy(sender, economy, currency)
+                        importManager.importEconomy(sender, economy, currencyForImport, currency)
                     }
                 })
     }

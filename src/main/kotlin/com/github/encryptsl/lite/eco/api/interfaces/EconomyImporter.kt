@@ -21,12 +21,18 @@ interface EconomyImporter {
     val name: String
 
     /**
-     * Executes the balance import process from the external economy source.
+     * Executes the balance import process from an external economy source.
      *
-     * @param currency The key or identifier of the currency to be imported.
-     * @param liteEco An instance of the target economy system's main class, used for API calls to deposit/set balances.
+     * @param currencyForImport The key or identifier of the currency to be imported from the source system.
+     * @param liteEcoCurrency The target currency identifier within the LiteEco system where data will be stored.
+     * @param liteEco An instance of the target economy system's main class, used for API calls to deposit or set balances.
      * @param offlinePlayers An array of all [OfflinePlayer]s whose data should be checked and imported.
-     * @return An [EconomyImportResults] object detailing the outcome of the import operation.
+     * @return An [EconomyImportResults] object detailing the outcome and statistics of the import operation.
      */
-    suspend fun import(currency: String, liteEco: LiteEco, offlinePlayers: Array<OfflinePlayer>): EconomyImportResults
+    suspend fun import(
+        currencyForImport: String?,
+        liteEcoCurrency: String,
+        liteEco: LiteEco,
+        offlinePlayers: Array<OfflinePlayer>
+    ): EconomyImportResults
 }

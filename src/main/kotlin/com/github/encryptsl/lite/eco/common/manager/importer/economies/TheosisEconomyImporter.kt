@@ -16,7 +16,8 @@ class TheosisEconomyImporter : EconomyImporter {
     override val name = "TheosisEconomy"
 
     override suspend fun import(
-        currency: String,
+        currencyForImport: String?,
+        liteEcoCurrency: String,
         liteEco: LiteEco,
         offlinePlayers: Array<OfflinePlayer>
     ): EconomyImportResults = coroutineScope {
@@ -49,7 +50,7 @@ class TheosisEconomyImporter : EconomyImporter {
                 }.awaitAll().filterNotNull()
 
                 if (dataToImport.isNotEmpty()) {
-                    liteEco.api.batchInsert(dataToImport, currency)
+                    liteEco.api.batchInsert(dataToImport, liteEcoCurrency)
 
                     dataToImport.forEach { (_, _, balance) ->
                         totalBalances = totalBalances.add(balance)

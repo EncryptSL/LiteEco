@@ -15,7 +15,8 @@ class ScruffyBoyImporter : EconomyImporter {
     override val name = "ScruffyBoyEconomy"
 
     override suspend fun import(
-        currency: String,
+        currencyForImport: String?,
+        liteEcoCurrency: String,
         liteEco: LiteEco,
         offlinePlayers: Array<OfflinePlayer>
     ): EconomyImportResults = coroutineScope {
@@ -47,7 +48,7 @@ class ScruffyBoyImporter : EconomyImporter {
                 }.awaitAll().filterNotNull()
 
                 if (dataToImport.isNotEmpty()) {
-                    liteEco.api.batchInsert(dataToImport, currency)
+                    liteEco.api.batchInsert(dataToImport, liteEcoCurrency)
 
                     dataToImport.forEach { (_, _, balance) ->
                         totalBalances = totalBalances.add(balance)

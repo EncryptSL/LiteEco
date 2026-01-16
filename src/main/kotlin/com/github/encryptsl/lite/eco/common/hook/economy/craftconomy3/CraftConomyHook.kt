@@ -10,13 +10,13 @@ class CraftConomyHook(
     private val liteEco: LiteEco
 ) : HookListener(
     PLUGIN_NAME,
-    "You can now export economy from plugin CraftConomy3 to LiteEco with /eco database import CraftConomy3 <your_currency>"
+    "You can now export economy from plugin Craftconomy3 to LiteEco with /eco database import Craftconomy3 <your_currency>"
 ) {
     private val economyHandler: AccountManager?
         get() = if (isCraftEconomyPresent()) Common.getInstance().accountManager else null
 
     companion object {
-        const val PLUGIN_NAME = "CraftConomy3"
+        const val PLUGIN_NAME = "Craftconomy3"
         fun isCraftEconomyPresent(): Boolean
                 = ClassUtil.isValidClasspath("com.greatmancode.craftconomy3.Common")
     }

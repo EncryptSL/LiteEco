@@ -13,10 +13,11 @@ import java.math.BigDecimal
 
 class CraftConomy3Importer : EconomyImporter {
 
-    override val name = "CraftConomy3"
+    override val name = "Craftconomy3"
 
     override suspend fun import(
-        currency: String,
+        currencyForImport: String?,
+        liteEcoCurrency: String,
         liteEco: LiteEco,
         offlinePlayers: Array<OfflinePlayer>
     ): EconomyImportResults = coroutineScope {
@@ -33,7 +34,7 @@ class CraftConomy3Importer : EconomyImporter {
                         try {
                             val uuid = p.uniqueId
                             val name = p.name ?: "Unknown"
-                            val balance = craftEconomy.getBalance(name, currency).toBigDecimal()
+                            val balance = currencyForImport?.let { craftEconomy.getBalance(name, it).toBigDecimal() } ?: BigDecimal.ZERO
 
                             if (balance <= BigDecimal.ZERO) {
                                 return@async null
@@ -48,7 +49,7 @@ class CraftConomy3Importer : EconomyImporter {
                 }.awaitAll().filterNotNull()
 
                 if (dataToImport.isNotEmpty()) {
-                    liteEco.api.batchInsert(dataToImport, currency)
+                    liteEco.api.batchInsert(dataToImport, liteEcoCurrency)
 
                     dataToImport.forEach { (_, _, balance) ->
                         totalBalances = totalBalances.add(balance)

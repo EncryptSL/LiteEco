@@ -17,7 +17,8 @@ class EssentialsXImporter : EconomyImporter {
     override val name: String = "EssentialsX"
 
     override suspend fun import(
-        currency: String,
+        currencyForImport: String?,
+        liteEcoCurrency: String,
         liteEco: LiteEco,
         offlinePlayers: Array<OfflinePlayer>
     ): EconomyImportResults = coroutineScope {
@@ -60,7 +61,7 @@ class EssentialsXImporter : EconomyImporter {
             }.awaitAll().filterNotNull()
 
             if (dataToImport.isNotEmpty()) {
-                liteEco.api.batchInsert(dataToImport, currency)
+                liteEco.api.batchInsert(dataToImport, liteEcoCurrency)
                 dataToImport.forEach { (_, _, balance) ->
                     totalBalances = totalBalances.add(balance)
                     converted++
