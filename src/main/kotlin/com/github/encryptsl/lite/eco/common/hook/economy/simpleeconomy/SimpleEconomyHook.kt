@@ -8,7 +8,7 @@ import it.alzy.simpleeconomy.plugin.storage.Storage
 
 class SimpleEconomyHook(private val liteEco: LiteEco) : HookListener(
     PLUGIN_NAME,
-    "You can now export economy from plugin SimpleEconomy to LiteEco with /eco database import SimpleEconomy <your_currency>"
+    "You can now export economy from plugin SimpleEconomy to LiteEco with /eco database import SimpleEconomy <into_currency>"
 ) {
 
     private val economyHandler: Storage?

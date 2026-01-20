@@ -10,7 +10,7 @@ import java.util.*
 
 class TheosisEconomyHook(private val liteEco: LiteEco) : HookListener(
     PLUGIN_NAME,
-    "You can now export economy from plugin TheosisEconomy to LiteEco with /eco database import TheosisEconomy <your_currency>"
+    "You can now export economy from plugin TheosisEconomy to LiteEco with /eco database import TheosisEconomy <into_currency>"
 ) {
     private val economyHandler: Map<UUID, PlayerAccount>?
         get() = if (isTheosisEconomyPresent()) {

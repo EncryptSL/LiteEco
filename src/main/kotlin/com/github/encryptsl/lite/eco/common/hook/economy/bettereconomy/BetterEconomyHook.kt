@@ -11,7 +11,7 @@ class BetterEconomyHook(
     private val liteEco: LiteEco
 ) : HookListener(
     PLUGIN_NAME,
-    "You can now export economy from plugin BetterEconomy to LiteEco with /eco database import BetterEconomy <your_currency>"
+    "You can now export economy from plugin BetterEconomy to LiteEco with /eco database import BetterEconomy <into_currency>"
 ) {
     private val economyHandler: EconomyHolder?
         get() = (if (isBetterEconomyPresent()) {

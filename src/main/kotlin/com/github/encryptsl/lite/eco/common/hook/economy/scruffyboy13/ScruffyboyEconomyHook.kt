@@ -11,7 +11,7 @@ class ScruffyboyEconomyHook(
     private val liteEco: LiteEco
 ) : HookListener(
     PLUGIN_NAME,
-    "You can now export economy from plugin Economy to LiteEco with /eco database import ScruffyboyEconomy <your_currency>"
+    "You can now export economy from plugin Economy to LiteEco with /eco database import ScruffyboyEconomy <into_currency>"
 ) {
     private val economyHandler: Economy?
         get() = if (isScruffyBoyEconomyPresent()) EconomyMain.getEco() else null

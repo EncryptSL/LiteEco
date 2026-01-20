@@ -11,7 +11,7 @@ class PlayerPointsHook(
     private val liteEco: LiteEco
 ) : HookListener(
     PLUGIN_NAME,
-    "You can now export economy from plugin PlayerPoints to LiteEco with /eco database import PlayerPoints <your_currency>"
+    "You can now export economy from plugin PlayerPoints to LiteEco with /eco database import PlayerPoints <into_currency>"
 ) {
     private val economyHandler: PlayerPointsAPI?
         get() = if (isPlayerPointsPresent()) PlayerPoints.getInstance().api else null
