@@ -16,8 +16,9 @@ class ImportEconomyParser(private val importer: ImportEconomy) : ArgumentParser<
         commandInput: CommandInput
     ): ArgumentParseResult<String> {
         val input = commandInput.readString()
-        commandInput.readString()
-        if (importer.getAvailableImporters().contains(input)) {
+        val keys = importer.importers.keys
+
+        if (keys.contains(input)) {
             return ArgumentParseResult.success(input)
         }
 
@@ -25,6 +26,7 @@ class ImportEconomyParser(private val importer: ImportEconomy) : ArgumentParser<
     }
 
     override fun suggestionProvider(): SuggestionProvider<Source> {
-        return SuggestionProvider.suggesting(importer.getAvailableImporters().map { Suggestion.suggestion(it) })
+        val keys = importer.importers.keys
+        return SuggestionProvider.suggesting(keys.map { Suggestion.suggestion(it) })
     }
 }
