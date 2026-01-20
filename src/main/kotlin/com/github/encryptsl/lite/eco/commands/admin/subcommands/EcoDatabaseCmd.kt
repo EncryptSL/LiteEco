@@ -93,7 +93,7 @@ class EcoDatabaseCmd(
                     .parser(currencyParser)
                 ).flag(
                     commandManager.flagBuilder("from")
-                        .withAliases("from")
+                        .withAliases("f")
                         .withComponent(stringParser())
                 ).handler { ctx ->
                     val economy: String = ctx.get("economy")
