@@ -89,25 +89,29 @@ class Helper(private val liteEco: LiteEco) {
     }
 
     internal fun executeJanitorTest(player: Player) {
-        val vault = Bukkit.getServicesManager().getRegistration(Economy::class.java)?.provider
+        try {
+            val vault = Bukkit.getServicesManager().getRegistration(Economy::class.java)?.provider
 
-        // STEP 1: Enable failMode
-        DatabaseEcoModel.debugFailMode = true
-        player.sendMessage("§8[§bLiteEco-Test§8] §cFailMode ACTIVATED.")
+            // STEP 1: Enable failMode
+            DatabaseEcoModel.debugFailMode = true
+            player.sendMessage("§8[§bLiteEco-Test§8] §cFailMode ACTIVATED.")
 
-        // STEP 2: Vault Transaction
-        vault?.depositPlayer(player, 500.0)
-        player.sendMessage("§8[§bLiteEco-Test§8] §7Vault: Deposited 500.0.")
+            // STEP 2: Vault Transaction
+            vault?.depositPlayer(player, 500.0)
+            player.sendMessage("§8[§bLiteEco-Test§8] §7Vault: Deposited 500.0.")
 
-        // STEP 3: Instructions
-        player.sendMessage("§8[§bLiteEco-Test§8] §ePlease disconnect from the server now.")
-        player.sendMessage("§7You should see a sync error in the console, but data MUST remain in the cache.")
+            // STEP 3: Instructions
+            player.sendMessage("§8[§bLiteEco-Test§8] §ePlease disconnect from the server now.")
+            player.sendMessage("§7You should see a sync error in the console, but data MUST remain in the cache.")
+        } catch (e : Exception) {
+            liteEco.logger.error(e.message, e)
+        }
     }
 
     internal fun forceJanitorSync(sender: CommandSender) {
         sender.sendMessage("§7Forcing Janitor execution...")
 
-        Bukkit.getScheduler().runTaskAsynchronously(LiteEco.instance, Runnable {
+        val task = Runnable {
             val offlineUUIDs = PlayerAccount.cache.keys.filter { uuid ->
                 Bukkit.getPlayer(uuid) == null
             }
@@ -122,39 +126,51 @@ class Helper(private val liteEco: LiteEco) {
             }
 
             sender.sendMessage("§aJanitor completed emergency synchronization for §e${offlineUUIDs.size} §aaccounts.")
-        })
+        }
+
+        if (!LiteEco.isFolia()) {
+            Bukkit.getScheduler().runTaskAsynchronously(liteEco, task)
+        } else {
+            Bukkit.getAsyncScheduler().runNow(liteEco, {
+                task.run()
+            })
+        }
     }
 
     internal fun executeStressTest(player: Player, amount: Double, iterations: Int) {
-        val vault = Bukkit.getServicesManager().getRegistration(Economy::class.java)?.provider
-        if (vault == null) {
-            player.sendMessage("§cError: Vault was not found!")
-            return
-        }
+        try {
+            val vault = Bukkit.getServicesManager().getRegistration(Economy::class.java)?.provider
 
-        player.sendMessage("§7Starting stress-test: §e$iterations §7iterations...")
+            player.sendMessage("§7Starting stress-test: §e$iterations §7iterations...")
 
-        Bukkit.getScheduler().runTaskAsynchronously(LiteEco.instance, Runnable {
-            val startTime = System.currentTimeMillis()
+            val task = Runnable {
+                val startTime = System.currentTimeMillis()
 
-            for (i in 1..iterations) {
-                val t1 = Thread { vault.depositPlayer(player, amount) }
-                val t2 = Thread { vault.withdrawPlayer(player, amount) }
+                for (i in 1..iterations) {
+                    val t1 = Thread { vault?.depositPlayer(player, amount) }
+                    val t2 = Thread { vault?.withdrawPlayer(player, amount) }
 
-                t1.start()
-                t2.start()
+                    t1.start()
+                    t2.start()
 
-                t1.join()
-                t2.join()
-            }
+                    t1.join()
+                    t2.join()
+                }
 
-            val duration = System.currentTimeMillis() - startTime
+                val duration = System.currentTimeMillis() - startTime
 
-            Bukkit.getScheduler().runTask(LiteEco.instance, Runnable {
                 player.sendMessage("§aStress-test finished in §e${duration}ms.")
                 player.sendMessage("§7Balance should be the same as at the start.")
-                player.sendMessage("§7Current balance: §e${vault.getBalance(player)}")
-            })
-        })
+                player.sendMessage("§7Current balance: §e${vault?.getBalance(player)}")
+            }
+
+            if (!LiteEco.isFolia()) {
+                Bukkit.getScheduler().runTaskAsynchronously(LiteEco.instance, task)
+            } else {
+                Bukkit.getAsyncScheduler().runNow(LiteEco.instance, {task.run()})
+            }
+        } catch (e : Exception) {
+            liteEco.logger.error(e.message, e)
+        }
     }
 }

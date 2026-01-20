@@ -3,9 +3,11 @@ package com.github.encryptsl.lite.eco.api.account
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.interfaces.AccountAPI
 import com.github.encryptsl.lite.eco.common.database.models.DatabaseEcoModel
+import kotlinx.coroutines.launch
 import org.bukkit.Bukkit
 import java.math.BigDecimal
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 object PlayerAccount : AccountAPI {
 
@@ -13,17 +15,31 @@ object PlayerAccount : AccountAPI {
     internal val cache = mutableMapOf<UUID, CachedAccount>()
 
     override fun startJanitor(liteEco: LiteEco) {
-        Bukkit.getScheduler().runTaskTimerAsynchronously(liteEco, Runnable {
+
+        val delay = 20L * 300
+        val period = 20L * 300
+
+        val janitorTask = Runnable {
             if (cache.isEmpty()) return@Runnable
 
             val offlineUUIDs = cache.keys.filter { uuid -> Bukkit.getPlayer(uuid) == null }
 
             offlineUUIDs.forEach { uuid ->
                 if (Bukkit.getPlayer(uuid) == null) {
-                    syncAccount(uuid)
+                    liteEco.pluginScope.launch {
+                        syncAccount(uuid)
+                    }
                 }
             }
-        }, 20L * 300, 20L * 300)
+        }
+
+        if (!LiteEco.isFolia()) {
+            Bukkit.getScheduler().runTaskTimerAsynchronously(liteEco, janitorTask, delay, period)
+        } else {
+            Bukkit.getAsyncScheduler().runAtFixedRate(liteEco, {
+                janitorTask.run()
+            }, delay * 50, period * 50, TimeUnit.MILLISECONDS)
+        }
     }
 
     override fun cacheAccount(uuid: UUID, currency: String, value: BigDecimal) {

@@ -15,6 +15,7 @@ import com.github.encryptsl.lite.eco.common.database.models.DatabaseEcoModel
 import com.github.encryptsl.lite.eco.common.database.models.DatabaseMonologModel
 import com.github.encryptsl.lite.eco.common.hook.HookManager
 import com.github.encryptsl.lite.eco.listeners.PlayerListeners
+import com.github.encryptsl.lite.eco.utils.ClassUtil
 import com.github.encryptsl.lite.eco.utils.Debugger
 import com.github.encryptsl.lite.eco.utils.PlaceholderHelper
 import com.tchristofferson.configupdater.ConfigUpdater
@@ -36,6 +37,10 @@ class LiteEco : JavaPlugin() {
 
         lateinit var instance: LiteEco
             private set
+
+        fun isFolia(): Boolean {
+            return ClassUtil.isValidClasspath("io.papermc.paper.threadedregions.RegionizedServer")
+        }
     }
 
     val pluginManager: PluginManager = server.pluginManager
@@ -88,17 +93,24 @@ class LiteEco : JavaPlugin() {
                 "database.connection",
                 "formatting.placeholders"
             )
-            componentLogger.info(ModernText.miniModernText("<green>Config was updated on current version !"))
+            logger.info(ModernText.miniModernText("<green>Config was updated on current version !"))
         } catch (e : Exception) {
             logger.error(e.message ?: e.localizedMessage)
         }
         PlayerAccount.startJanitor(this)
-        componentLogger.info(ModernText.miniModernText("Contribute to other updates <yellow>https://ko-fi.com/encryptsl"))
-        componentLogger.info(ModernText.miniModernText("<green>Plugin enabled in time $timeTaken ms"))
+        val pluginRunningOnFolia = if (isFolia()) "<blue>[Folia]</blue>" else "<yellow>[PaperMC]</yellow>"
+        logger.info(ModernText.miniModernText("Contribute to other updates <yellow>https://ko-fi.com/encryptsl"))
+        logger.info(ModernText.miniModernText("<green>Plugin enabled on $pluginRunningOnFolia in time $timeTaken ms"))
     }
 
     override fun onDisable() {
-        Bukkit.getScheduler().cancelTasks(this) // Needed we must cancel all tasks because janitor can corrupt final saving.
+        // Needed we must cancel all tasks because janitor can corrupt final saving.
+        if (!isFolia()) {
+            Bukkit.getScheduler().cancelTasks(this)
+        } else {
+            Bukkit.getAsyncScheduler().cancelTasks(this)
+        }
+        //END
         hookManager.unregisterHooks()
         api.syncAccounts()
         pluginScope.cancel()
