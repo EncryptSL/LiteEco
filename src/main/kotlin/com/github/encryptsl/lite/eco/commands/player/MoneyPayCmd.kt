@@ -14,7 +14,6 @@ import org.incendo.cloud.paper.PaperCommandManager
 import org.incendo.cloud.paper.util.sender.PlayerSource
 import org.incendo.cloud.paper.util.sender.Source
 import java.math.BigDecimal
-import kotlin.jvm.java
 
 class MoneyPayCmd(
     private val liteEco: LiteEco,

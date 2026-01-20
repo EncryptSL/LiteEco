@@ -1,8 +1,6 @@
 package com.github.encryptsl.lite.eco.api.interfaces
 
-import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.common.manager.importer.EconomyImportResults
-import org.bukkit.OfflinePlayer
 
 /**
  * Interface defining a contract for an economy data importer.
