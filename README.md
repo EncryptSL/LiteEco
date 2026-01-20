@@ -4,7 +4,7 @@
 
 ***
 # 💸 LiteEco - Minecraft Economy Plugin
-*A lightweight, Vault-compatible economy plugin for Minecraft servers.*
+*A lightweight, Vault-compatible economy plugin for Minecraft servers, Paper & Folia.*
 
 ![GitHub release](https://img.shields.io/github/v/release/EncryptSL/LiteEco?style=flat-square)
 ![GitHub issues](https://img.shields.io/github/issues/EncryptSL/LiteEco?style=flat-square)
