@@ -92,16 +92,16 @@ class EcoDatabaseCmd(
                     .componentBuilder(String::class.java, "lite_eco_currency")
                     .parser(currencyParser)
                 ).flag(
-                    commandManager.flagBuilder("source")
-                        .withAliases("c")
+                    commandManager.flagBuilder("from")
+                        .withAliases("from")
                         .withComponent(stringParser())
                 ).handler { ctx ->
                     val economy: String = ctx.get("economy")
                     val liteEcoCurrency: String = ctx.get("lite_eco_currency")
-                    val sourceCurrency: String? = if (ctx.flags().hasFlag("source")) ctx.flags().get("source") else null
+                    val fromCurrency: String? = if (ctx.flags().hasFlag("from")) ctx.flags().get("from") else null
 
                     liteEco.pluginScope.launch {
-                        importManager.importEconomy(ctx.sender().source(), economy, liteEcoCurrency, sourceCurrency)
+                        importManager.importEconomy(ctx.sender().source(), economy, liteEcoCurrency, fromCurrency)
                     }
                 }
         )
