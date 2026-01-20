@@ -33,7 +33,7 @@ dependencies:
     Economy:
       required: false
       join-classpath: true
-    CraftConomy3:
+    EzEconomy:
       required: false
       join-classpath: true
     PlayerPoints:
