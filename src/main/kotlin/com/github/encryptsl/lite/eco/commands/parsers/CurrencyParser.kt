@@ -26,7 +26,7 @@ class CurrencyParser : ArgumentParser<Source, String> {
     }
 
     override fun suggestionProvider(): SuggestionProvider<Source> {
-        return SuggestionProvider.blockingStrings { s, i ->
+        return SuggestionProvider.blockingStrings { s, _ ->
             LiteEco.instance.currencyImpl.getCurrenciesKeys().filter {
                 val sender: CommandSender = s.sender().source()
                 sender.hasPermission("lite.eco.balance.$it") || sender.hasPermission("lite.eco.balance.*")
