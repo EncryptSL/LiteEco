@@ -20,19 +20,22 @@ interface EconomyImporter {
      */
     val name: String
 
+    val isMultiCurrency: Boolean
+
     /**
      * Executes the balance import process from an external economy source.
      *
-     * @param currencyForImport The key or identifier of the currency to be imported from the source system.
-     * @param liteEcoCurrency The target currency identifier within the LiteEco system where data will be stored.
-     * @param liteEco An instance of the target economy system's main class, used for API calls to deposit or set balances.
-     * @param offlinePlayers An array of all [OfflinePlayer]s whose data should be checked and imported.
-     * @return An [EconomyImportResults] object detailing the outcome and statistics of the import operation.
+     * @param pluginName The name of the source economy plugin (e.g., "EssentialsX", "EzEconomy").
+     * @param intoCurrency The target currency identifier within LiteEco where the balances will be deposited.
+     * @param fromCurrency The specific source currency identifier from the external plugin.
+     * This is optional and only required if the source plugin supports multiple currencies.
+     * @return An [EconomyImportResults] object detailing the number of migrated accounts and the total balance amount.
+     * @throws IllegalArgumentException if the importer is not found or if a required source currency is missing.
+     * @throws Exception if the target database table for [intoCurrency] is not empty.
      */
     suspend fun import(
-        currencyForImport: String?,
-        liteEcoCurrency: String,
-        liteEco: LiteEco,
-        offlinePlayers: Array<OfflinePlayer>
+        pluginName: String,
+        intoCurrency: String,
+        fromCurrency: String?
     ): EconomyImportResults
 }
