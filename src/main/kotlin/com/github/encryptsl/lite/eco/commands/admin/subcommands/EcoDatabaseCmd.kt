@@ -17,6 +17,7 @@ import org.incendo.cloud.component.DefaultValue
 import org.incendo.cloud.description.Description
 import org.incendo.cloud.paper.PaperCommandManager
 import org.incendo.cloud.paper.util.sender.Source
+import org.incendo.cloud.parser.standard.StringParser.stringParser
 
 class EcoDatabaseCmd(
     private val liteEco: LiteEco,
@@ -27,6 +28,7 @@ class EcoDatabaseCmd(
 ) : CommandFeature {
 
     private val importEconomyParser by lazy { ImportEconomyParser(importEconomy) }
+    private val currencyParser by lazy { CurrencyParser() }
 
     override fun register(
         commandManager: PaperCommandManager<Source>,
@@ -82,30 +84,26 @@ class EcoDatabaseCmd(
             dbBase.literal("import")
                 .commandDescription(Description.description(DESCRIPTION))
                 .permission("lite.eco.admin.import")
-                .required(
-                    commandManager
-                        .componentBuilder(String::class.java, "economy")
-                        .parser(importEconomyParser)
+                .required(commandManager
+                    .componentBuilder(String::class.java, "economy")
+                    .parser(importEconomyParser)
                 )
-                .optional(
-                    commandManager
-                        .componentBuilder(String::class.java, "currencyForImport")
-                        .parser(CurrencyParser())
-                        .defaultValue(DefaultValue.parsed("dollars"))
-                )
-                .optional(
-                    commandManager
-                        .componentBuilder(String::class.java, "currency")
-                        .parser(CurrencyParser())
-                        .defaultValue(DefaultValue.parsed("dollars"))
+                .required(commandManager
+                    .componentBuilder(String::class.java, "lite_eco_currency")
+                    .parser(currencyParser)
+                ).flag(
+                    commandManager.flagBuilder("source")
+                        .withAliases("c")
+                        .withComponent(stringParser())
                 ).handler { ctx ->
-                    val sender: CommandSender = ctx.sender().source()
                     val economy: String = ctx.get("economy")
-                    val currencyForImport: String = ctx.get("currencyForImport")
-                    val currency: String = ctx.get("currency")
+                    val liteEcoCurrency: String = ctx.get("lite_eco_currency")
+                    val sourceCurrency: String? = if (ctx.flags().hasFlag("source")) ctx.flags().get("source") else null
+
                     liteEco.pluginScope.launch {
-                        importManager.importEconomy(sender, economy, currencyForImport, currency)
+                        importManager.importEconomy(ctx.sender().source(), economy, liteEcoCurrency, sourceCurrency)
                     }
-                })
+                }
+        )
     }
 }
