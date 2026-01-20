@@ -113,7 +113,7 @@ messages:
     - "<red>[★] <gray><hover:show_text:'<#F39E9E>Geld von einem oder mehreren anderen Spielern abheben.'>/eco withdraw <yellow><username> <#3EE84D><amount> <#3EE84D>[currency]"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E>Löscht Daten.'>/eco database purge <#b37dc7><argument> <#3EE84D>[currency]"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E>Migriert Datenbanken in ein anderes Format.'>/eco database export <#b37dc7><argument> <#3EE84D>[currency]"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Konvertieren Sie von einem anderen Economy-Plugin zu LiteEco.'>/eco database import <#b37dc7><argument> <#3EE84D>[currency]"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Konvertieren Sie von einem anderen Economy-Plugin zu LiteEco.'>/eco database import <#b37dc7><argument> <#3EE84D><into_currency> [--from <currency>]"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E>Schaltet die Simulation von Datenbankfehlern ein/aus.'>/eco debug failmode"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E>Führt einen automatisierten Test durch, der einen Datenbankfehler und 500 Dollar simuliert.'>/eco debug test-janitor <yellow><username>"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E>Löst sofort die automatische Synchronisierung aus.'>/eco debug janitor"

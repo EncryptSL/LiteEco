@@ -117,7 +117,7 @@ messages:
     - "<red>[★] <gray><hover:show_text:'<#F39E9E>Başka bir oyuncudan/oyunculardan para çekin.'>/eco withdraw <yellow><kullanıcı> <#3EE84D><miktar> <#3EE84D>[para birimi]"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E>Veritabanı temizleme.'>/eco database purge <#b37dc7><argument> <#3EE84D>[para birimi]"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E>Veritabanı taşıma.'>/eco database export <#b37dc7><argument> <#3EE84D>[para birimi]"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Başka bir ekonomi plugininden LiteEco'ya dönüştürme.'>/eco database import <#b37dc7><argument> <#3EE84D>[para birimi]"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Başka bir ekonomi plugininden LiteEco'ya dönüştürme.'>/eco database import <#b37dc7><argument> <#3EE84D>[para birimi] <#3EE84D><into_currency> [--from <currency>]"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E>Toggles database error simulation on/off.'>/eco debug failmode"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E>Runs an automated test simulating a database error and $500.'>/eco debug test-janitor <yellow><username>"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E>Immediately triggers automatic synchronization.'>/eco debug janitor"

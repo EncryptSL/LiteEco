@@ -113,7 +113,7 @@ messages:
     - "<red>[★] <gray><hover:show_text:'<#F39E9E> Entregar dinero a otro jugador o jugadores.'>/eco withdraw <yellow><username> <#3EE84D><amount>"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E> Purgar datos.'>/eco database purge <#b37dc7><argument>"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E> Migración de base de datos a otros formatos.'>/eco database export <#b37dc7><argument>"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E> Convertir de otro plugin de Economía a LiteEco.'>/eco database import <#b37dc7><argument>"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E> Convertir de otro plugin de Economía a LiteEco.'>/eco database import <#b37dc7><argument> <#3EE84D><into_currency> [--from <currency>]"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E>Toggles database error simulation on/off.'>/eco debug failmode"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E>Runs an automated test simulating a database error and $500.'>/eco debug test-janitor <yellow><username>"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E>Immediately triggers automatic synchronization.'>/eco debug janitor"

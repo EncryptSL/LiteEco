@@ -114,7 +114,7 @@ messages:
     - "<red>[★] <gray><hover:show_text:'<#F39E9E> 从指定玩家账户中取走货币.'>/eco withdraw <yellow><玩家名称> <#3EE84D><数量> <#3EE84D>[货币类型]"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E> 清除数据.'>/eco database purge <#b37dc7><参数> <#3EE84D>[货币类型]"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E> 迁移数据库至另一格式.'>/eco database export <#b37dc7><参数> <#3EE84D>[货币类型]"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E> 从其他插件迁移至 LiteEco.'>/eco database import <#b37dc7><参数> <#3EE84D>[货币类型]"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E> 从其他插件迁移至 LiteEco.'>/eco database import <#b37dc7><参数> <#3EE84D>[货币类型] <#3EE84D><into_currency> [--from <currency>]"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E>Toggles database error simulation on/off.'>/eco debug failmode"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E>Runs an automated test simulating a database error and $500.'>/eco debug test-janitor <yellow><username>"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E>Immediately triggers automatic synchronization.'>/eco debug janitor"
