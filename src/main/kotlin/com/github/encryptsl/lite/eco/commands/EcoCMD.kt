@@ -9,6 +9,7 @@ import com.github.encryptsl.lite.eco.commands.admin.subcommands.EcoConfigCmd
 import com.github.encryptsl.lite.eco.commands.admin.subcommands.EcoDatabaseCmd
 import com.github.encryptsl.lite.eco.commands.admin.subcommands.EcoDebugCmd
 import com.github.encryptsl.lite.eco.commands.admin.subcommands.EcoMonologCmd
+import com.github.encryptsl.lite.eco.commands.internal.InternalCmd
 import com.github.encryptsl.lite.eco.common.manager.ExportManager
 import com.github.encryptsl.lite.eco.common.manager.ImportManager
 import com.github.encryptsl.lite.eco.common.manager.monolog.MonologManager
