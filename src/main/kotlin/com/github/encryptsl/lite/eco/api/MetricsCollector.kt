@@ -6,11 +6,19 @@ import org.bstats.charts.AdvancedPie
 import org.bstats.charts.SingleLineChart
 
 class MetricsCollector(
-    private val metrics: Metrics,
     private val liteEco: LiteEco,
+    private val serviceId: Int,
     private val transactions: Map<String, Int>,
 ) {
-    internal fun registerCharts() {
+    private val metrics by lazy { Metrics(liteEco, serviceId) }
+
+    internal fun setupMetrics() {
+        if (liteEco.config.getBoolean("plugin.metrics", true)) {
+            registerCharts()
+        }
+    }
+
+    private fun registerCharts() {
         metrics.addCustomChart(SingleLineChart("transactions") {
             transactions["transactions"]
         })
