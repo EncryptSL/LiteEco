@@ -11,9 +11,14 @@ class ImportManager(
     private val importEconomy: ImportEconomy
 ) {
 
-    suspend fun importEconomy(sender: CommandSender, economyName: String, currencyForImport: String, liteEcoCurrency: String) {
+    suspend fun importEconomy(
+        sender: CommandSender,
+        economyName: String,
+        targetCurrency: String,
+        sourceCurrency: String?,
+    ) {
         val (converted, balances) = try {
-            importEconomy.import(economyName, currencyForImport, liteEcoCurrency)
+            importEconomy.import(economyName, targetCurrency, sourceCurrency)
         } catch (e : Exception) {
             liteEco.componentLogger.error("Failed to import Economy: $economyName {}", e.message)
             sender.sendMessage(liteEco.locale.translation("messages.error.import_failed"))
