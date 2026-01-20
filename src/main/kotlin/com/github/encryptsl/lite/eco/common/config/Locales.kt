@@ -15,6 +15,7 @@ class Locales(
 ) {
 
     private lateinit var langYml: FileConfiguration
+    private lateinit var fallbackYml: FileConfiguration
     private val config get() = liteEco.config
     private val logger get() = liteEco.logger
 
@@ -40,23 +41,36 @@ class Locales(
     }
 
     fun plainTextTranslation(component: Component): String {
-
         return PlainTextComponentSerializer.plainText().serialize(component)
     }
 
-    fun getMessage(key: String): String {
-        val raw = langYml.getString(key)
-            ?: langYml.getString("messages.admin.translation_missing")?.replace("<key>", key)
-        return raw?.replace("<prefix>", prefix)
-            ?: "Translation missing: $key"
+    /**
+     * Load base translations and then the selected language.
+     */
+    fun load() {
+        loadEnUs()
+
+        val selected = config.getString("plugin.translation").orEmpty()
+        setLocale(selected.ifBlank { "en_us" })
     }
 
-    private fun getList(key: String): List<String> {
-        return langYml.getList(key)
-            ?.mapNotNull { it?.toString()?.replace("<prefix>", prefix) }
-            ?: emptyList()
+    /**
+     * Forces loading of the master en_us.yml file from JAR or disk.
+     */
+    private fun loadEnUs() {
+        val fileName = "en_us.yml"
+        val file = File(localeDir, fileName)
+
+        if (!file.exists()) {
+            file.parentFile.mkdirs()
+            liteEco.saveResource("locale/$fileName", false)
+        }
+        fallbackYml = YamlConfiguration.loadConfiguration(file)
     }
 
+    /**
+     * Switches the current translation to a new locale.
+     */
     fun setLocale(localeCode: String): Boolean {
         val normalizedLocale = localeCode.lowercase()
         val fileName = "$normalizedLocale.yml"
@@ -71,7 +85,11 @@ class Locales(
                     liteEco.saveResource(resourcePath, false)
                 } else {
                     logger.warn("⚠️ Translation resource '$resourcePath' not found. Falling back to en_us.")
-                    return if (normalizedLocale != "en_us") setLocale("en_us") else false
+                    if (normalizedLocale != "en_us") {
+                        langYml = fallbackYml
+                        return true
+                    }
+                    return false
                 }
             }
 
@@ -83,21 +101,46 @@ class Locales(
 
             logger.info("✅ Translation loaded: $fileName")
             true
-        } catch (ex: Exception) {
+        } catch (_: Exception) {
             logger.warn("⚠️ Failed to load translation for $localeCode")
-            logger.warn(ex.message ?: ex.toString())
+            if (::fallbackYml.isInitialized) langYml = fallbackYml
             false
         }
+    }
+
+    /**
+     * Gets a message from the current locale, falls back to en_us if not found.
+     */
+    fun getMessage(key: String): String {
+        var raw = langYml.getString(key)
+
+        if (raw == null && ::fallbackYml.isInitialized) {
+            raw = fallbackYml.getString(key)
+        }
+
+        if (raw == null) {
+            val missingKey = "messages.admin.translation_missing"
+            val missingFormat = langYml.getString(missingKey) ?: fallbackYml.getString(missingKey)
+
+            return missingFormat?.replace("<key>", key)?.replace("<prefix>", prefix)
+                ?: "Translation missing: $key"
+        }
+
+        return raw.replace("<prefix>", prefix)
+    }
+
+    /**
+     * Gets a list of strings with fallback support.
+     */
+    private fun getList(key: String): List<String> {
+        val list = langYml.getList(key) ?: if (::fallbackYml.isInitialized) fallbackYml.getList(key) else null
+
+        return list?.mapNotNull { it?.toString()?.replace("<prefix>", prefix) } ?: emptyList()
     }
 
     fun reloadCurrentLocale() {
         val current = config.getString("plugin.translation").orEmpty()
         setLocale(current.ifBlank { "en_us" })
-    }
-
-    fun load() {
-        val selected = config.getString("plugin.translation").orEmpty()
-        setLocale(selected.ifBlank { "en_us" })
     }
 
     fun availableLocales(): List<String> {
@@ -118,7 +161,6 @@ class Locales(
 
     private fun availableLocalesFromJar(): List<String> {
         val locales = mutableListOf<String>()
-
         val jarUrl = this::class.java.protectionDomain.codeSource.location
         val jarFile = java.util.jar.JarFile(File(jarUrl.toURI()))
 
@@ -130,7 +172,6 @@ class Locales(
                 }
             }
         }
-
         return locales
     }
 }
