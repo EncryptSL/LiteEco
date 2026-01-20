@@ -1,6 +1,7 @@
 package com.github.encryptsl.lite.eco.commands
 
 import com.github.encryptsl.lite.eco.LiteEco
+import com.github.encryptsl.lite.eco.commands.internal.InternalCmd
 import com.github.encryptsl.lite.eco.commands.player.MoneyBalanceCmd
 import com.github.encryptsl.lite.eco.commands.player.MoneyPayCmd
 import com.github.encryptsl.lite.eco.commands.player.MoneyTopCmd
