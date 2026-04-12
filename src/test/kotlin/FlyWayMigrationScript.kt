@@ -56,14 +56,14 @@ class FlyWayMigrationScript {
 
         transaction {
 
-            val oldTables = arrayOf(V1AccountTable("dollars"), V2AccountTable("credits"))
+            val oldTables = arrayOf(V1AccountTable("dollars"), V2AccountTable("dollars"))
             SchemaUtils.create(*oldTables)
             commit()
 
             println("--- GENERATING MIGRATION SCRIPTS ---")
             println("Connecting to temporary in-memory database and simulating old schema.")
 
-            val newTables = arrayOf(V2AccountTable("dollars"), V2AccountTable("credits"))
+            val newTables = arrayOf(V2AccountTable("dollars"), V2AccountTable("dollars"))
             val statements = MigrationUtils.statementsRequiredForDatabaseMigration(*newTables)
 
             if (statements.isEmpty()) {

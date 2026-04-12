@@ -12,7 +12,11 @@ import org.jetbrains.exposed.v1.jdbc.*
 import java.math.BigDecimal
 import java.sql.SQLException
 import java.util.*
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.toJavaUuid
+import kotlin.uuid.toKotlinUuid
 
+@OptIn(ExperimentalUuidApi::class)
 class DatabaseEcoModel : PlayerSQL {
 
     companion object {
@@ -25,7 +29,7 @@ class DatabaseEcoModel : PlayerSQL {
                 val table = Account(currency)
                 table.insertIgnore {
                     it[table.username] = username
-                    it[table.uuid] = uuid
+                    it[table.uuid] = uuid.toKotlinUuid()
                     it[table.money] = money
                 }
             } catch (e : ExposedSQLException) {
@@ -38,7 +42,7 @@ class DatabaseEcoModel : PlayerSQL {
         loggedTransaction {
             try {
                 val table = Account(currency)
-                table.update ({ table.uuid eq uuid }) {
+                table.update ({ table.uuid eq uuid.toKotlinUuid() }) {
                     it[table.username] = username
                 }
             } catch (e : ExposedSQLException) {
@@ -51,8 +55,8 @@ class DatabaseEcoModel : PlayerSQL {
         return loggedTransaction {
             val table = Account(currency)
             table.select(table.uuid, table.username, table.money)
-                .where(table.uuid eq uuid).singleOrNull()?.let {
-                    UserEntity(it[table.username], it[table.uuid], it[table.money])
+                .where(table.uuid eq uuid.toKotlinUuid()).singleOrNull()?.let {
+                    UserEntity(it[table.username], it[table.uuid].toJavaUuid(), it[table.money])
                 }
         }
     }
@@ -61,7 +65,7 @@ class DatabaseEcoModel : PlayerSQL {
         return loggedTransaction {
             try {
                 val table = Account(currency)
-                val row = table.select(table.uuid, table.money).where { table.uuid eq uuid }.singleOrNull()
+                val row = table.select(table.uuid, table.money).where { table.uuid eq uuid.toKotlinUuid() }.singleOrNull()
                 row?.getOrNull(table.money) ?: BigDecimal.ZERO
             } catch (e : ExposedSQLException) {
                 LiteEco.instance.componentLogger.error(e.message ?: e.localizedMessage)
@@ -74,7 +78,7 @@ class DatabaseEcoModel : PlayerSQL {
         loggedTransaction {
             try {
                 val table = Account(currency)
-                table.deleteWhere { table.uuid eq uuid }
+                table.deleteWhere { table.uuid eq uuid.toKotlinUuid() }
             } catch (e : ExposedSQLException) {
                 LiteEco.instance.componentLogger.error(e.message ?: e.localizedMessage)
             }
@@ -85,7 +89,7 @@ class DatabaseEcoModel : PlayerSQL {
         return loggedTransaction {
             try {
                 val table = Account(currency)
-                !table.select(table.uuid).where(table.uuid eq uuid).empty()
+                !table.select(table.uuid).where(table.uuid eq uuid.toKotlinUuid()).empty()
             } catch (e : ExposedSQLException) {
                 LiteEco.instance.componentLogger.error(e.message ?: e.localizedMessage)
                 false
@@ -97,14 +101,14 @@ class DatabaseEcoModel : PlayerSQL {
         val table = Account(currency)
 
         table.selectAll().orderBy(table.money, SortOrder.DESC).associate {
-            it[table.username] to UserEntity(it[table.username], it[table.uuid], it[table.money])
+            it[table.username] to UserEntity(it[table.username], it[table.uuid].toJavaUuid(), it[table.money])
         }.toMutableMap()
     }
 
     override fun getUUIDNameMap(currency: String): MutableMap<UUID, String> = loggedTransaction {
         val table = Account(currency)
         table.selectAll().associate {
-            it[table.uuid] to it[table.username]
+            it[table.uuid].toJavaUuid() to it[table.username]
         }.toMutableMap()
     }
 
@@ -112,7 +116,7 @@ class DatabaseEcoModel : PlayerSQL {
         return loggedTransaction {
             try {
                 val table = Account(currency)
-                table.selectAll().map {it[table.uuid] }.toMutableList()
+                table.selectAll().map {it[table.uuid].toJavaUuid() }.toMutableList()
             } catch (e : ExposedSQLException) {
                 LiteEco.instance.componentLogger.error(e.message ?: e.localizedMessage)
                 mutableListOf()
@@ -124,7 +128,7 @@ class DatabaseEcoModel : PlayerSQL {
         loggedTransaction {
             try {
                 val table = Account(currency)
-                table.update({ table.uuid eq uuid }) {
+                table.update({ table.uuid eq uuid.toKotlinUuid() }) {
                     it[table.money] = table.money + money
                 }
             } catch (e : ExposedSQLException) {
@@ -136,7 +140,7 @@ class DatabaseEcoModel : PlayerSQL {
         loggedTransaction {
             try {
                 val table = Account(currency)
-                table.update({ table.uuid eq uuid }) {
+                table.update({ table.uuid eq uuid.toKotlinUuid() }) {
                     it[table.money] = table.money - money
                 }
             } catch (e : ExposedSQLException) {
@@ -147,14 +151,14 @@ class DatabaseEcoModel : PlayerSQL {
     override fun set(uuid: UUID, currency: String, money: BigDecimal) {
 
         if (debugFailMode) {
-            println("[DEBUG] I am throwing out a false error for $uuid")
+            LiteEco.instance.logger.error("[DEBUG] I am throwing out a false error for $uuid")
             throw SQLException("DEBUG: Database is currently in fail-mode.")
         }
 
         loggedTransaction {
             try {
                 val table = Account(currency)
-                table.update({ table.uuid eq uuid }) {
+                table.update({ table.uuid eq uuid.toKotlinUuid() }) {
                     it[table.money] = money
                 }
             } catch (e : ExposedSQLException) {
@@ -187,7 +191,7 @@ class DatabaseEcoModel : PlayerSQL {
         loggedTransaction {
             try {
                 Account(currency).deleteWhere {
-                    uuid notInList Bukkit.getOfflinePlayers().map { it.uniqueId }
+                    uuid notInList Bukkit.getOfflinePlayers().map { it.uniqueId.toKotlinUuid() }
                 }
             } catch (e : ExposedSQLException) {
                 LiteEco.instance.componentLogger.error(e.message ?: e.localizedMessage)
@@ -200,7 +204,7 @@ class DatabaseEcoModel : PlayerSQL {
             try {
                 val table = Account(currency)
                 table.batchInsert(importData) { (uuid, username, money) ->
-                    this[table.uuid] = uuid
+                    this[table.uuid] = uuid.toKotlinUuid()
                     this[table.username] = username
                     this[table.money] = money
                 }

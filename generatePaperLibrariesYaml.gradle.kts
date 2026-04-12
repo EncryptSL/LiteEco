@@ -1,47 +1,56 @@
 tasks.register("generatePaperLibrariesYaml") {
     group = "build setup"
-    description = "Generates paper-libraries.yml from all declared dependencies"
+    description = "Generates paper-libraries.yml from runtime dependencies filtering by allowed groups/prefixes"
 
     val outputFile = project.layout.projectDirectory.file("src/main/resources/paper-libraries.yml").asFile
-    val compileClasspath = project.configurations.named("compileClasspath")
 
-    val allowedDependencies = setOf(
-        "com.zaxxer:HikariCP",
-        "org.mariadb.jdbc:mariadb-java-client",
-        "org.postgresql:postgresql",
-        "org.xerial:sqlite-jdbc",
-        "org.jetbrains.kotlin:kotlin-stdlib-jdk8",
-        "org.jetbrains.kotlin:kotlin-reflect",
-        "org.jetbrains.kotlinx:kotlinx-io-core",
-        "org.jetbrains.exposed:exposed-core",
-        "org.jetbrains.exposed:exposed-jdbc",
-        "org.jetbrains.exposed:exposed-kotlin-datetime",
-        "org.flywaydb:flyway-core",
-        "org.flywaydb:flyway-mysql",
-        "io.ktor:ktor-client-core",
-        "com.tchristofferson:ConfigUpdater",
-        "org.apache.commons:commons-csv",
-        "org.incendo:cloud-annotations",
-        "org.incendo:cloud-minecraft-extras",
-        "org.incendo:cloud-kotlin-extensions",
-        "org.incendo:cloud-paper"
+    // Používáme runtimeClasspath, protože tam jsou skutečné závislosti potřebné pro běh
+    val runtimeClasspath = project.configurations.named("runtimeClasspath")
+
+    // Definujeme povolené skupiny nebo prefixy.
+    // Pokud ID skupiny začíná tímto řetězcem, bude zahrnuta.
+    val allowedGroups = setOf(
+        "org.jetbrains.kotlin",
+        "org.jetbrains.kotlinx",
+        "org.jetbrains.exposed",
+        "io.ktor",
+        "org.incendo",
+        "org.flywaydb",
+        "com.zaxxer",
+        "org.mariadb.jdbc",
+        "org.postgresql",
+        "org.xerial",
+        "com.tchristofferson",
+        "org.apache.commons",
     )
 
-    inputs.files(compileClasspath).withPropertyName("compileClasspath")
+    // Přidáme závislosti, které by se nemusely chytit přes skupinu (výjimečné případy)
+    val allowedSpecificDependencies = setOf(
+        "org.slf4j:slf4j-api" // Příklad, pokud bys potřeboval
+    )
+
+    inputs.files(runtimeClasspath).withPropertyName("runtimeClasspath")
     outputs.file(outputFile).withPropertyName("outputFile")
 
     doLast {
-        val configuration = compileClasspath.get()
+        val configuration = runtimeClasspath.get()
 
-        val dependencies = configuration.resolvedConfiguration.lenientConfiguration.allModuleDependencies
-            .map { it.module.id }
-            .filter { id -> "${id.group}:${id.name}" in allowedDependencies }
+        // Resolvujeme tranzitivní závislosti
+        val dependencies = configuration.resolvedConfiguration.resolvedArtifacts
+            .map { it.moduleVersion.id }
+            .filter { id ->
+                allowedGroups.any { group -> id.group.startsWith(group) } ||
+                        "${id.group}:${id.name}" in allowedSpecificDependencies
+            }
             .map { id -> "${id.group}:${id.name}:${id.version}" }
             .distinct()
             .sorted()
 
         val content = buildString {
             appendLine("libraries:")
+            if (dependencies.isEmpty()) {
+                println("⚠️ WARNING: No dependencies matched the filter! Check your allowedGroups.")
+            }
             dependencies.forEach {
                 appendLine("  - $it")
             }
@@ -53,5 +62,7 @@ tasks.register("generatePaperLibrariesYaml") {
 
         outputFile.writeText(content)
         println("✅ paper-libraries.yml generated with ${dependencies.size} libraries")
+
+        dependencies.forEach { println("   -> $it") }
     }
 }

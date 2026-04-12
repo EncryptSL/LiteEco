@@ -39,7 +39,13 @@ class SuspendLiteEcoEconomyWrapper : ModernLiteEcoEconomyImpl() {
     }
 
     override suspend fun createOrUpdateAndCache(uuid: UUID, username: String, currency: String, start: BigDecimal) {
-        val user = getUserByUUID(uuid, currency).orElse(null)
+        val user = try {
+            getUserByUUID(uuid, currency).orElse(null)
+        } catch (e : Exception) {
+            LiteEco.instance.logger.error("Error in createOrUpdateAndCache for $uuid: ${e.message}")
+            return
+        }
+
         if (user == null) {
             io { LiteEco.instance.databaseEcoModel.createPlayerAccount(username, uuid, currency, start) }
             cacheAccount(uuid, currency, start)

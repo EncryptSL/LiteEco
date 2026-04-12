@@ -124,7 +124,7 @@ class LiteEco : JavaPlugin() {
 
     private fun registerListeners() {
         val listeners = arrayOf(
-            PlayerListeners(this),
+            PlayerListeners(this)
         )
         val timeTaken = measureTimeMillis {
             for (listener in listeners) {

@@ -1,6 +1,10 @@
 package com.github.encryptsl.lite.eco.listeners
 
 import com.github.encryptsl.lite.eco.LiteEco
+import com.github.encryptsl.lite.eco.api.objects.ModernText
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -20,7 +24,16 @@ class PlayerListeners(
     fun onPreLogin(event: AsyncPlayerPreLoginEvent) {
         val uuid = event.uniqueId
         val username = event.name
-        liteEco.accountManager.createOrUpdateAndCache(uuid, username)
+
+        liteEco.pluginScope.launch {
+            try {
+                liteEco.accountManager.createOrUpdateAndCache(uuid, username)
+            } catch (_: Exception) {
+                withContext(Dispatchers.Main) {
+                    event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, ModernText.miniModernText("Error while loading or creating account."))
+                }
+            }
+        }
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
