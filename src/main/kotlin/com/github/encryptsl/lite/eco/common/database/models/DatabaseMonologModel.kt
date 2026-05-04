@@ -1,12 +1,12 @@
 package com.github.encryptsl.lite.eco.common.database.models
 
+import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.enums.TypeLogger
 import com.github.encryptsl.lite.eco.api.interfaces.TransactionLogger
 import com.github.encryptsl.lite.eco.common.database.entity.TransactionContextEntity
 import com.github.encryptsl.lite.eco.common.database.tables.MonologTable
 import com.github.encryptsl.lite.eco.common.extensions.io
 import com.github.encryptsl.lite.eco.common.extensions.loggedTransaction
-import org.bukkit.plugin.Plugin
 import org.jetbrains.exposed.v1.core.ResultRow
 import org.jetbrains.exposed.v1.core.SortOrder
 import org.jetbrains.exposed.v1.core.eq
@@ -19,11 +19,11 @@ import kotlin.time.ExperimentalTime
 
 @OptIn(ExperimentalTime::class)
 class DatabaseMonologModel(
-    val plugin: Plugin
+    val liteEco: LiteEco
 ) : TransactionLogger {
 
     private val isLoggingEnabled: Boolean
-        get() = plugin.config.getBoolean("economy.monolog_activity", true)
+        get() = liteEco.baseConfig.economy.monologActivity
 
     override suspend fun logging(ctx: TransactionContextEntity) {
         if (!isLoggingEnabled) return
@@ -41,7 +41,7 @@ class DatabaseMonologModel(
                         it[timestamp] = ctx.timestamp
                     }
                 } catch (e: Exception) {
-                    plugin.componentLogger.warn("Failed to log transaction: ${e.message}")
+                    liteEco.logger.warn("Failed to log transaction: ${e.message}")
                 }
             }
         }

@@ -29,7 +29,7 @@ class EconomyMoneySetHandler(
         }
 
         liteEco.pluginScope.launch {
-            val user = liteEco.api.getUserByUUID(target.uniqueId, currency).getOrNull()
+            val user = liteEco.api.getUserByUUID(target.uniqueId, currency)
             if (user == null) {
                 sender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist", Placeholder.parsed("account", target.name.toString())))
                 return@launch
@@ -50,7 +50,7 @@ class EconomyMoneySetHandler(
                 Placeholder.parsed("money", liteEco.currencyImpl.fullFormatting(money, currency)),
                 Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
             )))
-            if (target.isOnline && liteEco.config.getBoolean("messages.target.notify_set")) {
+            if (target.isOnline && liteEco.baseConfig.messages.target.notifySet) {
                 target.player?.sendMessage(liteEco.locale.translation("messages.target.set_money", TagResolver.resolver(
                     Placeholder.parsed("sender", sender.name),
                     Placeholder.parsed("money", liteEco.currencyImpl.fullFormatting(money, currency)),

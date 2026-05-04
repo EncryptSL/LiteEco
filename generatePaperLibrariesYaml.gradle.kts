@@ -20,6 +20,7 @@ tasks.register("generatePaperLibrariesYaml") {
         "org.mariadb.jdbc",
         "org.postgresql",
         "org.xerial",
+        "de.exlll",
         "com.tchristofferson",
         "org.apache.commons",
     )

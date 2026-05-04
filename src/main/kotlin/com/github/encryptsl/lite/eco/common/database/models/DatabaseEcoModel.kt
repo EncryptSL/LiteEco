@@ -4,6 +4,7 @@ import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.interfaces.PlayerSQL
 import com.github.encryptsl.lite.eco.common.database.entity.UserEntity
 import com.github.encryptsl.lite.eco.common.database.tables.Account
+import com.github.encryptsl.lite.eco.common.database.tables.toUserEntity
 import com.github.encryptsl.lite.eco.common.extensions.loggedTransaction
 import org.bukkit.Bukkit
 import org.jetbrains.exposed.v1.core.*
@@ -51,14 +52,12 @@ class DatabaseEcoModel : PlayerSQL {
         }
     }
 
-    override fun getUserByUUID(uuid: UUID, currency: String): UserEntity? {
-        return loggedTransaction {
-            val table = Account(currency)
-            table.select(table.uuid, table.username, table.money)
-                .where(table.uuid eq uuid.toKotlinUuid()).singleOrNull()?.let {
-                    UserEntity(it[table.username], it[table.uuid].toJavaUuid(), it[table.money])
-                }
-        }
+    override fun getUserByUUID(uuid: UUID, currency: String): UserEntity? = loggedTransaction {
+        val table = Account(currency)
+        table.select(table.uuid, table.username, table.money)
+            .where { table.uuid eq uuid.toKotlinUuid() }
+            .singleOrNull()
+            ?.toUserEntity(table)
     }
 
     override fun getBalance(uuid: UUID, currency: String): BigDecimal {

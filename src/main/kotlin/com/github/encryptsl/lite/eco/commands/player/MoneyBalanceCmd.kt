@@ -68,17 +68,17 @@ class MoneyBalanceCmd(
         }
 
         liteEco.pluginScope.launch {
-            liteEco.api.getUserByUUID(target.uniqueId, currency).ifPresentOrElse({ user ->
+            liteEco.api.getUserByUUID(target.uniqueId, currency)?.let {
                 val key = if (sender == target) "messages.balance.format" else "messages.balance.format_target"
-                sender.sendMessage(liteEco.locale.translation(key, helper.getComponentBal(user, currency)))
-            }, {
+                sender.sendMessage(liteEco.locale.translation(key, helper.getComponentBal(it, currency)))
+            } ?: run {
                 sender.sendMessage(
                     liteEco.locale.translation(
                         "messages.error.account_not_exist",
                         Placeholder.parsed("account", target.name.toString())
                     )
                 )
-            })
+            }
         }
     }
 }

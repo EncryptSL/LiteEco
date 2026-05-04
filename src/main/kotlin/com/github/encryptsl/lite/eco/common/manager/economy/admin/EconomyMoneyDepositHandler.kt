@@ -30,7 +30,7 @@ class EconomyMoneyDepositHandler(
         }
 
         liteEco.pluginScope.launch {
-            val user = liteEco.api.getUserByUUID(target.uniqueId, currency).getOrNull()
+            val user = liteEco.api.getUserByUUID(target.uniqueId, currency)
             if (user == null) {
                 sender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist", Placeholder.parsed("account", target.name.toString())))
                 return@launch
@@ -59,7 +59,7 @@ class EconomyMoneyDepositHandler(
                     Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
                 )
             ))
-            if (target.isOnline && liteEco.config.getBoolean("messages.target.notify_add")) {
+            if (target.isOnline && liteEco.baseConfig.messages.target.notifyAdd) {
                 if (silent) {
                     target.player?.sendMessage(liteEco.locale.translation(
                         "messages.target.add_money_silent",

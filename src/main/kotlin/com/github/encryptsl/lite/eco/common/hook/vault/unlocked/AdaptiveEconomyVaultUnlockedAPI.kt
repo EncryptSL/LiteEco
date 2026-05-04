@@ -73,7 +73,7 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
 
     override fun getAccountName(uuid: UUID): Optional<String> {
         return runBlocking {
-            liteEco.api.getUserByUUID(uuid, liteEco.currencyImpl.defaultCurrency()).getOrNull()?.let {
+            liteEco.api.getUserByUUID(uuid, liteEco.currencyImpl.defaultCurrency())?.let {
                 Optional.of(it.userName)
             } ?: Optional.empty()
         }
@@ -91,7 +91,10 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
 
     override fun accountSupportsCurrency(plugin: String, accountID: UUID, currency: String): Boolean {
         val result: Boolean = try {
-            runBlocking { liteEco.api.getUserByUUID(accountID, currency).isPresent }
+            runBlocking {
+                liteEco.api.getUserByUUID(accountID, currency)
+                true
+            }
         } catch (_: Exception) {
             false
         }

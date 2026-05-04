@@ -33,26 +33,24 @@ class EconomyGlobalDepositHandler(
         }
         liteEco.pluginScope.launch {
             players.forEach { player ->
-                val user = liteEco.api
-                    .getUserByUUID(player.uniqueId, currency)
-                    .getOrNull()
+                val user = liteEco.api.getUserByUUID(player.uniqueId, currency) ?: return@forEach
 
-                user?.takeIf { u ->
-                    !liteEco.currencyImpl.getCheckBalanceLimit(u.money, currency, money)
-                }?.also { u ->
-                    with(liteEco) {
-                        loggerModel.logging(
-                            TransactionContextEntity(
-                            TypeLogger.DEPOSIT,
-                            sender.name,
-                            u.userName,
-                            currency,
-                            u.money,
-                            u.money + money
-                        ))
-                        api.deposit(u.uuid, currency, money)
+                user.takeIf { !liteEco.currencyImpl.getCheckBalanceLimit(it.money, currency, money) }
+                    ?.let { u ->
+                        with(liteEco) {
+                            loggerModel.logging(
+                                TransactionContextEntity(
+                                    type = TypeLogger.DEPOSIT,
+                                    sender = sender.name,
+                                    target = u.userName,
+                                    currency = currency,
+                                    previousBalance = u.money,
+                                    newBalance = u.money.plus(money)
+                                )
+                            )
+                            api.deposit(u.uuid, currency, money)
+                        }
                     }
-                }
             }
             liteEco.increaseTransactions(players.size)
 
@@ -62,7 +60,7 @@ class EconomyGlobalDepositHandler(
                     Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
                 ))
             )
-            if (liteEco.config.getBoolean("messages.global.notify_add")) {
+            if (liteEco.baseConfig.messages.global.notifyAdd) {
                 Bukkit.broadcast(liteEco.locale.translation("messages.broadcast.add_money", TagResolver.resolver(
                     Placeholder.parsed("sender", sender.name),
                     Placeholder.parsed("money", liteEco.currencyImpl.fullFormatting(money, currency)),

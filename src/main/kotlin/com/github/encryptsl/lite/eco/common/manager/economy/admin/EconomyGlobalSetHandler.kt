@@ -35,23 +35,20 @@ class EconomyGlobalSetHandler(
 
         liteEco.pluginScope.launch {
             players.forEach { player ->
-                val user = liteEco.api
-                    .getUserByUUID(player.uniqueId, currency)
-                    .getOrNull()
+                val user = liteEco.api.getUserByUUID(player.uniqueId, currency) ?: return@forEach
 
-                user?.also { u ->
-                    with(liteEco) {
-                        loggerModel.logging(
-                            TransactionContextEntity(
-                            TypeLogger.SET,
-                            sender.name,
-                            u.userName,
-                            currency,
-                            u.money,
-                            money
-                        ))
-                        api.set(player.uniqueId, currency, money)
-                    }
+                with(liteEco) {
+                    loggerModel.logging(
+                        TransactionContextEntity(
+                            type = TypeLogger.SET,
+                            sender = sender.name,
+                            target = user.userName,
+                            currency = currency,
+                            previousBalance = user.money,
+                            newBalance = money
+                        )
+                    )
+                    api.set(player.uniqueId, currency, money)
                 }
             }
 
@@ -61,7 +58,7 @@ class EconomyGlobalSetHandler(
                 Placeholder.parsed("money", liteEco.currencyImpl.fullFormatting(money, currency)),
                 Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
             )))
-            if (liteEco.config.getBoolean("messages.global.notify_set")) {
+            if (liteEco.baseConfig.messages.global.notifySet) {
                 Bukkit.broadcast(liteEco.locale.translation("messages.broadcast.set_money", TagResolver.resolver(
                     Placeholder.parsed("sender", sender.name),
                     Placeholder.parsed("money", liteEco.currencyImpl.fullFormatting(money)),

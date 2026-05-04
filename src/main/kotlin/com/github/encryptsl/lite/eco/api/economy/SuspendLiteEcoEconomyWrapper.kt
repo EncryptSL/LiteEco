@@ -10,60 +10,68 @@ import java.util.*
 
 class SuspendLiteEcoEconomyWrapper : ModernLiteEcoEconomyImpl() {
 
-    override suspend fun getUserByUUID(uuid: UUID, currency: String): Optional<UserEntity> = io {
+    override suspend fun getUserByUUID(uuid: UUID, currency: String): UserEntity? = io {
         try {
             if (PlayerAccount.isPlayerOnline(uuid) || PlayerAccount.isAccountCached(uuid, currency)) {
                 val offlinePlayer = Bukkit.getOfflinePlayer(uuid)
                 val name = offlinePlayer.name ?: "Unknown"
-                Optional.of(UserEntity(name, uuid, PlayerAccount.getBalance(uuid, currency)))
+
+                UserEntity(name, uuid, PlayerAccount.getBalance(uuid, currency))
             } else {
-                Optional.ofNullable(LiteEco.instance.databaseEcoModel.getUserByUUID(uuid, currency))
+                LiteEco.instance.databaseEcoModel.getUserByUUID(uuid, currency)
             }
         } catch (e: Exception) {
             LiteEco.instance.logger.error("Error in getUserByUUID for $uuid: ${e.message}")
-            Optional.empty()
+            null
         }
     }
 
     override suspend fun createOrUpdateAccount(uuid: UUID, username: String, currency: String, value: BigDecimal, ignoreUpdate: Boolean): Boolean {
-        val userOpt = getUserByUUID(uuid, currency).orElse(null)
-        return if (userOpt == null) {
-            io { LiteEco.instance.databaseEcoModel.createPlayerAccount(username, uuid, currency, value) }
-            true
-        } else {
-            if (!ignoreUpdate) {
-                io { LiteEco.instance.databaseEcoModel.updatePlayerName(uuid, username, currency) }
+        val user = getUserByUUID(uuid, currency)
+        val userExists = user != null
+
+        io {
+            if (userExists) {
+                if (!ignoreUpdate) {
+                    LiteEco.instance.databaseEcoModel.updatePlayerName(uuid, username, currency)
+                }
+            } else {
+                LiteEco.instance.databaseEcoModel.createPlayerAccount(username, uuid, currency, value)
             }
-            false
         }
+
+        return !userExists
     }
 
     override suspend fun createOrUpdateAndCache(uuid: UUID, username: String, currency: String, start: BigDecimal) {
         val user = try {
-            getUserByUUID(uuid, currency).orElse(null)
-        } catch (e : Exception) {
+            getUserByUUID(uuid, currency)
+        } catch (e: Exception) {
             LiteEco.instance.logger.error("Error in createOrUpdateAndCache for $uuid: ${e.message}")
             return
         }
 
-        if (user == null) {
-            io { LiteEco.instance.databaseEcoModel.createPlayerAccount(username, uuid, currency, start) }
-            cacheAccount(uuid, currency, start)
-        } else {
-            io { LiteEco.instance.databaseEcoModel.updatePlayerName(uuid, username, currency) }
-            cacheAccount(uuid, currency, user.money)
+        val balanceToCache = user?.money ?: start
+
+        io {
+            if (user == null) {
+                LiteEco.instance.databaseEcoModel.createPlayerAccount(username, uuid, currency, start)
+            } else {
+                LiteEco.instance.databaseEcoModel.updatePlayerName(uuid, username, currency)
+            }
         }
+
+        cacheAccount(uuid, currency, balanceToCache)
     }
 
     override suspend fun deleteAccount(uuid: UUID, currency: String): Boolean {
-        val user = getUserByUUID(uuid, currency).orElse(null)
-        return if (user == null) {
-            false
-        } else {
+        val user = getUserByUUID(uuid, currency)
+
+        return user?.let {
             PlayerAccount.clearFromCache(uuid)
             io { LiteEco.instance.databaseEcoModel.deletePlayerAccount(uuid, currency) }
             true
-        }
+        } ?: false
     }
 
     override suspend fun purgeAccounts(currency: String) = io {
@@ -112,11 +120,10 @@ class SuspendLiteEcoEconomyWrapper : ModernLiteEcoEconomyImpl() {
     }
 
     override suspend fun getBalance(uuid: UUID, currency: String): BigDecimal {
-        val userOpt = getUserByUUID(uuid, currency)
-        if (userOpt.isPresent) {
-            return userOpt.get().money
-        }
-        return BigDecimal.ZERO
+        val user = getUserByUUID(uuid, currency)
+        return user?.let {
+            user.money
+        } ?: BigDecimal.ZERO
     }
 
     private fun cacheAccount(uuid: UUID, currency: String, amount: BigDecimal) {

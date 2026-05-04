@@ -17,9 +17,9 @@ interface LiteEconomyAPI {
      *
      * @param uuid UUID of the player
      * @param currency currency name (default "dollars")
-     * @return [Optional] containing the user if found, otherwise empty
+     * @return [UserEntity] containing the user if found, otherwise empty
      */
-    suspend fun getUserByUUID(uuid: UUID, currency: String = "dollars"): Optional<UserEntity>
+    suspend fun getUserByUUID(uuid: UUID, currency: String = "dollars"): UserEntity?
 
     /**
      * Creates or updates a player account.

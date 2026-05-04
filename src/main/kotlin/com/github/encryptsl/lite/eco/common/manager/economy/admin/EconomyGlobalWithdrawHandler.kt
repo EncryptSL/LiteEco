@@ -28,23 +28,22 @@ class EconomyGlobalWithdrawHandler(
             return sender.sendMessage(liteEco.locale.translation("messages.error.database_exception", Placeholder.parsed("exception", "Collection is empty !")))
 
         liteEco.pluginScope.launch {
+
             players.forEach { player ->
-                val user = liteEco.api
-                    .getUserByUUID(player.uniqueId, currency)
-                    .getOrNull()
-                user?.also { u ->
-                    with(liteEco) {
-                        loggerModel.logging(
-                            TransactionContextEntity(
-                            TypeLogger.WITHDRAW,
-                            sender.name,
-                            u.userName,
-                            currency,
-                            u.money,
-                            u.money - money
-                        ))
-                        api.withdraw(u.uuid, currency, money)
-                    }
+                val user = liteEco.api.getUserByUUID(player.uniqueId, currency) ?: return@forEach
+
+                with(liteEco) {
+                    loggerModel.logging(
+                        TransactionContextEntity(
+                            type = TypeLogger.WITHDRAW,
+                            sender = sender.name,
+                            target = user.userName,
+                            currency = currency,
+                            previousBalance = user.money,
+                            newBalance = user.money.minus(money),
+                        )
+                    )
+                    api.withdraw(user.uuid, currency, money)
                 }
             }
 
@@ -56,7 +55,7 @@ class EconomyGlobalWithdrawHandler(
                     Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
                 )
             ))
-            if (liteEco.config.getBoolean("messages.global.notify_withdraw")) {
+            if (liteEco.baseConfig.messages.global.notifyWithdraw) {
                 Bukkit.broadcast(liteEco.locale.translation("messages.broadcast.withdraw_money", TagResolver.resolver(
                     Placeholder.parsed("sender", sender.name),
                     Placeholder.parsed("money", liteEco.currencyImpl.fullFormatting(money, currency)),

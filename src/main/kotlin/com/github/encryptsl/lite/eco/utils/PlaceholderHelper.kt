@@ -22,7 +22,7 @@ class PlaceholderHelper(
     fun getNameByRank(rank: Int, currency: String): String {
         val top = liteEco.api.getTopBalance(currency)
         return top.keys.elementAtOrNull(rank - 1)
-            ?: liteEco.config.getString("formatting.placeholders.empty-name", "EMPTY")!!
+            ?: liteEco.baseConfig.formatting.placeholders.emptyName
     }
 
     /**

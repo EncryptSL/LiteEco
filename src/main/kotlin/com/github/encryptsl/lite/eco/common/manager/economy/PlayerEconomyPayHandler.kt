@@ -23,7 +23,7 @@ class PlayerEconomyPayHandler(
         currency: String
     ) {
         liteEco.pluginScope.launch {
-            liteEco.api.getUserByUUID(target.uniqueId, currency).orElse(null)?.let { user ->
+            liteEco.api.getUserByUUID(target.uniqueId, currency)?.let { user ->
                 if (!liteEco.api.has(sender.uniqueId, currency, money))
                     return@launch sender.sendMessage(liteEco.locale.translation("messages.error.insufficient_funds"))
 

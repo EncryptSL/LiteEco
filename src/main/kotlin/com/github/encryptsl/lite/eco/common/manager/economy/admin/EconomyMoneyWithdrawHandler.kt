@@ -25,13 +25,10 @@ class EconomyMoneyWithdrawHandler(
         silent: Boolean,
     ) {
         liteEco.pluginScope.launch {
-            val userOpt = liteEco.api.getUserByUUID(target.uniqueId, currency).getOrNull()
-            if (userOpt == null) {
-                sender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist",
+            val userOpt = liteEco.api.getUserByUUID(target.uniqueId, currency)
+                ?: return@launch sender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist",
                     Placeholder.parsed("account", target.name.toString())
                 ))
-                return@launch
-            }
 
             if (!liteEco.api.has(target.uniqueId, currency, money)) {
                 sender.sendMessage(liteEco.locale.translation("messages.error.insufficient_funds"))
@@ -61,7 +58,7 @@ class EconomyMoneyWithdrawHandler(
                     )
                 )
             )
-            if (target.isOnline && liteEco.config.getBoolean("messages.target.notify_withdraw")) {
+            if (target.isOnline && liteEco.baseConfig.messages.target.notifyWithdraw) {
                 if (silent) {
                     target.player?.sendMessage(liteEco.locale.translation("messages.target.withdraw_money_silent",
                         Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))

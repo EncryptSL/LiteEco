@@ -33,13 +33,7 @@ object PlayerAccount : AccountAPI {
             }
         }
 
-        if (!LiteEco.isFolia()) {
-            Bukkit.getScheduler().runTaskTimerAsynchronously(liteEco, janitorTask, delay, period)
-        } else {
-            Bukkit.getAsyncScheduler().runAtFixedRate(liteEco, {
-                janitorTask.run()
-            }, delay * 50, period * 50, TimeUnit.MILLISECONDS)
-        }
+        liteEco.schedulerHelper.runAsyncTimer(delay, period, janitorTask)
     }
 
     override fun cacheAccount(uuid: UUID, currency: String, value: BigDecimal) {
