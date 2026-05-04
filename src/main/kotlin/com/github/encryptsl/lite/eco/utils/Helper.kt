@@ -16,6 +16,7 @@ import net.milkbowl.vault.economy.Economy
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import java.math.BigDecimal
 import java.util.*
 import kotlin.time.ExperimentalTime
 
@@ -56,13 +57,32 @@ class Helper(private val liteEco: LiteEco) {
         val locale = LiteEco.instance.locale
         val formatter = LiteEco.instance.currencyImpl
 
+        val difference = newBalance.subtract(previousBalance)
+
+        val diffStatus = difference.compareTo(BigDecimal.ZERO)
+        val diffPrefix = if (diffStatus >= 0) "+" else "-"
+        val diffColor = if (diffStatus >= 0) "<green>" else "<red>"
+
+        val symbols = when(type.name.uppercase()) {
+            "DEPOSIT" -> "<green>➕</green>"
+            "WITHDRAW" -> "<red>➖</red>"
+            "SET" -> "<blue><b>=</b></blue>"
+            else -> "•"
+        }
+
+        val hoverWithSymbols = "<hover:show_text:'${type.name}'>$symbols</hover>"
+
+        val formattedDiff = formatter.fullFormatting(difference.abs(), currency)
+
         return locale.translation(translation, TagResolver.resolver(
-            Placeholder.unparsed("action", type.name), // type je nyní Enum v entitě
+            Placeholder.parsed("symbol", hoverWithSymbols),
+            Placeholder.unparsed("action", type.name),
             Placeholder.unparsed("sender", sender),
             Placeholder.unparsed("target", target),
             Placeholder.unparsed("currency", currency),
             Placeholder.unparsed("previous_balance", formatter.fullFormatting(previousBalance, currency)),
             Placeholder.unparsed("new_balance", formatter.fullFormatting(newBalance, currency)),
+            Placeholder.parsed("diff", "$diffColor$diffPrefix$formattedDiff"),
             Placeholder.unparsed("timestamp", convertInstant(timestamp))
         ))
     }
@@ -128,13 +148,7 @@ class Helper(private val liteEco: LiteEco) {
             sender.sendMessage("§aJanitor completed emergency synchronization for §e${offlineUUIDs.size} §aaccounts.")
         }
 
-        if (!LiteEco.isFolia()) {
-            Bukkit.getScheduler().runTaskAsynchronously(liteEco, task)
-        } else {
-            Bukkit.getAsyncScheduler().runNow(liteEco, {
-                task.run()
-            })
-        }
+        liteEco.schedulerHelper.runAsyncNow(task)
     }
 
     internal fun executeStressTest(player: Player, amount: Double, iterations: Int) {
@@ -164,11 +178,7 @@ class Helper(private val liteEco: LiteEco) {
                 player.sendMessage("§7Current balance: §e${vault?.getBalance(player)}")
             }
 
-            if (!LiteEco.isFolia()) {
-                Bukkit.getScheduler().runTaskAsynchronously(LiteEco.instance, task)
-            } else {
-                Bukkit.getAsyncScheduler().runNow(LiteEco.instance, {task.run()})
-            }
+            liteEco.schedulerHelper.runAsyncNow(task)
         } catch (e : Exception) {
             liteEco.logger.error(e.message, e)
         }
