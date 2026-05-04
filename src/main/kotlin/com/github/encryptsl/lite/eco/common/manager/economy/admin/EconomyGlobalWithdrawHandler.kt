@@ -10,7 +10,6 @@ import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import java.math.BigDecimal
-import kotlin.jvm.optionals.getOrNull
 import kotlin.time.ExperimentalTime
 
 class EconomyGlobalWithdrawHandler(
