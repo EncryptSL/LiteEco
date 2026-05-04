@@ -15,6 +15,7 @@ sqlite = "3.51.1.0"
 mariadb = "3.5.7"
 postqres = "42.7.9"
 placeholderapi = "2.12.2"
+configlib = "4.8.1"
 bettereconomy = "4.2"
 scruffyeconomy = "2.0"
 ezeconomy = "2.0.4"
@@ -48,6 +49,7 @@ ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negoti
 ktor-client-java = { module = "io.ktor:ktor-client-java", version.ref = "ktor"}
 ktor-serialization-gson = { module = "io.ktor:ktor-serialization-gson", version.ref = "ktor" }
 config-updater = { module = "com.tchristofferson:ConfigUpdater", version.ref = "config-updater" }
+configlib = { module = "de.exlll:configlib-yaml", version.ref = "configlib" }
 commons-csv = { module = "org.apache.commons:commons-csv", version.ref = "csv" }
 
 cloud-annotations = { module = "org.incendo:cloud-annotations", version.ref = "cloud" }

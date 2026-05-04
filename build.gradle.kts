@@ -59,6 +59,7 @@ dependencies {
     implementation(libs.bundles.flyway)
     implementation(libs.bundles.kotlin)
     implementation(libs.bundles.cloud)
+    implementation(libs.configlib)
     implementation(libs.commons.csv)
     implementation(libs.config.updater)
     implementation(libs.ktor.client.core) {
@@ -66,7 +67,7 @@ dependencies {
     }
     implementation(libs.bundles.ktor)
 
-    // Interní implementace (Tyto se mohou i stínovat, pokud chceš)
+    // Internal implementations (You can even shadow these if you want)
     implementation(libs.bstats)
     implementation(libs.miniplaceholders)
 
@@ -88,7 +89,7 @@ sourceSets {
 
 tasks {
     processResources {
-        // Spustí generování před procesem resources
+        // Triggers generation before the resources process
         dependsOn("generatePaperLibrariesYaml")
         filesMatching(listOf("plugin.yml", "paper-plugin.yml")) {
             expand(props)
@@ -98,18 +99,17 @@ tasks {
     shadowJar {
         archiveFileName.set("${providers.gradleProperty("plugin_name").get()}-${project.version}.jar")
 
-        // Ponecháme relokace
+        // We will keep the relocations
         relocate("org.bstats", "com.github.encryptsl.metrics")
 
-        // Tímto zakážeme ShadowJaru balit cizí knihovny,
-        // ale tvůj generátor je v runtimeClasspath stále uvidí.
+        // This prevents ShadowJAR from packaging third-party libraries,
+        // generator will still be able to see them in the runtimeClasspath.
         configurations = emptyList()
 
-        // Pokud chceš, aby bStats a MiniPlaceholders BYLY v JARu (protože nejsou v paper-libraries):
-        from(sourceSets.main.get().output)
+        // bStats and MiniPlaceholders to be included in the JAR (since they aren't in the paper-libraries)        from(sourceSets.main.get().output)
         configurations = listOf(project.configurations.getByName("runtimeClasspath"))
 
-        // Vyloučíme skupiny, které máš v paper-libraries.yml
+        // We'll exclude the groups listed in paper-libraries.yml file
         dependencies {
             exclude(dependency("org.jetbrains.kotlin:.*:.*"))
             exclude(dependency("org.jetbrains.kotlinx:.*:.*"))
@@ -121,6 +121,7 @@ tasks {
             exclude(dependency("org.mariadb.jdbc:.*:.*"))
             exclude(dependency("org.postgresql:.*:.*"))
             exclude(dependency("org.xerial:.*:.*"))
+            exclude(dependency("de.exlll:.*:.*"))
         }
 
         mergeServiceFiles()
