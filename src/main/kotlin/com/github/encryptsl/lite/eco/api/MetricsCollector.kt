@@ -13,7 +13,7 @@ class MetricsCollector(
     private val metrics by lazy { Metrics(liteEco, serviceId) }
 
     internal fun setupMetrics() {
-        if (liteEco.config.getBoolean("plugin.metrics", true)) {
+        if (liteEco.baseConfig.plugin.metrics) {
             registerCharts()
         }
     }
@@ -26,7 +26,7 @@ class MetricsCollector(
         metrics.addCustomChart(AdvancedPie("used_language") {
             val map = mutableMapOf<String, Int>()
 
-            val lang = (liteEco.config.getString("plugin.translation") ?: "en_us").lowercase()
+            val lang = (liteEco.baseConfig.plugin.translation).lowercase()
             map[lang] = 1
 
             return@AdvancedPie map

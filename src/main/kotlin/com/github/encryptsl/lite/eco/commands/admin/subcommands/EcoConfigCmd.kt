@@ -40,7 +40,7 @@ class EcoConfigCmd(
         commandManager.command(
             configSubCommand.literal("reload")
                 .permission("lite.eco.admin.reload").handler { ctx ->
-                    liteEco.reloadConfig()
+                    liteEco.reloadBaseConfig()
                     liteEco.locale.reloadCurrentLocale()
                     ctx.sender().source().sendMessage(liteEco.locale.translation("messages.admin.config_reload"))
                     liteEco.componentLogger.info(ModernText.miniModernText("✅ config.yml & locale reloaded."))

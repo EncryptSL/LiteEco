@@ -19,7 +19,7 @@ class DatabaseConnector(
     private var hikari: HikariDataSource? = null
 
     override fun onLoad() {
-        val configLoader = DatabaseConfigLoader(liteEco.config)
+        val configLoader = DatabaseConfigLoader(liteEco.baseConfig)
         val (driver, jdbcUrl, username, password) = configLoader.load()
 
         try {

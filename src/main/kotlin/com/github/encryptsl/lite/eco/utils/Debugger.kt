@@ -6,7 +6,7 @@ import com.github.encryptsl.lite.eco.api.objects.ModernText
 class Debugger(private val liteEco: LiteEco) {
 
     fun <T> debug(provider: Class<T>, message: String) {
-        if (liteEco.config.getBoolean("plugin.vault-debug")) {
+        if (liteEco.baseConfig.plugin.vaultDebug) {
             liteEco.logger.info(ModernText.miniModernText("<gold> ${provider.name} $message"))
         }
     }

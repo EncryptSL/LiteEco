@@ -16,13 +16,13 @@ class Locales(
 
     private lateinit var langYml: FileConfiguration
     private lateinit var fallbackYml: FileConfiguration
-    private val config get() = liteEco.config
+    private val config get() = liteEco.baseConfig
     private val logger get() = liteEco.logger
 
     private val localeDir = File(liteEco.dataFolder, "locale")
 
     val prefix: String
-        get() = config.getString("plugin.prefix").orEmpty()
+        get() = config.plugin.prefix
 
     fun translation(translationKey: String): Component {
         return ModernText.miniModernText(getMessage(translationKey))
@@ -50,7 +50,7 @@ class Locales(
     fun load() {
         loadEnUs()
 
-        val selected = config.getString("plugin.translation").orEmpty()
+        val selected = config.plugin.translation
         setLocale(selected.ifBlank { "en_us" })
     }
 
@@ -96,8 +96,7 @@ class Locales(
             ConfigUpdater.update(liteEco, "locale/$fileName", file)
             langYml = YamlConfiguration.loadConfiguration(file)
 
-            config.set("plugin.translation", normalizedLocale)
-            liteEco.saveConfig()
+            liteEco.updateLanguage(localeCode)
 
             logger.info("✅ Translation loaded: $fileName")
             true
@@ -139,7 +138,7 @@ class Locales(
     }
 
     fun reloadCurrentLocale() {
-        val current = config.getString("plugin.translation").orEmpty()
+        val current = config.plugin.translation
         setLocale(current.ifBlank { "en_us" })
     }
 

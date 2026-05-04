@@ -1,9 +1,9 @@
 package com.github.encryptsl.lite.eco.common.database
 
-import org.bukkit.configuration.ConfigurationSection
+import com.github.encryptsl.lite.eco.common.config.BaseConfig
 
 class DatabaseConfigLoader(
-    private val config: ConfigurationSection
+    private val config: BaseConfig
 ) {
 
     data class DbConfig(
@@ -14,17 +14,13 @@ class DatabaseConfigLoader(
     )
 
     fun load(): DbConfig {
-        val driver = config.getString("database.connection.driverClassName")
-            ?: throw IllegalArgumentException("Missing database.connection.driverClassName in config")
+        val driver = config.database.connection.driverClassName
 
-        val jdbcUrl = config.getString("database.connection.jdbc_url")
-            ?: throw IllegalArgumentException("Missing database.connection.jdbc_url in config")
+        val jdbcUrl = config.database.connection.jdbcUrl
 
-        val username = config.getString("database.connection.username")
-            ?: throw IllegalArgumentException("Missing database.connection.username in config")
+        val username = config.database.connection.username
 
-        val password = config.getString("database.connection.password")
-            ?: throw IllegalArgumentException("Missing database.connection.password in config")
+        val password = config.database.connection.password
 
         return DbConfig(
             driver = driver,

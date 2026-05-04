@@ -1,6 +1,8 @@
 libraries:
   - com.tchristofferson:ConfigUpdater:2.2
   - com.zaxxer:HikariCP:7.0.2
+  - de.exlll:configlib-core:4.8.1
+  - de.exlll:configlib-yaml:4.8.1
   - io.ktor:ktor-client-content-negotiation-jvm:3.3.3
   - io.ktor:ktor-client-core-jvm:3.3.3
   - io.ktor:ktor-client-java-jvm:3.3.3
