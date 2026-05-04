@@ -9,6 +9,7 @@ import com.github.encryptsl.lite.eco.api.economy.SuspendLiteEcoEconomyWrapper
 import com.github.encryptsl.lite.eco.api.objects.ModernText
 import com.github.encryptsl.lite.eco.commands.CommandFeatureManager
 import com.github.encryptsl.lite.eco.common.AccountManager
+import com.github.encryptsl.lite.eco.common.config.BaseConfig
 import com.github.encryptsl.lite.eco.common.config.Locales
 import com.github.encryptsl.lite.eco.common.database.DatabaseConnector
 import com.github.encryptsl.lite.eco.common.database.models.DatabaseEcoModel
@@ -18,15 +19,17 @@ import com.github.encryptsl.lite.eco.listeners.PlayerListeners
 import com.github.encryptsl.lite.eco.utils.ClassUtil
 import com.github.encryptsl.lite.eco.utils.Debugger
 import com.github.encryptsl.lite.eco.utils.PlaceholderHelper
-import com.tchristofferson.configupdater.ConfigUpdater
+import com.github.encryptsl.lite.eco.utils.SchedulerHelper
+import de.exlll.configlib.NameFormatters
+import de.exlll.configlib.YamlConfigurationProperties
+import de.exlll.configlib.YamlConfigurations
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import org.bukkit.Bukkit
 import org.bukkit.plugin.PluginManager
 import org.bukkit.plugin.java.JavaPlugin
-import java.io.File
+import java.nio.file.Files
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.system.measureTimeMillis
 
@@ -60,20 +63,26 @@ class LiteEco : JavaPlugin() {
     val accountManager: AccountManager by lazy { AccountManager(this) }
     val debugger: Debugger by lazy { Debugger(this) }
     val placeholderHelper by lazy { PlaceholderHelper(this) }
+    val schedulerHelper by lazy { SchedulerHelper(this, isFolia()) }
+    val configFile by lazy { dataFolder.toPath().resolve("config.yml") }
 
     val pluginScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     private val configAPI: ConfigAPI by lazy { ConfigAPI(this) }
     private val hookManager: HookManager by lazy { HookManager(this) }
     private val commandFeatureManager by lazy { CommandFeatureManager(this) }
-    private val configFile = File(dataFolder, "config.yml")
+    private val settings = YamlConfigurationProperties.newBuilder()
+        .setNameFormatter(NameFormatters.LOWER_UNDERSCORE)
+        .build()
+
+    lateinit var baseConfig: BaseConfig
+        private set
 
     override fun onLoad() {
         instance = this
-
+        createConfig()
         configAPI
             .create("database.db")
-            .createConfig("config.yml")
         locale.load()
         databaseConnector.onLoad()
     }
@@ -87,16 +96,6 @@ class LiteEco : JavaPlugin() {
             commandFeatureManager.createCommandManager()
             registerListeners()
         }
-        try {
-            ConfigUpdater.update(this, "config.yml", configFile,
-                "economy.currencies",
-                "database.connection",
-                "formatting.placeholders"
-            )
-            logger.info(ModernText.miniModernText("<green>Config was updated on current version !"))
-        } catch (e : Exception) {
-            logger.error(e.message ?: e.localizedMessage)
-        }
         PlayerAccount.startJanitor(this)
         val pluginRunningOnFolia = if (isFolia()) "<blue>[Folia]</blue>" else "<yellow>[PaperMC]</yellow>"
         logger.info(ModernText.miniModernText("Contribute to other updates <yellow>https://ko-fi.com/encryptsl"))
@@ -105,11 +104,7 @@ class LiteEco : JavaPlugin() {
 
     override fun onDisable() {
         // Needed we must cancel all tasks because janitor can corrupt final saving.
-        if (!isFolia()) {
-            Bukkit.getScheduler().cancelTasks(this)
-        } else {
-            Bukkit.getAsyncScheduler().cancelTasks(this)
-        }
+        schedulerHelper.cancelTasks()
         //END
         hookManager.unregisterHooks()
         api.syncAccounts()
@@ -120,6 +115,33 @@ class LiteEco : JavaPlugin() {
 
     fun increaseTransactions(value: Int) {
         countTransactions["transactions"] = (countTransactions["transactions"] ?: 0) + value
+    }
+
+    fun saveBaseConfig() {
+        YamlConfigurations.save(configFile, BaseConfig::class.java, baseConfig, settings)
+    }
+
+    fun updateLanguage(newLocale: String) {
+        baseConfig.plugin.translation = newLocale
+        saveBaseConfig()
+    }
+
+    fun reloadBaseConfig() {
+        baseConfig = YamlConfigurations.update(configFile, BaseConfig::class.java, settings)
+    }
+
+    private fun createConfig() {
+        try {
+            if (Files.notExists(dataFolder.toPath())) {
+                Files.createDirectories(configFile)
+            }
+
+            baseConfig = YamlConfigurations.update(configFile, BaseConfig::class.java, settings)
+
+        } catch (e: Exception) {
+            logger.error("Error during initialization: ${e.message}")
+            e.printStackTrace()
+        }
     }
 
     private fun registerListeners() {
