@@ -16,20 +16,22 @@ softdepend: [PlaceholderAPI, Vault, MiniPlaceholders, BetterEconomy, TheosisEcon
 libraries:
   - com.tchristofferson:ConfigUpdater:2.2
   - com.zaxxer:HikariCP:7.0.2
-  - io.ktor:ktor-client-content-negotiation-jvm:3.3.3
-  - io.ktor:ktor-client-core-jvm:3.3.3
-  - io.ktor:ktor-client-java-jvm:3.3.3
-  - io.ktor:ktor-events-jvm:3.3.3
-  - io.ktor:ktor-http-cio-jvm:3.3.3
-  - io.ktor:ktor-http-jvm:3.3.3
-  - io.ktor:ktor-io-jvm:3.3.3
-  - io.ktor:ktor-network-jvm:3.3.3
-  - io.ktor:ktor-serialization-gson-jvm:3.3.3
-  - io.ktor:ktor-serialization-jvm:3.3.3
-  - io.ktor:ktor-sse-jvm:3.3.3
-  - io.ktor:ktor-utils-jvm:3.3.3
-  - io.ktor:ktor-websocket-serialization-jvm:3.3.3
-  - io.ktor:ktor-websockets-jvm:3.3.3
+  - de.exlll:configlib-core:4.8.1
+  - de.exlll:configlib-yaml:4.8.1
+  - io.ktor:ktor-client-content-negotiation-jvm:3.4.3
+  - io.ktor:ktor-client-core-jvm:3.4.3
+  - io.ktor:ktor-client-java-jvm:3.4.3
+  - io.ktor:ktor-events-jvm:3.4.3
+  - io.ktor:ktor-http-cio-jvm:3.4.3
+  - io.ktor:ktor-http-jvm:3.4.3
+  - io.ktor:ktor-io-jvm:3.4.3
+  - io.ktor:ktor-network-jvm:3.4.3
+  - io.ktor:ktor-serialization-gson-jvm:3.4.3
+  - io.ktor:ktor-serialization-jvm:3.4.3
+  - io.ktor:ktor-sse-jvm:3.4.3
+  - io.ktor:ktor-utils-jvm:3.4.3
+  - io.ktor:ktor-websocket-serialization-jvm:3.4.3
+  - io.ktor:ktor-websockets-jvm:3.4.3
   - org.apache.commons:commons-csv:1.14.1
   - org.flywaydb:flyway-core:12.2.0
   - org.flywaydb:flyway-mysql:12.2.0
@@ -45,19 +47,18 @@ libraries:
   - org.jetbrains.exposed:exposed-jdbc:1.2.0
   - org.jetbrains.exposed:exposed-kotlin-datetime:1.2.0
   - org.jetbrains.exposed:exposed-migration:1.0.0-beta-5
-  - org.jetbrains.kotlin:kotlin-reflect:2.3.20
+  - org.jetbrains.kotlin:kotlin-reflect:2.3.21
   - org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.0.0
   - org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.0.0
-  - org.jetbrains.kotlin:kotlin-stdlib:2.3.20
+  - org.jetbrains.kotlin:kotlin-stdlib:2.3.21
   - org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.10.2
   - org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.10.2
   - org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:1.10.2
   - org.jetbrains.kotlinx:kotlinx-datetime-jvm:0.7.1-0.6.x-compat
   - org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.9.0
-  - org.mariadb.jdbc:mariadb-java-client:3.5.7
-  - org.postgresql:postgresql:42.7.9
-  - org.slf4j:slf4j-api:2.0.17
-  - org.xerial:sqlite-jdbc:3.51.1.0
+  - org.mariadb.jdbc:mariadb-java-client:3.5.8
+  - org.postgresql:postgresql:42.7.11
+  - org.xerial:sqlite-jdbc:3.53.0.0
 
 description: ${description}
 

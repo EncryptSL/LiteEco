@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 apply(from = "generatePaperLibrariesYaml.gradle.kts")
 
 plugins {
-    kotlin("jvm") version "2.3.20"
+    kotlin("jvm") version "2.3.21"
     alias(libs.plugins.gradleup.shadow)
     alias(libs.plugins.paperweight)
 }

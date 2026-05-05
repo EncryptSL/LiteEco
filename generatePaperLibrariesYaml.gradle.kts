@@ -40,8 +40,7 @@ tasks.register("generatePaperLibrariesYaml") {
         val dependencies = configuration.resolvedConfiguration.resolvedArtifacts
             .map { it.moduleVersion.id }
             .filter { id ->
-                allowedGroups.any { group -> id.group.startsWith(group) } ||
-                        "${id.group}:${id.name}" in allowedSpecificDependencies
+                allowedGroups.any { group -> id.group.startsWith(group) }
             }
             .map { id -> "${id.group}:${id.name}:${id.version}" }
             .distinct()
