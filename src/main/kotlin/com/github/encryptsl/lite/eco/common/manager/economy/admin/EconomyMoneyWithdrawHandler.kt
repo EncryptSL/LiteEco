@@ -60,7 +60,10 @@ class EconomyMoneyWithdrawHandler(
             if (target.isOnline && liteEco.baseConfig.messages.target.notifyWithdraw) {
                 if (silent) {
                     target.player?.sendMessage(liteEco.locale.translation("messages.target.withdraw_money_silent",
-                        Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
+                        TagResolver.resolver(
+                            Placeholder.parsed("money", liteEco.currencyImpl.fullFormatting(money, currency)),
+                            Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
+                        )
                     ))
                     return@launch
                 }
