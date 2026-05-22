@@ -31,6 +31,9 @@ class BaseConfig {
         var metrics = true
         @Comment("Enable or disable Vault debug messages.")
         var vaultDebug = false
+
+        @Comment("Settings for player suggestions in commands", "", "true: Suggests offline players" ,"false: Suggests only online players.")
+        var offlineSuggestionPlayers = true
     }
 
     @Configuration

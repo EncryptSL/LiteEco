@@ -39,7 +39,7 @@ class CommandFeatureManager(
         MinecraftExceptionHandler.create<Source> { source -> source.source() }
             .defaultHandlers()
             .decorator { component ->
-                ModernText.miniModernText(liteEco.config.getString("plugin.prefix", "<red>[!]").toString()).appendSpace().append(component)
+                ModernText.miniModernText(liteEco.baseConfig.plugin.prefix).appendSpace().append(component)
             }.registerTo(commandManager)
     }
 
@@ -56,7 +56,7 @@ class CommandFeatureManager(
     }
 
     private fun modifiableSuggestionPlayerSuggestion(): CompletableFuture<List<Suggestion>> {
-        val suggestion = if (liteEco.config.getBoolean("plugin.offline-suggestion-players", true)) {
+        val suggestion = if (liteEco.baseConfig.plugin.offlineSuggestionPlayers) {
             CompletableFuture.completedFuture(Bukkit.getOfflinePlayers()
                 .map { Suggestion.suggestion(it.name.toString()) })
         } else {
