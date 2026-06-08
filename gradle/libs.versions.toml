@@ -1,17 +1,17 @@
 [versions]
-kotlin = "2.3.21"
+kotlin = "2.4.0"
 exposed = "1.3.0"
 cloud = "2.0.0"
-flyway = "12.2.0"
+flyway = "12.8.1"
 hikari = "7.0.2"
-vaultunlocked = "2.18"
+vaultunlocked = "2.20"
 ktor = "3.4.3"
 csv = "1.14.1"
 config-updater = "2.2"
-miniplaceholders = "3.1.0"
+miniplaceholders = "3.2.0"
 bstats = "3.2.1"
 junit-jupiter = "5.13.1"
-sqlite = "3.53.0.0"
+sqlite = "3.53.2.0"
 mariadb = "3.5.8"
 postqres = "42.7.11"
 placeholderapi = "2.12.2"
@@ -21,10 +21,10 @@ scruffyeconomy = "2.3"
 ezeconomy = "2.0.4"
 simpleeconomy = "3.2"
 theosiseconomy = "1.46"
-playerpoints = "3.3.3"
+playerpoints = "3.3.4"
 
 [plugins]
-gradleup-shadow = { id = "com.gradleup.shadow", version = "9.4.1" }
+gradleup-shadow = { id = "com.gradleup.shadow", version = "9.4.2" }
 paperweight = { id = "io.papermc.paperweight.userdev", version = "2.0.0-beta.21" }
 
 [libraries]

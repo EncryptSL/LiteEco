@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 apply(from = "generatePaperLibrariesYaml.gradle.kts")
 
 plugins {
-    kotlin("jvm") version "2.3.21"
+    kotlin("jvm") version "2.4.0"
     alias(libs.plugins.gradleup.shadow)
     alias(libs.plugins.paperweight)
 }
@@ -40,7 +40,6 @@ kotlin {
     jvmToolchain(25)
     compilerOptions {
         jvmTarget.set(JvmTarget.JVM_25)
-        freeCompilerArgs.add("-Xcontext-parameters")
     }
 }
 
