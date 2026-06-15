@@ -1,7 +1,7 @@
 package com.github.encryptsl.lite.eco.api.economy
 
 import com.github.encryptsl.lite.eco.LiteEco
-import com.github.encryptsl.lite.eco.api.account.PlayerAccount
+import com.github.encryptsl.lite.eco.api.account.Account
 import com.github.encryptsl.lite.eco.common.database.entity.UserEntity
 import com.github.encryptsl.lite.eco.common.extensions.io
 import org.bukkit.Bukkit
@@ -12,11 +12,11 @@ class SuspendLiteEcoEconomyWrapper : ModernLiteEcoEconomyImpl() {
 
     override suspend fun getUserByUUID(uuid: UUID, currency: String): UserEntity? = io {
         try {
-            if (PlayerAccount.isPlayerOnline(uuid) || PlayerAccount.isAccountCached(uuid, currency)) {
+            if (Account.isPlayerOnline(uuid) || Account.isAccountCached(uuid, currency)) {
                 val offlinePlayer = Bukkit.getOfflinePlayer(uuid)
                 val name = offlinePlayer.name ?: "Unknown"
 
-                UserEntity(name, uuid, PlayerAccount.getBalance(uuid, currency))
+                UserEntity(name, uuid, Account.getBalance(uuid, currency))
             } else {
                 LiteEco.instance.databaseEcoModel.getUserByUUID(uuid, currency)
             }
@@ -64,11 +64,11 @@ class SuspendLiteEcoEconomyWrapper : ModernLiteEcoEconomyImpl() {
         cacheAccount(uuid, currency, balanceToCache)
     }
 
-    override suspend fun deleteAccount(uuid: UUID, currency: String): Boolean {
+    override suspend fun delete(uuid: UUID, currency: String): Boolean {
         val user = getUserByUUID(uuid, currency)
 
         return user?.let {
-            PlayerAccount.clearFromCache(uuid)
+            Account.clear(uuid)
             io { LiteEco.instance.databaseEcoModel.deletePlayerAccount(uuid, currency) }
             true
         } ?: false
@@ -87,7 +87,7 @@ class SuspendLiteEcoEconomyWrapper : ModernLiteEcoEconomyImpl() {
     }
 
     override suspend fun withdraw(uuid: UUID, currency: String, amount: BigDecimal) {
-        if (PlayerAccount.isPlayerOnline(uuid) && PlayerAccount.isAccountCached(uuid, currency)) {
+        if (Account.isPlayerOnline(uuid) && Account.isAccountCached(uuid, currency)) {
             cacheAccount(uuid, currency, getBalance(uuid, currency).minus(amount))
         } else {
             io { LiteEco.instance.databaseEcoModel.withdraw(uuid, currency, amount) }
@@ -95,7 +95,7 @@ class SuspendLiteEcoEconomyWrapper : ModernLiteEcoEconomyImpl() {
     }
 
     override suspend fun deposit(uuid: UUID, currency: String, amount: BigDecimal) {
-        if (PlayerAccount.isPlayerOnline(uuid) && PlayerAccount.isAccountCached(uuid, currency)) {
+        if (Account.isPlayerOnline(uuid) && Account.isAccountCached(uuid, currency)) {
             cacheAccount(uuid, currency, getBalance(uuid, currency).plus(amount))
         } else {
             io { LiteEco.instance.databaseEcoModel.deposit(uuid, currency, amount) }
@@ -103,15 +103,15 @@ class SuspendLiteEcoEconomyWrapper : ModernLiteEcoEconomyImpl() {
     }
 
     override suspend fun set(uuid: UUID, currency: String, amount: BigDecimal) {
-        if (PlayerAccount.isPlayerOnline(uuid)) {
+        if (Account.isPlayerOnline(uuid)) {
             cacheAccount(uuid, currency, amount)
         } else {
             io { LiteEco.instance.databaseEcoModel.set(uuid, currency, amount) }
         }
     }
 
-    override suspend fun syncAccount(uuid: UUID) {
-        PlayerAccount.syncAccount(uuid)
+    override suspend fun sync(uuid: UUID) {
+        Account.sync(uuid)
     }
 
     override suspend fun transfer(sender: UUID, target: UUID, currency: String, amount: BigDecimal) {
@@ -127,6 +127,6 @@ class SuspendLiteEcoEconomyWrapper : ModernLiteEcoEconomyImpl() {
     }
 
     private fun cacheAccount(uuid: UUID, currency: String, amount: BigDecimal) {
-        PlayerAccount.cacheAccount(uuid, currency, amount)
+        Account.cache(uuid, currency, amount)
     }
 }

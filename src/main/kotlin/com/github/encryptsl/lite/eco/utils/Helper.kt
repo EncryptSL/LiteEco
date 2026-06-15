@@ -2,7 +2,7 @@
 package com.github.encryptsl.lite.eco.utils
 
 import com.github.encryptsl.lite.eco.LiteEco
-import com.github.encryptsl.lite.eco.api.account.PlayerAccount
+import com.github.encryptsl.lite.eco.api.account.Account
 import com.github.encryptsl.lite.eco.common.database.entity.TransactionContextEntity
 import com.github.encryptsl.lite.eco.common.database.entity.UserEntity
 import com.github.encryptsl.lite.eco.common.database.models.DatabaseEcoModel
@@ -88,7 +88,7 @@ class Helper(private val liteEco: LiteEco) {
     }
 
     internal fun inspectCache(sender: CommandSender, uuid: UUID) {
-        val account = PlayerAccount.cache[uuid]
+        val account = Account.cache[uuid]
 
         sender.sendMessage("§8--- §bInspecting cache for: §f$uuid §8---")
 
@@ -132,7 +132,7 @@ class Helper(private val liteEco: LiteEco) {
         sender.sendMessage("§7Forcing Janitor execution...")
 
         val task = Runnable {
-            val offlineUUIDs = PlayerAccount.cache.keys.filter { uuid ->
+            val offlineUUIDs = Account.cache.keys.filter { uuid ->
                 Bukkit.getPlayer(uuid) == null
             }
 
@@ -141,9 +141,7 @@ class Helper(private val liteEco: LiteEco) {
                 return@Runnable
             }
 
-            offlineUUIDs.forEach { uuid ->
-                PlayerAccount.syncAccount(uuid)
-            }
+            offlineUUIDs.forEach { Account.sync(it) }
 
             sender.sendMessage("§aJanitor completed emergency synchronization for §e${offlineUUIDs.size} §aaccounts.")
         }

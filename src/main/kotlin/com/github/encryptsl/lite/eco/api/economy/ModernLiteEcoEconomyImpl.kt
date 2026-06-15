@@ -1,7 +1,7 @@
 package com.github.encryptsl.lite.eco.api.economy
 
 import com.github.encryptsl.lite.eco.LiteEco
-import com.github.encryptsl.lite.eco.api.account.PlayerAccount
+import com.github.encryptsl.lite.eco.api.account.Account
 import com.github.encryptsl.lite.eco.api.interfaces.LiteEconomyAPI
 import kotlinx.coroutines.runBlocking
 import java.math.BigDecimal
@@ -16,7 +16,7 @@ abstract class ModernLiteEcoEconomyImpl : LiteEconomyAPI {
             = runBlocking { requiredAmount <= getBalance(uuid, currency) }
 
     override fun syncAccounts() {
-        PlayerAccount.syncAccounts()
+        Account.syncAccounts()
     }
 
     override fun batchInsert(importData: List<Triple<UUID, String, BigDecimal>>, currency: String) {
@@ -39,8 +39,8 @@ abstract class ModernLiteEcoEconomyImpl : LiteEconomyAPI {
 
         val database = LiteEco.instance.databaseEcoModel.getTopBalance(currency)
             .mapValues { e ->
-                if (PlayerAccount.isAccountCached(e.value.uuid, currency))
-                    PlayerAccount.getBalance(e.value.uuid, currency)
+                if (Account.isAccountCached(e.value.uuid, currency))
+                    Account.getBalance(e.value.uuid, currency)
                 else
                     e.value.money
             }

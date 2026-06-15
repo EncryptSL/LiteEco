@@ -23,7 +23,7 @@ class AccountManager(private val liteEco: LiteEco) {
 
     fun syncAccount(uuid: UUID) {
         liteEco.pluginScope.launch {
-            liteEco.api.syncAccount(uuid)
+            liteEco.api.sync(uuid)
         }
     }
 }

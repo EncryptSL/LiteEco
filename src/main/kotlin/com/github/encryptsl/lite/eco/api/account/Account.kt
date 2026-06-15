@@ -8,10 +8,10 @@ import org.bukkit.Bukkit
 import java.math.BigDecimal
 import java.util.*
 
-object PlayerAccount : AccountAPI {
+object Account : AccountAPI {
 
     private val databaseEcoModel: DatabaseEcoModel by lazy { DatabaseEcoModel() }
-    internal val cache = mutableMapOf<UUID, CachedAccount>()
+    internal val cache = mutableMapOf<UUID, Wallet>()
 
     override fun startJanitor(liteEco: LiteEco) {
 
@@ -24,10 +24,8 @@ object PlayerAccount : AccountAPI {
             val offlineUUIDs = cache.keys.filter { uuid -> Bukkit.getPlayer(uuid) == null }
 
             offlineUUIDs.forEach { uuid ->
-                if (Bukkit.getPlayer(uuid) == null) {
-                    liteEco.pluginScope.launch {
-                        syncAccount(uuid)
-                    }
+                liteEco.pluginScope.launch {
+                    sync(uuid)
                 }
             }
         }
@@ -35,8 +33,8 @@ object PlayerAccount : AccountAPI {
         liteEco.schedulerHelper.runAsyncTimer(delay, period, janitorTask)
     }
 
-    override fun cacheAccount(uuid: UUID, currency: String, value: BigDecimal) {
-        val account = cache.getOrPut(uuid) { CachedAccount() }
+    override fun cache(uuid: UUID, currency: String, value: BigDecimal) {
+        val account = cache.getOrPut(uuid) { Wallet() }
         account.balances[currency] = value
         account.isSuccessfullyLoaded = true
     }
@@ -45,7 +43,7 @@ object PlayerAccount : AccountAPI {
         return cache[uuid]?.balances?.getOrDefault(currency, BigDecimal.ZERO) ?: BigDecimal.ZERO
     }
 
-    override fun syncAccount(uuid: UUID) {
+    override fun sync(uuid: UUID) {
         LiteEco.instance.logger.info("Attempting synchronization for UUID: $uuid")
         val account = cache[uuid] ?: return
 
@@ -61,7 +59,7 @@ object PlayerAccount : AccountAPI {
                 if (amount < BigDecimal.ZERO) return@forEach
 
                 databaseEcoModel.set(uuid, currency, amount)
-                LiteEco.instance.debugger.debug(PlayerAccount::class.java, "Sync OK: $uuid -> $currency ($amount)")
+                LiteEco.instance.debugger.debug(Account::class.java, "Sync OK: $uuid -> $currency ($amount)")
             } catch (e: Exception) {
                 failedCurrencies.add(currency)
                 LiteEco.instance.logger.error("Sync FAIL: $uuid -> $currency. Data preserved in cache for next cycle. Error: ${e.message}")
@@ -76,26 +74,47 @@ object PlayerAccount : AccountAPI {
     }
 
     override fun syncAccounts() {
-        val uuids = cache.keys.toList()
-        for (uuid in uuids) {
-            val account = cache[uuid] ?: continue
+        LiteEco.instance.logger.info("Initiating global shutdown synchronization for all cached accounts...")
 
-            if (!account.isSuccessfullyLoaded) {
-                LiteEco.instance.logger.warn("Skipping shutdown sync for $uuid: Data integrity flag is FALSE.")
-                continue
-            }
-            account.balances.forEach { (currency, amount) ->
-                try {
-                    databaseEcoModel.set(uuid, currency, amount)
-                } catch (e: Exception) {
-                    LiteEco.instance.logger.error("CRITICAL LOSS: Could not save $uuid ($currency) during shutdown! Error: ${e.message}")
-                }
-            }
+        val accountsToSync = cache.filter { (_, account) ->
+            account.isSuccessfullyLoaded && account.balances.isNotEmpty()
         }
-        cache.clear()
+
+        if (accountsToSync.isEmpty()) {
+            LiteEco.instance.logger.info("Shutdown sync finished: No valid accounts found in cache to save.")
+            cache.clear()
+            return
+        }
+
+        val allCurrencies = accountsToSync.values.flatMap { it.balances.keys }.distinct()
+        var isAllSavedSuccessfully = true
+
+        try {
+            allCurrencies.forEach { currency ->
+                LiteEco.instance.logger.info("Executing shutdown batch update for currency: $currency (${accountsToSync.size} accounts)")
+                databaseEcoModel.batchUpdate(accountsToSync.toMutableMap(), currency)
+            }
+        } catch (e: Exception) {
+            isAllSavedSuccessfully = false
+            LiteEco.instance.logger.error("CRITICAL ERROR: Global shutdown sync failed during batch processing!", e)
+        }
+
+        if (isAllSavedSuccessfully) {
+            cache.clear()
+            LiteEco.instance.logger.info("SUCCESS: All accounts successfully backed up to database. Cache cleared.")
+        } else {
+            LiteEco.instance.logger.error("=========================================================")
+            LiteEco.instance.logger.error(" EMERGENCY DATA DUMP - DO NOT CLOSE THE TERMINAL / PROCESS")
+            LiteEco.instance.logger.error("=========================================================")
+            accountsToSync.forEach { (uuid, account) ->
+                val balancesStr = account.balances.entries.joinToString(", ") { "${it.key}: ${it.value}" }
+                LiteEco.instance.logger.error("UNSAVED DATA: UUID: $uuid | Balances: [$balancesStr]")
+            }
+            LiteEco.instance.logger.error("=========================================================")
+        }
     }
 
-    override fun clearFromCache(uuid: UUID) {
+    override fun clear(uuid: UUID) {
         val player = cache.keys.find { key -> key == uuid } ?: return
 
         cache.remove(player)

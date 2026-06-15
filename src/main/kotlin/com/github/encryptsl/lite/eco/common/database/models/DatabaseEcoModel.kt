@@ -1,10 +1,12 @@
 package com.github.encryptsl.lite.eco.common.database.models
 
 import com.github.encryptsl.lite.eco.LiteEco
+import com.github.encryptsl.lite.eco.api.account.Wallet
 import com.github.encryptsl.lite.eco.api.interfaces.PlayerSQL
 import com.github.encryptsl.lite.eco.common.database.entity.UserEntity
 import com.github.encryptsl.lite.eco.common.database.tables.Account
 import com.github.encryptsl.lite.eco.common.database.tables.toUserEntity
+import com.github.encryptsl.lite.eco.common.extensions.batchUpdate
 import com.github.encryptsl.lite.eco.common.extensions.loggedTransaction
 import org.bukkit.Bukkit
 import org.jetbrains.exposed.v1.core.*
@@ -208,6 +210,23 @@ class DatabaseEcoModel : PlayerSQL {
                     this[table.money] = money
                 }
             } catch (e : ExposedSQLException) {
+                LiteEco.instance.componentLogger.error(e.message ?: e.localizedMessage)
+            }
+        }
+    }
+
+    override fun batchUpdate(balances: MutableMap<UUID, Wallet>, currency: String) {
+        loggedTransaction {
+            try {
+                val table = Account(currency)
+                val sql = "UPDATE ${table.tableName} SET money = ? WHERE uuid = ?"
+
+                table.batchUpdate(balances.entries, sql) { entry ->
+                    val amountForCurrency = entry.value.balances[currency]
+                    this.setBigDecimal(1, amountForCurrency)
+                    this.setString(2, entry.key.toKotlinUuid().toString())
+                }
+            } catch (e: ExposedSQLException) {
                 LiteEco.instance.componentLogger.error(e.message ?: e.localizedMessage)
             }
         }

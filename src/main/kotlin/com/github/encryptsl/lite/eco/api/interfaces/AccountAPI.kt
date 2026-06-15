@@ -15,7 +15,7 @@ interface AccountAPI {
 
     /**
      * Starts the Janitor service task that periodically synchronizes offline players' data.
-     * * This service iterates through the [com.github.encryptsl.lite.eco.api.account.PlayerAccount.cache] and identifies players
+     * * This service iterates through the [com.github.encryptsl.lite.eco.api.account.Account.cache] and identifies players
      * who are no longer online. It attempts to synchronize their cached balances
      * (including failed transactions from previous database outages) back to the database.
      * * The task runs asynchronously to prevent blocking the main server thread during
@@ -34,7 +34,7 @@ interface AccountAPI {
      * @param currency The key/name of the currency being cached.
      * @param value The [BigDecimal] balance value to store in the cache.
      */
-    fun cacheAccount(uuid: UUID, currency: String, value: BigDecimal)
+    fun cache(uuid: UUID, currency: String, value: BigDecimal)
 
     /**
      * Synchronizes a single player's account data from the cache back to the persistent store (SQL).
@@ -43,7 +43,7 @@ interface AccountAPI {
      *
      * @param uuid The unique identifier (UUID) of the player to synchronize.
      */
-    fun syncAccount(uuid: UUID)
+    fun sync(uuid: UUID)
 
     /**
      * Synchronizes all currently cached account data back to the persistent store (SQL).
@@ -59,7 +59,7 @@ interface AccountAPI {
      *
      * @param uuid The unique identifier (UUID) of the player to remove from the cache.
      */
-    fun clearFromCache(uuid: UUID)
+    fun clear(uuid: UUID)
 
     /**
      * Retrieves the current balance of a player, preferably from the cache for speed.

@@ -4,14 +4,13 @@ import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.common.hook.HookListener
 import com.github.encryptsl.lite.eco.utils.ClassUtil
 import it.alzy.simpleeconomy.plugin.SimpleEconomy
-import it.alzy.simpleeconomy.plugin.storage.Storage
 
 class SimpleEconomyHook(private val liteEco: LiteEco) : HookListener(
     PLUGIN_NAME,
     "You can now export economy from plugin SimpleEconomy to LiteEco with /eco database import SimpleEconomy <into_currency>"
 ) {
 
-    private val economyHandler: Storage?
+    private val economyHandler
         get() = if (isSimpleEconomyPresent()) SimpleEconomy.getInstance().storage else null
 
     companion object {
@@ -34,8 +33,28 @@ class SimpleEconomyHook(private val liteEco: LiteEco) : HookListener(
     override fun unregister() {}
 
     fun getAccounts(): MutableMap<String, Double> {
-        return if (isSimpleEconomyPresent()) {
-            economyHandler?.allBalances ?: mutableMapOf()
-        } else mutableMapOf()
+        if (!isSimpleEconomyPresent()) return mutableMapOf()
+
+        val handler = economyHandler ?: return mutableMapOf()
+
+        try {
+            val method = handler.javaClass.getMethod("getAllBalances")
+
+            val rawResult = method.invoke(handler)
+
+            if (rawResult is Map<*, *>) {
+                val castedMap = mutableMapOf<String, Double>()
+                for ((key, value) in rawResult) {
+                    if (key is String && value is Double) {
+                        castedMap[key] = value
+                    }
+                }
+                return castedMap
+            }
+        } catch (e: Exception) {
+            liteEco.componentLogger.error("Failed to reflectively fetch accounts from SimpleEconomy: ${e.message}", e)
+        }
+
+        return mutableMapOf()
     }
 }

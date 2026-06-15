@@ -5,6 +5,7 @@ import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.common.hook.HookListener
 import com.github.encryptsl.lite.eco.common.hook.vault.legacy.LegacyEconomyVaultAPI
 import com.github.encryptsl.lite.eco.common.hook.vault.unlocked.AdaptiveEconomyVaultUnlockedAPI
+import com.github.encryptsl.lite.eco.common.hook.vault.unlocked.async.AsyncEconomyVaultUnlockedAPI
 import com.github.encryptsl.lite.eco.utils.ClassUtil
 import net.milkbowl.vault.economy.Economy
 import org.bukkit.plugin.ServicePriority
@@ -22,6 +23,9 @@ class VaultHook(
 
         fun isVaultUnlocked(): Boolean
             = ClassUtil.isValidClasspath("net.milkbowl.vault2.economy.Economy")
+
+        fun isVaultUnlockedAsync(): Boolean
+                = ClassUtil.isValidClasspath("net.milkbowl.vault2.economy.AsyncEconomy")
     }
 
 
@@ -35,6 +39,11 @@ class VaultHook(
             liteEco.componentLogger.info("You can now use modern VaultUnlocked API.")
         }
 
+        if (isVaultUnlockedAsync()) {
+            liteEco.server.servicesManager.register(net.milkbowl.vault2.economy.AsyncEconomy::class.java, AsyncEconomyVaultUnlockedAPI(liteEco), liteEco, ServicePriority.Highest)
+            liteEco.componentLogger.info("You can now use modern AsyncVaultUnlocked API. !")
+        }
+
         liteEco.server.servicesManager.register(Economy::class.java,
             LegacyEconomyVaultAPI(liteEco), liteEco, ServicePriority.Highest)
         registered = true
@@ -45,6 +54,10 @@ class VaultHook(
 
         if (isVaultUnlocked()) {
             liteEco.server.servicesManager.unregister(AdaptiveEconomyVaultUnlockedAPI::class.java)
+        }
+
+        if (isVaultUnlockedAsync()) {
+            liteEco.server.servicesManager.unregister(AsyncEconomyVaultUnlockedAPI::class.java)
         }
     }
 }

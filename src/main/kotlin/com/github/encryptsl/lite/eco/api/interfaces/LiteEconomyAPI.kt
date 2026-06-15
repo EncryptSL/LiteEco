@@ -61,7 +61,7 @@ interface LiteEconomyAPI {
      * @param currency currency of the account
      * @return true if the account was deleted, false if it didn’t exist
      */
-    suspend fun deleteAccount(uuid: UUID, currency: String = "dollars"): Boolean
+    suspend fun delete(uuid: UUID, currency: String = "dollars"): Boolean
 
     /** Deletes all accounts for the specified currency. */
     suspend fun purgeAccounts(currency: String)
@@ -109,7 +109,7 @@ interface LiteEconomyAPI {
      *
      * @param uuid UUID of the player
      */
-    suspend fun syncAccount(uuid: UUID)
+    suspend fun sync(uuid: UUID)
 
     /** Synchronizes all accounts at once. */
     fun syncAccounts()

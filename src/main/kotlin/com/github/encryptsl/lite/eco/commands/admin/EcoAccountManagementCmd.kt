@@ -89,7 +89,7 @@ class EcoAccountManagementCmd(
                     val currency: String = ctx.get("currency")
 
                     liteEco.pluginScope.launch {
-                        val message = if (liteEco.api.deleteAccount(target.uniqueId, currency)) {
+                        val message = if (liteEco.api.delete(target.uniqueId, currency)) {
                             "messages.admin.delete_account"
                         } else {
                             "messages.error.account_not_exist"
