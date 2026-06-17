@@ -29,7 +29,8 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import org.bukkit.plugin.PluginManager
 import org.bukkit.plugin.java.JavaPlugin
-import java.nio.file.Files
+import java.io.File
+import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.system.measureTimeMillis
 
@@ -64,7 +65,7 @@ class LiteEco : JavaPlugin() {
     val debugger: Debugger by lazy { Debugger(this) }
     val placeholderHelper by lazy { PlaceholderHelper(this) }
     val schedulerHelper by lazy { SchedulerHelper(this, isFolia()) }
-    val configFile by lazy { dataFolder.toPath().resolve("config.yml") }
+    val configFile: Path by lazy { File(dataFolder, "config.yml").toPath() }
 
     val pluginScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
@@ -132,12 +133,7 @@ class LiteEco : JavaPlugin() {
 
     private fun createConfig() {
         try {
-            if (Files.notExists(dataFolder.toPath())) {
-                Files.createDirectories(configFile)
-            }
-
             baseConfig = YamlConfigurations.update(configFile, BaseConfig::class.java, settings)
-
         } catch (e: Exception) {
             logger.error("Error during initialization: ${e.message}")
             e.printStackTrace()
