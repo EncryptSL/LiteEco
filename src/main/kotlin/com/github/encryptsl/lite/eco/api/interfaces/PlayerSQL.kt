@@ -1,9 +1,8 @@
 package com.github.encryptsl.lite.eco.api.interfaces
 
-import com.github.encryptsl.lite.eco.api.account.Wallet
 import com.github.encryptsl.lite.eco.common.database.entity.UserEntity
 import java.math.BigDecimal
-import java.util.UUID
+import java.util.*
 
 interface PlayerSQL {
 
