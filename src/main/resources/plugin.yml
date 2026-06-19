@@ -35,13 +35,12 @@ libraries:
   - org.apache.commons:commons-csv:1.14.1
   - org.flywaydb:flyway-core:12.8.1
   - org.flywaydb:flyway-mysql:12.8.1
-  - org.incendo:cloud-annotations:2.0.0
-  - org.incendo:cloud-brigadier:2.0.0-beta.15
-  - org.incendo:cloud-bukkit:2.0.0-beta.15
+  - org.incendo:cloud-brigadier:2.0.0-beta.16
+  - org.incendo:cloud-bukkit:2.0.0-beta.16
   - org.incendo:cloud-core:2.0.0
   - org.incendo:cloud-kotlin-extensions:2.0.0
-  - org.incendo:cloud-minecraft-extras:2.0.0-beta.15
-  - org.incendo:cloud-paper:2.0.0-beta.15
+  - org.incendo:cloud-minecraft-extras:2.0.0-beta.16
+  - org.incendo:cloud-paper:2.0.0-beta.16
   - org.incendo:cloud-services:2.0.0
   - org.jetbrains.exposed:exposed-core:1.3.0
   - org.jetbrains.exposed:exposed-jdbc:1.3.0

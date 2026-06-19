@@ -19,10 +19,10 @@ repositories {
     mavenCentral()
     maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
-    maven {
-        url = uri("https://central.sonatype.com/repository/maven-snapshots/")
-        content {
-            includeGroup("org.incendo")
+    maven("https://central.sonatype.com/repository/maven-snapshots/") {
+        name = "sonatype-snapshots"
+        mavenContent {
+            snapshotsOnly()
         }
     }
     maven("https://jitpack.io")
