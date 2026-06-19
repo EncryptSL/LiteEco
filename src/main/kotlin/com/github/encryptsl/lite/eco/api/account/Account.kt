@@ -52,7 +52,7 @@ object Account : AccountAPI {
             return
         }
 
-        val failedCurrencies = mutableListOf<String>()
+        var isAllSavedSuccessfully = true
 
         account.balances.forEach { (currency, amount) ->
             try {
@@ -61,56 +61,49 @@ object Account : AccountAPI {
                 databaseEcoModel.set(uuid, currency, amount)
                 LiteEco.instance.debugger.debug(Account::class.java, "Sync OK: $uuid -> $currency ($amount)")
             } catch (e: Exception) {
-                failedCurrencies.add(currency)
-                LiteEco.instance.logger.error("Sync FAIL: $uuid -> $currency. Data preserved in cache for next cycle. Error: ${e.message}")
+                isAllSavedSuccessfully = false
+                LiteEco.instance.logger.error("Sync FAIL: $uuid -> $currency. Data preserved in cache. Error: ${e.message}")
             }
         }
 
-        if (failedCurrencies.isEmpty()) {
+        if (isAllSavedSuccessfully) {
             cache.remove(uuid)
         } else {
-            account.balances.keys.retainAll(failedCurrencies.toSet())
+            LiteEco.instance.logger.warn("Sync HOLD: Account for $uuid retained in cache due to save failure.")
         }
     }
 
     override fun syncAccounts() {
-        LiteEco.instance.logger.info("Initiating global shutdown synchronization for all cached accounts...")
+        LiteEco.instance.logger.info("Initiating global shutdown synchronization...")
 
-        val accountsToSync = cache.filter { (_, account) ->
-            account.isSuccessfullyLoaded && account.balances.isNotEmpty()
-        }
+        val uuids = cache.keys.toList()
+        var hasErrorOccurred = false
 
-        if (accountsToSync.isEmpty()) {
-            LiteEco.instance.logger.info("Shutdown sync finished: No valid accounts found in cache to save.")
-            cache.clear()
-            return
-        }
+        for (uuid in uuids) {
+            val account = cache[uuid] ?: continue
 
-        val allCurrencies = accountsToSync.values.flatMap { it.balances.keys }.distinct()
-        var isAllSavedSuccessfully = true
-
-        try {
-            allCurrencies.forEach { currency ->
-                LiteEco.instance.logger.info("Executing shutdown batch update for currency: $currency (${accountsToSync.size} accounts)")
-                databaseEcoModel.batchUpdate(accountsToSync.toMutableMap(), currency)
+            if (!account.isSuccessfullyLoaded) {
+                LiteEco.instance.logger.warn("Skipping shutdown sync for $uuid: Data integrity flag is FALSE.")
+                continue
             }
-        } catch (e: Exception) {
-            isAllSavedSuccessfully = false
-            LiteEco.instance.logger.error("CRITICAL ERROR: Global shutdown sync failed during batch processing!", e)
+
+            account.balances.forEach { (currency, amount) ->
+                try {
+                    if (amount < BigDecimal.ZERO) return@forEach
+
+                    databaseEcoModel.set(uuid, currency, amount)
+                } catch (e: Exception) {
+                    hasErrorOccurred = true
+                    LiteEco.instance.logger.error("CRITICAL LOSS: Could not save $uuid ($currency) during shutdown! Error: ${e.message}", e)
+                }
+            }
         }
 
-        if (isAllSavedSuccessfully) {
+        if (!hasErrorOccurred) {
             cache.clear()
             LiteEco.instance.logger.info("SUCCESS: All accounts successfully backed up to database. Cache cleared.")
         } else {
-            LiteEco.instance.logger.error("=========================================================")
-            LiteEco.instance.logger.error(" EMERGENCY DATA DUMP - DO NOT CLOSE THE TERMINAL / PROCESS")
-            LiteEco.instance.logger.error("=========================================================")
-            accountsToSync.forEach { (uuid, account) ->
-                val balancesStr = account.balances.entries.joinToString(", ") { "${it.key}: ${it.value}" }
-                LiteEco.instance.logger.error("UNSAVED DATA: UUID: $uuid | Balances: [$balancesStr]")
-            }
-            LiteEco.instance.logger.error("=========================================================")
+            LiteEco.instance.logger.error("WARNING: Shutdown sync completed with errors. Cache was NOT cleared to prevent data loss.")
         }
     }
 

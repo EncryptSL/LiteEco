@@ -152,29 +152,4 @@ interface PlayerSQL {
      * @param currency The key/name of the currency the accounts belong to.
      */
     fun batchInsert(importData: List<Triple<UUID, String, BigDecimal>>, currency: String)
-
-    /**
-     * Executes a bulk update of user account balances within a single batch operation.
-     *
-     * Implementations of this method should ensure efficient data persistence
-     * (e.g., using batch statements in SQL) to minimize write operations and network overhead.
-     *
-     * ### Example implementation (Exposed):
-     * ```kotlin
-     * override fun batchUpdate(balances: Map<String, BigDecimal>, currency: String) {
-     * if (balances.isEmpty()) return
-     * * // Example assuming the map key represents the string representation of a UUID
-     * UsersTable.batchUpdate(balances.entries.toList()) { entry ->
-     * this.where { UsersTable.uuid eq UUID.fromString(entry.key) and (UsersTable.currency eq currency) }
-     * this[UsersTable.balance] = entry.value
-     * }
-     * }
-     * ```
-     *
-     * @param balances A map containing the account identifiers (e.g., UUID strings or unique usernames)
-     * as keys, and their corresponding new [BigDecimal] balance values to be set.
-     * @param currency The identifier of the currency (e.g., "USD", "EUR") for which the bulk update should be performed.
-     * @throws Exception If the persistence layer fails to write the data.
-     */
-    fun batchUpdate(balances: MutableMap<UUID, Wallet>, currency: String)
 }
