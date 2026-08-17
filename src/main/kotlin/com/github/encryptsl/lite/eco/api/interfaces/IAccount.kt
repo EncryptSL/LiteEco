@@ -11,11 +11,11 @@ import java.util.*
  * This API is typically used to provide fast access to player data (like balances)
  * without constantly hitting the main database (SQL).
  */
-interface AccountAPI {
+interface IAccount {
 
     /**
      * Starts the Janitor service task that periodically synchronizes offline players' data.
-     * * This service iterates through the [com.github.encryptsl.lite.eco.api.account.Account.cache] and identifies players
+     * * This service iterates through the [com.github.encryptsl.lite.eco.api.economy.account.AccountCache.cache] and identifies players
      * who are no longer online. It attempts to synchronize their cached balances
      * (including failed transactions from previous database outages) back to the database.
      * * The task runs asynchronously to prevent blocking the main server thread during

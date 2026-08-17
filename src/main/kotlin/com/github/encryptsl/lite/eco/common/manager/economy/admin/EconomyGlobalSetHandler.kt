@@ -10,13 +10,11 @@ import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import java.math.BigDecimal
-import kotlin.time.ExperimentalTime
 
 class EconomyGlobalSetHandler(
     private val liteEco: LiteEco
 ) {
 
-    @OptIn(ExperimentalTime::class)
     fun onAdminGlobalSetMoney(
         sender: CommandSender,
         currency: String,
@@ -33,22 +31,22 @@ class EconomyGlobalSetHandler(
         }
 
         liteEco.pluginScope.launch {
-            players.forEach { player ->
-                val user = liteEco.api.getUserByUUID(player.uniqueId, currency) ?: return@forEach
+            val account = liteEco.api.account()
+            for (player in players) {
+                val user = account.getUserByUUID(player.uniqueId, currency) ?: continue
 
-                with(liteEco) {
-                    loggerModel.logging(
-                        TransactionContextEntity(
-                            type = TypeLogger.SET,
-                            sender = sender.name,
-                            target = user.userName,
-                            currency = currency,
-                            previousBalance = user.money,
-                            newBalance = money
-                        )
+                liteEco.loggerModel.logging(
+                    TransactionContextEntity(
+                        type = TypeLogger.SET,
+                        sender = sender.name,
+                        target = user.userName,
+                        currency = currency,
+                        previousBalance = user.money,
+                        newBalance = money
                     )
-                    api.set(player.uniqueId, currency, money)
-                }
+                )
+
+                account.set(user.uuid, currency, money)
             }
 
             liteEco.increaseTransactions(players.size)

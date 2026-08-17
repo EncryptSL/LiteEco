@@ -2,7 +2,7 @@ package com.github.encryptsl.lite.eco.common.hook.vault.unlocked.async
 
 import net.milkbowl.vault2.economy.AccountPermission
 import net.milkbowl.vault2.economy.AsyncEconomy
-import java.util.UUID
+import java.util.*
 import java.util.concurrent.CompletableFuture
 
 abstract class AsyncUnusedVaultUnlockedAPI : AsyncEconomy {

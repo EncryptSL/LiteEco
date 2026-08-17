@@ -6,7 +6,6 @@ import com.github.encryptsl.lite.eco.common.extensions.isApproachingZero
 import kotlinx.coroutines.runBlocking
 import net.milkbowl.vault.economy.EconomyResponse
 import org.bukkit.OfflinePlayer
-import java.util.*
 
 @Suppress("DEPRECATION")
 class LegacyEconomyVaultAPI(private val liteEco: LiteEco) : LegacyDeprecatedEconomy() {
@@ -35,7 +34,7 @@ class LegacyEconomyVaultAPI(private val liteEco: LiteEco) : LegacyDeprecatedEcon
     }
 
     override fun hasAccount(player: OfflinePlayer): Boolean {
-        return liteEco.api.hasAccount(player.uniqueId)
+        return liteEco.api.account().hasAccount(player.uniqueId)
     }
 
     override fun hasAccount(player: OfflinePlayer, worldName: String?): Boolean {
@@ -47,7 +46,7 @@ class LegacyEconomyVaultAPI(private val liteEco: LiteEco) : LegacyDeprecatedEcon
 
         return try {
             runBlocking {
-                liteEco.api.getBalance(player.uniqueId, liteEco.currencyImpl.defaultCurrency()).toDouble()
+                liteEco.api.account().getBalance(player.uniqueId, liteEco.currencyImpl.defaultCurrency()).toDouble()
             }
         } catch (e: Exception) {
             liteEco.debugger.debug(LegacyEconomyVaultAPI::class.java, "Error getting balance for ${player.name}: ${e.message}")
@@ -60,7 +59,7 @@ class LegacyEconomyVaultAPI(private val liteEco: LiteEco) : LegacyDeprecatedEcon
     }
 
     override fun has(player: OfflinePlayer?, amount: Double): Boolean {
-        return if(player != null) liteEco.api.has(player.uniqueId, liteEco.currencyImpl.defaultCurrency(), amount.toBigDecimal()) else false
+        return if(player != null) liteEco.api.account().has(player.uniqueId, liteEco.currencyImpl.defaultCurrency(), amount.toBigDecimal()) else false
     }
 
     override fun has(player: OfflinePlayer?, worldName: String?, amount: Double): Boolean {
@@ -76,7 +75,7 @@ class LegacyEconomyVaultAPI(private val liteEco: LiteEco) : LegacyDeprecatedEcon
         return if (has(player, amount)) {
             liteEco.debugger.debug(LegacyEconomyVaultAPI::class.java, "successfully withdraw ${player.name} from his balance ${getBalance(player)} amount $amount")
             runBlocking {
-                liteEco.api.withdraw(player.uniqueId, liteEco.currencyImpl.defaultCurrency(), amount.toBigDecimal())
+                liteEco.api.account().withdraw(player.uniqueId, liteEco.currencyImpl.defaultCurrency(), amount.toBigDecimal())
             }
             EconomyResponse(amount, getBalance(player), EconomyResponse.ResponseType.SUCCESS, null)
         } else {
@@ -104,7 +103,7 @@ class LegacyEconomyVaultAPI(private val liteEco: LiteEco) : LegacyDeprecatedEcon
         }
 
         runBlocking {
-            liteEco.api.deposit(player.uniqueId, liteEco.currencyImpl.defaultCurrency(), amount.toBigDecimal())
+            liteEco.api.account().deposit(player.uniqueId, liteEco.currencyImpl.defaultCurrency(), amount.toBigDecimal())
         }
         return EconomyResponse(amount, getBalance(player), EconomyResponse.ResponseType.SUCCESS, null)
     }
@@ -161,6 +160,6 @@ class LegacyEconomyVaultAPI(private val liteEco: LiteEco) : LegacyDeprecatedEcon
     }
 
     override fun getBanks(): MutableList<String> {
-        return Collections.emptyList()
+        return mutableListOf()
     }
 }

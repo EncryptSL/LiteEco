@@ -9,8 +9,7 @@ import net.milkbowl.vault2.economy.EconomyResponse
 import net.milkbowl.vault2.economy.MultiEconomyResponse
 import org.bukkit.Bukkit
 import java.math.BigDecimal
-import java.util.Optional
-import java.util.UUID
+import java.util.*
 import java.util.concurrent.CompletableFuture
 import kotlin.time.ExperimentalTime
 
@@ -57,12 +56,12 @@ class AsyncEconomyVaultUnlockedAPI(
     }
 
     override fun getAccountName(accountID: UUID): CompletableFuture<Optional<String>> = liteEco.pluginScope.future {
-        val user = liteEco.api.getUserByUUID(accountID, liteEco.currencyImpl.defaultCurrency())
+        val user = liteEco.api.account().getUserByUUID(accountID, liteEco.currencyImpl.defaultCurrency())
         if (user != null) Optional.of(user.userName) else Optional.empty()
     }
 
     override fun hasAccount(accountID: UUID): CompletableFuture<Boolean?> = liteEco.pluginScope.future {
-        val user = liteEco.api.getUserByUUID(accountID, liteEco.currencyImpl.defaultCurrency())
+        val user = liteEco.api.account().getUserByUUID(accountID, liteEco.currencyImpl.defaultCurrency())
         user != null
     }
 
@@ -80,7 +79,7 @@ class AsyncEconomyVaultUnlockedAPI(
 
     override fun accountSupportsCurrency(pluginName: String, accountID: UUID, currency: String): CompletableFuture<Boolean?> = liteEco.pluginScope.future {
         try {
-            liteEco.api.getUserByUUID(accountID, currency)
+            liteEco.api.account().getUserByUUID(accountID, currency)
             true
         } catch (_: Exception) {
             false
@@ -92,7 +91,7 @@ class AsyncEconomyVaultUnlockedAPI(
     }
 
     override fun balance(pluginName: String, accountID: UUID): CompletableFuture<BigDecimal?> = liteEco.pluginScope.future {
-        liteEco.api.getBalance(accountID, liteEco.currencyImpl.defaultCurrency())
+        liteEco.api.account().getBalance(accountID, liteEco.currencyImpl.defaultCurrency())
     }
 
     override fun balance(pluginName: String, accountID: UUID, world: String): CompletableFuture<BigDecimal?> {
@@ -100,11 +99,11 @@ class AsyncEconomyVaultUnlockedAPI(
     }
 
     override fun balance(pluginName: String, accountID: UUID, world: String, currency: String): CompletableFuture<BigDecimal?> = liteEco.pluginScope.future {
-        liteEco.api.getBalance(accountID, currency)
+        liteEco.api.account().getBalance(accountID, currency)
     }
 
     override fun has(pluginName: String, accountID: UUID, amount: BigDecimal): CompletableFuture<Boolean?> = liteEco.pluginScope.future {
-        liteEco.api.has(accountID, liteEco.currencyImpl.defaultCurrency(), amount)
+        liteEco.api.account().has(accountID, liteEco.currencyImpl.defaultCurrency(), amount)
     }
 
     override fun has(pluginName: String, accountID: UUID, world: String, amount: BigDecimal): CompletableFuture<Boolean?> {
@@ -112,7 +111,7 @@ class AsyncEconomyVaultUnlockedAPI(
     }
 
     override fun has(pluginName: String, accountID: UUID, world: String, currency: String, amount: BigDecimal): CompletableFuture<Boolean?> = liteEco.pluginScope.future {
-        liteEco.api.has(accountID, currency, amount)
+        liteEco.api.account().has(accountID, currency, amount)
     }
 
     override fun set(pluginName: String, accountID: UUID, amount: BigDecimal): CompletableFuture<EconomyResponse?> {
@@ -125,16 +124,20 @@ class AsyncEconomyVaultUnlockedAPI(
 
     override fun set(pluginName: String, accountID: UUID, world: String, currency: String, amount: BigDecimal): CompletableFuture<EconomyResponse?> = liteEco.pluginScope.future {
         liteEco.debugger.debug(AsyncEconomyVaultUnlockedAPI::class.java, "$pluginName try async set $accountID amount $amount ($currency)")
-        try {
-            val user = liteEco.api.getUserByUUID(accountID, currency)
-            if (user != null) {
-                val balanceBefore = liteEco.api.getBalance(accountID, currency)
 
-                if (liteEco.currencyImpl.getCheckBalanceLimit(amount, currency)) {
+        val balanceBefore = liteEco.api.account().getBalance(accountID, currency)
+        if (amount.isApproachingZero()) {
+            return@future EconomyResponse(amount, balanceBefore, EconomyResponse.ResponseType.FAILURE, AMOUNT_APPROACHING_ZERO)
+        }
+
+        try {
+            val user = liteEco.api.account().getUserByUUID(accountID, currency)
+            if (user != null) {
+                if (liteEco.currencyImpl.getCheckBalanceLimit(balanceBefore, currency, amount)) {
                     return@future EconomyResponse(amount, balanceBefore, EconomyResponse.ResponseType.FAILURE, FAIL_REACHED_BALANCE_LIMIT)
                 }
 
-                liteEco.api.set(accountID, currency, amount)
+                liteEco.api.account().set(accountID, currency, amount)
                 liteEco.loggerModel.logging(
                     TransactionContextEntity(
                         TypeLogger.SET,
@@ -149,11 +152,11 @@ class AsyncEconomyVaultUnlockedAPI(
 
                 EconomyResponse(amount, amount, EconomyResponse.ResponseType.SUCCESS, SUCCESS_SET)
             } else {
-                EconomyResponse(amount, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, FAIL_SET)
+                EconomyResponse(amount, balanceBefore, EconomyResponse.ResponseType.FAILURE, FAIL_SET)
             }
         } catch (e: Exception) {
             liteEco.logger.error("VaultUnlocked async set error: ${e.message}")
-            EconomyResponse(BigDecimal.ZERO, liteEco.api.getBalance(accountID, currency), EconomyResponse.ResponseType.FAILURE, FAIL_SET)
+            EconomyResponse(amount, balanceBefore, EconomyResponse.ResponseType.FAILURE, FAIL_SET)
         }
     }
 
@@ -166,11 +169,11 @@ class AsyncEconomyVaultUnlockedAPI(
     }
 
     override fun canWithdraw(pluginName: String, accountID: UUID, world: String, currency: String, amount: BigDecimal): CompletableFuture<EconomyResponse?> = liteEco.pluginScope.future {
-        val currentBalance = liteEco.api.getBalance(accountID, currency)
+        val currentBalance = liteEco.api.account().getBalance(accountID, currency)
         if (amount.isApproachingZero()) {
-            return@future EconomyResponse(BigDecimal.ZERO, currentBalance, EconomyResponse.ResponseType.FAILURE, AMOUNT_APPROACHING_ZERO)
+            return@future EconomyResponse(amount, currentBalance, EconomyResponse.ResponseType.FAILURE, AMOUNT_APPROACHING_ZERO)
         }
-        if (liteEco.api.has(accountID, currency, amount)) {
+        if (liteEco.api.account().has(accountID, currency, amount)) {
             EconomyResponse(amount, currentBalance, EconomyResponse.ResponseType.SUCCESS, "Can withdraw.")
         } else {
             EconomyResponse(amount, currentBalance, EconomyResponse.ResponseType.FAILURE, "Insufficient funds.")
@@ -189,15 +192,15 @@ class AsyncEconomyVaultUnlockedAPI(
     override fun withdraw(pluginName: String, accountID: UUID, world: String, currency: String, amount: BigDecimal): CompletableFuture<EconomyResponse?> = liteEco.pluginScope.future {
         liteEco.debugger.debug(AsyncEconomyVaultUnlockedAPI::class.java, "$pluginName try async withdraw from $accountID amount $amount ($currency)")
 
-        val currentBalance = liteEco.api.getBalance(accountID, currency)
+        val currentBalance = liteEco.api.account().getBalance(accountID, currency)
         if (amount.isApproachingZero()) {
-            return@future EconomyResponse(BigDecimal.ZERO, currentBalance, EconomyResponse.ResponseType.FAILURE, AMOUNT_APPROACHING_ZERO)
+            return@future EconomyResponse(amount, currentBalance, EconomyResponse.ResponseType.FAILURE, AMOUNT_APPROACHING_ZERO)
         }
 
         try {
-            if (liteEco.api.has(accountID, currency, amount)) {
+            if (liteEco.api.account().has(accountID, currency, amount)) {
                 val username = Bukkit.getOfflinePlayer(accountID).name ?: "Unknown"
-                liteEco.api.withdraw(accountID, currency, amount)
+                liteEco.api.account().withdraw(accountID, currency, amount)
 
                 val balanceAfter = currentBalance.subtract(amount)
                 liteEco.loggerModel.logging(TransactionContextEntity(TypeLogger.WITHDRAW, pluginName, username, currency, currentBalance, balanceAfter))
@@ -209,7 +212,7 @@ class AsyncEconomyVaultUnlockedAPI(
             }
         } catch (e: Exception) {
             liteEco.logger.error("VaultUnlocked async withdraw error: ${e.message}")
-            EconomyResponse(BigDecimal.ZERO, currentBalance, EconomyResponse.ResponseType.FAILURE, FAIL_WITHDRAW)
+            EconomyResponse(amount, currentBalance, EconomyResponse.ResponseType.FAILURE, FAIL_WITHDRAW)
         }
     }
 
@@ -222,9 +225,9 @@ class AsyncEconomyVaultUnlockedAPI(
     }
 
     override fun canDeposit(pluginName: String, accountID: UUID, world: String, currency: String, amount: BigDecimal): CompletableFuture<EconomyResponse?> = liteEco.pluginScope.future {
-        val currentBalance = liteEco.api.getBalance(accountID, currency)
+        val currentBalance = liteEco.api.account().getBalance(accountID, currency)
         if (amount.isApproachingZero()) {
-            return@future EconomyResponse(BigDecimal.ZERO, currentBalance, EconomyResponse.ResponseType.FAILURE, AMOUNT_APPROACHING_ZERO)
+            return@future EconomyResponse(amount, currentBalance, EconomyResponse.ResponseType.FAILURE, AMOUNT_APPROACHING_ZERO)
         }
         if (liteEco.currencyImpl.getCheckBalanceLimit(currentBalance, currency, amount)) {
             EconomyResponse(amount, currentBalance, EconomyResponse.ResponseType.FAILURE, FAIL_REACHED_BALANCE_LIMIT)
@@ -241,23 +244,22 @@ class AsyncEconomyVaultUnlockedAPI(
         return deposit(pluginName, accountID, world, liteEco.currencyImpl.defaultCurrency(), amount)
     }
 
-    @OptIn(ExperimentalTime::class)
     override fun deposit(pluginName: String, accountID: UUID, world: String, currency: String, amount: BigDecimal): CompletableFuture<EconomyResponse> = liteEco.pluginScope.future {
         liteEco.debugger.debug(AsyncEconomyVaultUnlockedAPI::class.java, "$pluginName try async deposit to $accountID amount $amount ($currency)")
 
-        val currentBalance = liteEco.api.getBalance(accountID, currency)
+        val currentBalance = liteEco.api.account().getBalance(accountID, currency)
         if (amount.isApproachingZero()) {
-            return@future EconomyResponse(BigDecimal.ZERO, currentBalance, EconomyResponse.ResponseType.FAILURE, AMOUNT_APPROACHING_ZERO)
+            return@future EconomyResponse(amount, currentBalance, EconomyResponse.ResponseType.FAILURE, AMOUNT_APPROACHING_ZERO)
         }
 
         try {
-            val user = liteEco.api.getUserByUUID(accountID, currency)
+            val user = liteEco.api.account().getUserByUUID(accountID, currency)
             if (user != null) {
                 if (liteEco.currencyImpl.getCheckBalanceLimit(currentBalance, currency, amount)) {
                     return@future EconomyResponse(amount, currentBalance, EconomyResponse.ResponseType.FAILURE, FAIL_REACHED_BALANCE_LIMIT)
                 }
 
-                liteEco.api.deposit(accountID, currency, amount)
+                liteEco.api.account().deposit(accountID, currency, amount)
 
                 val balanceAfter = currentBalance.add(amount)
                 liteEco.loggerModel.logging(TransactionContextEntity(TypeLogger.DEPOSIT, pluginName, user.userName, currency, currentBalance, balanceAfter))
@@ -265,11 +267,11 @@ class AsyncEconomyVaultUnlockedAPI(
 
                 EconomyResponse(amount, balanceAfter, EconomyResponse.ResponseType.SUCCESS, SUCCESS_DEPOSIT)
             } else {
-                EconomyResponse(amount, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, FAIL_DEPOSIT)
+                EconomyResponse(amount, currentBalance, EconomyResponse.ResponseType.FAILURE, FAIL_DEPOSIT)
             }
         } catch (e: Exception) {
             liteEco.logger.error("VaultUnlocked async deposit error: ${e.message}")
-            EconomyResponse(BigDecimal.ZERO, currentBalance, EconomyResponse.ResponseType.FAILURE, FAIL_DEPOSIT)
+            EconomyResponse(amount, currentBalance, EconomyResponse.ResponseType.FAILURE, FAIL_DEPOSIT)
         }
     }
 
@@ -283,11 +285,11 @@ class AsyncEconomyVaultUnlockedAPI(
 
     override fun transfer(pluginName: String, from: UUID, to: UUID, worldName: String, currency: String, amount: BigDecimal): CompletableFuture<MultiEconomyResponse> = liteEco.pluginScope.future {
         if (amount.isApproachingZero()) {
-            return@future MultiEconomyResponse(BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, AMOUNT_APPROACHING_ZERO)
+            return@future MultiEconomyResponse(amount, EconomyResponse.ResponseType.FAILURE, AMOUNT_APPROACHING_ZERO)
         }
 
         try {
-            val hasAccountTo = liteEco.api.getUserByUUID(to, currency) != null
+            val hasAccountTo = liteEco.api.account().getUserByUUID(to, currency) != null
             if (!hasAccountTo) {
                 return@future MultiEconomyResponse(amount, EconomyResponse.ResponseType.FAILURE, FAIL_TRANSFER_TARGET_NOT_FOUND)
             }
@@ -300,7 +302,11 @@ class AsyncEconomyVaultUnlockedAPI(
                 if (depositRes?.transactionSuccess() == true) {
                     MultiEconomyResponse(amount, withdrawRes.type, SUCCESS_TRANSFER)
                 } else {
-                    liteEco.api.deposit(from, currency, amount)
+                    try {
+                        liteEco.api.account().deposit(from, currency, amount)
+                    } catch (e: Exception) {
+                        liteEco.logger.error("Failed to refund money back to $from during transfer: ${e.message}")
+                    }
 
                     MultiEconomyResponse(amount, EconomyResponse.ResponseType.FAILURE, FAIL_TRANSFER_LIMIT_REACHED)
                 }

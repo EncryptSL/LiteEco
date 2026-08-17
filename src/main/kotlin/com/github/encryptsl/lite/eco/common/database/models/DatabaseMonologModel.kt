@@ -15,9 +15,7 @@ import org.jetbrains.exposed.v1.jdbc.deleteAll
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.selectAll
 import kotlin.math.ceil
-import kotlin.time.ExperimentalTime
 
-@OptIn(ExperimentalTime::class)
 class DatabaseMonologModel(
     val liteEco: LiteEco
 ) : TransactionLogger {
@@ -57,7 +55,6 @@ class DatabaseMonologModel(
         }
     }
 
-    @OptIn(ExperimentalTime::class)
     override suspend fun getLog(targetFilter: String?): List<TransactionContextEntity> = io {
         loggedTransaction {
             createQuery(targetFilter)

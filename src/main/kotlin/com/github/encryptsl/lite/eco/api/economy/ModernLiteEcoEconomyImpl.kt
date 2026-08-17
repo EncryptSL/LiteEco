@@ -1,23 +1,15 @@
 package com.github.encryptsl.lite.eco.api.economy
 
 import com.github.encryptsl.lite.eco.LiteEco
-import com.github.encryptsl.lite.eco.api.account.Account
+import com.github.encryptsl.lite.eco.api.economy.account.AccountCache
+import com.github.encryptsl.lite.eco.api.economy.account.AccountHolder
 import com.github.encryptsl.lite.eco.api.interfaces.LiteEconomyAPI
-import kotlinx.coroutines.runBlocking
 import java.math.BigDecimal
 import java.util.*
 
 abstract class ModernLiteEcoEconomyImpl : LiteEconomyAPI {
 
-    override fun hasAccount(uuid: UUID, currency: String): Boolean =
-        LiteEco.instance.databaseEcoModel.getExistPlayerAccount(uuid, currency)
-
-    override fun has(uuid: UUID, currency: String, requiredAmount: BigDecimal): Boolean
-            = runBlocking { requiredAmount <= getBalance(uuid, currency) }
-
-    override fun syncAccounts() {
-        Account.syncAccounts()
-    }
+    private val account: AccountHolder by lazy { AccountHolder() }
 
     override fun batchInsert(importData: List<Triple<UUID, String, BigDecimal>>, currency: String) {
         LiteEco.instance.databaseEcoModel.batchInsert(importData, currency)
@@ -37,10 +29,10 @@ abstract class ModernLiteEcoEconomyImpl : LiteEconomyAPI {
 
         val combinedList = blackList.toSet().plus(setOf("NULL", "CONSOLE", "SERVER"))
 
-        val database = LiteEco.instance.databaseEcoModel.getTopBalance(currency)
+        return LiteEco.instance.databaseEcoModel.getTopBalance(currency)
             .mapValues { e ->
-                if (Account.isAccountCached(e.value.uuid, currency))
-                    Account.getBalance(e.value.uuid, currency)
+                if (AccountCache.isAccountCached(e.value.uuid, currency))
+                    AccountCache.getBalance(e.value.uuid, currency)
                 else
                     e.value.money
             }
@@ -48,11 +40,13 @@ abstract class ModernLiteEcoEconomyImpl : LiteEconomyAPI {
                 combinedList.none { it.equals(name, ignoreCase = true) }
             }
             .toList()
-
-        return database.sortedByDescending { (_, balance) -> balance }.toMap()
+            .sortedByDescending { (_, balance) -> balance }
+            .toMap()
     }
 
     override fun getUUIDNameMap(currency: String): MutableMap<UUID, String> {
         return LiteEco.instance.databaseEcoModel.getUUIDNameMap(currency)
     }
+
+    override fun account(): AccountHolder = account
 }

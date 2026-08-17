@@ -10,13 +10,11 @@ import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import java.math.BigDecimal
-import kotlin.time.ExperimentalTime
 
 class EconomyGlobalWithdrawHandler(
     private val liteEco: LiteEco
 ) {
 
-    @OptIn(ExperimentalTime::class)
     fun onAdminGlobalWithdrawMoney(
         sender: CommandSender,
         currency: String,
@@ -27,23 +25,28 @@ class EconomyGlobalWithdrawHandler(
             return sender.sendMessage(liteEco.locale.translation("messages.error.database_exception", Placeholder.parsed("exception", "Collection is empty !")))
 
         liteEco.pluginScope.launch {
+            val account = liteEco.api.account()
+            for (player in players) {
+                val user = account.getUserByUUID(player.uniqueId, currency) ?: continue
 
-            players.forEach { player ->
-                val user = liteEco.api.getUserByUUID(player.uniqueId, currency) ?: return@forEach
-
-                with(liteEco) {
-                    loggerModel.logging(
-                        TransactionContextEntity(
-                            type = TypeLogger.WITHDRAW,
-                            sender = sender.name,
-                            target = user.userName,
-                            currency = currency,
-                            previousBalance = user.money,
-                            newBalance = user.money.minus(money),
-                        )
-                    )
-                    api.withdraw(user.uuid, currency, money)
+                if (user.money < money) {
+                    continue
                 }
+
+                val newBalance = user.money.minus(money)
+
+                liteEco.loggerModel.logging(
+                    TransactionContextEntity(
+                        type = TypeLogger.WITHDRAW,
+                        sender = sender.name,
+                        target = user.userName,
+                        currency = currency,
+                        previousBalance = user.money,
+                        newBalance = newBalance
+                    )
+                )
+
+                account.withdraw(user.uuid, currency, money)
             }
 
             liteEco.increaseTransactions(players.size)

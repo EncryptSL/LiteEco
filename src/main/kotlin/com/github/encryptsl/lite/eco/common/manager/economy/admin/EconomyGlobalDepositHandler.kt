@@ -10,13 +10,11 @@ import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import java.math.BigDecimal
-import kotlin.time.ExperimentalTime
 
 class EconomyGlobalDepositHandler(
     private val liteEco: LiteEco
 ) {
 
-    @OptIn(ExperimentalTime::class)
     fun onAdminGlobalDepositMoney(
         sender: CommandSender,
         currency: String,
@@ -31,25 +29,28 @@ class EconomyGlobalDepositHandler(
             return
         }
         liteEco.pluginScope.launch {
-            players.forEach { player ->
-                val user = liteEco.api.getUserByUUID(player.uniqueId, currency) ?: return@forEach
+            val account = liteEco.api.account()
+            for (player in players) {
+                val user = account.getUserByUUID(player.uniqueId, currency) ?: continue
 
-                user.takeIf { !liteEco.currencyImpl.getCheckBalanceLimit(it.money, currency, money) }
-                    ?.let { u ->
-                        with(liteEco) {
-                            loggerModel.logging(
-                                TransactionContextEntity(
-                                    type = TypeLogger.DEPOSIT,
-                                    sender = sender.name,
-                                    target = u.userName,
-                                    currency = currency,
-                                    previousBalance = u.money,
-                                    newBalance = u.money.plus(money)
-                                )
-                            )
-                            api.deposit(u.uuid, currency, money)
-                        }
-                    }
+                if (liteEco.currencyImpl.getCheckBalanceLimit(user.money, currency, money)) {
+                    continue
+                }
+
+                val newBalance = user.money.plus(money)
+
+                liteEco.loggerModel.logging(
+                    TransactionContextEntity(
+                        type = TypeLogger.DEPOSIT,
+                        sender = sender.name,
+                        target = user.userName,
+                        currency = currency,
+                        previousBalance = user.money,
+                        newBalance = newBalance
+                    )
+                )
+
+                account.deposit(user.uuid, currency, money)
             }
             liteEco.increaseTransactions(players.size)
 

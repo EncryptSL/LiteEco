@@ -1,19 +1,21 @@
 import io.papermc.paperweight.userdev.ReobfArtifactConfiguration
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
-apply(from = "generatePaperLibrariesYaml.gradle.kts")
-
 plugins {
-    kotlin("jvm") version "2.4.0"
+    kotlin("jvm") version "2.4.10"
+    id("generate-paper-libraries")
     alias(libs.plugins.gradleup.shadow)
     alias(libs.plugins.paperweight)
 }
 
 group = "com.github.encryptsl"
-version = providers.gradleProperty("plugin_version").get()
-description = providers.gradleProperty("plugin_description").get()
 
-val props = project.properties.mapValues { it.value.toString() }
+val pluginName = providers.gradleProperty("plugin_name").get()
+val pluginVersion = providers.gradleProperty("plugin_version").get()
+val pluginDescription = providers.gradleProperty("plugin_description").orNull ?: ""
+
+version = pluginVersion
+description = pluginDescription
 
 repositories {
     mavenCentral()
@@ -66,9 +68,14 @@ dependencies {
     }
     implementation(libs.bundles.ktor)
 
-    // Internal implementations (You can even shadow these if you want)
+    // Internal implementations
     implementation(libs.bstats)
     implementation(libs.miniplaceholders)
+
+    testImplementation("org.junit.jupiter:junit-jupiter:6.1.3")
+    testImplementation("io.mockk:mockk:1.14.11")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.0")
+    testImplementation(libs.vaultunlocked)
 
     // Test
     testImplementation(libs.junit.jupiter)
@@ -88,27 +95,30 @@ sourceSets {
 
 tasks {
     processResources {
-        // Triggers generation before the resources process
         dependsOn("generatePaperLibrariesYaml")
+
+        val expandProps = mapOf(
+            "name" to pluginName,
+            "version" to pluginVersion,
+            "description" to pluginDescription,
+        )
+
+        inputs.properties(expandProps)
+
         filesMatching(listOf("plugin.yml", "paper-plugin.yml")) {
-            expand(props)
+            expand(expandProps)
         }
     }
 
     shadowJar {
-        archiveFileName.set("${providers.gradleProperty("plugin_name").get()}-${project.version}.jar")
+        archiveFileName.set("$pluginName-$pluginVersion.jar")
 
-        // We will keep the relocations
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+
         relocate("org.bstats", "com.github.encryptsl.metrics")
 
-        // This prevents ShadowJAR from packaging third-party libraries,
-        // generator will still be able to see them in the runtimeClasspath.
-        configurations = emptyList()
-
-        // bStats and MiniPlaceholders to be included in the JAR (since they aren't in the paper-libraries)        from(sourceSets.main.get().output)
         configurations = listOf(project.configurations.getByName("runtimeClasspath"))
 
-        // We'll exclude the groups listed in paper-libraries.yml file
         dependencies {
             exclude(dependency("org.jetbrains.kotlin:.*:.*"))
             exclude(dependency("org.jetbrains.kotlinx:.*:.*"))
@@ -121,9 +131,12 @@ tasks {
             exclude(dependency("org.postgresql:.*:.*"))
             exclude(dependency("org.xerial:.*:.*"))
             exclude(dependency("de.exlll:.*:.*"))
+            exclude(dependency("com.tchristofferson:.*:.*"))
+            exclude(dependency("org.apache.commons:.*:.*"))
         }
 
         mergeServiceFiles()
+        append("META-INF/*.kotlin_module")
     }
 
     test {

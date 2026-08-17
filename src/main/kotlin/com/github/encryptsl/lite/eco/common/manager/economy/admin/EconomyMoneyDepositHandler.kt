@@ -9,13 +9,11 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import java.math.BigDecimal
-import kotlin.time.ExperimentalTime
 
 class EconomyMoneyDepositHandler(
     private val liteEco: LiteEco
 ) {
 
-    @OptIn(ExperimentalTime::class)
     fun onAdminDepositMoney(
         sender: CommandSender,
         target: OfflinePlayer,
@@ -29,48 +27,67 @@ class EconomyMoneyDepositHandler(
         }
 
         liteEco.pluginScope.launch {
-            val user = liteEco.api.getUserByUUID(target.uniqueId, currency)
+            val targetName = target.name ?: "Unknown"
+            val account = liteEco.api.account()
+            val user = account.getUserByUUID(target.uniqueId, currency)
+
             if (user == null) {
-                sender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist", Placeholder.parsed("account", target.name.toString())))
-                return@launch
-            }
-            if (liteEco.currencyImpl.getCheckBalanceLimit(user.money, currency, money)  && !sender.hasPermission("lite.eco.admin.bypass.limit")) {
-                sender.sendMessage(liteEco.locale.translation("messages.error.balance_above_limit",
-                    Placeholder.parsed("account", target.name.toString()))
+                sender.sendMessage(
+                    liteEco.locale.translation("messages.error.account_not_exist", Placeholder.parsed("account", targetName))
                 )
                 return@launch
             }
 
+            if (liteEco.currencyImpl.getCheckBalanceLimit(user.money, currency, money) && !sender.hasPermission("lite.eco.admin.bypass.limit")) {
+                sender.sendMessage(
+                    liteEco.locale.translation("messages.error.balance_above_limit", Placeholder.parsed("account", targetName))
+                )
+                return@launch
+            }
+
+            val newBalance = user.money.plus(money)
             liteEco.increaseTransactions(1)
-            liteEco.loggerModel.logging(TransactionContextEntity(TypeLogger.DEPOSIT, sender.name, user.userName, currency, user.money, user.money.plus(money)))
-            liteEco.api.deposit(target.uniqueId, currency, money)
 
-            if (sender.name == target.name) {
-                sender.sendMessage(liteEco.locale.translation("messages.self.add_money", TagResolver.resolver(
-                    Placeholder.parsed("money", liteEco.currencyImpl.fullFormatting(money, currency)),
-                    Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
-                )))
+            liteEco.loggerModel.logging(
+                TransactionContextEntity(TypeLogger.DEPOSIT, sender.name, user.userName, currency, user.money, newBalance)
+            )
+            account.deposit(target.uniqueId, currency, money)
+
+            val formattedMoney = liteEco.currencyImpl.fullFormatting(money, currency)
+            val currencyName = liteEco.currencyImpl.currencyModularNameConvert(currency, money)
+
+            val moneyPlaceholders = TagResolver.resolver(
+                Placeholder.parsed("money", formattedMoney),
+                Placeholder.parsed("currency", currencyName)
+            )
+
+            if (sender.name == targetName) {
+                sender.sendMessage(liteEco.locale.translation("messages.self.add_money", moneyPlaceholders))
                 return@launch
             }
-            sender.sendMessage(liteEco.locale.translation("messages.sender.add_money",
-                TagResolver.resolver(
-                    Placeholder.parsed("target", target.name.toString()), Placeholder.parsed("money", liteEco.currencyImpl.fullFormatting(money, currency)),
-                    Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
+
+            sender.sendMessage(
+                liteEco.locale.translation(
+                    "messages.sender.add_money",
+                    TagResolver.resolver(Placeholder.parsed("target", targetName), moneyPlaceholders)
                 )
-            ))
+            )
+
             if (target.isOnline && liteEco.baseConfig.messages.target.notifyAdd) {
+                val targetPlayer = target.player ?: return@launch
+
                 if (silent) {
-                    target.player?.sendMessage(liteEco.locale.translation(
-                        "messages.target.add_money_silent",
-                        Placeholder.parsed("money", liteEco.currencyImpl.fullFormatting(money, currency))
-                    ))
-                    return@launch
+                    targetPlayer.sendMessage(
+                        liteEco.locale.translation("messages.target.add_money_silent", Placeholder.parsed("money", formattedMoney))
+                    )
+                } else {
+                    targetPlayer.sendMessage(
+                        liteEco.locale.translation(
+                            "messages.target.add_money",
+                            TagResolver.resolver(Placeholder.parsed("sender", sender.name), moneyPlaceholders)
+                        )
+                    )
                 }
-                target.player?.sendMessage(liteEco.locale.translation("messages.target.add_money", TagResolver.resolver(
-                    Placeholder.parsed("sender", sender.name),
-                    Placeholder.parsed("money", liteEco.currencyImpl.fullFormatting(money, currency)),
-                    Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money)))
-                ))
             }
         }
     }

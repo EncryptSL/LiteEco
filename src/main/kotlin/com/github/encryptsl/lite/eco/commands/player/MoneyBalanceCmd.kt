@@ -68,7 +68,7 @@ class MoneyBalanceCmd(
         }
 
         liteEco.pluginScope.launch {
-            liteEco.api.getUserByUUID(target.uniqueId, currency)?.let {
+            liteEco.api.account().getUserByUUID(target.uniqueId, currency)?.let {
                 val key = if (sender == target) "messages.balance.format" else "messages.balance.format_target"
                 sender.sendMessage(liteEco.locale.translation(key, helper.getComponentBal(it, currency)))
             } ?: run {

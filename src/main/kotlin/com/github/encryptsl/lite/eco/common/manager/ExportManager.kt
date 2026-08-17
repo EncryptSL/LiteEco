@@ -31,7 +31,7 @@ class ExportManager(
                     } else {
                         io {
                             liteEco.api.getUUIDNameMap(currency.lowercase()).toList().mapIndexed { index, pair ->
-                                PlayerBalances.PlayerBalance(index + 1, pair.first, pair.second, liteEco.api.getBalance(pair.first))
+                                PlayerBalances.PlayerBalance(index + 1, pair.first, pair.second, liteEco.api.account().getBalance(pair.first))
                             }
                         }
                     }

@@ -13,7 +13,7 @@ class PlaceholderHelper(
      * Gets the player's balance for a specific currency.
      */
     fun getBalance(uuid: UUID, currency: String): BigDecimal = runBlocking {
-        liteEco.api.getBalance(uuid, currency)
+        liteEco.api.account().getBalance(uuid, currency)
     }
 
     /**

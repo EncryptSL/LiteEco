@@ -9,13 +9,11 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import java.math.BigDecimal
-import kotlin.time.ExperimentalTime
 
 class EconomyMoneySetHandler(
     private val liteEco: LiteEco
 ) {
 
-    @OptIn(ExperimentalTime::class)
     fun onAdminSetMoney(
         sender: CommandSender,
         target: OfflinePlayer,
@@ -28,33 +26,50 @@ class EconomyMoneySetHandler(
         }
 
         liteEco.pluginScope.launch {
-            val user = liteEco.api.getUserByUUID(target.uniqueId, currency)
-            if (user == null) {
-                sender.sendMessage(liteEco.locale.translation("messages.error.account_not_exist", Placeholder.parsed("account", target.name.toString())))
-                return@launch
-            }
-            liteEco.loggerModel.logging(TransactionContextEntity(TypeLogger.SET, sender.name, target.name.toString(), currency, user.money, money))
-            liteEco.increaseTransactions(1)
-            liteEco.api.set(target.uniqueId, currency, money)
+            val targetName = target.name ?: "Unknown"
+            val account = liteEco.api.account()
+            val user = account.getUserByUUID(target.uniqueId, currency)
 
-            if (sender.name == target.name) {
-                sender.sendMessage(liteEco.locale.translation("messages.self.set_money", TagResolver.resolver(
-                    Placeholder.parsed("money", liteEco.currencyImpl.fullFormatting(money, currency)),
-                    Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
-                )))
+            if (user == null) {
+                sender.sendMessage(
+                    liteEco.locale.translation("messages.error.account_not_exist", Placeholder.parsed("account", targetName))
+                )
                 return@launch
             }
-            sender.sendMessage(liteEco.locale.translation("messages.sender.set_money", TagResolver.resolver(
-                Placeholder.parsed("target", target.name.toString()),
-                Placeholder.parsed("money", liteEco.currencyImpl.fullFormatting(money, currency)),
-                Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
-            )))
+
+            liteEco.increaseTransactions(1)
+            liteEco.loggerModel.logging(
+                TransactionContextEntity(TypeLogger.SET, sender.name, user.userName, currency, user.money, money)
+            )
+            account.set(target.uniqueId, currency, money)
+
+            val formattedMoney = liteEco.currencyImpl.fullFormatting(money, currency)
+            val currencyName = liteEco.currencyImpl.currencyModularNameConvert(currency, money)
+
+            val moneyPlaceholders = TagResolver.resolver(
+                Placeholder.parsed("money", formattedMoney),
+                Placeholder.parsed("currency", currencyName)
+            )
+
+            if (sender.name == targetName) {
+                sender.sendMessage(liteEco.locale.translation("messages.self.set_money", moneyPlaceholders))
+                return@launch
+            }
+
+            sender.sendMessage(
+                liteEco.locale.translation(
+                    "messages.sender.set_money",
+                    TagResolver.resolver(Placeholder.parsed("target", targetName), moneyPlaceholders)
+                )
+            )
+
             if (target.isOnline && liteEco.baseConfig.messages.target.notifySet) {
-                target.player?.sendMessage(liteEco.locale.translation("messages.target.set_money", TagResolver.resolver(
-                    Placeholder.parsed("sender", sender.name),
-                    Placeholder.parsed("money", liteEco.currencyImpl.fullFormatting(money, currency)),
-                    Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
-                )))
+                target.player?.sendMessage(
+                    liteEco.locale.translation(
+                        "messages.target.set_money",
+                        TagResolver.resolver(Placeholder.parsed("sender", sender.name), moneyPlaceholders)
+                    )
+                )
             }
         }
     }

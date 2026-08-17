@@ -3,7 +3,7 @@ package com.github.encryptsl.lite.eco
 import com.github.encryptsl.lite.eco.api.ConfigAPI
 import com.github.encryptsl.lite.eco.api.MetricsCollector
 import com.github.encryptsl.lite.eco.api.UpdateNotifier
-import com.github.encryptsl.lite.eco.api.account.Account
+import com.github.encryptsl.lite.eco.api.economy.account.AccountCache
 import com.github.encryptsl.lite.eco.api.economy.Currency
 import com.github.encryptsl.lite.eco.api.economy.SuspendLiteEcoEconomyWrapper
 import com.github.encryptsl.lite.eco.api.objects.ModernText
@@ -97,7 +97,7 @@ class LiteEco : JavaPlugin() {
             commandFeatureManager.createCommandManager()
             registerListeners()
         }
-        Account.startJanitor(this)
+        AccountCache.startJanitor(this)
         val pluginRunningOnFolia = if (isFolia()) "<blue>[Folia]</blue>" else "<yellow>[PaperMC]</yellow>"
         logger.info(ModernText.miniModernText("Contribute to other updates <yellow>https://ko-fi.com/encryptsl"))
         logger.info(ModernText.miniModernText("<green>Plugin enabled on $pluginRunningOnFolia in time $timeTaken ms"))
@@ -108,7 +108,7 @@ class LiteEco : JavaPlugin() {
         schedulerHelper.cancelTasks()
         //END
         hookManager.unregisterHooks()
-        api.syncAccounts()
+        api.account().syncAccounts()
         pluginScope.cancel()
         databaseConnector.onDisable()
         logger.info("Plugin is disabled")

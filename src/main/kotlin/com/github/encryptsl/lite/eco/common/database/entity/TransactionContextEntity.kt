@@ -3,7 +3,6 @@ package com.github.encryptsl.lite.eco.common.database.entity
 import com.github.encryptsl.lite.eco.api.enums.TypeLogger
 import java.math.BigDecimal
 import kotlin.time.Clock
-import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
 /**
@@ -17,7 +16,6 @@ import kotlin.time.Instant
  * @property newBalance Balance after the transaction.
  * @property timestamp The [Instant] when the transaction was recorded.
  */
-@OptIn(ExperimentalTime::class)
 data class TransactionContextEntity(
     val type: TypeLogger,
     val sender: String,

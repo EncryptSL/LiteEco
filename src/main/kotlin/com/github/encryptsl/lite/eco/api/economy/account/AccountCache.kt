@@ -1,17 +1,34 @@
-package com.github.encryptsl.lite.eco.api.account
+package com.github.encryptsl.lite.eco.api.economy.account
 
 import com.github.encryptsl.lite.eco.LiteEco
-import com.github.encryptsl.lite.eco.api.interfaces.AccountAPI
+import com.github.encryptsl.lite.eco.api.account.Wallet
+import com.github.encryptsl.lite.eco.api.interfaces.IAccount
 import com.github.encryptsl.lite.eco.common.database.models.DatabaseEcoModel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import org.bukkit.Bukkit
 import java.math.BigDecimal
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
-object Account : AccountAPI {
+object AccountCache : IAccount {
 
     private val databaseEcoModel: DatabaseEcoModel by lazy { DatabaseEcoModel() }
-    internal val cache = mutableMapOf<UUID, Wallet>()
+    internal val cache = ConcurrentHashMap<UUID, Wallet>()
+
+    private val locks = Array(64) { Mutex() }
+
+    fun getLock(uuid: UUID): Mutex {
+        val index = (uuid.hashCode() and Int.MAX_VALUE) % locks.size
+        return locks[index]
+    }
+
+    suspend inline fun <T> withLock(uuid: UUID, crossinline block: suspend () -> T): T {
+        return getLock(uuid).withLock {
+            block()
+        }
+    }
 
     override fun startJanitor(liteEco: LiteEco) {
 
@@ -59,7 +76,7 @@ object Account : AccountAPI {
                 if (amount < BigDecimal.ZERO) return@forEach
 
                 databaseEcoModel.set(uuid, currency, amount)
-                LiteEco.instance.debugger.debug(Account::class.java, "Sync OK: $uuid -> $currency ($amount)")
+                LiteEco.instance.debugger.debug(AccountCache::class.java, "Sync OK: $uuid -> $currency ($amount)")
             } catch (e: Exception) {
                 isAllSavedSuccessfully = false
                 LiteEco.instance.logger.error("Sync FAIL: $uuid -> $currency. Data preserved in cache. Error: ${e.message}")
@@ -115,8 +132,7 @@ object Account : AccountAPI {
 
     override fun isAccountCached(uuid: UUID, currency: String?): Boolean {
         val account = cache[uuid] ?: return false
-        if (currency == null) return true
-        return account.balances.containsKey(currency)
+        return currency == null || account.balances.containsKey(currency)
     }
 
     override fun isPlayerOnline(uuid: UUID): Boolean {
