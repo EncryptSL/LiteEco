@@ -124,6 +124,7 @@ messages:
     - "<red>[★] <gray><hover:show_text:'<#F39E9E>Zapne okamžitou synchronizaci.'>/eco debug janitor"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E>Vypíše detailní výpis uložený v paměti.'>/eco debug inspect <yellow><username>"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E>Spustí souběžný zátěžový test pro atomickost transakcí.'>/eco debug stress <yellow><username> <#3EE84D>[iterations]"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Spustí souběžný zátěžový test pro uložení virtuálních hráčů do databáze.'>/eco debug stress-shutdown <#3EE84D>[iterations]"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E>Přepne překlad zpráv.'>/eco config lang <#b37dc7>[lang]"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E>Znovu načte konfiguraci.'>/eco config reload"
     - " "

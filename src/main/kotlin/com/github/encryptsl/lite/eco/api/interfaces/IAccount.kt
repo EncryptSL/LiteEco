@@ -39,11 +39,12 @@ interface IAccount {
     /**
      * Synchronizes a single player's account data from the cache back to the persistent store (SQL).
      *
-     * This operation typically saves the current cached balance to the database.
+     * This operation saves the current cached balance to the database and clears the cache upon success.
      *
      * @param uuid The unique identifier (UUID) of the player to synchronize.
+     * @return true if synchronization was successful and cache was cleared, false otherwise.
      */
-    fun sync(uuid: UUID)
+    fun sync(uuid: UUID): Boolean
 
     /**
      * Synchronizes all currently cached account data back to the persistent store (SQL).

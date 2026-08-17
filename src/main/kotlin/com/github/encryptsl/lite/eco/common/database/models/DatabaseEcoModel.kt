@@ -13,11 +13,9 @@ import org.jetbrains.exposed.v1.jdbc.*
 import java.math.BigDecimal
 import java.sql.SQLException
 import java.util.*
-import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.toJavaUuid
 import kotlin.uuid.toKotlinUuid
 
-@OptIn(ExperimentalUuidApi::class)
 class DatabaseEcoModel : PlayerSQL {
 
     companion object {

@@ -23,7 +23,10 @@ class AccountManager(private val liteEco: LiteEco) {
 
     fun syncAccount(uuid: UUID) {
         liteEco.pluginScope.launch {
-            liteEco.api.account().sync(uuid)
+            val success = liteEco.api.account().sync(uuid)
+            if (!success) {
+                liteEco.logger.warn("Sync FAIL for $uuid: Data preserved in cache for retry.")
+            }
         }
     }
 }

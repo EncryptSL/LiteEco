@@ -4,6 +4,7 @@ import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.objects.ModernText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.event.EventHandler
@@ -60,7 +61,9 @@ class PlayerListeners(
             return
         }
 
-        liteEco.accountManager.syncAccount(uuid)
+        runBlocking(Dispatchers.IO) {
+            liteEco.accountManager.syncAccount(player.uniqueId)
+        }
     }
 
 }

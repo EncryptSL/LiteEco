@@ -42,7 +42,9 @@ object AccountCache : IAccount {
 
             offlineUUIDs.forEach { uuid ->
                 liteEco.pluginScope.launch {
-                    sync(uuid)
+                    withLock(uuid) {
+                        sync(uuid)
+                    }
                 }
             }
         }
@@ -60,33 +62,44 @@ object AccountCache : IAccount {
         return cache[uuid]?.balances?.getOrDefault(currency, BigDecimal.ZERO) ?: BigDecimal.ZERO
     }
 
-    override fun sync(uuid: UUID) {
+    override fun sync(uuid: UUID): Boolean {
         LiteEco.instance.logger.info("Attempting synchronization for UUID: $uuid")
-        val account = cache[uuid] ?: return
+        val account = cache[uuid] ?: return false
 
         if (!account.isSuccessfullyLoaded) {
             LiteEco.instance.logger.error("Sync BLOCKED for $uuid: Data integrity risk (isSuccessfullyLoaded = false).")
-            return
+            return false
         }
 
         var isAllSavedSuccessfully = true
 
         account.balances.forEach { (currency, amount) ->
-            try {
-                if (amount < BigDecimal.ZERO) return@forEach
+            if (amount < BigDecimal.ZERO) return@forEach
 
+            try {
                 databaseEcoModel.set(uuid, currency, amount)
-                LiteEco.instance.debugger.debug(AccountCache::class.java, "Sync OK: $uuid -> $currency ($amount)")
+
+                val dbBalance = databaseEcoModel.getBalance(uuid, currency)
+
+                if (dbBalance != amount) {
+                    isAllSavedSuccessfully = false
+                    LiteEco.instance.logger.error("Sync FAIL (Mismatched DB value): $uuid -> $currency. Expected: $amount, DB has: $dbBalance")
+                } else {
+                    LiteEco.instance.debugger.debug(AccountCache::class.java, "Sync OK: $uuid -> $currency ($amount)")
+                }
             } catch (e: Exception) {
                 isAllSavedSuccessfully = false
                 LiteEco.instance.logger.error("Sync FAIL: $uuid -> $currency. Data preserved in cache. Error: ${e.message}")
             }
         }
 
-        if (isAllSavedSuccessfully) {
+        return if (isAllSavedSuccessfully) {
             cache.remove(uuid)
+            LiteEco.instance.logger.info("Sync SUCCESS: Account for $uuid cleared from cache.")
+            true
         } else {
             LiteEco.instance.logger.warn("Sync HOLD: Account for $uuid retained in cache due to save failure.")
+            false
         }
     }
 
@@ -105,10 +118,17 @@ object AccountCache : IAccount {
             }
 
             account.balances.forEach { (currency, amount) ->
-                try {
-                    if (amount < BigDecimal.ZERO) return@forEach
+                if (amount < BigDecimal.ZERO) return@forEach
 
+                try {
                     databaseEcoModel.set(uuid, currency, amount)
+
+                    val dbBalance = databaseEcoModel.getBalance(uuid, currency)
+
+                    if (dbBalance != amount) {
+                        hasErrorOccurred = true
+                        LiteEco.instance.logger.error("CRITICAL LOSS: Mismatched DB value for $uuid ($currency) during shutdown! Expected: $amount, DB has: $dbBalance")
+                    }
                 } catch (e: Exception) {
                     hasErrorOccurred = true
                     LiteEco.instance.logger.error("CRITICAL LOSS: Could not save $uuid ($currency) during shutdown! Error: ${e.message}", e)
@@ -131,8 +151,8 @@ object AccountCache : IAccount {
     }
 
     override fun isAccountCached(uuid: UUID, currency: String?): Boolean {
-        val account = cache[uuid] ?: return false
-        return currency == null || account.balances.containsKey(currency)
+        val wallet = cache[uuid] ?: return false
+        return currency?.let { wallet.balances.containsKey(it) } ?: true
     }
 
     override fun isPlayerOnline(uuid: UUID): Boolean {

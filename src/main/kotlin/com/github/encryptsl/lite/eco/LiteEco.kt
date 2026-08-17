@@ -104,14 +104,18 @@ class LiteEco : JavaPlugin() {
     }
 
     override fun onDisable() {
-        // Needed we must cancel all tasks because janitor can corrupt final saving.
-        schedulerHelper.cancelTasks()
-        //END
-        hookManager.unregisterHooks()
-        api.account().syncAccounts()
-        pluginScope.cancel()
-        databaseConnector.onDisable()
-        logger.info("Plugin is disabled")
+        try {
+            schedulerHelper.cancelTasks()
+            hookManager.unregisterHooks()
+        } finally {
+            try {
+                api.account().syncAccounts()
+            } finally {
+                pluginScope.cancel()
+                databaseConnector.onDisable()
+                logger.info("Plugin is disabled")
+            }
+        }
     }
 
     fun increaseTransactions(value: Int) {

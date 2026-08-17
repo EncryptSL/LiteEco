@@ -4,15 +4,15 @@ import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.interfaces.IAccountHolder
 import com.github.encryptsl.lite.eco.common.database.entity.UserEntity
 import com.github.encryptsl.lite.eco.common.extensions.io
-import kotlinx.coroutines.runBlocking
 import org.bukkit.Bukkit
 import java.math.BigDecimal
 import java.util.*
 
 class AccountHolder : IAccountHolder {
+
     override suspend fun getUserByUUID(uuid: UUID, currency: String): UserEntity? = io {
         try {
-            if (AccountCache.isPlayerOnline(uuid) || AccountCache.isAccountCached(uuid, currency)) {
+            if (AccountCache.isAccountCached(uuid, currency)) {
                 val offlinePlayer = Bukkit.getOfflinePlayer(uuid)
                 val name = offlinePlayer.name ?: "Unknown"
 
@@ -33,7 +33,9 @@ class AccountHolder : IAccountHolder {
         if (AccountCache.isAccountCached(uuid, currency)) {
             return requiredAmount <= AccountCache.getBalance(uuid, currency)
         }
-        return runBlocking { requiredAmount <= getBalance(uuid, currency) }
+
+        val offlineBalance = LiteEco.instance.databaseEcoModel.getBalance(uuid, currency)
+        return requiredAmount <= offlineBalance
     }
 
     override suspend fun delete(uuid: UUID, currency: String): Boolean {
@@ -50,29 +52,19 @@ class AccountHolder : IAccountHolder {
 
     override suspend fun withdraw(uuid: UUID, currency: String, amount: BigDecimal) {
         AccountCache.withLock(uuid) {
-            if (AccountCache.isPlayerOnline(uuid) && AccountCache.isAccountCached(uuid, currency)) {
-                val current = AccountCache.getBalance(uuid, currency)
-                cacheAccount(uuid, currency, current.minus(amount))
-            } else {
-                io { LiteEco.instance.databaseEcoModel.withdraw(uuid, currency, amount) }
-            }
+            withdrawUnsafe(uuid, currency, amount)
         }
     }
 
     override suspend fun deposit(uuid: UUID, currency: String, amount: BigDecimal) {
         AccountCache.withLock(uuid) {
-            if (AccountCache.isPlayerOnline(uuid) && AccountCache.isAccountCached(uuid, currency)) {
-                val current = AccountCache.getBalance(uuid, currency)
-                cacheAccount(uuid, currency, current.plus(amount))
-            } else {
-                io { LiteEco.instance.databaseEcoModel.deposit(uuid, currency, amount) }
-            }
+            depositUnsafe(uuid, currency, amount)
         }
     }
 
     override suspend fun set(uuid: UUID, currency: String, amount: BigDecimal) {
         AccountCache.withLock(uuid) {
-            if (AccountCache.isPlayerOnline(uuid)) {
+            if (AccountCache.isAccountCached(uuid, currency)) {
                 cacheAccount(uuid, currency, amount)
             } else {
                 io { LiteEco.instance.databaseEcoModel.set(uuid, currency, amount) }
@@ -80,7 +72,7 @@ class AccountHolder : IAccountHolder {
         }
     }
 
-    override suspend fun sync(uuid: UUID) {
+    override suspend fun sync(uuid: UUID): Boolean = io {
         AccountCache.withLock(uuid) {
             AccountCache.sync(uuid)
         }
@@ -113,6 +105,9 @@ class AccountHolder : IAccountHolder {
     }
 
     override suspend fun getBalance(uuid: UUID, currency: String): BigDecimal {
+        if (AccountCache.isAccountCached(uuid, currency)) {
+            return AccountCache.getBalance(uuid, currency)
+        }
         val user = getUserByUUID(uuid, currency)
         return user?.money ?: BigDecimal.ZERO
     }
@@ -130,7 +125,7 @@ class AccountHolder : IAccountHolder {
     }
 
     private suspend fun withdrawUnsafe(uuid: UUID, currency: String, amount: BigDecimal) {
-        if (AccountCache.isPlayerOnline(uuid) && AccountCache.isAccountCached(uuid, currency)) {
+        if (AccountCache.isAccountCached(uuid, currency)) {
             val current = AccountCache.getBalance(uuid, currency)
             cacheAccount(uuid, currency, current.minus(amount))
         } else {
@@ -139,7 +134,7 @@ class AccountHolder : IAccountHolder {
     }
 
     private suspend fun depositUnsafe(uuid: UUID, currency: String, amount: BigDecimal) {
-        if (AccountCache.isPlayerOnline(uuid) && AccountCache.isAccountCached(uuid, currency)) {
+        if (AccountCache.isAccountCached(uuid, currency)) {
             val current = AccountCache.getBalance(uuid, currency)
             cacheAccount(uuid, currency, current.plus(amount))
         } else {

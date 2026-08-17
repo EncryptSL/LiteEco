@@ -55,8 +55,9 @@ interface IAccountHolder {
      * Synchronizes a single account between cache and database.
      *
      * @param uuid UUID of the player
+     * @return true if synchronization and cache cleanup succeeded, false otherwise
      */
-    suspend fun sync(uuid: UUID)
+    suspend fun sync(uuid: UUID): Boolean
 
     /** Synchronizes all accounts at once. */
     fun syncAccounts()

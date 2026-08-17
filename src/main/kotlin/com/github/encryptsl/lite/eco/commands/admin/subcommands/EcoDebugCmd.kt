@@ -1,8 +1,12 @@
 package com.github.encryptsl.lite.eco.commands.admin.subcommands
 
+import com.github.encryptsl.lite.eco.LiteEco
+import com.github.encryptsl.lite.eco.api.economy.account.AccountCache
 import com.github.encryptsl.lite.eco.commands.internal.CommandFeature
 import com.github.encryptsl.lite.eco.common.database.models.DatabaseEcoModel
 import com.github.encryptsl.lite.eco.utils.Helper
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.yield
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import org.incendo.cloud.Command
@@ -13,6 +17,9 @@ import org.incendo.cloud.description.Description
 import org.incendo.cloud.paper.PaperCommandManager
 import org.incendo.cloud.paper.util.sender.Source
 import org.incendo.cloud.parser.standard.IntegerParser
+import java.math.BigDecimal
+import java.util.*
+import kotlin.system.measureTimeMillis
 
 class EcoDebugCmd(
     private val helper: Helper
@@ -76,6 +83,61 @@ class EcoDebugCmd(
                     val target: Player = context.get("target")
                     val iterations: Int = context.get("iterations")
                     helper.executeStressTest(target, 1.0, iterations)
+                }
+        )
+
+        commandManager.command(
+            debugSubCommand.literal("stress-shutdown")
+                .commandDescription(Description.description("Run global shutdown sync stress test on multiple cached accounts."))
+                .optional("accounts", IntegerParser.integerParser(1, 10000), DefaultValue.constant(100))
+                .permission("lite.eco.admin.debug.stress")
+                .handler { context ->
+                    val sender = context.sender().source()
+                    val accountCount: Int = context.get("accounts")
+
+                    sender.sendMessage("§e[LiteEco Debug] Preparing $accountCount test accounts in database and cache...")
+
+                    val generatedUuids = Collections.synchronizedList(mutableListOf<UUID>())
+                    val currency = LiteEco.instance.currencyImpl.defaultCurrency()
+                    val initialDbAmount = BigDecimal.ZERO
+                    val random = kotlin.random.Random
+
+                    LiteEco.instance.pluginScope.launch {
+                        val preparationTime = measureTimeMillis {
+                            (0 until accountCount).chunked(50).forEach { batch ->
+                                batch.forEach { index ->
+                                    val testUuid = UUID.randomUUID()
+                                    val testUsername = "TestPlayer_$index"
+                                    val randomAmount = BigDecimal(random.nextInt(1, 10_000))
+
+                                    LiteEco.instance.databaseEcoModel.createPlayerAccount(
+                                        testUsername,
+                                        testUuid,
+                                        currency,
+                                        initialDbAmount
+                                    )
+
+                                    AccountCache.cache(testUuid, currency, randomAmount)
+                                    generatedUuids.add(testUuid)
+                                }
+                                yield()
+                            }
+                        }
+
+                        sender.sendMessage("§e[LiteEco Debug] Injected $accountCount accounts in ${preparationTime}ms. Executing AccountCache.syncAccounts()...")
+
+                        val syncTime = measureTimeMillis {
+                            AccountCache.syncAccounts()
+                        }
+
+                        val remainingInCache = generatedUuids.count { AccountCache.isAccountCached(it, null) }
+
+                        if (remainingInCache == 0) {
+                            sender.sendMessage("§a[LiteEco Debug] PASSED: All $accountCount accounts were saved to DB and cleared from cache in ${syncTime}ms.")
+                        } else {
+                            sender.sendMessage("§c[LiteEco Debug] FAILED: $remainingInCache / $accountCount accounts remained in cache after sync!")
+                        }
+                    }
                 }
         )
     }
