@@ -77,19 +77,17 @@ object AccountCache : IAccount {
             if (amount < BigDecimal.ZERO) return@forEach
 
             try {
-                databaseEcoModel.set(uuid, currency, amount)
+                val isSaved = databaseEcoModel.set(uuid, currency, amount)
 
-                val dbBalance = databaseEcoModel.getBalance(uuid, currency)
-
-                if (dbBalance != amount) {
+                if (!isSaved) {
                     isAllSavedSuccessfully = false
-                    LiteEco.instance.logger.error("Sync FAIL (Mismatched DB value): $uuid -> $currency. Expected: $amount, DB has: $dbBalance")
+                    LiteEco.instance.logger.error("Sync FAIL (No rows updated): $uuid -> $currency ($amount)")
                 } else {
                     LiteEco.instance.debugger.debug(AccountCache::class.java, "Sync OK: $uuid -> $currency ($amount)")
                 }
             } catch (e: Exception) {
                 isAllSavedSuccessfully = false
-                LiteEco.instance.logger.error("Sync FAIL: $uuid -> $currency. Data preserved in cache. Error: ${e.message}")
+                LiteEco.instance.logger.error("Sync FAIL: $uuid -> $currency ($amount). Error: ${e.message}")
             }
         }
 
@@ -121,13 +119,11 @@ object AccountCache : IAccount {
                 if (amount < BigDecimal.ZERO) return@forEach
 
                 try {
-                    databaseEcoModel.set(uuid, currency, amount)
+                    val isSaved = databaseEcoModel.set(uuid, currency, amount)
 
-                    val dbBalance = databaseEcoModel.getBalance(uuid, currency)
-
-                    if (dbBalance != amount) {
+                    if (!isSaved) {
                         hasErrorOccurred = true
-                        LiteEco.instance.logger.error("CRITICAL LOSS: Mismatched DB value for $uuid ($currency) during shutdown! Expected: $amount, DB has: $dbBalance")
+                        LiteEco.instance.logger.error("Sync FAIL (No rows updated): $uuid -> $currency ($amount)")
                     }
                 } catch (e: Exception) {
                     hasErrorOccurred = true

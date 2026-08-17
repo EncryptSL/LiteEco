@@ -112,7 +112,7 @@ interface PlayerSQL {
      * @param currency The key/name of the currency the account belongs to.
      * @param money The new balance value as a [BigDecimal].
      */
-    fun set(uuid: UUID, currency: String, money: BigDecimal)
+    fun set(uuid: UUID, currency: String, money: BigDecimal): Boolean
 
     /**
      * Deletes **all** accounts related to the specified currency.

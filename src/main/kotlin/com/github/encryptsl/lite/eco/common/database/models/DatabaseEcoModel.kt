@@ -145,22 +145,22 @@ class DatabaseEcoModel : PlayerSQL {
             }
         }
     }
-    override fun set(uuid: UUID, currency: String, money: BigDecimal) {
-
+    override fun set(uuid: UUID, currency: String, money: BigDecimal): Boolean {
         if (debugFailMode) {
-            LiteEco.instance.logger.error("[DEBUG] I am throwing out a false error for $uuid")
             throw SQLException("DEBUG: Database is currently in fail-mode.")
         }
 
-        loggedTransaction {
-            try {
+        return try {
+            loggedTransaction {
                 val table = Account(currency)
-                table.update({ table.uuid eq uuid.toKotlinUuid() }) {
+                val rowsUpdated = table.update({ table.uuid eq uuid.toKotlinUuid() }) {
                     it[table.money] = money
                 }
-            } catch (e : ExposedSQLException) {
-                LiteEco.instance.componentLogger.error(e.message ?: e.localizedMessage)
+                rowsUpdated > 0
             }
+        } catch (e: Exception) {
+            LiteEco.instance.logger.error("Failed to set balance for $uuid: ${e.message}")
+            false
         }
     }
 
