@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import org.bukkit.command.CommandSender
 import org.incendo.cloud.Command
 import org.incendo.cloud.component.DefaultValue
-import org.incendo.cloud.description.Description
+import org.incendo.cloud.description.CommandDescription
 import org.incendo.cloud.paper.PaperCommandManager
 import org.incendo.cloud.paper.util.sender.Source
 import org.incendo.cloud.parser.standard.StringParser.stringParser
@@ -38,7 +38,7 @@ class EcoDatabaseCmd(
 
         commandManager.command(
             dbBase.literal("purge")
-                .commandDescription(Description.description(DESCRIPTION))
+                .commandDescription(CommandDescription.commandDescription(description))
                 .permission("lite.eco.admin.purge")
                 .required(
                     commandManager
@@ -60,7 +60,7 @@ class EcoDatabaseCmd(
 
         commandManager.command(
             dbBase.literal("export")
-                .commandDescription(Description.description(DESCRIPTION))
+                .commandDescription(CommandDescription.commandDescription(description))
                 .permission("lite.eco.admin.export")
                 .required(
                     commandManager
@@ -82,7 +82,7 @@ class EcoDatabaseCmd(
 
         commandManager.command(
             dbBase.literal("import")
-                .commandDescription(Description.description(DESCRIPTION))
+                .commandDescription(CommandDescription.commandDescription(description))
                 .permission("lite.eco.admin.import")
                 .required(commandManager
                     .componentBuilder(String::class.java, "economy")

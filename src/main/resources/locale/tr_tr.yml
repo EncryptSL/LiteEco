@@ -87,6 +87,7 @@ messages:
     translation_switch: "<prefix> <green>Çeviri <locale>'ye değiştirildi."
     translation_missing: "<prefix> <red><key> için çeviri eksik. Lütfen plugin geliştiricisi ile iletişime geçin."
     purge_accounts: "<prefix> <green>Tüm oyuncu hesapları temizlendi."
+    purge_test_accounts: "<prefix> <green>All test accounts was purged !"
     purge_null_accounts: "<prefix> <green>Null değerli tüm oyuncu hesapları temizlendi."
     purge_default_accounts: "<prefix> <green>Varsayılan değerli tüm oyuncu hesapları temizlendi."
     purge_monolog_success: "<prefix> <green>Tüm ekonomi faaliyetlerine dair loglar temizlendi [!]"

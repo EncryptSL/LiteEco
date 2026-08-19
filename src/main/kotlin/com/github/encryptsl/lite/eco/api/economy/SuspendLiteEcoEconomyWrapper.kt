@@ -54,6 +54,10 @@ class SuspendLiteEcoEconomyWrapper : ModernLiteEcoEconomyImpl() {
         LiteEco.instance.databaseEcoModel.purgeAccounts(currency)
     }
 
+    override suspend fun purgeTestAccounts() {
+        LiteEco.instance.databaseEcoModel.purgeTestAccounts()
+    }
+
     override suspend fun purgeInvalidAccounts(currency: String) = io {
         LiteEco.instance.databaseEcoModel.purgeInvalidAccounts(currency)
     }

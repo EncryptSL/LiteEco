@@ -72,9 +72,9 @@ class AccountHolder : IAccountHolder {
         }
     }
 
-    override suspend fun sync(uuid: UUID): Boolean = io {
+    override suspend fun sync(uuid: UUID, shouldUnload: Boolean): Boolean = io {
         AccountCache.withLock(uuid) {
-            AccountCache.sync(uuid)
+            AccountCache.sync(uuid, shouldUnload)
         }
     }
 

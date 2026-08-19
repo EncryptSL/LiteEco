@@ -14,7 +14,7 @@ import java.nio.file.Files
 
 class CSVFileExporter(private val plugin: Plugin, fileName: String, currency: String = "dollars") : Export {
 
-    private val file = File("${plugin.dataFolder}/migration/${fileName}_${currency}_${timestamp}.csv")
+    private val file = File("${plugin.dataFolder}/migration/${fileName}_${currency}_${date_and_time}.csv")
 
     override suspend fun export(balances: List<PlayerBalances.PlayerBalance>): Boolean = withContext(Dispatchers.IO) {
 

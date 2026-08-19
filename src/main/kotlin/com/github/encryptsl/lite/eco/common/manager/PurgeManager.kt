@@ -16,6 +16,10 @@ class PurgeManager(private val liteEco: LiteEco) {
                     liteEco.api.purgeAccounts(currency)
                     sender.sendMessage(liteEco.locale.translation("messages.admin.purge_accounts"))
                 }
+                PurgeKey.TEST_ACCOUNTS -> {
+                    liteEco.api.purgeTestAccounts()
+                    sender.sendMessage(liteEco.locale.translation("messages.admin.purge_test_accounts"))
+                }
                 PurgeKey.NULL_ACCOUNTS -> {
                     liteEco.api.purgeInvalidAccounts(currency)
                     sender.sendMessage(liteEco.locale.translation("messages.admin.purge_null_accounts"))

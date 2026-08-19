@@ -18,11 +18,9 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.math.BigDecimal
 import java.util.*
-import kotlin.time.ExperimentalTime
 
 class Helper(private val liteEco: LiteEco) {
 
-    @OptIn(ExperimentalTime::class)
     suspend fun validateLog(parameter: String, page: Int): MonologPageResult {
         val pageSize = 10
         val (logs, totalPages) = liteEco.loggerModel.getLogPage(parameter, page, pageSize)
@@ -52,7 +50,6 @@ class Helper(private val liteEco: LiteEco) {
         )
     }
 
-    @OptIn(ExperimentalTime::class)
     internal fun TransactionContextEntity.toComponent(translation: String): Component {
         val locale = LiteEco.instance.locale
         val formatter = LiteEco.instance.currencyImpl

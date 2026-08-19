@@ -44,7 +44,7 @@ interface IAccount {
      * @param uuid The unique identifier (UUID) of the player to synchronize.
      * @return true if synchronization was successful and cache was cleared, false otherwise.
      */
-    fun sync(uuid: UUID): Boolean
+    fun sync(uuid: UUID, shouldUnload: Boolean = false): Boolean
 
     /**
      * Synchronizes all currently cached account data back to the persistent store (SQL).

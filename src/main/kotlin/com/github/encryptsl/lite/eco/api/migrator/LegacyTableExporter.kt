@@ -13,7 +13,7 @@ class LegacyTableExporter(
     private val dialect: Export.SQLDialect = Export.SQLDialect.MARIADB
 ) : Export {
 
-    private val file = File("${liteEco.dataFolder}/migration/${fileName}_${currency}_${timestamp}.sql")
+    private val file = File("${liteEco.dataFolder}/migration/${fileName}_${currency}_${date_and_time}.sql")
 
     override suspend fun export(balances: List<PlayerBalances.PlayerBalance>): Boolean = io {
         try {

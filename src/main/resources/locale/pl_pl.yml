@@ -85,6 +85,7 @@ messages:
     translation_switch: "<prefix> <green>Tłumaczenie zmienione na <locale>."
     translation_missing: "<prefix> <red>Brakujące tłumaczenie dla <key>. Skontaktuj się z deweloperem pluginu."
     purge_accounts: "<prefix> <green>Konta wszystkich graczy zostały wyczyszczone."
+    purge_test_accounts: "<prefix> <green>All test accounts was purged !"
     purge_null_accounts: "<prefix> <green>Konta wszystkich graczy z nieprawidłową wartością zostały wyczyszczone."
     purge_default_accounts: "<prefix> <green>Konta wszystkich graczy z domyślną wartością zostały wyczyszczone."
     purge_monolog_success: "<prefix> <green>Wszytkie logi dotyczące aktywności ekonomii zostały wyczyszczone [!]"

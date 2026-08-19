@@ -5,7 +5,7 @@ import com.github.encryptsl.lite.eco.common.manager.monolog.MonologManager
 import org.bukkit.command.CommandSender
 import org.incendo.cloud.Command
 import org.incendo.cloud.component.DefaultValue
-import org.incendo.cloud.description.Description
+import org.incendo.cloud.description.CommandDescription
 import org.incendo.cloud.paper.PaperCommandManager
 import org.incendo.cloud.paper.util.sender.Source
 import org.incendo.cloud.parser.standard.IntegerParser
@@ -20,7 +20,7 @@ class EcoMonologCmd(
     ) {
         commandManager.command(
             base.literal("monolog")
-                .commandDescription(Description.description(DESCRIPTION))
+                .commandDescription(CommandDescription.commandDescription(description))
                 .permission("lite.eco.admin.monolog")
                 .optional("page", IntegerParser.integerParser(1), DefaultValue.constant(1))
                 .optional(

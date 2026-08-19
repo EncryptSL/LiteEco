@@ -13,7 +13,7 @@ interface CommandFeature {
     /**
      * The default description for commands within this feature.
      */
-    val DESCRIPTION: String
+    val description: String
         get() = "Provided plugin by LiteEco"
 
     /**

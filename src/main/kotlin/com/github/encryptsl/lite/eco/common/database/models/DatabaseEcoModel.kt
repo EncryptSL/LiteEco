@@ -174,6 +174,18 @@ class DatabaseEcoModel : PlayerSQL {
         }
     }
 
+    override fun purgeTestAccounts() {
+        loggedTransaction {
+            try {
+                Account(LiteEco.instance.currencyImpl.defaultCurrency()).deleteWhere {
+                    username like "TestPlayer_%"
+                }
+            } catch (e : ExposedSQLException) {
+                LiteEco.instance.componentLogger.error(e.message ?: e.localizedMessage)
+            }
+        }
+    }
+
     override fun purgeDefaultAccounts(defaultMoney: BigDecimal, currency: String) {
         loggedTransaction {
             try {

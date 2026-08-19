@@ -124,6 +124,11 @@ interface PlayerSQL {
     fun purgeAccounts(currency: String)
 
     /**
+     * Deletes **all** test accounts
+     */
+    fun purgeTestAccounts()
+
+    /**
      * Deletes accounts that have the **default balance** for the specified currency.
      *
      * This is typically used to clean up unused/inactive accounts.

@@ -62,7 +62,7 @@ class PlayerListeners(
         }
 
         runBlocking(Dispatchers.IO) {
-            liteEco.accountManager.syncAccount(player.uniqueId)
+            liteEco.accountManager.syncAccount(player.uniqueId, true)
         }
     }
 

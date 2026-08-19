@@ -11,7 +11,6 @@ import org.bukkit.Bukkit
 import java.math.BigDecimal
 import java.util.*
 import java.util.concurrent.CompletableFuture
-import kotlin.time.ExperimentalTime
 
 class AsyncEconomyVaultUnlockedAPI(
     private val liteEco: LiteEco
@@ -188,7 +187,6 @@ class AsyncEconomyVaultUnlockedAPI(
         return withdraw(pluginName, accountID, world, liteEco.currencyImpl.defaultCurrency(), amount)
     }
 
-    @OptIn(ExperimentalTime::class)
     override fun withdraw(pluginName: String, accountID: UUID, world: String, currency: String, amount: BigDecimal): CompletableFuture<EconomyResponse?> = liteEco.pluginScope.future {
         liteEco.debugger.debug(AsyncEconomyVaultUnlockedAPI::class.java, "$pluginName try async withdraw from $accountID amount $amount ($currency)")
 

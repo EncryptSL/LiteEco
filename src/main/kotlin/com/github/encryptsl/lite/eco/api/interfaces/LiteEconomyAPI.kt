@@ -47,6 +47,9 @@ interface LiteEconomyAPI {
     /** Deletes all accounts for the specified currency. */
     suspend fun purgeAccounts(currency: String)
 
+    /** Deletes all accounts created by command eco debug stress-shutdown */
+    suspend fun purgeTestAccounts()
+
     /** Deletes all invalid accounts (e.g., corrupted or broken data). */
     suspend fun purgeInvalidAccounts(currency: String)
 

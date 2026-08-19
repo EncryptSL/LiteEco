@@ -10,7 +10,7 @@ import org.bukkit.command.CommandSender
 import org.incendo.cloud.Command
 import org.incendo.cloud.bukkit.parser.selector.MultiplePlayerSelectorParser
 import org.incendo.cloud.component.DefaultValue
-import org.incendo.cloud.description.Description
+import org.incendo.cloud.description.CommandDescription
 import org.incendo.cloud.paper.PaperCommandManager
 import org.incendo.cloud.paper.util.sender.Source
 import org.incendo.cloud.parser.standard.BooleanParser
@@ -27,7 +27,7 @@ class EcoWithdrawCmd(
     ) {
         commandManager.command(
             base.literal("withdraw")
-                .commandDescription(Description.description(DESCRIPTION))
+                .commandDescription(CommandDescription.commandDescription(description))
                 .permission("lite.eco.admin.withdraw")
                 .required(
                     "target",

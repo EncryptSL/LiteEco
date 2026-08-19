@@ -13,7 +13,7 @@ import org.incendo.cloud.Command
 import org.incendo.cloud.bukkit.parser.OfflinePlayerParser
 import org.incendo.cloud.bukkit.parser.PlayerParser
 import org.incendo.cloud.component.DefaultValue
-import org.incendo.cloud.description.Description
+import org.incendo.cloud.description.CommandDescription
 import org.incendo.cloud.paper.PaperCommandManager
 import org.incendo.cloud.paper.util.sender.Source
 import org.incendo.cloud.parser.standard.IntegerParser
@@ -33,7 +33,7 @@ class EcoDebugCmd(
 
         commandManager.command(
             debugSubCommand.literal("failmode")
-                .commandDescription(Description.description("Toggle database failure simulation (writes will fail)."))
+                .commandDescription(CommandDescription.commandDescription("Toggle database failure simulation (writes will fail)."))
                 .permission("lite.eco.admin.debug.failmode")
                 .handler { context ->
                     DatabaseEcoModel.debugFailMode = !DatabaseEcoModel.debugFailMode
@@ -44,7 +44,7 @@ class EcoDebugCmd(
 
         commandManager.command(
             debugSubCommand.literal("test-janitor")
-                .commandDescription(Description.description("Run automated persistence test (failMode + deposit)."))
+                .commandDescription(CommandDescription.commandDescription("Run automated persistence test (failMode + deposit)."))
                 .required("target", PlayerParser.playerParser())
                 .permission("lite.eco.admin.debug.testjanitor")
                 .handler { context ->
@@ -55,7 +55,7 @@ class EcoDebugCmd(
 
         commandManager.command(
             debugSubCommand.literal("janitor")
-                .commandDescription(Description.description("Force immediate synchronization of all offline players in cache."))
+                .commandDescription(CommandDescription.commandDescription("Force immediate synchronization of all offline players in cache."))
                 .permission("lite.eco.admin.debug.janitor")
                 .handler { context ->
                     helper.forceJanitorSync(context.sender().source())
@@ -64,7 +64,7 @@ class EcoDebugCmd(
 
         commandManager.command(
             debugSubCommand.literal("inspect")
-                .commandDescription(Description.description("View detailed cache content (failed currencies) for a player."))
+                .commandDescription(CommandDescription.commandDescription("View detailed cache content (failed currencies) for a player."))
                 .required("target", OfflinePlayerParser.offlinePlayerParser())
                 .permission("lite.eco.admin.debug.inspect")
                 .handler { context ->
@@ -75,7 +75,7 @@ class EcoDebugCmd(
 
         commandManager.command(
             debugSubCommand.literal("stress")
-                .commandDescription(Description.description("Run simultaneous stress test of transaction atomicity."))
+                .commandDescription(CommandDescription.commandDescription("Run simultaneous stress test of transaction atomicity."))
                 .required("target", PlayerParser.playerParser())
                 .optional("iterations", IntegerParser.integerParser(1, 1000), DefaultValue.constant(100))
                 .permission("lite.eco.admin.debug.stress")
@@ -88,7 +88,7 @@ class EcoDebugCmd(
 
         commandManager.command(
             debugSubCommand.literal("stress-shutdown")
-                .commandDescription(Description.description("Run global shutdown sync stress test on multiple cached accounts."))
+                .commandDescription(CommandDescription.commandDescription("Run global shutdown sync stress test on multiple cached accounts."))
                 .optional("accounts", IntegerParser.integerParser(1, 10000), DefaultValue.constant(100))
                 .permission("lite.eco.admin.debug.stress")
                 .handler { context ->

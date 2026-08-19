@@ -15,7 +15,7 @@ class SQLFileExporter(
 ) : Export {
 
     override suspend fun export(balances: List<PlayerBalances.PlayerBalance>): Boolean = withContext(Dispatchers.IO) {
-        val file = File("${plugin.dataFolder}/migration/", "${fileName}_${currency}_${timestamp}.sql")
+        val file = File("${plugin.dataFolder}/migration/", "${fileName}_${currency}_${date_and_time}.sql")
         val tableName = "lite_eco_$currency"
 
         if (balances.isEmpty()) return@withContext false

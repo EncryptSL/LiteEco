@@ -86,6 +86,7 @@ messages:
     translation_switch: "<prefix> <green>显示语言已切换为 <locale>."
     translation_missing: "<prefix> <red><key> 对应文本确实. 请联系插件开发者."
     purge_accounts: "<prefix> <green>所有玩家账户已被清理."
+    purge_test_accounts: "<prefix> <green>All test accounts was purged !"
     purge_null_accounts: "<prefix> <green>所有存在非法值的账户已被清理."
     purge_default_accounts: "<prefix> <green>所有存在默认值的账户已被清理."
     purge_monolog_success: "<prefix> <green>所有交易日志已被清理 [!]"

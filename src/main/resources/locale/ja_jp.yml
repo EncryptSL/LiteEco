@@ -85,6 +85,7 @@ messages:
     translation_switch: "<prefix> <green>言語の切り替えが完了しました。(言語: <locale>)"
     translation_missing: "<prefix> <red>翻訳が見つかりません。このプラグインの開発者に連絡してください。(言語: <key>)"
     purge_accounts: "<prefix> <green>すべてのプレイヤーのアカウントを削除しました。"
+    purge_test_accounts: "<prefix> <green>All test accounts was purged !"
     purge_null_accounts: "<prefix> <green> すべてのプレイヤーアカウントのヌル値が削除されました。" # TEMP #
     purge_default_accounts: "<prefix> <green>デフォルトの値で全てのプレイヤーの所持金を再設定しました。"
     purge_monolog_success: "<prefix> <green>All logs about economy activities was purged [!]"

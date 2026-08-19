@@ -85,6 +85,7 @@ messages:
     translation_switch: "<prefix> <green>Translation switched to <locale>."
     translation_missing: "<prefix> <red>Translation missing for <key>. Contact the developer of this plugin."
     purge_accounts: "<prefix> <green>All player accounts were purged."
+    purge_test_accounts: "<prefix> <green>All test accounts was purged !"
     purge_null_accounts: "<prefix> <green>All player accounts with null values were purged."
     purge_default_accounts: "<prefix> <green>All player accounts with default values were purged."
     purge_monolog_success: "<prefix> <green>All logs about economy activities was purged [!]"
