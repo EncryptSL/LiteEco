@@ -2,11 +2,9 @@ package com.github.encryptsl.lite.eco.common.extensions
 
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 import kotlin.time.toJavaInstant
 
-@OptIn(ExperimentalTime::class)
 fun convertInstant(instant: Instant): String {
    return instant
        .toJavaInstant()

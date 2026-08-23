@@ -3,9 +3,9 @@ package com.github.encryptsl.lite.eco
 import com.github.encryptsl.lite.eco.api.ConfigAPI
 import com.github.encryptsl.lite.eco.api.MetricsCollector
 import com.github.encryptsl.lite.eco.api.UpdateNotifier
-import com.github.encryptsl.lite.eco.api.economy.account.AccountCache
 import com.github.encryptsl.lite.eco.api.economy.Currency
 import com.github.encryptsl.lite.eco.api.economy.SuspendLiteEcoEconomyWrapper
+import com.github.encryptsl.lite.eco.api.economy.account.AccountCache
 import com.github.encryptsl.lite.eco.api.objects.ModernText
 import com.github.encryptsl.lite.eco.commands.CommandFeatureManager
 import com.github.encryptsl.lite.eco.common.AccountManager
