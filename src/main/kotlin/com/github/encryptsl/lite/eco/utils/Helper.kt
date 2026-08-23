@@ -3,6 +3,7 @@ package com.github.encryptsl.lite.eco.utils
 
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.economy.account.AccountCache
+import com.github.encryptsl.lite.eco.api.objects.ModernText
 import com.github.encryptsl.lite.eco.common.database.entity.TransactionContextEntity
 import com.github.encryptsl.lite.eco.common.database.entity.UserEntity
 import com.github.encryptsl.lite.eco.common.database.models.DatabaseEcoModel
@@ -87,22 +88,28 @@ class Helper(private val liteEco: LiteEco) {
     internal fun inspectCache(sender: CommandSender, uuid: UUID) {
         val account = AccountCache.cache[uuid]
 
-        sender.sendMessage("§8--- §bInspecting cache for: §f$uuid §8---")
+        sender.sendMessage(ModernText.miniModernText("<dark_gray>--- <cyan>Inspecting cache for: <white>$uuid <dark_gray>---"))
 
         if (account == null || account.balances.isEmpty()) {
-            sender.sendMessage("§cCache is empty for this player.")
+            sender.sendMessage(ModernText.miniModernText("<red>Cache is empty for this player."))
             return
         }
 
-        val statusColor = if (account.isSuccessfullyLoaded) "§aVALID (Loaded)" else "§cINVALID (Not Loaded)"
-        sender.sendMessage("§7Data Integrity: $statusColor")
+        val statusColor = if (account.isSuccessfullyLoaded) "<green>VALID (Loaded)</green>" else "<red>INVALID (Not Loaded)</red>"
+        sender.sendMessage(ModernText.miniModernText("<gray>Data Integrity: $statusColor"))
 
         account.balances.forEach { (currency, amount) ->
-            sender.sendMessage("§7Currency: §e$currency §7| Amount: §a$amount")
+            sender.sendMessage(ModernText.miniModernText("<gray>Currency: <yellow>$currency</yellow> | Amount: <green>$amount</green></gray>"))
         }
 
         val isOnline = Bukkit.getPlayer(uuid) != null
-        sender.sendMessage("§7Player Status: " + if (isOnline) "§aONLINE §8(Ignored by Janitor)" else "§cOFFLINE §8(Will be processed by Janitor)")
+        val playerStatus = if (isOnline) {
+            "<green>ONLINE <dark_gray>(Ignored by Janitor)</dark_gray></green>"
+        } else {
+            "<red>OFFLINE <dark_gray>(Will be processed by Janitor)</dark_gray></red>"
+        }
+
+        sender.sendMessage(ModernText.miniModernText("<gray>Player Status: $playerStatus"))
     }
 
     internal fun executeJanitorTest(player: Player) {
@@ -111,22 +118,22 @@ class Helper(private val liteEco: LiteEco) {
 
             // STEP 1: Enable failMode
             DatabaseEcoModel.debugFailMode = true
-            player.sendMessage("§8[§bLiteEco-Test§8] §cFailMode ACTIVATED.")
+            player.sendMessage(ModernText.miniModernText("<dark_gray>[<cyan>LiteEco-Test</cyan>] <red>FailMode ACTIVATED.</dark_gray>"))
 
             // STEP 2: Vault Transaction
             vault?.depositPlayer(player, 500.0)
-            player.sendMessage("§8[§bLiteEco-Test§8] §7Vault: Deposited 500.0.")
+            player.sendMessage(ModernText.miniModernText("<dark_gray>[<cyan>LiteEco-Test</cyan>] <gray>Vault: Deposited 500.0.</gray></dark_gray>"))
 
             // STEP 3: Instructions
-            player.sendMessage("§8[§bLiteEco-Test§8] §ePlease disconnect from the server now.")
-            player.sendMessage("§7You should see a sync error in the console, but data MUST remain in the cache.")
-        } catch (e : Exception) {
+            player.sendMessage(ModernText.miniModernText("<dark_gray>[<cyan>LiteEco-Test</cyan>] <yellow>Please disconnect from the server now.</yellow></dark_gray>"))
+            player.sendMessage(ModernText.miniModernText("<gray>You should see a sync error in the console, but data MUST remain in the cache.</gray>"))
+        } catch (e: Exception) {
             liteEco.logger.error(e.message, e)
         }
     }
 
     internal fun forceJanitorSync(sender: CommandSender) {
-        sender.sendMessage("§7Forcing Janitor execution...")
+        sender.sendMessage(ModernText.miniModernText("<gray>Forcing Janitor execution...</gray>"))
 
         val task = Runnable {
             val offlineUUIDs = AccountCache.cache.keys.filter { uuid ->
@@ -134,18 +141,18 @@ class Helper(private val liteEco: LiteEco) {
             }
 
             if (offlineUUIDs.isEmpty()) {
-                sender.sendMessage("§eJanitor: No data to synchronize (everyone is online or cache is empty).")
+                sender.sendMessage(ModernText.miniModernText("<yellow>Janitor: No data to synchronize (everyone is online or cache is empty).</yellow>"))
                 return@Runnable
             }
 
             val savedCount = offlineUUIDs.count { uuid -> AccountCache.sync(uuid) }
 
             if (savedCount == offlineUUIDs.size) {
-                sender.sendMessage("§aJanitor completed emergency synchronization for §e$savedCount §aaccounts.")
+                sender.sendMessage(ModernText.miniModernText("<green>Janitor completed emergency synchronization for <yellow>$savedCount</yellow> accounts.</green>"))
             } else if (savedCount > 0) {
-                sender.sendMessage("§eJanitor partially synchronized §a$savedCount§e/§c${offlineUUIDs.size} §eaccounts. Check logs for errors.")
+                sender.sendMessage(ModernText.miniModernText("<yellow>Janitor partially synchronized <green>$savedCount</green>/<red>${offlineUUIDs.size}</red> accounts. Check logs for errors.</yellow>"))
             } else {
-                sender.sendMessage("§cJanitor execution failed: 0/${offlineUUIDs.size} accounts were synchronized. (FailMode active or DB error).")
+                sender.sendMessage(ModernText.miniModernText("<red>Janitor execution failed: 0/${offlineUUIDs.size} accounts were synchronized. (FailMode active or DB error).</red>"))
             }
         }
 
@@ -156,7 +163,7 @@ class Helper(private val liteEco: LiteEco) {
         try {
             val vault = Bukkit.getServicesManager().getRegistration(Economy::class.java)?.provider
 
-            player.sendMessage("§7Starting stress-test: §e$iterations §7iterations...")
+            player.sendMessage(ModernText.miniModernText("<gray>Starting stress-test: <yellow>$iterations</yellow> iterations...</gray>"))
 
             val task = Runnable {
                 val startTime = System.currentTimeMillis()
@@ -174,13 +181,13 @@ class Helper(private val liteEco: LiteEco) {
 
                 val duration = System.currentTimeMillis() - startTime
 
-                player.sendMessage("§aStress-test finished in §e${duration}ms.")
-                player.sendMessage("§7Balance should be the same as at the start.")
-                player.sendMessage("§7Current balance: §e${vault?.getBalance(player)}")
+                player.sendMessage(ModernText.miniModernText("<green>Stress-test finished in <yellow>${duration}ms</yellow>.</green>"))
+                player.sendMessage(ModernText.miniModernText("<gray>Balance should be the same as at the start.</gray>"))
+                player.sendMessage(ModernText.miniModernText("<gray>Current balance: <yellow>${vault?.getBalance(player)}</yellow></gray>"))
             }
 
             liteEco.schedulerHelper.runAsyncNow(task)
-        } catch (e : Exception) {
+        } catch (e: Exception) {
             liteEco.logger.error(e.message, e)
         }
     }

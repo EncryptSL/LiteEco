@@ -2,6 +2,7 @@ package com.github.encryptsl.lite.eco.commands.admin.subcommands
 
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.economy.account.AccountCache
+import com.github.encryptsl.lite.eco.api.objects.ModernText
 import com.github.encryptsl.lite.eco.commands.internal.CommandFeature
 import com.github.encryptsl.lite.eco.common.database.models.DatabaseEcoModel
 import com.github.encryptsl.lite.eco.utils.Helper
@@ -95,7 +96,7 @@ class EcoDebugCmd(
                     val sender = context.sender().source()
                     val accountCount: Int = context.get("accounts")
 
-                    sender.sendMessage("§e[LiteEco Debug] Preparing $accountCount test accounts in database and cache...")
+                    sender.sendMessage(ModernText.miniModernText("<yellow>[LiteEco Debug] Preparing $accountCount test accounts in database and cache...</yellow>"))
 
                     val generatedUuids = Collections.synchronizedList(mutableListOf<UUID>())
                     val currency = LiteEco.instance.currencyImpl.defaultCurrency()
@@ -124,7 +125,7 @@ class EcoDebugCmd(
                             }
                         }
 
-                        sender.sendMessage("§e[LiteEco Debug] Injected $accountCount accounts in ${preparationTime}ms. Executing AccountCache.syncAccounts()...")
+                        sender.sendMessage(ModernText.miniModernText("<yellow>[LiteEco Debug] Injected $accountCount accounts in ${preparationTime}ms. Executing AccountCache.syncAccounts()...</yellow>"))
 
                         val syncTime = measureTimeMillis {
                             AccountCache.syncAccounts()
@@ -133,9 +134,9 @@ class EcoDebugCmd(
                         val remainingInCache = generatedUuids.count { AccountCache.isAccountCached(it, null) }
 
                         if (remainingInCache == 0) {
-                            sender.sendMessage("§a[LiteEco Debug] PASSED: All $accountCount accounts were saved to DB and cleared from cache in ${syncTime}ms.")
+                            sender.sendMessage(ModernText.miniModernText("<green>[LiteEco Debug] PASSED: All $accountCount accounts were saved to DB and cleared from cache in ${syncTime}ms.</green>"))
                         } else {
-                            sender.sendMessage("§c[LiteEco Debug] FAILED: $remainingInCache / $accountCount accounts remained in cache after sync!")
+                            sender.sendMessage(ModernText.miniModernText("<red>[LiteEco Debug] FAILED: $remainingInCache / $accountCount accounts remained in cache after sync!</red>"))
                         }
                     }
                 }
