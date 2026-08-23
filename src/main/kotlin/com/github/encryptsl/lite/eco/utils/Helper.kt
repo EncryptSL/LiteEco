@@ -138,9 +138,15 @@ class Helper(private val liteEco: LiteEco) {
                 return@Runnable
             }
 
-            offlineUUIDs.forEach { AccountCache.sync(it) }
+            val savedCount = offlineUUIDs.count { uuid -> AccountCache.sync(uuid) }
 
-            sender.sendMessage("§aJanitor completed emergency synchronization for §e${offlineUUIDs.size} §aaccounts.")
+            if (savedCount == offlineUUIDs.size) {
+                sender.sendMessage("§aJanitor completed emergency synchronization for §e$savedCount §aaccounts.")
+            } else if (savedCount > 0) {
+                sender.sendMessage("§eJanitor partially synchronized §a$savedCount§e/§c${offlineUUIDs.size} §eaccounts. Check logs for errors.")
+            } else {
+                sender.sendMessage("§cJanitor execution failed: 0/${offlineUUIDs.size} accounts were synchronized. (FailMode active or DB error).")
+            }
         }
 
         liteEco.schedulerHelper.runAsyncNow(task)
