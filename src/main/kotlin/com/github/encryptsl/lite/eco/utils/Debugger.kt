@@ -16,7 +16,7 @@ class Debugger(private val liteEco: LiteEco) {
         }
     }
 
-    fun dumpUnsavedAccounts(failedAccounts: Map<UUID, Wallet>, reason: String) {
+    fun dumpUnsavedAccounts(failedAccounts: Map<UUID, Wallet>, reason: String, isSqlite: Boolean = false) {
         if (failedAccounts.isEmpty()) return
 
         try {
@@ -25,22 +25,28 @@ class Debugger(private val liteEco: LiteEco) {
                 errorsFolder.mkdirs()
             }
 
-            val timeStamp = SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(Date())
+            val timeStamp = SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.US).format(Date())
             val dumpFile = File(errorsFolder, "restore_$timeStamp.sql")
 
-            // 1. Group unsaved balances by currency (database tables)
-            val groupedByCurrency = mutableMapOf<String, MutableMap<UUID, BigDecimal>>()
+            // 1. Group unsaved balances by currency, capturing UUID, username, and amount
+            data class DumpRecord(val uuid: UUID, val username: String, val amount: BigDecimal)
+            val groupedByCurrency = mutableMapOf<String, MutableList<DumpRecord>>()
 
             failedAccounts.forEach { (uuid, wallet) ->
+                val username = wallet.username.ifBlank { "Unknown" }
                 wallet.balances.forEach { (currency, amount) ->
                     groupedByCurrency
-                        .computeIfAbsent(currency.lowercase()) { mutableMapOf() }[uuid] = amount
+                        .computeIfAbsent(currency.lowercase()) { mutableListOf() }
+                        .add(DumpRecord(uuid, username, amount))
                 }
             }
 
-            // 2. Build bulk SQL query statements
+            // Helper extension function to strip dashes from UUID string for binary literal representation
+            fun UUID.toCleanHex(): String = this.toString().replace("-", "")
+
+            // 2. Build dialect-aware bulk SQL query statements
             val sqlBuilder = StringBuilder().apply {
-                appendLine("-- Emergency SQL Dump - LiteEco")
+                appendLine("-- Emergency SQL Dump - LiteEco (${if (isSqlite) "SQLite" else "MySQL/MariaDB"})")
                 appendLine("-- Generated: ${Date()}")
                 appendLine("-- Reason: $reason")
                 appendLine("-- Total unsaved accounts: ${failedAccounts.size}")
@@ -50,21 +56,35 @@ class Debugger(private val liteEco: LiteEco) {
                     if (records.isEmpty()) return@forEach
 
                     appendLine("-- Bulk insert for currency table: `lite_eco_$tableName` (${records.size} accounts)")
-                    appendLine("INSERT INTO `lite_eco_$tableName` (`uuid`, `money`) VALUES")
+                    appendLine("INSERT INTO `lite_eco_$tableName` (`uuid`, `username`, `money`) VALUES")
 
-                    val valueRows = records.entries.joinToString(",\n") { (uuid, amount) ->
-                        "  ('$uuid', ${amount.toPlainString()})"
+                    val valueRows = records.joinToString(",\n") { record ->
+                        val formattedUuid = if (isSqlite) {
+                            "x'${record.uuid.toCleanHex()}'"
+                        } else {
+                            "0x${record.uuid.toCleanHex()}"
+                        }
+                        // Escape apostrophes in username to prevent SQL injection or syntax error
+                        val safeUsername = record.username.replace("'", "''")
+
+                        "  ($formattedUuid, '$safeUsername', ${record.amount.toPlainString()})"
                     }
                     appendLine(valueRows)
-                    appendLine("ON DUPLICATE KEY UPDATE `money` = VALUES(`money`);")
+
+                    // Dialect-specific Upsert clause
+                    if (isSqlite) {
+                        appendLine("ON CONFLICT(`uuid`) DO UPDATE SET `money` = excluded.`money`, `username` = excluded.`username`;")
+                    } else {
+                        appendLine("ON DUPLICATE KEY UPDATE `money` = VALUES(`money`), `username` = VALUES(`username`);")
+                    }
                     appendLine()
                 }
             }
 
-            // 3. Save to disk
+            // 3. Write SQL script to disk
             dumpFile.writeText(sqlBuilder.toString())
 
-            // 4. Clear and actionable error log for server admins
+            // 4. Actionable error notice in logs for system administrators
             liteEco.logger.error("-----------------------------------------------------------------")
             liteEco.logger.error("ERROR: Failed to sync cache data with the database!")
             liteEco.logger.error("A total of ${failedAccounts.size} account(s) could not be saved.")
@@ -72,10 +92,10 @@ class Debugger(private val liteEco: LiteEco) {
             liteEco.logger.error(" ")
             liteEco.logger.error("To prevent data loss, the unsaved cache has been dumped to:")
             liteEco.logger.error("Path -> ${dumpFile.path}")
-            liteEco.logger.error("")
+            liteEco.logger.error(" ")
             liteEco.logger.error("MANUAL RESTORE INSTRUCTIONS:")
-            liteEco.logger.error("Open the SQL file above in your database tool (HeidiSQL, phpMyAdmin, DBeaver)")
-            liteEco.logger.error("and execute it to manually update the player balances in the database.")
+            liteEco.logger.error("Open the SQL file above in your database client (HeidiSQL, DBeaver, etc.)")
+            liteEco.logger.error("and execute it to update the player balances in the database.")
             liteEco.logger.error("-----------------------------------------------------------------")
 
         } catch (e: Exception) {

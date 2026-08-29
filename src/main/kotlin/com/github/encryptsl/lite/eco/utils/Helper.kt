@@ -10,6 +10,8 @@ import com.github.encryptsl.lite.eco.common.database.models.DatabaseEcoModel
 import com.github.encryptsl.lite.eco.common.extensions.convertInstant
 import com.github.encryptsl.lite.eco.common.extensions.positionIndexed
 import com.github.encryptsl.lite.eco.common.manager.monolog.MonologPageResult
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
@@ -88,7 +90,7 @@ class Helper(private val liteEco: LiteEco) {
     internal fun inspectCache(sender: CommandSender, uuid: UUID) {
         val account = AccountCache.cache[uuid]
 
-        sender.sendMessage(ModernText.miniModernText("<dark_gray>--- <cyan>Inspecting cache for: <white>$uuid <dark_gray>---"))
+        sender.sendMessage(ModernText.miniModernText("<dark_gray>--- <aqua>Inspecting cache for: <white>$uuid <dark_gray>---"))
 
         if (account == null || account.balances.isEmpty()) {
             sender.sendMessage(ModernText.miniModernText("<red>Cache is empty for this player."))
@@ -135,28 +137,39 @@ class Helper(private val liteEco: LiteEco) {
     internal fun forceJanitorSync(sender: CommandSender) {
         sender.sendMessage(ModernText.miniModernText("<gray>Forcing Janitor execution...</gray>"))
 
-        val task = Runnable {
+        liteEco.pluginScope.launch(Dispatchers.IO) {
             val offlineUUIDs = AccountCache.cache.keys.filter { uuid ->
-                Bukkit.getPlayer(uuid) == null
+                !AccountCache.isPlayerOnline(uuid)
             }
 
             if (offlineUUIDs.isEmpty()) {
                 sender.sendMessage(ModernText.miniModernText("<yellow>Janitor: No data to synchronize (everyone is online or cache is empty).</yellow>"))
-                return@Runnable
+                return@launch
             }
 
-            val savedCount = offlineUUIDs.count { uuid -> AccountCache.sync(uuid) }
+            var savedCount = 0
 
-            if (savedCount == offlineUUIDs.size) {
-                sender.sendMessage(ModernText.miniModernText("<green>Janitor completed emergency synchronization for <yellow>$savedCount</yellow> accounts.</green>"))
-            } else if (savedCount > 0) {
-                sender.sendMessage(ModernText.miniModernText("<yellow>Janitor partially synchronized <green>$savedCount</green>/<red>${offlineUUIDs.size}</red> accounts. Check logs for errors.</yellow>"))
-            } else {
-                sender.sendMessage(ModernText.miniModernText("<red>Janitor execution failed: 0/${offlineUUIDs.size} accounts were synchronized. (FailMode active or DB error).</red>"))
+            for (uuid in offlineUUIDs) {
+                val isSaved = AccountCache.withLock(uuid) {
+                    if (!AccountCache.isPlayerOnline(uuid)) {
+                        AccountCache.sync(uuid, shouldUnload = true)
+                    } else false
+                }
+                if (isSaved) savedCount++
+            }
+
+            when {
+                savedCount == offlineUUIDs.size -> {
+                    sender.sendMessage(ModernText.miniModernText("<green>Janitor completed emergency synchronization for <yellow>$savedCount</yellow> accounts.</green>"))
+                }
+                savedCount > 0 -> {
+                    sender.sendMessage(ModernText.miniModernText("<yellow>Janitor partially synchronized <green>$savedCount</green>/<red>${offlineUUIDs.size}</red> accounts. Check logs for errors.</yellow>"))
+                }
+                else -> {
+                    sender.sendMessage(ModernText.miniModernText("<red>Janitor execution failed: 0/${offlineUUIDs.size} accounts were synchronized. (FailMode active or DB error).</red>"))
+                }
             }
         }
-
-        liteEco.schedulerHelper.runAsyncNow(task)
     }
 
     internal fun executeStressTest(player: Player, amount: Double, iterations: Int) {

@@ -47,16 +47,6 @@ class MoneyPayCmd(
                 val amount: BigDecimal = ctx.get("amount")
                 val currency: String = ctx.get("currency")
 
-                if (sender.uniqueId == target.uniqueId) {
-                    sender.sendMessage(liteEco.locale.translation("messages.error.self_pay"))
-                    return@handler
-                }
-
-                if (!sender.hasPermission("lite.eco.pay.$currency") && !sender.hasPermission("lite.eco.pay.*")) {
-                    sender.sendMessage(liteEco.locale.translation("messages.error.missing_currency_permission"))
-                    return@handler
-                }
-
                 payCommand(sender, target, amount, currency)
             }
 

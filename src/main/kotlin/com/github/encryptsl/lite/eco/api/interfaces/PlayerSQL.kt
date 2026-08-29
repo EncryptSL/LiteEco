@@ -1,5 +1,6 @@
 package com.github.encryptsl.lite.eco.api.interfaces
 
+import com.github.encryptsl.lite.eco.api.migrator.entity.PlayerBalances
 import com.github.encryptsl.lite.eco.common.database.entity.UserEntity
 import java.math.BigDecimal
 import java.util.*
@@ -76,6 +77,17 @@ interface PlayerSQL {
      * @return A mutable map where the key is the player's UUID and the value is their name.
      */
     fun getUUIDNameMap(currency: String): MutableMap<UUID, String>
+
+    /**
+     * Retrieves all player accounts and their corresponding database balances for a specific currency.
+     *
+     * This operation is executed as a single bulk query against the database, returning
+     * raw persistent state without applying active in-memory cache overrides.
+     *
+     * @param currency The internal identifier/name of the target currency.
+     * @return A list of [PlayerBalances.PlayerBalance] containing the database records for all registered accounts.
+     */
+    fun getBalancesForCurrency(currency: String): List<PlayerBalances.PlayerBalance>
 
     /**
      * Retrieves a collection of all player UUIDs who have an account in the specified currency.

@@ -4,6 +4,7 @@ import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.account.Wallet
 import com.github.encryptsl.lite.eco.api.interfaces.IAccount
 import com.github.encryptsl.lite.eco.common.database.models.DatabaseEcoModel
+import com.github.encryptsl.lite.eco.common.extensions.io
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -29,18 +30,20 @@ object AccountCache : IAccount {
 
     private val databaseEcoModel: DatabaseEcoModel by lazy { DatabaseEcoModel() }
     internal val cache = ConcurrentHashMap<UUID, Wallet>()
-
-    private val locks = Array(64) { Mutex() }
+    private val locks = ConcurrentHashMap<UUID, Mutex>()
 
     fun getLock(uuid: UUID): Mutex {
-        val index = (uuid.hashCode() and Int.MAX_VALUE) % locks.size
-        return locks[index]
+        return locks.computeIfAbsent(uuid) { Mutex() }
     }
 
     suspend inline fun <T> withLock(uuid: UUID, crossinline block: suspend () -> T): T {
         return getLock(uuid).withLock {
             block()
         }
+    }
+
+    fun removeLock(uuid: UUID) {
+        locks.remove(uuid)
     }
 
     override fun startJanitor(liteEco: LiteEco) {
@@ -55,8 +58,9 @@ object AccountCache : IAccount {
             offlineUUIDs.forEach { uuid ->
                 liteEco.pluginScope.launch {
                     withLock(uuid) {
+                        // Re-check player status inside lock to prevent race conditions on reconnect
                         if (!isPlayerOnline(uuid)) {
-                            sync(uuid, shouldUnload = true)
+                            syncUnsafe(uuid, shouldUnload = true)
                         }
                     }
                 }
@@ -66,9 +70,10 @@ object AccountCache : IAccount {
         liteEco.schedulerHelper.runAsyncTimer(delay, period, janitorTask)
     }
 
-    override fun cache(uuid: UUID, currency: String, value: BigDecimal) {
+    override fun cache(uuid: UUID, username: String?, currency: String, value: BigDecimal) {
         val account = cache.getOrPut(uuid) { Wallet() }
         account.balances[currency] = value
+        username?.let { account.username = it }
         account.isSuccessfullyLoaded = true
     }
 
@@ -76,12 +81,24 @@ object AccountCache : IAccount {
         return cache[uuid]?.balances?.getOrDefault(currency, BigDecimal.ZERO) ?: BigDecimal.ZERO
     }
 
-    override fun sync(uuid: UUID, shouldUnload: Boolean): Boolean {
-        val account = cache[uuid] ?: return false
+    /**
+     * Suspendable thread-safe sync method to be called from exterior scopes.
+     */
+    override suspend fun sync(uuid: UUID, shouldUnload: Boolean): Boolean {
+        return withLock(uuid) {
+            syncUnsafe(uuid, shouldUnload)
+        }
+    }
+
+    /**
+     * Unsafe sync implementation to be executed ONLY within an existing lock scope.
+     */
+    suspend fun syncUnsafe(uuid: UUID, shouldUnload: Boolean): Boolean = io {
+        val account = cache[uuid] ?: return@io false
 
         if (!account.isSuccessfullyLoaded) {
             LiteEco.instance.logger.error(SYNC_BLOCKED, uuid)
-            return false
+            return@io false
         }
 
         var isAllSavedSuccessfully = true
@@ -107,6 +124,7 @@ object AccountCache : IAccount {
         if (isAllSavedSuccessfully) {
             if (shouldUnload) {
                 cache.remove(uuid)
+                removeLock(uuid) // Clean up unused mutex
                 LiteEco.instance.logger.info(SYNC_SUCCESS_CLEARED, uuid)
             } else {
                 LiteEco.instance.logger.info(SYNC_SUCCESS_RETAINED, uuid)
@@ -115,7 +133,7 @@ object AccountCache : IAccount {
             LiteEco.instance.logger.warn(SYNC_HOLD_SAVE_FAILURE, uuid)
         }
 
-        return isAllSavedSuccessfully
+        return@io isAllSavedSuccessfully
     }
 
     override fun syncAccounts() {
@@ -151,19 +169,21 @@ object AccountCache : IAccount {
 
         if (!hasErrorOccurred) {
             cache.clear()
+            locks.clear()
             LiteEco.instance.logger.info(SHUTDOWN_SUCCESS)
         } else {
             LiteEco.instance.debugger.dumpUnsavedAccounts(
                 cache,
-                "Shutdown sync completed with errors. Cache was NOT cleared to prevent data loss."
+                "Shutdown sync completed with errors. Cache was NOT cleared to prevent data loss.",
+                LiteEco.instance.databaseConnector.isSqlite
             )
             LiteEco.instance.logger.error(SHUTDOWN_ERROR_WARNING)
         }
     }
 
     override fun clear(uuid: UUID) {
-        val player = cache.keys.find { key -> key == uuid } ?: return
-        cache.remove(player)
+        cache.remove(uuid)
+        removeLock(uuid)
     }
 
     override fun isAccountCached(uuid: UUID, currency: String?): Boolean {

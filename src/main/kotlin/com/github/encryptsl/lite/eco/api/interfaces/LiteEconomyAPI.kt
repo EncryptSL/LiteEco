@@ -1,5 +1,6 @@
 package com.github.encryptsl.lite.eco.api.interfaces
 
+import com.github.encryptsl.lite.eco.api.migrator.entity.PlayerBalances
 import java.math.BigDecimal
 import java.util.*
 
@@ -60,6 +61,17 @@ interface LiteEconomyAPI {
      * @param defaultValue the value considered as "default"
      */
     suspend fun purgeDefaultAccounts(currency: String, defaultValue: BigDecimal)
+
+    /**
+     * Retrieves all player balances for the specified currency, merged with active in-memory cache states.
+     *
+     * This method fetches persistent records from the database in bulk and overlays any
+     * unsaved balance modifications currently held in the memory cache for active player sessions.
+     *
+     * @param currency currency of the accounts (default "dollars")
+     * @return a list of [PlayerBalances.PlayerBalance] containing up-to-date player balances
+     */
+    suspend fun getBalancesForCurrency(currency: String = "dollars"): List<PlayerBalances.PlayerBalance>
 
 
     /**

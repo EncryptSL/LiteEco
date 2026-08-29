@@ -3,6 +3,7 @@ package com.github.encryptsl.lite.eco.common.manager.economy.admin
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.enums.TypeLogger
 import com.github.encryptsl.lite.eco.common.database.entity.TransactionContextEntity
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
@@ -21,20 +22,24 @@ class EconomyMoneyWithdrawHandler(
         money: BigDecimal,
         silent: Boolean,
     ) {
-        liteEco.pluginScope.launch {
+        liteEco.pluginScope.launch(Dispatchers.IO) {
             val targetName = target.name ?: "Unknown"
             val account = liteEco.api.account()
             val user = account.getUserByUUID(target.uniqueId, currency)
 
             if (user == null) {
-                sender.sendMessage(
+                liteEco.schedulerHelper.sendMessageSync(
+                    sender,
                     liteEco.locale.translation("messages.error.account_not_exist", Placeholder.parsed("account", targetName))
                 )
                 return@launch
             }
 
             if (!account.has(target.uniqueId, currency, money)) {
-                sender.sendMessage(liteEco.locale.translation("messages.error.insufficient_funds"))
+                liteEco.schedulerHelper.sendMessageSync(
+                    sender,
+                    liteEco.locale.translation("messages.error.insufficient_funds")
+                )
                 return@launch
             }
 
@@ -44,7 +49,7 @@ class EconomyMoneyWithdrawHandler(
             liteEco.loggerModel.logging(
                 TransactionContextEntity(TypeLogger.WITHDRAW, sender.name, user.userName, currency, user.money, newBalance)
             )
-            liteEco.api.account().withdraw(target.uniqueId, currency, money)
+            account.withdraw(target.uniqueId, currency, money)
 
             val formattedMoney = liteEco.currencyImpl.fullFormatting(money, currency)
             val currencyName = liteEco.currencyImpl.currencyModularNameConvert(currency, money)
@@ -54,12 +59,17 @@ class EconomyMoneyWithdrawHandler(
                 Placeholder.parsed("currency", currencyName)
             )
 
+            // Dispatch messages to sender safely via SchedulerHelper
             if (sender.name == targetName) {
-                sender.sendMessage(liteEco.locale.translation("messages.self.withdraw_money", moneyPlaceholders))
+                liteEco.schedulerHelper.sendMessageSync(
+                    sender,
+                    liteEco.locale.translation("messages.self.withdraw_money", moneyPlaceholders)
+                )
                 return@launch
             }
 
-            sender.sendMessage(
+            liteEco.schedulerHelper.sendMessageSync(
+                sender,
                 liteEco.locale.translation(
                     "messages.sender.withdraw_money",
                     TagResolver.resolver(Placeholder.parsed("target", targetName), moneyPlaceholders)
@@ -69,18 +79,16 @@ class EconomyMoneyWithdrawHandler(
             if (target.isOnline && liteEco.baseConfig.messages.target.notifyWithdraw) {
                 val targetPlayer = target.player ?: return@launch
 
-                if (silent) {
-                    targetPlayer.sendMessage(
-                        liteEco.locale.translation("messages.target.withdraw_money_silent", moneyPlaceholders)
-                    )
+                val targetMsg = if (silent) {
+                    liteEco.locale.translation("messages.target.withdraw_money_silent", moneyPlaceholders)
                 } else {
-                    targetPlayer.sendMessage(
-                        liteEco.locale.translation(
-                            "messages.target.withdraw_money",
-                            TagResolver.resolver(Placeholder.parsed("sender", sender.name), moneyPlaceholders)
-                        )
+                    liteEco.locale.translation(
+                        "messages.target.withdraw_money",
+                        TagResolver.resolver(Placeholder.parsed("sender", sender.name), moneyPlaceholders)
                     )
                 }
+
+                liteEco.schedulerHelper.sendMessageSync(targetPlayer, targetMsg)
             }
         }
     }

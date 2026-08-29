@@ -2,6 +2,7 @@ package com.github.encryptsl.lite.eco.common.database.models
 
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.interfaces.PlayerSQL
+import com.github.encryptsl.lite.eco.api.migrator.entity.PlayerBalances
 import com.github.encryptsl.lite.eco.common.database.entity.UserEntity
 import com.github.encryptsl.lite.eco.common.database.tables.Account
 import com.github.encryptsl.lite.eco.common.database.tables.toUserEntity
@@ -107,6 +108,19 @@ class DatabaseEcoModel : PlayerSQL {
         table.selectAll().associate {
             it[table.uuid].toJavaUuid() to it[table.username]
         }.toMutableMap()
+    }
+
+    override fun getBalancesForCurrency(currency: String): List<PlayerBalances.PlayerBalance> = loggedTransaction {
+        val table = Account(currency.lowercase())
+
+        table.selectAll().mapIndexed { index, row ->
+            PlayerBalances.PlayerBalance(
+                id = index + 1,
+                username = row[table.username],
+                uuid = row[table.uuid].toJavaUuid(),
+                money = row[table.money]
+            )
+        }
     }
 
     override fun getPlayersIds(currency: String): MutableCollection<UUID> {

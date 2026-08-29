@@ -8,12 +8,14 @@ import kotlinx.coroutines.launch
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
 import org.incendo.cloud.Command
 import org.incendo.cloud.bukkit.parser.OfflinePlayerParser
 import org.incendo.cloud.component.DefaultValue
 import org.incendo.cloud.paper.PaperCommandManager
 import org.incendo.cloud.paper.util.sender.PlayerSource
 import org.incendo.cloud.paper.util.sender.Source
+import java.util.UUID
 
 class MoneyBalanceCmd(
     private val liteEco: LiteEco,
@@ -29,7 +31,7 @@ class MoneyBalanceCmd(
         val playerBal = balBase.senderType(PlayerSource::class.java)
             .handler { ctx ->
                 val sender = ctx.sender().source()
-                showBalance(sender, sender, liteEco.currencyImpl.defaultCurrency())
+                showBalance(sender, sender.uniqueId, sender.name, liteEco.currencyImpl.defaultCurrency())
             }
 
         val targetBal = balBase
@@ -47,11 +49,15 @@ class MoneyBalanceCmd(
                 val target: OfflinePlayer = ctx.get("target")
                 val currency: String = ctx.get("currency")
 
-                if (!sender.hasPermission("lite.eco.balance.others") && sender != target) {
+                val senderUuid = (sender as? Player)?.uniqueId
+
+                if (!sender.hasPermission("lite.eco.balance.others") && senderUuid != target.uniqueId) {
                     sender.sendMessage(liteEco.locale.translation("messages.error.missing_balance_others_permission"))
                     return@handler
                 }
-                showBalance(sender, target, currency)
+
+                val targetName = target.name ?: "Unknown"
+                showBalance(sender, target.uniqueId, targetName, currency)
             }
 
         commandManager.command(playerBal)
@@ -61,21 +67,24 @@ class MoneyBalanceCmd(
         commandManager.command(commandManager.commandBuilder("bal", "balance").proxies(targetBal.build()))
     }
 
-    private fun showBalance(sender: CommandSender, target: OfflinePlayer, currency: String) {
+    private fun showBalance(sender: CommandSender, targetUuid: UUID, targetName: String, currency: String) {
         if (!sender.hasPermission("lite.eco.balance.$currency") && !sender.hasPermission("lite.eco.balance.*")) {
             sender.sendMessage(liteEco.locale.translation("messages.error.missing_currency_permission"))
             return
         }
 
         liteEco.pluginScope.launch {
-            liteEco.api.account().getUserByUUID(target.uniqueId, currency)?.let {
-                val key = if (sender == target) "messages.balance.format" else "messages.balance.format_target"
-                sender.sendMessage(liteEco.locale.translation(key, helper.getComponentBal(it, currency)))
-            } ?: run {
+            val user = liteEco.api.account().getUserByUUID(targetUuid, currency)
+
+            if (user != null) {
+                val isSelf = (sender as? Player)?.uniqueId == targetUuid
+                val key = if (isSelf) "messages.balance.format" else "messages.balance.format_target"
+                sender.sendMessage(liteEco.locale.translation(key, helper.getComponentBal(user, currency)))
+            } else {
                 sender.sendMessage(
                     liteEco.locale.translation(
                         "messages.error.account_not_exist",
-                        Placeholder.parsed("account", target.name.toString())
+                        Placeholder.parsed("account", targetName)
                     )
                 )
             }

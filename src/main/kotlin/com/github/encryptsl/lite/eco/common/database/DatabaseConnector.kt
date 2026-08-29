@@ -9,6 +9,7 @@ import com.zaxxer.hikari.HikariDataSource
 import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.v1.core.DatabaseConfig
 import org.jetbrains.exposed.v1.core.ExperimentalKeywordApi
+import org.jetbrains.exposed.v1.core.vendors.SQLiteDialect
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.SchemaUtils
 
@@ -17,6 +18,9 @@ class DatabaseConnector(
 ) : DatabaseConnectorProvider {
 
     private var hikari: HikariDataSource? = null
+
+    var isSqlite: Boolean = false
+        private set
 
     override fun onLoad() {
         val configLoader = DatabaseConfigLoader(liteEco.baseConfig)
@@ -53,10 +57,11 @@ class DatabaseConnector(
                 .migrate()
 
             @OptIn(ExperimentalKeywordApi::class)
-            Database.connect(hikari!!, databaseConfig = DatabaseConfig {
+            val db = Database.connect(hikari!!, databaseConfig = DatabaseConfig {
                 preserveKeywordCasing = true
             })
 
+            isSqlite = db.dialect is SQLiteDialect
 
             val tables = liteEco.currencyImpl.getCurrenciesKeys().map { Account(it) }.toTypedArray()
 

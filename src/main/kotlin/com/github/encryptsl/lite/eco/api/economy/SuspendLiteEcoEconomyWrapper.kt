@@ -2,6 +2,7 @@ package com.github.encryptsl.lite.eco.api.economy
 
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.economy.account.AccountCache
+import com.github.encryptsl.lite.eco.api.migrator.entity.PlayerBalances
 import com.github.encryptsl.lite.eco.common.extensions.io
 import java.math.BigDecimal
 import java.util.*
@@ -27,26 +28,24 @@ class SuspendLiteEcoEconomyWrapper : ModernLiteEcoEconomyImpl() {
         }
     }
 
-    override suspend fun createOrUpdateAndCache(uuid: UUID, username: String, currency: String, start: BigDecimal) {
+    override suspend fun createOrUpdateAndCache(
+        uuid: UUID,
+        username: String,
+        currency: String,
+        start: BigDecimal
+    ) {
         AccountCache.withLock(uuid) {
-            val user = try {
-                account().getUserByUUID(uuid, currency)
-            } catch (e: Exception) {
-                LiteEco.instance.logger.error("Error in createOrUpdateAndCache for $uuid: ${e.message}")
-                return@withLock
-            }
+            val user = account().getUserByUUID(uuid, currency)
 
             val balanceToCache = user?.money ?: start
 
-            io {
-                if (user == null) {
-                    LiteEco.instance.databaseEcoModel.createPlayerAccount(username, uuid, currency, start)
-                } else {
-                    LiteEco.instance.databaseEcoModel.updatePlayerName(uuid, username, currency)
-                }
+            if (user == null) {
+                LiteEco.instance.databaseEcoModel.createPlayerAccount(username, uuid, currency, start)
+            } else {
+                LiteEco.instance.databaseEcoModel.updatePlayerName(uuid, username, currency)
             }
 
-            cacheAccount(uuid, currency, balanceToCache)
+            cacheAccount(uuid, username, currency, balanceToCache)
         }
     }
 
@@ -66,7 +65,20 @@ class SuspendLiteEcoEconomyWrapper : ModernLiteEcoEconomyImpl() {
         LiteEco.instance.databaseEcoModel.purgeDefaultAccounts(defaultValue, currency)
     }
 
-    private fun cacheAccount(uuid: UUID, currency: String, amount: BigDecimal) {
-        AccountCache.cache(uuid, currency, amount)
+    override suspend fun getBalancesForCurrency(currency: String): List<PlayerBalances.PlayerBalance> {
+        val cleanCurrency = currency.lowercase()
+        val dbBalances = LiteEco.instance.databaseEcoModel.getBalancesForCurrency(cleanCurrency)
+
+        return dbBalances.map { player ->
+            if (AccountCache.isAccountCached(player.uuid, cleanCurrency)) {
+                player.copy(money = AccountCache.getBalance(player.uuid, cleanCurrency))
+            } else {
+                player
+            }
+        }
+    }
+
+    private fun cacheAccount(uuid: UUID, username: String, currency: String, amount: BigDecimal) {
+        AccountCache.cache(uuid, username, currency, amount)
     }
 }

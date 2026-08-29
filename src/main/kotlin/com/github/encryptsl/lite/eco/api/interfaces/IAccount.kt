@@ -15,57 +15,51 @@ interface IAccount {
 
     /**
      * Starts the Janitor service task that periodically synchronizes offline players' data.
-     * * This service iterates through the [com.github.encryptsl.lite.eco.api.economy.account.AccountCache.cache] and identifies players
-     * who are no longer online. It attempts to synchronize their cached balances
-     * (including failed transactions from previous database outages) back to the database.
-     * * The task runs asynchronously to prevent blocking the main server thread during
-     * database operations.
+     *
+     * This service iterates through the cache and identifies players who are no longer online.
+     * It attempts to synchronize their cached balances back to the database asynchronously.
      *
      * @param liteEco The plugin instance used to schedule the task and access the logger.
      */
     fun startJanitor(liteEco: LiteEco)
 
     /**
-     * Caches the player's account balance in memory or a fast storage layer.
-     *
-     * This method is usually called after data is loaded from the persistent store (SQL).
+     * Caches the player's account balance and username in memory or a fast storage layer.
      *
      * @param uuid The unique identifier (UUID) of the player.
+     * @param username The player's username.
      * @param currency The key/name of the currency being cached.
      * @param value The [BigDecimal] balance value to store in the cache.
      */
-    fun cache(uuid: UUID, currency: String, value: BigDecimal)
+    fun cache(uuid: UUID, username: String?, currency: String, value: BigDecimal)
 
     /**
      * Synchronizes a single player's account data from the cache back to the persistent store (SQL).
      *
-     * This operation saves the current cached balance to the database and clears the cache upon success.
+     * Marked as [suspend] because it performs non-blocking thread-safe database I/O.
      *
      * @param uuid The unique identifier (UUID) of the player to synchronize.
-     * @return true if synchronization was successful and cache was cleared, false otherwise.
+     * @param shouldUnload If true, removes the player from the cache upon successful save.
+     * @return true if synchronization was successful, false otherwise.
      */
-    fun sync(uuid: UUID, shouldUnload: Boolean = false): Boolean
+    suspend fun sync(uuid: UUID, shouldUnload: Boolean = false): Boolean
 
     /**
      * Synchronizes all currently cached account data back to the persistent store (SQL).
      *
-     * This is generally used as a mass save operation or a cleanup on shutdown.
+     * Executed synchronously during server shutdown to guarantee final data persistence.
      */
     fun syncAccounts()
 
     /**
-     * Removes the player's account data entirely from the cache.
+     * Removes the player's account data and associated locks entirely from the cache.
      *
-     * This is typically performed when a player logs out or when an account is deleted.
-     *
-     * @param uuid The unique identifier (UUID) of the player to remove from the cache.
+     * @param uuid The unique identifier (UUID) of the player to remove.
      */
     fun clear(uuid: UUID)
 
     /**
-     * Retrieves the current balance of a player, preferably from the cache for speed.
-     *
-     * If the account is not found in the cache, the implementation may fall back to the SQL database.
+     * Retrieves the current balance of a player from the cache.
      *
      * @param uuid The unique identifier (UUID) of the player.
      * @param currency The key/name of the currency requested.
@@ -77,15 +71,13 @@ interface IAccount {
      * Checks if the player's account data for the specified currency is currently held in the cache.
      *
      * @param uuid The unique identifier (UUID) of the player.
-     * @param currency The key/name of the currency, or `null` to check for any cached data for the player.
-     * @return `true` if the account is cached (for the given currency or any currency), otherwise `false`.
+     * @param currency The key/name of the currency, or `null` to check for any cached data.
+     * @return `true` if the account is cached, otherwise `false`.
      */
     fun isAccountCached(uuid: UUID, currency: String?): Boolean
 
     /**
-     * Checks if the player is currently online/active in the system.
-     *
-     * This is often used to determine if an account needs immediate caching or synchronization.
+     * Checks if the player is currently online on the server.
      *
      * @param uuid The unique identifier (UUID) of the player.
      * @return `true` if the player is online, otherwise `false`.

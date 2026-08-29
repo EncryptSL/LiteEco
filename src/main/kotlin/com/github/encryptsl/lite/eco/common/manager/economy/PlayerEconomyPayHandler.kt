@@ -4,6 +4,7 @@ import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.enums.TypeLogger
 import com.github.encryptsl.lite.eco.api.errors.CouldNotTransferredException
 import com.github.encryptsl.lite.eco.common.database.entity.TransactionContextEntity
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
@@ -21,63 +22,82 @@ class PlayerEconomyPayHandler(
         money: BigDecimal,
         currency: String
     ) {
-        liteEco.pluginScope.launch {
+        liteEco.pluginScope.launch(Dispatchers.IO) {
             val targetName = target.name ?: "Unknown"
             val account = liteEco.api.account()
-            val user = account.getUserByUUID(target.uniqueId, currency)
 
+            val user = account.getUserByUUID(target.uniqueId, currency)
             if (user == null) {
-                sender.sendMessage(
+                liteEco.schedulerHelper.sendMessageSync(
+                    sender,
                     liteEco.locale.translation("messages.error.account_not_exist", Placeholder.parsed("account", targetName))
                 )
                 return@launch
             }
 
-            if (!account.has(sender.uniqueId, currency, money)) {
-                sender.sendMessage(liteEco.locale.translation("messages.error.insufficient_funds"))
+            val isTransferred = account.transfer(sender.uniqueId, target.uniqueId, currency, money)
+
+            if (!isTransferred) {
+                val senderBalance = account.getBalance(sender.uniqueId, currency)
+                val targetBalance = account.getBalance(target.uniqueId, currency)
+
+                val errorMessage = when {
+                    senderBalance < money ->
+                        liteEco.locale.translation("messages.error.insufficient_funds")
+
+                    liteEco.currencyImpl.getCheckBalanceLimit(targetBalance, currency, money) ->
+                        liteEco.locale.translation("messages.error.balance_above_limit", Placeholder.parsed("account", targetName))
+
+                    else ->
+                        liteEco.locale.translation("messages.error.transfer_failed")
+                }
+
+                liteEco.schedulerHelper.sendMessageSync(sender, errorMessage)
                 return@launch
             }
 
-            if (liteEco.currencyImpl.getCheckBalanceLimit(user.money, currency, money)) {
-                sender.sendMessage(
-                    liteEco.locale.translation("messages.error.balance_above_limit", Placeholder.parsed("account", targetName))
+            val updatedTargetBalance = account.getBalance(target.uniqueId, currency)
+            val previousTargetBalance = updatedTargetBalance.minus(money)
+
+            liteEco.increaseTransactions(1)
+
+            liteEco.loggerModel.logging(
+                TransactionContextEntity(
+                    TypeLogger.TRANSFER,
+                    sender.name,
+                    user.userName,
+                    currency,
+                    previousTargetBalance,
+                    updatedTargetBalance
                 )
-                return@launch
-            }
-            if(account.transfer(sender.uniqueId, target.uniqueId, currency, money)) {
+            )
 
-                val targetNewBalance = user.money.plus(money)
-                liteEco.increaseTransactions(1)
+            val formattedMoney = liteEco.currencyImpl.fullFormatting(money, currency)
+            val currencyName = liteEco.currencyImpl.currencyModularNameConvert(currency, money)
 
-                liteEco.loggerModel.logging(
-                    TransactionContextEntity(TypeLogger.TRANSFER, sender.name, user.userName, currency, user.money, targetNewBalance)
+            val moneyPlaceholders = TagResolver.resolver(
+                Placeholder.parsed("money", formattedMoney),
+                Placeholder.parsed("currency", currencyName)
+            )
+
+            liteEco.schedulerHelper.sendMessageSync(
+                sender,
+                liteEco.locale.translation(
+                    "messages.sender.add_money",
+                    TagResolver.resolver(Placeholder.parsed("target", targetName), moneyPlaceholders)
                 )
+            )
 
-                val formattedMoney = liteEco.currencyImpl.fullFormatting(money, currency)
-                val currencyName = liteEco.currencyImpl.currencyModularNameConvert(currency, money)
-
-                val moneyPlaceholders = TagResolver.resolver(
-                    Placeholder.parsed("money", formattedMoney),
-                    Placeholder.parsed("currency", currencyName)
-                )
-
-                sender.sendMessage(
-                    liteEco.locale.translation(
-                        "messages.sender.add_money",
-                        TagResolver.resolver(Placeholder.parsed("target", targetName), moneyPlaceholders)
-                    )
-                )
-
-                if (target.isOnline) {
-                    target.player?.sendMessage(
+            if (target.isOnline) {
+                target.player?.let { targetPlayer ->
+                    liteEco.schedulerHelper.sendMessageSync(
+                        targetPlayer,
                         liteEco.locale.translation(
                             "messages.target.add_money",
                             TagResolver.resolver(Placeholder.parsed("sender", sender.name), moneyPlaceholders)
                         )
                     )
                 }
-            } else {
-                throw CouldNotTransferredException(sender.uniqueId, target.uniqueId, currency, money)
             }
         }
     }

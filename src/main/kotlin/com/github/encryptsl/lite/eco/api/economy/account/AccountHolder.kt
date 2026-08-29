@@ -4,6 +4,7 @@ import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.interfaces.IAccountHolder
 import com.github.encryptsl.lite.eco.common.database.entity.UserEntity
 import com.github.encryptsl.lite.eco.common.extensions.io
+import kotlinx.coroutines.sync.withLock
 import org.bukkit.Bukkit
 import java.math.BigDecimal
 import java.util.*
@@ -13,8 +14,8 @@ class AccountHolder : IAccountHolder {
     override suspend fun getUserByUUID(uuid: UUID, currency: String): UserEntity? = io {
         try {
             if (AccountCache.isAccountCached(uuid, currency)) {
-                val offlinePlayer = Bukkit.getOfflinePlayer(uuid)
-                val name = offlinePlayer.name ?: "Unknown"
+                val onlinePlayer = Bukkit.getPlayer(uuid)
+                val name = onlinePlayer?.name ?: "Unknown"
 
                 UserEntity(name, uuid, AccountCache.getBalance(uuid, currency))
             } else {
@@ -72,22 +73,27 @@ class AccountHolder : IAccountHolder {
         }
     }
 
-    override suspend fun sync(uuid: UUID, shouldUnload: Boolean): Boolean = io {
-        AccountCache.withLock(uuid) {
-            AccountCache.sync(uuid, shouldUnload)
-        }
+    override suspend fun sync(uuid: UUID, shouldUnload: Boolean): Boolean {
+        // Direct delegation to AccountCache.sync to avoid recursive Mutex locking deadlock
+        return AccountCache.sync(uuid, shouldUnload)
     }
 
     override suspend fun transfer(sender: UUID, target: UUID, currency: String, amount: BigDecimal): Boolean {
         if (amount.signum() <= 0 || sender == target) return false
 
-        val firstLock = if (sender < target) sender else target
-        val secondLock = if (sender < target) target else sender
+        // Correct UUID comparison order to avoid deadlocks
+        val (firstUuid, secondUuid) = if (sender.compareTo(target) < 0) {
+            sender to target
+        } else {
+            target to sender
+        }
 
-        return AccountCache.withLock(firstLock) {
-            AccountCache.withLock(secondLock) {
+        val lock1 = AccountCache.getLock(firstUuid)
+        val lock2 = AccountCache.getLock(secondUuid)
+
+        return lock1.withLock {
+            lock2.withLock {
                 val senderBalance = getBalance(sender, currency)
-
                 if (senderBalance < amount) {
                     return@withLock false
                 }
@@ -121,7 +127,8 @@ class AccountHolder : IAccountHolder {
     }
 
     private fun cacheAccount(uuid: UUID, currency: String, amount: BigDecimal) {
-        AccountCache.cache(uuid, currency, amount)
+        val username = Bukkit.getPlayer(uuid)?.name
+        AccountCache.cache(uuid, username, currency, amount)
     }
 
     private suspend fun withdrawUnsafe(uuid: UUID, currency: String, amount: BigDecimal) {

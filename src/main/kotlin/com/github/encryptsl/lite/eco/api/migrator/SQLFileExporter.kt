@@ -2,10 +2,14 @@ package com.github.encryptsl.lite.eco.api.migrator
 
 import com.github.encryptsl.lite.eco.api.migrator.entity.PlayerBalances
 import com.github.encryptsl.lite.eco.api.migrator.interfaces.Export
+import com.github.encryptsl.lite.eco.common.extensions.io
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.bukkit.plugin.Plugin
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class SQLFileExporter(
     private val plugin: Plugin,
@@ -14,32 +18,64 @@ class SQLFileExporter(
     private val dialect: Export.SQLDialect,
 ) : Export {
 
-    override suspend fun export(balances: List<PlayerBalances.PlayerBalance>): Boolean = withContext(Dispatchers.IO) {
-        val file = File("${plugin.dataFolder}/migration/", "${fileName}_${currency}_${date_and_time}.sql")
-        val tableName = "lite_eco_$currency"
+    override suspend fun export(balances: List<PlayerBalances.PlayerBalance>): Boolean = io {
+        if (balances.isEmpty()) return@io false
 
-        if (balances.isEmpty()) return@withContext false
+        val timeStamp = SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.US).format(Date())
+        val migrationFolder = File(plugin.dataFolder, "migration")
+        val file = File(migrationFolder, "${fileName}_${currency}_$timeStamp.sql")
+
+        // Clean table name with escaped backticks
+        val rawTableName = "lite_eco_${currency.lowercase()}"
+        val tableName = "`$rawTableName`"
 
         try {
-            file.parentFile.mkdirs()
-            file.bufferedWriter().use { writer ->
-                if (dialect == Export.SQLDialect.MARIADB) {
-                    writer.write("DROP TABLE IF EXISTS $tableName;\n")
-                }
-                writer.write("CREATE TABLE IF NOT EXISTS $tableName (id INT PRIMARY KEY, username VARCHAR(36), uuid BINARY(16), money DECIMAL(18,9));\n")
+            if (!migrationFolder.exists()) {
+                migrationFolder.mkdirs()
+            }
 
+            file.bufferedWriter().use { writer ->
+                // SQL Header metadata
+                writer.appendLine("-- LiteEco Migration Export")
+                writer.appendLine("-- Generated: ${Date()}")
+                writer.appendLine("-- Dialect: ${dialect.name}")
+                writer.appendLine("-- Total Records: ${balances.size}")
+                writer.appendLine()
+
+                // Dialect-specific DDL Table Creation
+                writer.appendLine("CREATE TABLE IF NOT EXISTS $tableName (")
+                writer.appendLine("    `id` INT AUTO_INCREMENT PRIMARY KEY,")
+                writer.appendLine("    `username` VARCHAR(36),")
+                writer.appendLine("    `uuid` BINARY(16) NOT NULL UNIQUE,")
+                writer.appendLine("    `money` DECIMAL(18,9) NOT NULL")
+                writer.appendLine(");")
+                writer.appendLine()
+
+                // Batch Inserts (500 records per statement)
                 balances.chunked(500).forEach { batch ->
-                    val values = batch.joinToString(",\n") {
-                        val formattedUUID = dialect.formatHex(it.uuid.toString())
-                        val safeName = it.username?.replace("'", "''") ?: "Unknown"
-                        "(${it.id}, '$safeName', $formattedUUID, ${it.money.toPlainString()})"
+                    writer.appendLine("INSERT INTO $tableName (`id`, `username`, `uuid`, `money`) VALUES")
+
+                    batch.forEachIndexed { index, record ->
+                        val formattedUUID = dialect.formatHex(record.uuid.toString())
+                        val safeName = record.username?.replace("'", "''") ?: "Unknown"
+                        val isLast = index == batch.size - 1
+
+                        val row = "  (${record.id}, '$safeName', $formattedUUID, ${record.money.toPlainString()})${if (isLast) "" else ","}"
+                        writer.appendLine(row)
                     }
-                    writer.write("INSERT INTO $tableName (id, username, uuid, money) VALUES $values;\n")
+
+                    // Dialect-specific Upsert logic to handle existing records during import
+                    if (dialect == Export.SQLDialect.SQLITE) {
+                        writer.appendLine("ON CONFLICT(`uuid`) DO UPDATE SET `money` = excluded.`money`, `username` = excluded.`username`;")
+                    } else {
+                        writer.appendLine("ON DUPLICATE KEY UPDATE `money` = VALUES(`money`), `username` = VALUES(`username`);")
+                    }
+                    writer.appendLine()
                 }
             }
             true
         } catch (e: Exception) {
-            plugin.logger.severe("SQL Export failed: ${e.message}")
+            plugin.logger.severe("SQL Export failed for currency '$currency': ${e.message}")
             false
         }
     }

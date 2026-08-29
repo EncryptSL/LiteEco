@@ -4,6 +4,7 @@ import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.economy.account.AccountCache
 import com.github.encryptsl.lite.eco.api.economy.account.AccountHolder
 import com.github.encryptsl.lite.eco.api.interfaces.LiteEconomyAPI
+import com.github.encryptsl.lite.eco.api.migrator.entity.PlayerBalances
 import java.math.BigDecimal
 import java.util.*
 

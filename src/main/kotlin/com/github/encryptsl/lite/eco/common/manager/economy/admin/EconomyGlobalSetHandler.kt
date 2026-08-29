@@ -3,12 +3,14 @@ package com.github.encryptsl.lite.eco.common.manager.economy.admin
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.enums.TypeLogger
 import com.github.encryptsl.lite.eco.common.database.entity.TransactionContextEntity
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
 import java.math.BigDecimal
 
 class EconomyGlobalSetHandler(
@@ -21,16 +23,25 @@ class EconomyGlobalSetHandler(
         money: BigDecimal,
         players: MutableCollection<OfflinePlayer>
     ) {
-        if (liteEco.api.getUUIDNameMap(currency).isEmpty())
-            return sender.sendMessage(liteEco.locale.translation("messages.error.database_exception", Placeholder.parsed("exception", "Collection is empty !")))
+        val isPlayerBypassing = (sender is Player) && sender.hasPermission("lite.eco.admin.bypass.limit")
 
-
-        if (liteEco.currencyImpl.getCheckBalanceLimit(money) && !sender.hasPermission("lite.eco.admin.bypass.limit")) {
-            sender.sendMessage(liteEco.locale.translation("messages.error.amount_above_limit"))
+        if (liteEco.currencyImpl.getCheckBalanceLimit(money) && !isPlayerBypassing) {
+            liteEco.schedulerHelper.sendMessageSync(
+                sender,
+                liteEco.locale.translation("messages.error.amount_above_limit")
+            )
             return
         }
 
-        liteEco.pluginScope.launch {
+        liteEco.pluginScope.launch(Dispatchers.IO) {
+            if (liteEco.api.getUUIDNameMap(currency).isEmpty()) {
+                liteEco.schedulerHelper.sendMessageSync(
+                    sender,
+                    liteEco.locale.translation("messages.error.database_exception", Placeholder.parsed("exception", "Collection is empty !"))
+                )
+                return@launch
+            }
+
             val account = liteEco.api.account()
             for (player in players) {
                 val user = account.getUserByUUID(player.uniqueId, currency) ?: continue
@@ -51,16 +62,28 @@ class EconomyGlobalSetHandler(
 
             liteEco.increaseTransactions(players.size)
 
-            sender.sendMessage(liteEco.locale.translation("messages.global.set_money", TagResolver.resolver(
+            val moneyPlaceholders = TagResolver.resolver(
                 Placeholder.parsed("money", liteEco.currencyImpl.fullFormatting(money, currency)),
                 Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
-            )))
+            )
+
+            liteEco.schedulerHelper.sendMessageSync(
+                sender,
+                liteEco.locale.translation("messages.global.set_money", moneyPlaceholders)
+            )
+
             if (liteEco.baseConfig.messages.global.notifySet) {
-                Bukkit.broadcast(liteEco.locale.translation("messages.broadcast.set_money", TagResolver.resolver(
-                    Placeholder.parsed("sender", sender.name),
-                    Placeholder.parsed("money", liteEco.currencyImpl.fullFormatting(money)),
-                    Placeholder.parsed("currency", liteEco.currencyImpl.currencyModularNameConvert(currency, money))
-                )))
+                val broadcastMsg = liteEco.locale.translation(
+                    "messages.broadcast.set_money",
+                    TagResolver.resolver(
+                        Placeholder.parsed("sender", sender.name),
+                        moneyPlaceholders
+                    )
+                )
+
+                liteEco.schedulerHelper.runSyncNow {
+                    Bukkit.broadcast(broadcastMsg)
+                }
             }
         }
     }

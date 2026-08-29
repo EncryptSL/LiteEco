@@ -1,6 +1,7 @@
 package com.github.encryptsl.lite.eco.commands.admin
 
 import com.github.encryptsl.lite.eco.LiteEco
+import com.github.encryptsl.lite.eco.api.enums.CheckLevel
 import com.github.encryptsl.lite.eco.commands.internal.EconomyCommand
 import com.github.encryptsl.lite.eco.commands.parsers.AmountValidatorParser
 import com.github.encryptsl.lite.eco.commands.parsers.CurrencyParser
@@ -31,7 +32,7 @@ class EcoSetCmd(
                 .required(
                     commandManager
                         .componentBuilder(BigDecimal::class.java, "amount")
-                        .parser(AmountValidatorParser())
+                        .parser(AmountValidatorParser(CheckLevel.ONLY_NEGATIVE))
                         .defaultValue(DefaultValue.constant(BigDecimal.ONE))
                 )
                 .optional(

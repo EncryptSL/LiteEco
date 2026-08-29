@@ -1,9 +1,12 @@
 package com.github.encryptsl.lite.eco.common
 
 import com.github.encryptsl.lite.eco.LiteEco
+import com.github.encryptsl.lite.eco.api.economy.account.AccountCache
 import com.github.encryptsl.lite.eco.common.extensions.io
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -12,18 +15,20 @@ class AccountManager(private val liteEco: LiteEco) {
     suspend fun createOrUpdateAndCache(uuid: UUID, username: String) = io {
         val currencies = liteEco.currencyImpl.getCurrenciesKeys()
 
-        val tasks = currencies.map { currency ->
-            async {
-                val startBalance = liteEco.currencyImpl.getCurrencyStartBalance(currency)
-                liteEco.api.createOrUpdateAndCache(uuid, username, currency, startBalance)
-            }
+        coroutineScope {
+            currencies.map { currency ->
+                async {
+                    val startBalance = liteEco.currencyImpl.getCurrencyStartBalance(currency)
+                    liteEco.api.createOrUpdateAndCache(uuid, username, currency, startBalance)
+                }
+            }.awaitAll()
         }
-        tasks.awaitAll()
     }
 
     fun syncAccount(uuid: UUID, shouldUnload: Boolean) {
-        liteEco.pluginScope.launch {
-           liteEco.api.account().sync(uuid, shouldUnload)
+        liteEco.pluginScope.launch(Dispatchers.IO) {
+            // AccountCache handles lock acquisition, DB write, cache eviction, and lock cleanup internally
+            liteEco.api.account().sync(uuid, shouldUnload)
         }
     }
 }

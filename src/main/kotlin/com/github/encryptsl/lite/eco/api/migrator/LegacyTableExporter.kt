@@ -5,40 +5,75 @@ import com.github.encryptsl.lite.eco.api.migrator.entity.PlayerBalances
 import com.github.encryptsl.lite.eco.api.migrator.interfaces.Export
 import com.github.encryptsl.lite.eco.common.extensions.io
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class LegacyTableExporter(
     private val liteEco: LiteEco,
-    fileName: String,
+    private val fileName: String,
     private val currency: String = "dollars",
     private val dialect: Export.SQLDialect = Export.SQLDialect.MARIADB
 ) : Export {
 
-    private val file = File("${liteEco.dataFolder}/migration/${fileName}_${currency}_${date_and_time}.sql")
-
     override suspend fun export(balances: List<PlayerBalances.PlayerBalance>): Boolean = io {
+        if (balances.isEmpty()) return@io false
+
+        val timeStamp = SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.US).format(Date())
+        val migrationFolder = File(liteEco.dataFolder, "migration")
+        val file = File(migrationFolder, "${fileName}_${currency}_$timeStamp.sql")
+
+        // Clean table name with escaped backticks
+        val rawTableName = "lite_eco_${currency.lowercase()}"
+        val tableName = "`$rawTableName`"
+
         try {
-            file.parentFile.mkdirs()
-            val tableName = "lite_eco_$currency"
+            if (!migrationFolder.exists()) {
+                migrationFolder.mkdirs()
+            }
 
             file.bufferedWriter().use { writer ->
-                writer.write("-- Legacy Migration Export\n")
-                if (dialect == Export.SQLDialect.MARIADB) {
-                    writer.write("DROP TABLE IF EXISTS $tableName;\n")
-                }
-                writer.write("CREATE TABLE IF NOT EXISTS $tableName (id INT PRIMARY KEY, username VARCHAR(36), uuid BINARY(16), money DECIMAL(18,9));\n")
+                // SQL Header metadata
+                writer.appendLine("-- Legacy Migration Export - LiteEco")
+                writer.appendLine("-- Generated: ${Date()}")
+                writer.appendLine("-- Dialect: ${dialect.name}")
+                writer.appendLine("-- Total Records: ${balances.size}")
+                writer.appendLine()
 
+                // Dialect-specific DDL Table Creation
+                writer.appendLine("CREATE TABLE IF NOT EXISTS $tableName (")
+                writer.appendLine("    `id` INT AUTO_INCREMENT PRIMARY KEY,")
+                writer.appendLine("    `username` VARCHAR(36),")
+                writer.appendLine("    `uuid` BINARY(16) NOT NULL UNIQUE,")
+                writer.appendLine("    `money` DECIMAL(18,9) NOT NULL")
+                writer.appendLine(");")
+                writer.appendLine()
+
+                // Batch Inserts (500 records per statement)
                 balances.chunked(500).forEach { batch ->
-                    val values = batch.joinToString(",\n") { player ->
+                    writer.appendLine("INSERT INTO $tableName (`id`, `username`, `uuid`, `money`) VALUES")
+
+                    batch.forEachIndexed { index, player ->
                         val hexUuid = dialect.formatHex(player.uuid.toString())
                         val safeName = player.username?.replace("'", "''") ?: "Unknown"
-                        "(${player.id}, '$safeName', $hexUuid, ${player.money.toPlainString()})"
+                        val isLast = index == batch.size - 1
+
+                        val row = "  (${player.id}, '$safeName', $hexUuid, ${player.money.toPlainString()})${if (isLast) "" else ","}"
+                        writer.appendLine(row)
                     }
-                    writer.write("INSERT INTO $tableName (id, username, uuid, money) VALUES $values;\n")
+
+                    // Dialect-specific Upsert clause to safely handle duplicate primary/unique keys
+                    if (dialect == Export.SQLDialect.SQLITE) {
+                        writer.appendLine("ON CONFLICT(`uuid`) DO UPDATE SET `money` = excluded.`money`, `username` = excluded.`username`;")
+                    } else {
+                        writer.appendLine("ON DUPLICATE KEY UPDATE `money` = VALUES(`money`), `username` = VALUES(`username`);")
+                    }
+                    writer.appendLine()
                 }
             }
             true
         } catch (e: Exception) {
-            liteEco.logger.error("Legacy Table Export failed: ${e.message}")
+            liteEco.logger.error("Legacy Table Export failed for currency '$currency': ${e.message}")
             false
         }
     }
