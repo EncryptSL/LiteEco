@@ -9,7 +9,6 @@ import com.github.encryptsl.lite.eco.api.migrator.entity.PlayerBalances
 import com.github.encryptsl.lite.eco.api.migrator.interfaces.Export
 import com.github.encryptsl.lite.eco.api.objects.ModernText
 import com.github.encryptsl.lite.eco.common.database.models.legacy.LegacyDatabaseEcoModel
-import com.github.encryptsl.lite.eco.common.extensions.io
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder

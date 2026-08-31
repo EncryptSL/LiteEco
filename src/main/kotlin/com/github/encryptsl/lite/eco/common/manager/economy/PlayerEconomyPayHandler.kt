@@ -2,7 +2,6 @@ package com.github.encryptsl.lite.eco.common.manager.economy
 
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.enums.TypeLogger
-import com.github.encryptsl.lite.eco.api.errors.CouldNotTransferredException
 import com.github.encryptsl.lite.eco.common.database.entity.TransactionContextEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

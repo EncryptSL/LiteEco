@@ -15,7 +15,7 @@ import org.incendo.cloud.component.DefaultValue
 import org.incendo.cloud.paper.PaperCommandManager
 import org.incendo.cloud.paper.util.sender.PlayerSource
 import org.incendo.cloud.paper.util.sender.Source
-import java.util.UUID
+import java.util.*
 
 class MoneyBalanceCmd(
     private val liteEco: LiteEco,
