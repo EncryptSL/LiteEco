@@ -9,11 +9,12 @@ class ImportEconomy(private val liteEco: LiteEco) {
     internal val importers = mutableMapOf<String, EconomyImporter>()
 
     init {
-        registerImporter(EssentialsXImporter(liteEco))
-        registerImporter(PlayerPointsImporter(liteEco))
         registerImporter(BetterEconomyImporter(liteEco))
-        registerImporter(ScruffyBoyImporter(liteEco))
+        registerImporter(CMIEconomyImport(liteEco))
+        registerImporter(EssentialsXImporter(liteEco))
         registerImporter(EzEconomyImporter(liteEco))
+        registerImporter(PlayerPointsImporter(liteEco))
+        registerImporter(ScruffyBoyImporter(liteEco))
         registerImporter(SimpleEconomyImporter(liteEco))
         registerImporter(TheosisEconomyImporter(liteEco))
     }
