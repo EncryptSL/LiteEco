@@ -42,7 +42,7 @@ class EzEconomyHook(
         return try {
             economyHandler?.getBalance(uuid, currency ?: economyHandler?.defaultCurrency)?.balance ?: 0.0
         } catch (e: Exception) {
-            liteEco.componentLogger.warn("Failed to get ${PLUGIN_NAME} balance for $uuid: ${e.message}")
+            liteEco.componentLogger.warn("Failed to get $PLUGIN_NAME balance for $uuid: ${e.message}")
             0.0
         }
     }
