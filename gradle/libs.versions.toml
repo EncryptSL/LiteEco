@@ -17,6 +17,7 @@ postqres = "42.7.13"
 placeholderapi = "2.12.2"
 configlib = "4.8.1"
 bettereconomy = "4.2"
+cmi = "9.8.6.4"
 scruffyeconomy = "2.3"
 ezeconomy = "3.1.2"
 simpleeconomy = "3.4"
@@ -58,6 +59,7 @@ cloud-extras = { module = "org.incendo:cloud-minecraft-extras", version = "2.0.0
 cloud-kotlin = { module = "org.incendo:cloud-kotlin-extensions", version.ref = "cloud" }
 
 bettereconomy = { module = "me.hsgamer:bettereconomy", version.ref = "bettereconomy" }
+cmi = { module = "com.github.Zrips:CMI-API", version.ref = "cmi" }
 scruffyeconomy = { module = "me.scruffyboy13:Economy", version.ref = "scruffyeconomy" }
 ezeconomy = { module = "com.github.ez-plugins:ezeconomy-bukkit", version.ref = "ezeconomy" }
 simpleeconomy = { module = "it.alzy.simpleeconomy:SimpleEconomy", version.ref="simpleeconomy" }
@@ -81,4 +83,4 @@ flyway = ["flyway-core", "flyway-mysql"]
 ktor = ["ktor-client-content-negotiation", "ktor-client-java", "ktor-serialization-gson"]
 cloud = ["cloud-core", "cloud-paper", "cloud-extras", "cloud-kotlin"]
 database-drivers = ["sqlite", "mariadb", "postqresql"]
-economy-plugins = ["bettereconomy", "scruffyeconomy", "ezeconomy", "simpleeconomy", "theosiseconomy", "playerpoints"]
+economy-plugins = ["bettereconomy", "cmi", "scruffyeconomy", "ezeconomy", "simpleeconomy", "theosiseconomy", "playerpoints"]

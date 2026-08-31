@@ -3,6 +3,7 @@ package com.github.encryptsl.lite.eco.common.hook
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.objects.ModernText
 import com.github.encryptsl.lite.eco.common.hook.economy.bettereconomy.BetterEconomyHook
+import com.github.encryptsl.lite.eco.common.hook.economy.cmi.CMIEconomyHook
 import com.github.encryptsl.lite.eco.common.hook.economy.ezeconomy.EzEconomyHook
 import com.github.encryptsl.lite.eco.common.hook.economy.playerpoints.PlayerPointsHook
 import com.github.encryptsl.lite.eco.common.hook.economy.scruffyboy13.ScruffyboyEconomyHook
@@ -17,6 +18,7 @@ class HookManager(private val liteEco: LiteEco) {
 
     private val hooks: Set<HookListener> = mutableSetOf(
         BetterEconomyHook(liteEco),
+        CMIEconomyHook(liteEco),
         EzEconomyHook(liteEco),
         PlayerPointsHook(liteEco),
         ScruffyboyEconomyHook(liteEco),
