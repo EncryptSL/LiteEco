@@ -13,7 +13,6 @@ import org.bukkit.entity.Player
 import org.incendo.cloud.execution.ExecutionCoordinator
 import org.incendo.cloud.minecraft.extras.MinecraftExceptionHandler
 import org.incendo.cloud.paper.PaperCommandManager
-import org.incendo.cloud.paper.util.sender.ConsoleSource
 import org.incendo.cloud.paper.util.sender.PaperSimpleSenderMapper
 import org.incendo.cloud.paper.util.sender.Source
 import org.incendo.cloud.suggestion.Suggestion

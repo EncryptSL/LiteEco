@@ -2,7 +2,6 @@
 package com.github.encryptsl.lite.eco.common.hook.vault.legacy
 
 import com.github.encryptsl.lite.eco.LiteEco
-import com.github.encryptsl.lite.eco.common.extensions.isApproachingZero
 import kotlinx.coroutines.runBlocking
 import net.milkbowl.vault.economy.EconomyResponse
 import org.bukkit.OfflinePlayer

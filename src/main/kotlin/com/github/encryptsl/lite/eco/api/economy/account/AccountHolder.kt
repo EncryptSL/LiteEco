@@ -4,8 +4,6 @@ import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.interfaces.IAccountHolder
 import com.github.encryptsl.lite.eco.common.database.entity.UserEntity
 import com.github.encryptsl.lite.eco.common.extensions.io
-import kotlinx.coroutines.sync.withLock
-import org.bukkit.Bukkit
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.util.*
