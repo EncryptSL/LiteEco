@@ -1,8 +1,5 @@
---- SQL Migration Statements for Flyway ---
+-- SQL Migration Statements for Flyway
 ALTER TABLE lite_eco_dollars MODIFY COLUMN money DECIMAL(30, 2) NOT NULL;
-------------------------------------------
 
---- CREATE TABLE statement for lite_eco_dollars ---
-------------------------------------------------------------------
---- CREATE TABLE statement for lite_eco_credits ---
-------------------------------------------------------------------
+-- CREATE TABLE statement for lite_eco_dollars
+-- CREATE TABLE statement for lite_eco_credits
