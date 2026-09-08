@@ -103,6 +103,7 @@ permissions:
       lite.eco.admin.debug.inspect: true
       lite.eco.admin.debug.stress: true
       # Bypass and player permissions
+      lite.eco.admin.bypass.confirmation: true
       lite.eco.admin.bypass.limit: true
       lite.eco.pay.*: true
       lite.eco.balance.others: true
