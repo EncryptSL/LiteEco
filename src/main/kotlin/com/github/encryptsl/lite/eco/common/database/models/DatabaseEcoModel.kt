@@ -12,6 +12,7 @@ import org.jetbrains.exposed.v1.core.*
 import org.jetbrains.exposed.v1.exceptions.ExposedSQLException
 import org.jetbrains.exposed.v1.jdbc.*
 import java.math.BigDecimal
+import java.math.RoundingMode
 import java.sql.SQLException
 import java.util.*
 import kotlin.uuid.toJavaUuid
@@ -136,39 +137,47 @@ class DatabaseEcoModel : PlayerSQL {
     }
 
     override fun deposit(uuid: UUID, currency: String, money: BigDecimal) {
+        val sanitizedMoney = money.setScale(2, RoundingMode.HALF_UP)
+
         loggedTransaction {
             try {
                 val table = Account(currency)
                 table.update({ table.uuid eq uuid.toKotlinUuid() }) {
-                    it[table.money] = table.money + money
+                    it.update(table.money, table.money + sanitizedMoney)
                 }
-            } catch (e : ExposedSQLException) {
+            } catch (e: ExposedSQLException) {
                 LiteEco.instance.componentLogger.error(e.message ?: e.localizedMessage)
             }
         }
     }
+
     override fun withdraw(uuid: UUID, currency: String, money: BigDecimal) {
+        val sanitizedMoney = money.setScale(2, RoundingMode.HALF_UP)
+
         loggedTransaction {
             try {
                 val table = Account(currency)
                 table.update({ table.uuid eq uuid.toKotlinUuid() }) {
-                    it[table.money] = table.money - money
+                    it.update(table.money, table.money - sanitizedMoney)
                 }
-            } catch (e : ExposedSQLException) {
+            } catch (e: ExposedSQLException) {
                 LiteEco.instance.componentLogger.error(e.message ?: e.localizedMessage)
             }
         }
     }
+
     override fun set(uuid: UUID, currency: String, money: BigDecimal): Boolean {
         if (debugFailMode) {
             throw SQLException("DEBUG: Database is currently in fail-mode.")
         }
 
+        val sanitizedMoney = money.setScale(2, RoundingMode.HALF_UP)
+
         return try {
             loggedTransaction {
                 val table = Account(currency)
                 val rowsUpdated = table.update({ table.uuid eq uuid.toKotlinUuid() }) {
-                    it[table.money] = money
+                    it[table.money] = sanitizedMoney
                 }
                 rowsUpdated > 0
             }

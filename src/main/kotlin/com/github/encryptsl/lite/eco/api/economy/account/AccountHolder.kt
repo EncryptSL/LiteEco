@@ -7,6 +7,7 @@ import com.github.encryptsl.lite.eco.common.extensions.io
 import kotlinx.coroutines.sync.withLock
 import org.bukkit.Bukkit
 import java.math.BigDecimal
+import java.math.RoundingMode
 import java.util.*
 
 class AccountHolder : IAccountHolder {
@@ -89,7 +90,7 @@ class AccountHolder : IAccountHolder {
         val userEntity = io { LiteEco.instance.databaseEcoModel.getUserByUUID(uuid, currency) }
         val balance = userEntity?.money ?: BigDecimal.ZERO
 
-        return balance
+        return balance.setScale(2, RoundingMode.HALF_UP)
     }
 
     override suspend fun getUserByUUID(uuid: UUID, currency: String): UserEntity? {

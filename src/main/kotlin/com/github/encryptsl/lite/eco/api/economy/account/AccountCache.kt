@@ -10,6 +10,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.bukkit.Bukkit
 import java.math.BigDecimal
+import java.math.RoundingMode
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -56,7 +57,7 @@ object AccountCache : IAccount {
 
         return account.balances.compute(currency) { _, currentAmount ->
             val present = currentAmount ?: BigDecimal.ZERO
-            transform(present)
+            transform(present.setScale(2, RoundingMode.HALF_UP))
         } ?: BigDecimal.ZERO
     }
 
