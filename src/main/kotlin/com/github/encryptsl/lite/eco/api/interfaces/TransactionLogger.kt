@@ -22,11 +22,13 @@ interface TransactionLogger {
     )
 
     /**
-     * Clears and permanently deletes all recorded transaction logs from the storage.
+     * Permanently deletes **all** recorded transaction logs from the database.
      *
-     * **Warning:** This operation is irreversible and should be used with caution.
+     * *Use with extreme caution! This operation is irreversible.*
+     *
+     * @return The total number of transaction log entries deleted.
      */
-    fun clearLogs()
+    fun clearLogs(): Int
 
     suspend fun hasLogs(targetFilter: String?): Boolean
 

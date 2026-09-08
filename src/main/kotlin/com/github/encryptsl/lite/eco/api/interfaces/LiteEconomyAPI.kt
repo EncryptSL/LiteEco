@@ -45,22 +45,41 @@ interface LiteEconomyAPI {
         start: BigDecimal
     )
 
-    /** Deletes all accounts for the specified currency. */
-    suspend fun purgeAccounts(currency: String)
-
-    /** Deletes all accounts created by command eco debug stress-shutdown */
-    suspend fun purgeTestAccounts()
-
-    /** Deletes all invalid accounts (e.g., corrupted or broken data). */
-    suspend fun purgeInvalidAccounts(currency: String)
+    /**
+     * Deletes **all** player accounts for the specified currency.
+     *
+     * *Use with extreme caution!*
+     *
+     * @param currency The key or name of the currency whose accounts should be purged.
+     * @return The total number of accounts deleted.
+     */
+    suspend fun purgeAccounts(currency: String): Int
 
     /**
-     * Deletes all accounts that only hold the default value.
+     * Deletes **all** test accounts created by the `/eco debug stress-shutdown` command.
      *
-     * @param currency currency of the accounts
-     * @param defaultValue the value considered as "default"
+     * @return The total number of test accounts deleted.
      */
-    suspend fun purgeDefaultAccounts(currency: String, defaultValue: BigDecimal)
+    suspend fun purgeTestAccounts(): Int
+
+    /**
+     * Deletes accounts that hold the **default balance** for the specified currency.
+     *
+     * Typically used to clean up inactive or unused player accounts that have not made any transactions.
+     *
+     * @param currency The key or name of the currency the accounts belong to.
+     * @param defaultValue The [BigDecimal] balance value considered as default.
+     * @return The total number of default accounts deleted.
+     */
+    suspend fun purgeDefaultAccounts(currency: String, defaultValue: BigDecimal): Int
+
+    /**
+     * Deletes all invalid or corrupted accounts (e.g., missing essential fields or broken data).
+     *
+     * @param currency The key or name of the currency to scan for invalid entries.
+     * @return The total number of invalid accounts deleted.
+     */
+    suspend fun purgeInvalidAccounts(currency: String): Int
 
     /**
      * Retrieves all player balances for the specified currency, merged with active in-memory cache states.

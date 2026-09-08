@@ -3,9 +3,9 @@ messages:
   balance:
     format: "<prefix> <white>現在の所持金: <green><money></green> <gold><currency></gold>"
     format_target: "<prefix> <gold><player></gold> <white>の所持金は <green><money></green> <gold><currency></gold>"
-    top_format: "<yellow><position># <gold><player></gold> <gray>- <green><money></green>"
-    top_header: "<gray><st>─━━━━━━─</st> <#64646F>[ <#F9AD47>所持金ランキング</#F9AD47> ]</#64646F> <st>─━━━━━━─</st></gray>"
-    top_footer: "<gray><st>─━━━━━━─</st> <#64646F>[ <#F9AD47><pagination></#F9AD47> ]</#64646F> <st>─━━━━━━─</st></gray>"
+    top_format: "<yellow><position># <white><player></white> <gray>- <green><money></green>"
+    top_header: "<gray><st>─━━━━━━─</st> <blue>[ <yellow>所持金ランキング <blue>] <gray><st>─━━━━━━─</st>"
+    top_footer: "<gray><st>─━━━━━━─</st> <blue>[ <pagination> <blue>] <gray><st>─━━━━━━─</st>"
 
   # Self-transaction messages
   self:
@@ -42,21 +42,22 @@ messages:
   # Error messages
   error:
     account_not_exist: "<prefix> <red>そのプレイヤーは存在しません。(プレイヤー名: <account>)"
-    account_now_exist: "<prefix> <red>Account <account> now exists [!]"
-    missing_balance_others_permission: "<prefix> <red>You do not have permission to view the account balance of others [!]"
-    missing_currency_permission: "<prefix> <red>You do not have permission to use this currency [!]"
+    account_now_exist: "<prefix> <red>アカウント <account> は既に存在します。"
+    missing_balance_others_permission: "<prefix> <red>他のプレイヤーの所持金を確認する権限がありません。"
+    missing_currency_permission: "<prefix> <red>この通貨を使用する権限がありません。"
     insufficient_funds: "<prefix> <red>お金が足りていません。"
     maximum_page: "<red>ページ数の上限は <max_page>"
     export_argument: "<prefix> <red>この<argument>は適切ではないか、サーバーの移行の準備が完了していない可能性があります。"
-    export_failed: "<prefix> <red>マイグレーション中に問題が発生しました。詳細についてはコンソールをご確認ください。" # TEMP #
-    import_failed: "<prefix> <red>There was an issue during the import or missing data !"
+    export_failed: "<prefix> <red>マイグレーション中に問題が発生しました。詳細についてはコンソールをご確認ください。"
+    import_failed: "<prefix> <red>インポート中に問題が発生したか、データが見つかりません。"
     purge_argument: "<prefix> <red>この<argument>は適切ではないか、サーバーの削除の準備が完了していない可能性があります。"
-    purge_monolog_fail: "<prefix> <red>You can't delete logs, because table is empty [!]"
+    purge_fail: "<prefix> <red>テーブルが空のため削除できません。"
     player_is_null: "<prefix> <red>プレイヤー名を入力してください。"
     self_pay: "<prefix> <red>自分自身にお金を送金することはできません。"
-    amount_above_limit: "<prefix> <red>Amount is above, allowed limit of server !"
-    balance_above_limit: "<prefix> <red>Balance of account <account> is above, allowed limit of server !"
-    database_exception: "<prefix> <red>Something unexpected happened while working with the database: <exception> [!]"
+    amount_above_limit: "<prefix> <red>金額がサーバーの許容上限を超えています。"
+    balance_above_limit: "<prefix> <red>アカウント <account> の所持金がサーバーの許容上限を超えています。"
+    command_require_confirm: "<prefix> <red>確認のため、15秒以内に <command> を再入力してください。"
+    database_exception: "<prefix> <red>データベース処理中に予期しないエラーが発生しました: <exception>"
 
   # This messages not support MiniMessage and Style Formatting !
   # Please don't try edit this messages !
@@ -64,13 +65,13 @@ messages:
     error:
       format_amount: "無効な金額です。小数点を使用するか、コンパクトな表記（例：1K）を利用してください。"
       negative_amount: "マイナスの金額は入力できません。"
-      currency_not_exist: "These currency %s not exist [!]"
-      language_not_exist: "This %s language is not supported [!]"
-      convert_fail: "Something broke during convert look into console [!]"
+      currency_not_exist: "通貨 %s は存在しません。"
+      language_not_exist: "言語 %s はサポートされていません。"
+      convert_fail: "変換中に問題が発生しました。コンソールを確認してください。"
 
   # Monolog message formatting
   monolog:
-    header: "<gray><st>─━━━━━━─</st> <blue>[ <yellow>Transaction History <blue>] <gray><st>─━━━━━━─</st>"
+    header: "<gray><st>─━━━━━━─</st> <blue>[ <yellow>取引履歴 <blue>] <gray><st>─━━━━━━─</st>"
     footer: "<gray><st>─━━━━━━─</st> <blue>[ <pagination> <blue>] <gray><st>─━━━━━━─</st>"
     formatting: >-
       <blue>[<white><hover:show_text:'<timestamp>'><symbol></hover></white>]</blue> 
@@ -80,25 +81,25 @@ messages:
 
   # Admin commands
   admin:
-    create_account: "<prefix> <green>Account <account> was created [!]"
+    create_account: "<prefix> <green>アカウント <account> を作成しました。"
     config_reload: "<prefix> <green>コンフィグは正常に読み込まれました。"
     translation_switch: "<prefix> <green>言語の切り替えが完了しました。(言語: <locale>)"
     translation_missing: "<prefix> <red>翻訳が見つかりません。このプラグインの開発者に連絡してください。(言語: <key>)"
     purge_accounts: "<prefix> <green>すべてのプレイヤーのアカウントを削除しました。"
-    purge_test_accounts: "<prefix> <green>All test accounts was purged !"
-    purge_null_accounts: "<prefix> <green> すべてのプレイヤーアカウントのヌル値が削除されました。" # TEMP #
+    purge_test_accounts: "<prefix> <green>すべてのテストアカウントを削除しました。"
+    purge_null_accounts: "<prefix> <green>すべてのプレイヤーアカウントのヌル値が削除されました。"
     purge_default_accounts: "<prefix> <green>デフォルトの値で全てのプレイヤーの所持金を再設定しました。"
-    purge_monolog_success: "<prefix> <green>All logs about economy activities was purged [!]"
-    delete_account: "<prefix> <green>Account of player <account> was deleted !"
+    purge_monolog_success: "<prefix> <green>経済アクティビティに関するすべてのログを削除しました。"
+    delete_account: "<prefix> <green>プレイヤー <account> のアカウントを削除しました。"
     export_success: "<prefix> <green><type>からのマイグレーションが完了しました。"
-    import_success: "<prefix> <green>Import of <converted>x accounts and <balances> balances from <economy> to LiteEco was successful !"
+    import_success: "<prefix> <green><economy> から LiteEco への <converted> 個のアカウントおよび <balances> 個の残高のインポートが成功しました。"
 
   # Translation for pagination component
   # Is available with placeholder <pagination>
   pagination:
-    previous: "« Previous"
+    previous: "« 前へ"
     center: " <yellow><page>/<max_page> "
-    next: "Next »"
+    next: "次へ »"
 
   help:
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> LiteEco <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
@@ -119,12 +120,12 @@ messages:
     - "<red>[★] <gray><hover:show_text:'<#F39E9E>選択したデータを削除します。'>/eco database purge <#b37dc7><argument>"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E>他の経済プラグインのデータから移行します。'>/eco database export <#b37dc7><argument>"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E>他のエコノミープラグインからライトエコに変換。'>/eco database import <#b37dc7><argument> <#3EE84D><into_currency> [--from <currency>]"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Toggles database error simulation on/off.'>/eco debug failmode"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Runs an automated test simulating a database error and $500.'>/eco debug test-janitor <yellow><username>"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Immediately triggers automatic synchronization.'>/eco debug janitor"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Displays a detailed readout of the player's internal cache.'>/eco debug inspect <yellow><username>"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Runs a concurrent stress test for transaction atomicity.'>/eco debug stress <yellow><username> <#3EE84D>[iterations]"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Runs a concurrent load test to store virtual players and create accounts in the database from the cache.'>/eco debug stress-shutdown <#3EE84D>[iterations]"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>データベースエラーシミュレーションのON/OFFを切り替えます。'>/eco debug failmode"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>データベースエラーと$500をシミュレートする自動テストを実行します。'>/eco debug test-janitor <yellow><ユーザー名>"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>自動同期を即座にトリガーします。'>/eco debug janitor"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>プレイヤーの内部キャッシュの詳細情報を表示します。'>/eco debug inspect <yellow><ユーザー名>"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>トランザクションのアトミック性に関する並行ストレステストを実行します。'>/eco debug stress <yellow><ユーザー名> <#3EE84D>[iterations]"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>仮想プレイヤーを保存し、キャッシュからDBにアカウントを作成する並行負荷テストを実行します。'>/eco debug stress-shutdown <#3EE84D>[iterations]"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E>表示メッセージの言語を変更します。'>/eco config lang <#b37dc7>[lang]"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E>設定を再読み込みします。'>/eco config reload"
     - " "

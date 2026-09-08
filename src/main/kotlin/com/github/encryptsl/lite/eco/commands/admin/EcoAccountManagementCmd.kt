@@ -2,6 +2,7 @@ package com.github.encryptsl.lite.eco.commands.admin
 
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.commands.internal.CommandFeature
+import com.github.encryptsl.lite.eco.commands.internal.ConfirmationPostprocessor
 import com.github.encryptsl.lite.eco.commands.parsers.CurrencyParser
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
@@ -17,6 +18,7 @@ import org.incendo.cloud.parser.standard.IntegerParser
 
 class EcoAccountManagementCmd(
     private val liteEco: LiteEco,
+    private val confirmationManager: ConfirmationPostprocessor<Source>
 ) : CommandFeature {
     override fun register(
         commandManager: PaperCommandManager<Source>,
@@ -26,6 +28,7 @@ class EcoAccountManagementCmd(
             base.literal("create")
                 .commandDescription(CommandDescription.commandDescription(description))
                 .permission("lite.eco.admin.create")
+                .apply(confirmationManager::applyToBuilder)
                 .required(
                     "target",
                     OfflinePlayerParser.offlinePlayerParser(),
@@ -72,6 +75,7 @@ class EcoAccountManagementCmd(
             base.literal("delete")
                 .commandDescription(CommandDescription.commandDescription(description))
                 .permission("lite.eco.admin.delete")
+                .apply(confirmationManager::applyToBuilder)
                 .required(
                     "target",
                     OfflinePlayerParser.offlinePlayerParser(),

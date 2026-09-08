@@ -127,36 +127,41 @@ interface PlayerSQL {
     fun set(uuid: UUID, currency: String, money: BigDecimal): Boolean
 
     /**
-     * Deletes **all** accounts related to the specified currency.
+     * Deletes **all** player accounts associated with the specified currency.
      *
      * *Use with extreme caution!*
      *
-     * @param currency The key/name of the currency whose accounts should be purged.
+     * @param currency The identifier or key of the currency whose accounts should be purged.
+     * @return The total number of accounts deleted.
      */
-    fun purgeAccounts(currency: String)
+    fun purgeAccounts(currency: String): Int
 
     /**
-     * Deletes **all** test accounts
+     * Deletes **all** test accounts across the database.
+     *
+     * @return The total number of test accounts deleted.
      */
-    fun purgeTestAccounts()
+    fun purgeTestAccounts(): Int
 
     /**
-     * Deletes accounts that have the **default balance** for the specified currency.
+     * Deletes accounts that hold the **default balance** for the specified currency.
      *
-     * This is typically used to clean up unused/inactive accounts.
+     * Typically used to clean up inactive or unused player accounts that have not made any transactions.
      *
-     * @param defaultMoney The [BigDecimal] default balance value accounts must have to be deleted.
-     * @param currency The key/name of the currency the accounts belong to.
+     * @param defaultMoney The default balance threshold [BigDecimal] required for an account to be purged.
+     * @param currency The identifier or key of the currency to check against.
+     * @return The total number of default accounts deleted.
      */
-    fun purgeDefaultAccounts(defaultMoney: BigDecimal, currency: String)
+    fun purgeDefaultAccounts(defaultMoney: BigDecimal, currency: String): Int
 
     /**
-     * Deletes accounts that are considered invalid (e.g., accounts with duplicate
-     * UUIDs or other database inconsistencies, depending on the implementation).
+     * Deletes invalid or corrupted accounts (e.g., entries with `null` fields, duplicate
+     * UUIDs, or database inconsistencies).
      *
-     * @param currency The key/name of the currency the accounts belong to.
+     * @param currency The identifier or key of the currency to scan for invalid entries.
+     * @return The total number of invalid accounts deleted.
      */
-    fun purgeInvalidAccounts(currency: String)
+    fun purgeInvalidAccounts(currency: String): Int
 
     /**
      * Executes a batch insertion or replacement of player records directly in the database.

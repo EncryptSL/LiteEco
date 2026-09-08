@@ -14,6 +14,19 @@ import java.util.*
 interface IAccount {
 
     /**
+     * Atomically updates a player's cached balance using a transformation function.
+     *
+     * Performs a thread-safe read-modify-write operation directly in memory,
+     * preventing race conditions during concurrent deposits or withdrawals.
+     *
+     * @param uuid The unique identifier (UUID) of the player.
+     * @param currency The key/name of the currency to update.
+     * @param transform The transformation function to compute the new balance.
+     * @return The newly calculated [BigDecimal] balance.
+     */
+    fun updateBalance(uuid: UUID, currency: String, transform: (BigDecimal) -> BigDecimal): BigDecimal
+
+    /**
      * Starts the Janitor service task that periodically synchronizes offline players' data.
      *
      * This service iterates through the cache and identifies players who are no longer online.

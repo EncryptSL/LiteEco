@@ -45,8 +45,8 @@ class DatabaseMonologModel(
         }
     }
 
-    override fun clearLogs() {
-        loggedTransaction { MonologTable.deleteAll() }
+    override fun clearLogs(): Int {
+        return loggedTransaction { MonologTable.deleteAll() }
     }
 
     override suspend fun hasLogs(targetFilter: String?): Boolean = io {

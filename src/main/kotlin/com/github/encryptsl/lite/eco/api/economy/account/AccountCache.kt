@@ -46,6 +46,20 @@ object AccountCache : IAccount {
         locks.remove(uuid)
     }
 
+    override fun updateBalance(
+        uuid: UUID,
+        currency: String,
+        transform: (BigDecimal) -> BigDecimal
+    ): BigDecimal {
+        val account = cache.getOrPut(uuid) { Wallet() }
+        account.isSuccessfullyLoaded = true
+
+        return account.balances.compute(currency) { _, currentAmount ->
+            val present = currentAmount ?: BigDecimal.ZERO
+            transform(present)
+        } ?: BigDecimal.ZERO
+    }
+
     override fun startJanitor(liteEco: LiteEco) {
         val delay = 20L * 300
         val period = 20L * 300

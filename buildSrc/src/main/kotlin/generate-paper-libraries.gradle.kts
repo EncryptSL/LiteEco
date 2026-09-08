@@ -64,7 +64,8 @@ tasks.register<GeneratePaperLibrariesTask>("generatePaperLibrariesYaml") {
             "org.xerial",
             "de.exlll",
             "com.tchristofferson",
-            "org.apache.commons"
+            "org.apache.commons",
+            "com.github.ben-manes.caffeine"
         )
     )
 }

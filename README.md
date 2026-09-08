@@ -43,6 +43,7 @@ Popular sections:
 - [Economy & Currencies](https://liteeco.github.io/docs/user-guide/economy-settings)
 - [Commands & Overview](https://liteeco.github.io/docs/user-guide/commands-permissions)
 - [Placeholders](https://liteeco.github.io/docs/user-guide/placeholders)
+- [Debugging](https://liteeco.github.io/docs/user-guide/debugging)
 ---
 
 ## 🧪 bStats Metrics

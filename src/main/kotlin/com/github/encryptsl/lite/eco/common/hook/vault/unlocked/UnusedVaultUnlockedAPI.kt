@@ -3,24 +3,19 @@ package com.github.encryptsl.lite.eco.common.hook.vault.unlocked
 
 import net.milkbowl.vault2.economy.AccountPermission
 import net.milkbowl.vault2.economy.Economy
-import net.milkbowl.vault2.economy.EconomyResponse
 import java.math.BigDecimal
 import java.util.*
 
 abstract class UnusedVaultUnlockedAPI : Economy {
-    companion object {
-        private const val SHARED_ACCOUNTS_NOT_SUPPORTED_MESSAGE = "LiteEco does not support shared accounts !"
-        private const val PERMISSIONS_NOT_SUPPORTED_MESSAGE = "LiteEco does not support permissions operation!"
-    }
 
-    @Deprecated("Deprecated in Java")
+    @Deprecated("Deprecated in Java", ReplaceWith("createAccount(accountID, name)"))
     override fun createAccount(accountID: UUID, name: String): Boolean {
-        return false
+        return createAccount(accountID, name)
     }
 
-    @Deprecated("Deprecated in Java")
+    @Deprecated("Deprecated in Java", ReplaceWith("createAccount(accountID, name)"))
     override fun createAccount(accountID: UUID, name: String, worldName: String): Boolean {
-        return false
+        return createAccount(accountID, name)
     }
 
     @Deprecated("Deprecated in Java", ReplaceWith("format(pluginName, amount)"))
@@ -30,7 +25,7 @@ abstract class UnusedVaultUnlockedAPI : Economy {
 
     @Deprecated("Deprecated in Java", ReplaceWith("format(pluginName, amount, currency)"))
     override fun format(amount: BigDecimal, currency: String): String {
-        return format("pluginName", amount, currency)
+        return format("", amount, currency)
     }
 
     @Deprecated("Deprecated in Java", ReplaceWith("balance(pluginName, accountID)"))
@@ -43,46 +38,28 @@ abstract class UnusedVaultUnlockedAPI : Economy {
         return balance(pluginName, accountID)
     }
 
-    @Deprecated("Deprecated in Java", ReplaceWith("balance(pluginName, accountID, world, currency)"))
+    @Deprecated("Deprecated in Java", ReplaceWith("balance(pluginName, accountID, currency)"))
     override fun getBalance(pluginName: String, accountID: UUID, world: String, currency: String): BigDecimal {
-        return balance(pluginName, accountID, world, currency)
+        return balance(pluginName, accountID, currency)
     }
 
-    override fun createSharedAccount(pluginName: String, accountID: UUID, name: String, owner: UUID): Boolean {
-        return EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.NOT_IMPLEMENTED, SHARED_ACCOUNTS_NOT_SUPPORTED_MESSAGE).transactionSuccess()
-    }
+    override fun hasSharedAccountSupport(): Boolean = false
 
-    override fun hasSharedAccountSupport(): Boolean {
-        return EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.NOT_IMPLEMENTED, SHARED_ACCOUNTS_NOT_SUPPORTED_MESSAGE).transactionSuccess()
-    }
+    override fun createSharedAccount(pluginName: String, accountID: UUID, name: String, owner: UUID): Boolean = false
 
-    override fun isAccountOwner(pluginName: String, accountID: UUID, uuid: UUID): Boolean {
-        return EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.NOT_IMPLEMENTED, SHARED_ACCOUNTS_NOT_SUPPORTED_MESSAGE).transactionSuccess()
-    }
+    override fun isAccountOwner(pluginName: String, accountID: UUID, uuid: UUID): Boolean = false
 
-    override fun setOwner(pluginName: String, accountID: UUID, uuid: UUID): Boolean {
-        return EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.NOT_IMPLEMENTED, SHARED_ACCOUNTS_NOT_SUPPORTED_MESSAGE).transactionSuccess()
-    }
+    override fun setOwner(pluginName: String, accountID: UUID, uuid: UUID): Boolean = false
 
-    override fun isAccountMember(pluginName: String, accountID: UUID, uuid: UUID): Boolean {
-        return EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.NOT_IMPLEMENTED, SHARED_ACCOUNTS_NOT_SUPPORTED_MESSAGE).transactionSuccess()
-    }
+    override fun isAccountMember(pluginName: String, accountID: UUID, uuid: UUID): Boolean = false
 
-    override fun addAccountMember(pluginName: String, accountID: UUID, uuid: UUID): Boolean {
-        return EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.NOT_IMPLEMENTED, SHARED_ACCOUNTS_NOT_SUPPORTED_MESSAGE).transactionSuccess()
-    }
+    override fun addAccountMember(pluginName: String, accountID: UUID, uuid: UUID): Boolean = false
 
-    override fun addAccountMember(pluginName: String, accountID: UUID, uuid: UUID, vararg initialPermissions: AccountPermission): Boolean {
-        return EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.NOT_IMPLEMENTED, SHARED_ACCOUNTS_NOT_SUPPORTED_MESSAGE).transactionSuccess()
-    }
+    override fun addAccountMember(pluginName: String, accountID: UUID, uuid: UUID, vararg initialPermissions: AccountPermission): Boolean = false
 
-    override fun removeAccountMember(pluginName: String, accountID: UUID, uuid: UUID): Boolean {
-        return EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.NOT_IMPLEMENTED, SHARED_ACCOUNTS_NOT_SUPPORTED_MESSAGE).transactionSuccess()
-    }
+    override fun removeAccountMember(pluginName: String, accountID: UUID, uuid: UUID): Boolean = false
 
-    override fun hasAccountPermission(pluginName: String, accountID: UUID, uuid: UUID, permission: AccountPermission): Boolean {
-        return EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.NOT_IMPLEMENTED, PERMISSIONS_NOT_SUPPORTED_MESSAGE).transactionSuccess()
-    }
+    override fun hasAccountPermission(pluginName: String, accountID: UUID, uuid: UUID, permission: AccountPermission): Boolean = false
 
     override fun updateAccountPermission(
         pluginName: String,
@@ -90,8 +67,5 @@ abstract class UnusedVaultUnlockedAPI : Economy {
         uuid: UUID,
         permission: AccountPermission,
         value: Boolean
-    ): Boolean {
-        return EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.NOT_IMPLEMENTED, PERMISSIONS_NOT_SUPPORTED_MESSAGE).transactionSuccess()
-    }
-
+    ): Boolean = false
 }

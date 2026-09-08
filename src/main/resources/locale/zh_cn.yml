@@ -3,9 +3,9 @@ messages:
   balance:
     format: "<prefix> <white>你拥有 <green><money></green> <gold><currency></gold>. [!]"
     format_target: "<prefix> <white>玩家 <#13AFFE><target></#13AFFE> 拥有 <green><money></green> <gold><currency><gold>. [!]"
-    top_format: "<yellow><position># <gold><player></gold> <gray>- <green><money></green>"
-    top_header: "<gray><st>─━━━━━━─</st> <#64646F>[ <#F9AD47>排行榜</#F9AD47> ]</#64646F> <st>─━━━━━━─</st></gray>"
-    top_footer: "<gray><st>─━━━━━━─</st> <#64646F>[ <#F9AD47><pagination></#F9AD47> ]</#64646F> <st>─━━━━━━─</st></gray>"
+    top_format: "<yellow><position># <white><player></white> <gray>- <green><money></green>"
+    top_header: "<gray><st>─━━━━━━─</st> <blue>[ <yellow>排行榜 <blue>] <gray><st>─━━━━━━─</st>"
+    top_footer: "<gray><st>─━━━━━━─</st> <blue>[ <pagination> <blue>] <gray><st>─━━━━━━─</st>"
 
   # 转账消息
   self:
@@ -43,20 +43,21 @@ messages:
   error:
     account_not_exist: "<prefix> <red>账号 <account> 不存在 [!]"
     account_now_exist: "<prefix> <red>账号 <account> 已存在 [!]"
-    missing_balance_others_permission: "<prefix> <red>You do not have permission to view the account balance of others [!]"
+    missing_balance_others_permission: "<prefix> <red>你没有权限查看其他人的账户余额 [!]"
     missing_currency_permission: "<prefix> <red>你没有权限使用此货币 [!]"
     insufficient_funds: "<prefix> <red>余额不足! [!]"
     maximum_page: "<red>最大页码为 <max_page>"
-    export_argument: "<prefix> <red>参数 <参数> 无效或尚不可用."
+    export_argument: "<prefix> <red>参数 <argument> 无效或尚不可用."
     export_failed: "<prefix> <red>迁移过程遇到问题. 请检查控制台获取信息."
-    import_failed: "<prefix> <red>There was an issue during the import or missing data !"
-    purge_argument: "<prefix> <red>参数 <参数> 无效或尚不可用."
-    purge_monolog_fail: "<prefix> <red>无法删除日志, 表为空 [!]"
+    import_failed: "<prefix> <red>导入过程中出现问题或缺失数据！"
+    purge_argument: "<prefix> <red>参数 <argument> 无效或尚不可用."
+    purge_fail: "<prefix> <red>由於表格為空，無法刪除。 [!]"
     player_is_null: "<prefix> <red>请输入有效的玩家名称 [!]"
     self_pay: "<prefix> <red>你不能付款给自己 [!]"
     convert_fail: "<prefix> <red>转化过程出现问题, 请查看控制台 [!]"
     amount_above_limit: "<prefix> <red>交易数量超出服务器允许上限!"
     balance_above_limit: "<prefix> <red>账号 <account> 持有的货币数量超出服务器允许上限!"
+    command_require_confirm: "<prefix> <red>请在 15 秒内再次输入 <command> 以进行确认。"
     database_exception: "<prefix> <red>与数据库交互时出现问题: <exception> [!]"
 
   # This messages not support MiniMessage and Style Formatting !
@@ -66,12 +67,12 @@ messages:
       format_amount: "数量无效. 请使用小数或缩写 (如 1K) [!]"
       negative_amount: "请勿输入负数. [!]"
       currency_not_exist: "货币 %s 不存在!"
-      language_not_exist: "This %s language is not supported [!]"
+      language_not_exist: "不支持 %s 语言 [!]"
       convert_fail: "转化过程出现问题, 请查看控制台 [!]"
 
   # Monolog message formatting
   monolog:
-    header: "<gray><st>─━━━━━━─</st> <blue>[ <yellow>Transaction History <blue>] <gray><st>─━━━━━━─</st>"
+    header: "<gray><st>─━━━━━━─</st> <blue>[ <yellow>交易历史纪录 <blue>] <gray><st>─━━━━━━─</st>"
     footer: "<gray><st>─━━━━━━─</st> <blue>[ <yellow><page>/<max_page> <blue>] <gray><st>─━━━━━━─</st>"
     formatting: >-
       <blue>[<white><hover:show_text:'<timestamp>'><symbol></hover></white>]</blue> 
@@ -84,9 +85,9 @@ messages:
     create_account: "<prefix> <green>账号 <account> 已被创建 [!]"
     config_reload: "<prefix> <green>配置成功重载 [!]"
     translation_switch: "<prefix> <green>显示语言已切换为 <locale>."
-    translation_missing: "<prefix> <red><key> 对应文本确实. 请联系插件开发者."
+    translation_missing: "<prefix> <red><key> 对应文本缺失. 请联系插件开发者."
     purge_accounts: "<prefix> <green>所有玩家账户已被清理."
-    purge_test_accounts: "<prefix> <green>All test accounts was purged !"
+    purge_test_accounts: "<prefix> <green>所有测试账户已被清理！"
     purge_null_accounts: "<prefix> <green>所有存在非法值的账户已被清理."
     purge_default_accounts: "<prefix> <green>所有存在默认值的账户已被清理."
     purge_monolog_success: "<prefix> <green>所有交易日志已被清理 [!]"
@@ -97,9 +98,9 @@ messages:
   # Translation for pagination component
   # Is available with placeholder <pagination>
   pagination:
-    previous: "« Previous"
+    previous: "« 上一页"
     center: " <yellow><page>/<max_page> "
-    next: "Next »"
+    next: "下一页 »"
 
   help:
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> LiteEco <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
@@ -120,12 +121,12 @@ messages:
     - "<red>[★] <gray><hover:show_text:'<#F39E9E> 清除数据.'>/eco database purge <#b37dc7><参数> <#3EE84D>[货币类型]"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E> 迁移数据库至另一格式.'>/eco database export <#b37dc7><参数> <#3EE84D>[货币类型]"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E> 从其他插件迁移至 LiteEco.'>/eco database import <#b37dc7><参数> <#3EE84D>[货币类型] <#3EE84D><into_currency> [--from <currency>]"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Toggles database error simulation on/off.'>/eco debug failmode"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Runs an automated test simulating a database error and $500.'>/eco debug test-janitor <yellow><username>"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Immediately triggers automatic synchronization.'>/eco debug janitor"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Displays a detailed readout of the player's internal cache.'>/eco debug inspect <yellow><username>"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Runs a concurrent stress test for transaction atomicity.'>/eco debug stress <yellow><username> <#3EE84D>[iterations]"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Runs a concurrent load test to store virtual players and create accounts in the database from the cache.'>/eco debug stress-shutdown <#3EE84D>[iterations]"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>切换数据库错误模拟的开启/关闭状态。'>/eco debug failmode"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>运行模拟数据库错误和 500 美元金额的自动测试。'>/eco debug test-janitor <yellow><玩家名称>"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>立即触发自动同步。'>/eco debug janitor"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>显示玩家内部缓存的详细读取数据。'>/eco debug inspect <yellow><玩家名称>"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>运行并发压力测试以验证交易的原子性。'>/eco debug stress <yellow><玩家名称> <#3EE84D>[迭代次数]"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>运行并发负载测试，以储存虚拟玩家并从缓存中在数据库里创建账户。'>/eco debug stress-shutdown <#3EE84D>[迭代次数]"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E> 切换语言.'>/eco config lang <#b37dc7>[语言]"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E> 重载配置文件.'>/eco config reload"
     - " "

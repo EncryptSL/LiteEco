@@ -3,9 +3,9 @@ messages:
   balance:
     format: "<prefix> <white>Tu saldo es de <green><money></green> es <currency> [!]"
     format_target: "<prefix> <white>El saldo de <gold><target></gold> es de <green><money></green> es <gold><currency></gold> [!]"
-    top_format: "<yellow><position># <gold><player></gold> <gray>- <green><money></green>"
-    top_header: "<gray><st>─━━━━━━─</st> <#64646F>[ <#F9AD47>TOP ECONOMIA<gray> ]</#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray>"
-    top_footer: "<gray><st>─━━━━━━─</st> <#64646F>[ <#F9AD47><pagination></#F9AD47> ]</#64646F> <st>─━━━━━━─</st></gray>"
+    top_format: "<yellow><position># <white><player></white> <gray>- <green><money></green>"
+    top_header: "<gray><st>─━━━━━━─</st> <blue>[ <yellow>TOP ECONOMIA <blue>] <gray><st>─━━━━━━─</st>"
+    top_footer: "<gray><st>─━━━━━━─</st> <blue>[ <pagination> <blue>] <gray><st>─━━━━━━─</st>"
 
   # Self-transaction messages
   self:
@@ -42,21 +42,22 @@ messages:
   # Error messages
   error:
     account_not_exist: "<prefix> <red>No existe la cuenta <account> [!]"
-    account_now_exist: "<prefix> <red>Account <account> now exists [!]"
-    missing_balance_others_permission: "<prefix> <red>You do not have permission to view the account balance of others [!]"
-    missing_currency_permission: "<prefix> <red>You do not have permission to use this currency [!]"
+    account_now_exist: "<prefix> <red>La cuenta <account> ya existe [!]"
+    missing_balance_others_permission: "<prefix> <red>No tienes permiso para ver el saldo de otros jugadores [!]"
+    missing_currency_permission: "<prefix> <red>No tienes permiso para usar esta moneda [!]"
     insufficient_funds: "<prefix> <red>No tienes suficiente dinero [!]"
     maximum_page: "<red>El limite de paginas es <max_page>"
     export_argument: "<prefix> <red>El argumento <argument> no es valido o no esta listo para produccion."
     export_failed: "<prefix> <red>Ocurrio un problema durante la migración. Por favor, revise la consola para más detalles."
-    import_failed: "<prefix> <red>There was an issue during the import or missing data !"
+    import_failed: "<prefix> <red>¡Ocurrió un problema durante la importación o faltan datos!"
     purge_argument: "<prefix> <red>El argumento <argument> no es valido o no esta listo para produccion."
-    purge_monolog_fail: "<prefix> <red>You can't delete logs, because table is empty [!]"
+    purge_fail: "<prefix> <red>No se puede eliminar porque la tabla está vacía. [!]"
     player_is_null: "<prefix> <red>Debes especificar un jugador [!]"
     self_pay: "<prefix> <red>No puedes enviarte dinero a ti mismo [!]"
     amount_above_limit: "<prefix> <red>El importe es superior al límite permitido por el servidor !"
     balance_above_limit: "<prefix> <red>Saldo de la cuenta <account> está por encima del límite permitido del servidor !"
-    database_exception: "<prefix> <red>Something unexpected happened while working with the database: <exception> [!]"
+    command_require_confirm: "<prefix> <red>Escribe <command> de nuevo en 15 segundos para confirmar."
+    database_exception: "<prefix> <red>Ocurrió un error inesperado al trabajar con la base de datos: <exception> [!]"
 
   # This messages not support MiniMessage and Style Formatting !
   # Please don't try edit this messages !
@@ -64,13 +65,13 @@ messages:
     error:
       format_amount: "Cantidad invalida. Usa numeros decimales o representaciones compactas (ej. 1K) [!]"
       negative_amount: "Introduce un valor positivo [!]"
-      currency_not_exist: "These currency %s not exist [!]"
-      language_not_exist: "This %s language is not supported [!]"
+      currency_not_exist: "Esta moneda %s no existe [!]"
+      language_not_exist: "Este idioma %s no es compatible [!]"
       convert_fail: "Algo se rompió durante la conversión mira en la consola [!]"
 
   # Monolog message formatting
   monolog:
-    header: "<gray><st>─━━━━━━─</st> <blue>[ <yellow>Transaction History <blue>] <gray><st>─━━━━━━─</st>"
+    header: "<gray><st>─━━━━━━─</st> <blue>[ <yellow>Historial de Transacciones <blue>] <gray><st>─━━━━━━─</st>"
     footer: "<gray><st>─━━━━━━─</st> <blue>[ <pagination> <blue>] <gray><st>─━━━━━━─</st>"
     formatting: >-
       <blue>[<white><hover:show_text:'<timestamp>'><symbol></hover></white>]</blue> 
@@ -80,25 +81,25 @@ messages:
 
   # Admin commands
   admin:
-    create_account: "<prefix> <green>Account <account> was created [!]"
+    create_account: "<prefix> <green>Se ha creado la cuenta <account> [!]"
     config_reload: "<prefix> <green>Configuracion recargada exitosamente [!]"
     translation_switch: "<prefix> <green>Traduccion cambiada a <locale>"
     translation_missing: "<prefix> <red>Traduccion <key> inexistente.... contacta al desarrollador de este plugin."
     purge_accounts: "<prefix> <green>Se purgaron todas las cuentas."
-    purge_test_accounts: "<prefix> <green>All test accounts was purged !"
+    purge_test_accounts: "<prefix> <green>¡Se purgaron todas las cuentas de prueba!"
     purge_null_accounts: "<prefix> <green>Se purgaron todas las cuentas con valores nulos."
     purge_default_accounts: "<prefix> <green>Se purgaron todas las cuentas con valores predeterminados."
-    purge_monolog_success: "<prefix> <green>All logs about economy activities was purged [!]"
-    delete_account: "<prefix> <green>Account of player <account> was deleted !"
+    purge_monolog_success: "<prefix> <green>¡Se purgaron todos los registros de la actividad económica! [!]"
+    delete_account: "<prefix> <green>¡La cuenta del jugador <account> fue eliminada!"
     export_success: "<prefix> <green>La migracion de <type> fue exitosa [!]"
     import_success: "<prefix> <green>La conversión <converted>x cuentas y <balances> saldos de <economy> a LiteEco se ha realizado correctamente !"
 
   # Translation for pagination component
   # Is available with placeholder <pagination>
   pagination:
-    previous: "« Previous"
+    previous: "« Anterior"
     center: " <yellow><page>/<max_page> "
-    next: "Next »"
+    next: "Siguiente »"
 
   help:
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> LiteEco <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
@@ -119,12 +120,12 @@ messages:
     - "<red>[★] <gray><hover:show_text:'<#F39E9E> Purgar datos.'>/eco database purge <#b37dc7><argument>"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E> Migración de base de datos a otros formatos.'>/eco database export <#b37dc7><argument>"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E> Convertir de otro plugin de Economía a LiteEco.'>/eco database import <#b37dc7><argument> <#3EE84D><into_currency> [--from <currency>]"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Toggles database error simulation on/off.'>/eco debug failmode"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Runs an automated test simulating a database error and $500.'>/eco debug test-janitor <yellow><username>"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Immediately triggers automatic synchronization.'>/eco debug janitor"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Displays a detailed readout of the player's internal cache.'>/eco debug inspect <yellow><username>"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Runs a concurrent stress test for transaction atomicity.'>/eco debug stress <yellow><username> <#3EE84D>[iterations]"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Runs a concurrent load test to store virtual players and create accounts in the database from the cache.'>/eco debug stress-shutdown <#3EE84D>[iterations]"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Activa o desactiva la simulación de errores de base de datos.'>/eco debug failmode"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Ejecuta una prueba automatizada simulando un error de base de datos y $500.'>/eco debug test-janitor <yellow><username>"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Activa inmediatamente la sincronización automática.'>/eco debug janitor"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Muestra una lectura detallada de la caché interna del jugador.'>/eco debug inspect <yellow><username>"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Ejecuta una prueba de esfuerzo concurrente para la atomicidad de transacciones.'>/eco debug stress <yellow><username> <#3EE84D>[iterations]"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Ejecuta una prueba de carga concurrente para guardar jugadores virtuales y crear cuentas desde la caché.'>/eco debug stress-shutdown <#3EE84D>[iterations]"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E> Cambiar la traduccion de mensajes.'>/eco config lang <#b37dc7>[lang]"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E> Recargar la configuracion.'>/eco config reload"
     - " "

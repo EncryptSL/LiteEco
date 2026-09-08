@@ -12,7 +12,7 @@ class LegacyEconomyVaultAPI(private val liteEco: LiteEco) : LegacyDeprecatedEcon
 
     companion object {
         private const val BANK_NOT_SUPPORTED_MESSAGE = "LiteEco does not support bank accounts!"
-        private const val FAIL_REACHED_BALANCE_LIMIT = "LiteEco you reach limit of balance."
+        private const val FAIL_REACHED_BALANCE_LIMIT = "LiteEco: account limit exceeded."
     }
 
     override fun isEnabled(): Boolean = liteEco.isEnabled
@@ -25,13 +25,9 @@ class LegacyEconomyVaultAPI(private val liteEco: LiteEco) : LegacyDeprecatedEcon
 
     override fun format(amount: Double): String = liteEco.currencyImpl.fullFormatting(amount.toBigDecimal())
 
-    override fun currencyNamePlural(): String? {
-        return null
-    }
+    override fun currencyNamePlural(): String? = null
 
-    override fun currencyNameSingular(): String? {
-        return null
-    }
+    override fun currencyNameSingular(): String? = null
 
     override fun hasAccount(player: OfflinePlayer): Boolean {
         return liteEco.api.account().hasAccount(player.uniqueId)
@@ -59,7 +55,9 @@ class LegacyEconomyVaultAPI(private val liteEco: LiteEco) : LegacyDeprecatedEcon
     }
 
     override fun has(player: OfflinePlayer?, amount: Double): Boolean {
-        return if(player != null) liteEco.api.account().has(player.uniqueId, liteEco.currencyImpl.defaultCurrency(), amount.toBigDecimal()) else false
+        if (player == null || amount < 0) return false
+        val defaultCurrency = liteEco.currencyImpl.defaultCurrency()
+        return liteEco.api.account().has(player.uniqueId, defaultCurrency, amount.toBigDecimal())
     }
 
     override fun has(player: OfflinePlayer?, worldName: String?, amount: Double): Boolean {
@@ -67,19 +65,29 @@ class LegacyEconomyVaultAPI(private val liteEco: LiteEco) : LegacyDeprecatedEcon
     }
 
     override fun withdrawPlayer(player: OfflinePlayer?, amount: Double): EconomyResponse {
-        liteEco.debugger.debug(LegacyEconomyVaultAPI::class.java, "try withdraw from ${player?.name} amount $amount")
-        if (player == null || amount.toBigDecimal().isApproachingZero()) {
-            return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.FAILURE, null)
+        if (player == null || amount <= 0.0) {
+            val currentBalance = if (player != null) getBalance(player) else 0.0
+            return EconomyResponse(0.0, currentBalance, EconomyResponse.ResponseType.FAILURE, "Invalid amount or player")
         }
 
-        return if (has(player, amount)) {
-            liteEco.debugger.debug(LegacyEconomyVaultAPI::class.java, "successfully withdraw ${player.name} from his balance ${getBalance(player)} amount $amount")
+        val currency = liteEco.currencyImpl.defaultCurrency()
+        val amountBd = amount.toBigDecimal()
+
+        return try {
             runBlocking {
-                liteEco.api.account().withdraw(player.uniqueId, liteEco.currencyImpl.defaultCurrency(), amount.toBigDecimal())
+                if (!liteEco.api.account().has(player.uniqueId, currency, amountBd)) {
+                    val currentBalance = liteEco.api.account().getBalance(player.uniqueId, currency).toDouble()
+                    return@runBlocking EconomyResponse(0.0, currentBalance, EconomyResponse.ResponseType.FAILURE, "Insufficient funds")
+                }
+
+                liteEco.api.account().withdraw(player.uniqueId, currency, amountBd)
+                val newBalance = liteEco.api.account().getBalance(player.uniqueId, currency).toDouble()
+
+                EconomyResponse(amount, newBalance, EconomyResponse.ResponseType.SUCCESS, null)
             }
-            EconomyResponse(amount, getBalance(player), EconomyResponse.ResponseType.SUCCESS, null)
-        } else {
-            EconomyResponse(0.0, getBalance(player), EconomyResponse.ResponseType.FAILURE, null)
+        } catch (e: Exception) {
+            liteEco.debugger.debug(LegacyEconomyVaultAPI::class.java, "Error withdrawing from ${player.name}: ${e.message}")
+            EconomyResponse(0.0, getBalance(player), EconomyResponse.ResponseType.FAILURE, e.message)
         }
     }
 
@@ -88,24 +96,36 @@ class LegacyEconomyVaultAPI(private val liteEco: LiteEco) : LegacyDeprecatedEcon
     }
 
     override fun depositPlayer(player: OfflinePlayer?, amount: Double): EconomyResponse {
-        liteEco.debugger.debug(LegacyEconomyVaultAPI::class.java, "try deposit to ${player?.name} amount $amount")
-        if (player == null || !hasAccount(player) || amount.toBigDecimal().isApproachingZero() || liteEco.currencyImpl.getCheckBalanceLimit(getBalance(player).toBigDecimal(), amount = amount.toBigDecimal())) {
-            return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.FAILURE, null)
+        if (player == null || amount <= 0.0) {
+            val currentBalance = if (player != null) getBalance(player) else 0.0
+            return EconomyResponse(0.0, currentBalance, EconomyResponse.ResponseType.FAILURE, "Invalid amount or player")
         }
 
-        liteEco.debugger.debug(LegacyEconomyVaultAPI::class.java, "successfully deposit ${player.name} to his balance ${getBalance(player)} amount $amount")
+        val currency = liteEco.currencyImpl.defaultCurrency()
+        val amountBd = amount.toBigDecimal()
 
-        val currencyName = liteEco.currencyImpl.defaultCurrency()
-        val currentBalance = this.getBalance(player, currencyName).toBigDecimal()
+        return try {
+            runBlocking {
+                val currentBalanceBd = liteEco.api.account().getBalance(player.uniqueId, currency)
 
-        if (liteEco.currencyImpl.getCheckBalanceLimit(currentBalance, currencyName, amount.toBigDecimal())) {
-            return EconomyResponse(amount, getBalance(player), EconomyResponse.ResponseType.FAILURE, FAIL_REACHED_BALANCE_LIMIT)
+                if (liteEco.currencyImpl.getCheckBalanceLimit(currentBalanceBd, currency, amountBd)) {
+                    return@runBlocking EconomyResponse(
+                        0.0,
+                        currentBalanceBd.toDouble(),
+                        EconomyResponse.ResponseType.FAILURE,
+                        FAIL_REACHED_BALANCE_LIMIT
+                    )
+                }
+
+                liteEco.api.account().deposit(player.uniqueId, currency, amountBd)
+                val newBalance = liteEco.api.account().getBalance(player.uniqueId, currency).toDouble()
+
+                EconomyResponse(amount, newBalance, EconomyResponse.ResponseType.SUCCESS, null)
+            }
+        } catch (e: Exception) {
+            liteEco.debugger.debug(LegacyEconomyVaultAPI::class.java, "Error depositing to ${player.name}: ${e.message}")
+            EconomyResponse(0.0, getBalance(player), EconomyResponse.ResponseType.FAILURE, e.message)
         }
-
-        runBlocking {
-            liteEco.api.account().deposit(player.uniqueId, liteEco.currencyImpl.defaultCurrency(), amount.toBigDecimal())
-        }
-        return EconomyResponse(amount, getBalance(player), EconomyResponse.ResponseType.SUCCESS, null)
     }
 
     override fun depositPlayer(player: OfflinePlayer?, worldName: String?, amount: Double): EconomyResponse {
@@ -113,13 +133,21 @@ class LegacyEconomyVaultAPI(private val liteEco: LiteEco) : LegacyDeprecatedEcon
     }
 
     override fun createPlayerAccount(player: OfflinePlayer?): Boolean {
-        return runBlocking {
-            liteEco.api.createOrUpdateAccount(
-                player!!.uniqueId,
-                player.name.toString(),
-                liteEco.currencyImpl.defaultCurrency(),
-                liteEco.currencyImpl.defaultStartBalance()
-            )
+        if (player == null) return false
+        val playerName = player.name ?: "Unknown"
+
+        return try {
+            runBlocking {
+                liteEco.api.createOrUpdateAccount(
+                    player.uniqueId,
+                    playerName,
+                    liteEco.currencyImpl.defaultCurrency(),
+                    liteEco.currencyImpl.defaultStartBalance()
+                )
+            }
+        } catch (e: Exception) {
+            liteEco.debugger.debug(LegacyEconomyVaultAPI::class.java, "Error creating account for ${player.name}: ${e.message}")
+            false
         }
     }
 

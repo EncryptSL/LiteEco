@@ -178,46 +178,50 @@ class DatabaseEcoModel : PlayerSQL {
         }
     }
 
-    override fun purgeAccounts(currency: String) {
-        loggedTransaction {
+    override fun purgeAccounts(currency: String): Int {
+        return loggedTransaction {
             try {
                 Account(currency).deleteAll()
-            } catch (e : ExposedSQLException) {
+            } catch (e: ExposedSQLException) {
                 LiteEco.instance.componentLogger.error(e.message ?: e.localizedMessage)
+                0
             }
         }
     }
 
-    override fun purgeTestAccounts() {
-        loggedTransaction {
+    override fun purgeTestAccounts(): Int {
+        return loggedTransaction {
             try {
                 Account(LiteEco.instance.currencyImpl.defaultCurrency()).deleteWhere {
                     username like "TestPlayer_%"
                 }
-            } catch (e : ExposedSQLException) {
+            } catch (e: ExposedSQLException) {
                 LiteEco.instance.componentLogger.error(e.message ?: e.localizedMessage)
+                0
             }
         }
     }
 
-    override fun purgeDefaultAccounts(defaultMoney: BigDecimal, currency: String) {
-        loggedTransaction {
+    override fun purgeDefaultAccounts(defaultMoney: BigDecimal, currency: String): Int {
+        return loggedTransaction {
             try {
                 Account(currency).deleteWhere { money eq defaultMoney }
-            } catch (e : ExposedSQLException) {
+            } catch (e: ExposedSQLException) {
                 LiteEco.instance.componentLogger.error(e.message ?: e.localizedMessage)
+                0
             }
         }
     }
 
-    override fun purgeInvalidAccounts(currency: String) {
-        loggedTransaction {
+    override fun purgeInvalidAccounts(currency: String): Int {
+        return loggedTransaction {
             try {
                 Account(currency).deleteWhere {
                     uuid notInList Bukkit.getOfflinePlayers().map { it.uniqueId.toKotlinUuid() }
                 }
-            } catch (e : ExposedSQLException) {
+            } catch (e: ExposedSQLException) {
                 LiteEco.instance.componentLogger.error(e.message ?: e.localizedMessage)
+                0
             }
         }
     }

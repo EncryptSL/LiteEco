@@ -49,19 +49,19 @@ class SuspendLiteEcoEconomyWrapper : ModernLiteEcoEconomyImpl() {
         }
     }
 
-    override suspend fun purgeAccounts(currency: String) = io {
+    override suspend fun purgeAccounts(currency: String): Int = io {
         LiteEco.instance.databaseEcoModel.purgeAccounts(currency)
     }
 
-    override suspend fun purgeTestAccounts() {
+    override suspend fun purgeTestAccounts(): Int = io {
         LiteEco.instance.databaseEcoModel.purgeTestAccounts()
     }
 
-    override suspend fun purgeInvalidAccounts(currency: String) = io {
+    override suspend fun purgeInvalidAccounts(currency: String): Int = io {
         LiteEco.instance.databaseEcoModel.purgeInvalidAccounts(currency)
     }
 
-    override suspend fun purgeDefaultAccounts(currency: String, defaultValue: BigDecimal) = io {
+    override suspend fun purgeDefaultAccounts(currency: String, defaultValue: BigDecimal): Int = io {
         LiteEco.instance.databaseEcoModel.purgeDefaultAccounts(defaultValue, currency)
     }
 

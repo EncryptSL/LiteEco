@@ -7,6 +7,20 @@ import java.util.*
 interface IAccountHolder {
 
     /**
+     * Atomically updates the balance of a player account using a transformation function.
+     *
+     * @param uuid UUID of the player
+     * @param currency currency of the account (default "dollars")
+     * @param transform functional block to calculate the new balance based on current balance
+     * @return the newly calculated balance
+     */
+    suspend fun updateBalance(
+        uuid: UUID,
+        currency: String = "dollars",
+        transform: (BigDecimal) -> BigDecimal
+    ): BigDecimal
+
+    /**
      * Retrieves a user by UUID and currency.
      *
      * @param uuid UUID of the player

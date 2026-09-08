@@ -11,100 +11,71 @@ import java.util.*
 
 class AccountHolder : IAccountHolder {
 
-    override suspend fun getUserByUUID(uuid: UUID, currency: String): UserEntity? = io {
-        try {
-            if (AccountCache.isAccountCached(uuid, currency)) {
-                val onlinePlayer = Bukkit.getPlayer(uuid)
-                val name = onlinePlayer?.name ?: "Unknown"
-
-                UserEntity(name, uuid, AccountCache.getBalance(uuid, currency))
-            } else {
-                LiteEco.instance.databaseEcoModel.getUserByUUID(uuid, currency)
-            }
-        } catch (e: Exception) {
-            LiteEco.instance.logger.error("Error in getUserByUUID for $uuid: ${e.message}")
-            null
-        }
-    }
-
-    override fun hasAccount(uuid: UUID, currency: String): Boolean =
-        LiteEco.instance.databaseEcoModel.getExistPlayerAccount(uuid, currency)
-
-    override fun has(uuid: UUID, currency: String, requiredAmount: BigDecimal): Boolean {
-        if (AccountCache.isAccountCached(uuid, currency)) {
-            return requiredAmount <= AccountCache.getBalance(uuid, currency)
-        }
-
-        val offlineBalance = LiteEco.instance.databaseEcoModel.getBalance(uuid, currency)
-        return requiredAmount <= offlineBalance
-    }
-
-    override suspend fun delete(uuid: UUID, currency: String): Boolean {
+    override suspend fun updateBalance(
+        uuid: UUID,
+        currency: String,
+        transform: (BigDecimal) -> BigDecimal
+    ): BigDecimal {
         return AccountCache.withLock(uuid) {
-            val user = getUserByUUID(uuid, currency)
-
-            user?.let {
-                AccountCache.clear(uuid)
-                io { LiteEco.instance.databaseEcoModel.deletePlayerAccount(uuid, currency) }
-                true
-            } ?: false
+            if (AccountCache.isAccountCached(uuid, currency)) {
+                AccountCache.updateBalance(uuid, currency, transform)
+            } else {
+                val current = getBalance(uuid, currency)
+                val newBalance = transform(current)
+                io { LiteEco.instance.databaseEcoModel.set(uuid, currency, newBalance) }
+                newBalance
+            }
         }
     }
 
     override suspend fun withdraw(uuid: UUID, currency: String, amount: BigDecimal) {
-        AccountCache.withLock(uuid) {
-            withdrawUnsafe(uuid, currency, amount)
-        }
+        if (amount <= BigDecimal.ZERO) return
+        updateBalance(uuid, currency) { current -> current.minus(amount) }
     }
 
     override suspend fun deposit(uuid: UUID, currency: String, amount: BigDecimal) {
-        AccountCache.withLock(uuid) {
-            depositUnsafe(uuid, currency, amount)
-        }
+        if (amount <= BigDecimal.ZERO) return
+        updateBalance(uuid, currency) { current -> current.plus(amount) }
     }
 
     override suspend fun set(uuid: UUID, currency: String, amount: BigDecimal) {
         AccountCache.withLock(uuid) {
             if (AccountCache.isAccountCached(uuid, currency)) {
-                cacheAccount(uuid, currency, amount)
+                AccountCache.cache(uuid, null, currency, amount)
             } else {
                 io { LiteEco.instance.databaseEcoModel.set(uuid, currency, amount) }
             }
         }
     }
 
-    override suspend fun sync(uuid: UUID, shouldUnload: Boolean): Boolean {
-        // Direct delegation to AccountCache.sync to avoid recursive Mutex locking deadlock
-        return AccountCache.sync(uuid, shouldUnload)
-    }
+    override suspend fun transfer(
+        sender: UUID,
+        target: UUID,
+        currency: String,
+        amount: BigDecimal
+    ): Boolean {
+        if (amount <= BigDecimal.ZERO || sender == target) return false
 
-    override suspend fun transfer(sender: UUID, target: UUID, currency: String, amount: BigDecimal): Boolean {
-        if (amount.signum() <= 0 || sender == target) return false
+        val firstLock = if (sender < target) sender else target
+        val secondLock = if (sender < target) target else sender
 
-        // Correct UUID comparison order to avoid deadlocks
-        val (firstUuid, secondUuid) = if (sender.compareTo(target) < 0) {
-            sender to target
-        } else {
-            target to sender
-        }
-
-        val lock1 = AccountCache.getLock(firstUuid)
-        val lock2 = AccountCache.getLock(secondUuid)
-
-        return lock1.withLock {
-            lock2.withLock {
+        return AccountCache.withLock(firstLock) {
+            AccountCache.withLock(secondLock) {
                 val senderBalance = getBalance(sender, currency)
-                if (senderBalance < amount) {
-                    return@withLock false
+                if (senderBalance < amount) return@withLock false
+
+                if (AccountCache.isAccountCached(sender, currency)) {
+                    AccountCache.updateBalance(sender, currency) { current -> current.minus(amount) }
+                } else {
+                    io { LiteEco.instance.databaseEcoModel.withdraw(sender, currency, amount) }
                 }
 
-                val targetBalance = getBalance(target, currency)
-                if (LiteEco.instance.currencyImpl.getCheckBalanceLimit(targetBalance, currency, amount)) {
-                    return@withLock false
+                if (AccountCache.isAccountCached(target, currency)) {
+                    AccountCache.updateBalance(target, currency) { current -> current.plus(amount) }
+                } else {
+                    io { LiteEco.instance.databaseEcoModel.deposit(target, currency, amount) }
                 }
 
-                withdrawUnsafe(sender, currency, amount)
-                depositUnsafe(target, currency, amount)
                 true
             }
         }
@@ -114,38 +85,47 @@ class AccountHolder : IAccountHolder {
         if (AccountCache.isAccountCached(uuid, currency)) {
             return AccountCache.getBalance(uuid, currency)
         }
-        val user = getUserByUUID(uuid, currency)
-        return user?.money ?: BigDecimal.ZERO
+
+        val userEntity = io { LiteEco.instance.databaseEcoModel.getUserByUUID(uuid, currency) }
+        val balance = userEntity?.money ?: BigDecimal.ZERO
+
+        return balance
+    }
+
+    override suspend fun getUserByUUID(uuid: UUID, currency: String): UserEntity? {
+        if (AccountCache.isAccountCached(uuid, currency)) {
+            val balance = AccountCache.getBalance(uuid, currency)
+            val account = AccountCache.cache[uuid]
+            return UserEntity(account?.username ?: "Unknown", uuid, balance)
+        }
+        return io { LiteEco.instance.databaseEcoModel.getUserByUUID(uuid, currency) }
+    }
+
+    override suspend fun delete(uuid: UUID, currency: String): Boolean {
+        return AccountCache.withLock(uuid) {
+            val exists = hasAccount(uuid, currency)
+            AccountCache.clear(uuid)
+
+            io { LiteEco.instance.databaseEcoModel.deletePlayerAccount(uuid, currency) }
+
+            exists
+        }
+    }
+
+    override suspend fun sync(uuid: UUID, shouldUnload: Boolean): Boolean {
+        return AccountCache.sync(uuid, shouldUnload)
     }
 
     override fun syncAccounts() {
-        try {
-            AccountCache.syncAccounts()
-        } catch (e: Exception) {
-            LiteEco.instance.logger.error(e.message ?: e.localizedMessage)
-        }
+        AccountCache.syncAccounts()
     }
 
-    private fun cacheAccount(uuid: UUID, currency: String, amount: BigDecimal) {
-        val username = Bukkit.getPlayer(uuid)?.name
-        AccountCache.cache(uuid, username, currency, amount)
+    override fun hasAccount(uuid: UUID, currency: String): Boolean {
+        return AccountCache.isAccountCached(uuid, currency)
     }
 
-    private suspend fun withdrawUnsafe(uuid: UUID, currency: String, amount: BigDecimal) {
-        if (AccountCache.isAccountCached(uuid, currency)) {
-            val current = AccountCache.getBalance(uuid, currency)
-            cacheAccount(uuid, currency, current.minus(amount))
-        } else {
-            io { LiteEco.instance.databaseEcoModel.withdraw(uuid, currency, amount) }
-        }
-    }
-
-    private suspend fun depositUnsafe(uuid: UUID, currency: String, amount: BigDecimal) {
-        if (AccountCache.isAccountCached(uuid, currency)) {
-            val current = AccountCache.getBalance(uuid, currency)
-            cacheAccount(uuid, currency, current.plus(amount))
-        } else {
-            io { LiteEco.instance.databaseEcoModel.deposit(uuid, currency, amount) }
-        }
+    override fun has(uuid: UUID, currency: String, requiredAmount: BigDecimal): Boolean {
+        val currentBalance = AccountCache.getBalance(uuid, currency)
+        return currentBalance >= requiredAmount
     }
 }

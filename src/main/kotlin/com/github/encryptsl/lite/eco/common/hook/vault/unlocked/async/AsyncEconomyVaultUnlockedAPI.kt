@@ -35,18 +35,18 @@ class AsyncEconomyVaultUnlockedAPI(
 
     private fun BigDecimal.isApproachingZero(): Boolean = this.signum() <= 0
 
-    override fun createAccount(accountID: UUID, name: String, player: Boolean): CompletableFuture<Boolean?> = liteEco.pluginScope.future {
+    override fun createAccount(accountID: UUID, name: String, player: Boolean): CompletableFuture<Boolean> = liteEco.pluginScope.future {
         if (!player) return@future false
         val offlinePlayer = Bukkit.getOfflinePlayer(accountID)
         liteEco.api.createOrUpdateAccount(
-            offlinePlayer.uniqueId,
+            accountID,
             offlinePlayer.name ?: name,
             liteEco.currencyImpl.defaultCurrency(),
             liteEco.currencyImpl.defaultStartBalance()
         )
     }
 
-    override fun createAccount(accountID: UUID, name: String, worldName: String, player: Boolean): CompletableFuture<Boolean?> {
+    override fun createAccount(accountID: UUID, name: String, worldName: String, player: Boolean): CompletableFuture<Boolean> {
         return createAccount(accountID, name, player)
     }
 
@@ -56,72 +56,71 @@ class AsyncEconomyVaultUnlockedAPI(
 
     override fun getAccountName(accountID: UUID): CompletableFuture<Optional<String>> = liteEco.pluginScope.future {
         val user = liteEco.api.account().getUserByUUID(accountID, liteEco.currencyImpl.defaultCurrency())
-        if (user != null) Optional.of(user.userName) else Optional.empty()
+        Optional.ofNullable(user?.userName)
     }
 
-    override fun hasAccount(accountID: UUID): CompletableFuture<Boolean?> = liteEco.pluginScope.future {
+    override fun hasAccount(accountID: UUID): CompletableFuture<Boolean> = liteEco.pluginScope.future {
         val user = liteEco.api.account().getUserByUUID(accountID, liteEco.currencyImpl.defaultCurrency())
         user != null
     }
 
-    override fun hasAccount(accountID: UUID, worldName: String): CompletableFuture<Boolean?> {
+    override fun hasAccount(accountID: UUID, worldName: String): CompletableFuture<Boolean> {
         return hasAccount(accountID)
     }
 
-    override fun renameAccount(pluginName: String, accountID: UUID, name: String): CompletableFuture<Boolean?> {
+    override fun renameAccount(pluginName: String, accountID: UUID, name: String): CompletableFuture<Boolean> {
         return CompletableFuture.completedFuture(false)
     }
 
-    override fun deleteAccount(pluginName: String, accountID: UUID): CompletableFuture<Boolean?> {
+    override fun deleteAccount(pluginName: String, accountID: UUID): CompletableFuture<Boolean> {
         return CompletableFuture.completedFuture(false)
     }
 
-    override fun accountSupportsCurrency(pluginName: String, accountID: UUID, currency: String): CompletableFuture<Boolean?> = liteEco.pluginScope.future {
+    override fun accountSupportsCurrency(pluginName: String, accountID: UUID, currency: String): CompletableFuture<Boolean> = liteEco.pluginScope.future {
         try {
-            liteEco.api.account().getUserByUUID(accountID, currency)
-            true
+            liteEco.api.account().getUserByUUID(accountID, currency) != null
         } catch (_: Exception) {
             false
         }
     }
 
-    override fun accountSupportsCurrency(pluginName: String, accountID: UUID, currency: String, world: String): CompletableFuture<Boolean?> {
+    override fun accountSupportsCurrency(pluginName: String, accountID: UUID, currency: String, world: String): CompletableFuture<Boolean> {
         return accountSupportsCurrency(pluginName, accountID, currency)
     }
 
-    override fun balance(pluginName: String, accountID: UUID): CompletableFuture<BigDecimal?> = liteEco.pluginScope.future {
+    override fun balance(pluginName: String, accountID: UUID): CompletableFuture<BigDecimal> = liteEco.pluginScope.future {
         liteEco.api.account().getBalance(accountID, liteEco.currencyImpl.defaultCurrency())
     }
 
-    override fun balance(pluginName: String, accountID: UUID, world: String): CompletableFuture<BigDecimal?> {
+    override fun balance(pluginName: String, accountID: UUID, world: String): CompletableFuture<BigDecimal> {
         return balance(pluginName, accountID)
     }
 
-    override fun balance(pluginName: String, accountID: UUID, world: String, currency: String): CompletableFuture<BigDecimal?> = liteEco.pluginScope.future {
+    override fun balance(pluginName: String, accountID: UUID, world: String, currency: String): CompletableFuture<BigDecimal> = liteEco.pluginScope.future {
         liteEco.api.account().getBalance(accountID, currency)
     }
 
-    override fun has(pluginName: String, accountID: UUID, amount: BigDecimal): CompletableFuture<Boolean?> = liteEco.pluginScope.future {
+    override fun has(pluginName: String, accountID: UUID, amount: BigDecimal): CompletableFuture<Boolean> = liteEco.pluginScope.future {
         liteEco.api.account().has(accountID, liteEco.currencyImpl.defaultCurrency(), amount)
     }
 
-    override fun has(pluginName: String, accountID: UUID, world: String, amount: BigDecimal): CompletableFuture<Boolean?> {
+    override fun has(pluginName: String, accountID: UUID, world: String, amount: BigDecimal): CompletableFuture<Boolean> {
         return has(pluginName, accountID, amount)
     }
 
-    override fun has(pluginName: String, accountID: UUID, world: String, currency: String, amount: BigDecimal): CompletableFuture<Boolean?> = liteEco.pluginScope.future {
+    override fun has(pluginName: String, accountID: UUID, world: String, currency: String, amount: BigDecimal): CompletableFuture<Boolean> = liteEco.pluginScope.future {
         liteEco.api.account().has(accountID, currency, amount)
     }
 
-    override fun set(pluginName: String, accountID: UUID, amount: BigDecimal): CompletableFuture<EconomyResponse?> {
+    override fun set(pluginName: String, accountID: UUID, amount: BigDecimal): CompletableFuture<EconomyResponse> {
         return set(pluginName, accountID, "default", liteEco.currencyImpl.defaultCurrency(), amount)
     }
 
-    override fun set(pluginName: String, accountID: UUID, world: String, amount: BigDecimal): CompletableFuture<EconomyResponse?> {
+    override fun set(pluginName: String, accountID: UUID, world: String, amount: BigDecimal): CompletableFuture<EconomyResponse> {
         return set(pluginName, accountID, world, liteEco.currencyImpl.defaultCurrency(), amount)
     }
 
-    override fun set(pluginName: String, accountID: UUID, world: String, currency: String, amount: BigDecimal): CompletableFuture<EconomyResponse?> = liteEco.pluginScope.future {
+    override fun set(pluginName: String, accountID: UUID, world: String, currency: String, amount: BigDecimal): CompletableFuture<EconomyResponse> = liteEco.pluginScope.future {
         liteEco.debugger.debug(AsyncEconomyVaultUnlockedAPI::class.java, "$pluginName try async set $accountID amount $amount ($currency)")
 
         val balanceBefore = liteEco.api.account().getBalance(accountID, currency)
@@ -132,7 +131,7 @@ class AsyncEconomyVaultUnlockedAPI(
         try {
             val user = liteEco.api.account().getUserByUUID(accountID, currency)
             if (user != null) {
-                if (liteEco.currencyImpl.getCheckBalanceLimit(balanceBefore, currency, amount)) {
+                if (liteEco.currencyImpl.getCheckBalanceLimit(amount, currency)) {
                     return@future EconomyResponse(amount, balanceBefore, EconomyResponse.ResponseType.FAILURE, FAIL_REACHED_BALANCE_LIMIT)
                 }
 
@@ -159,15 +158,15 @@ class AsyncEconomyVaultUnlockedAPI(
         }
     }
 
-    override fun canWithdraw(pluginName: String, accountID: UUID, amount: BigDecimal): CompletableFuture<EconomyResponse?> {
+    override fun canWithdraw(pluginName: String, accountID: UUID, amount: BigDecimal): CompletableFuture<EconomyResponse> {
         return canWithdraw(pluginName, accountID, "default", liteEco.currencyImpl.defaultCurrency(), amount)
     }
 
-    override fun canWithdraw(pluginName: String, accountID: UUID, world: String, amount: BigDecimal): CompletableFuture<EconomyResponse?> {
+    override fun canWithdraw(pluginName: String, accountID: UUID, world: String, amount: BigDecimal): CompletableFuture<EconomyResponse> {
         return canWithdraw(pluginName, accountID, world, liteEco.currencyImpl.defaultCurrency(), amount)
     }
 
-    override fun canWithdraw(pluginName: String, accountID: UUID, world: String, currency: String, amount: BigDecimal): CompletableFuture<EconomyResponse?> = liteEco.pluginScope.future {
+    override fun canWithdraw(pluginName: String, accountID: UUID, world: String, currency: String, amount: BigDecimal): CompletableFuture<EconomyResponse> = liteEco.pluginScope.future {
         val currentBalance = liteEco.api.account().getBalance(accountID, currency)
         if (amount.isApproachingZero()) {
             return@future EconomyResponse(amount, currentBalance, EconomyResponse.ResponseType.FAILURE, AMOUNT_APPROACHING_ZERO)
@@ -179,15 +178,15 @@ class AsyncEconomyVaultUnlockedAPI(
         }
     }
 
-    override fun withdraw(pluginName: String, accountID: UUID, amount: BigDecimal): CompletableFuture<EconomyResponse?> {
+    override fun withdraw(pluginName: String, accountID: UUID, amount: BigDecimal): CompletableFuture<EconomyResponse> {
         return withdraw(pluginName, accountID, "default", liteEco.currencyImpl.defaultCurrency(), amount)
     }
 
-    override fun withdraw(pluginName: String, accountID: UUID, world: String, amount: BigDecimal): CompletableFuture<EconomyResponse?> {
+    override fun withdraw(pluginName: String, accountID: UUID, world: String, amount: BigDecimal): CompletableFuture<EconomyResponse> {
         return withdraw(pluginName, accountID, world, liteEco.currencyImpl.defaultCurrency(), amount)
     }
 
-    override fun withdraw(pluginName: String, accountID: UUID, world: String, currency: String, amount: BigDecimal): CompletableFuture<EconomyResponse?> = liteEco.pluginScope.future {
+    override fun withdraw(pluginName: String, accountID: UUID, world: String, currency: String, amount: BigDecimal): CompletableFuture<EconomyResponse> = liteEco.pluginScope.future {
         liteEco.debugger.debug(AsyncEconomyVaultUnlockedAPI::class.java, "$pluginName try async withdraw from $accountID amount $amount ($currency)")
 
         val currentBalance = liteEco.api.account().getBalance(accountID, currency)
@@ -197,7 +196,9 @@ class AsyncEconomyVaultUnlockedAPI(
 
         try {
             if (liteEco.api.account().has(accountID, currency, amount)) {
-                val username = Bukkit.getOfflinePlayer(accountID).name ?: "Unknown"
+                val user = liteEco.api.account().getUserByUUID(accountID, currency)
+                val username = user?.userName ?: Bukkit.getOfflinePlayer(accountID).name ?: "Unknown"
+
                 liteEco.api.account().withdraw(accountID, currency, amount)
 
                 val balanceAfter = currentBalance.subtract(amount)
@@ -214,15 +215,15 @@ class AsyncEconomyVaultUnlockedAPI(
         }
     }
 
-    override fun canDeposit(pluginName: String, accountID: UUID, amount: BigDecimal): CompletableFuture<EconomyResponse?> {
+    override fun canDeposit(pluginName: String, accountID: UUID, amount: BigDecimal): CompletableFuture<EconomyResponse> {
         return canDeposit(pluginName, accountID, "default", liteEco.currencyImpl.defaultCurrency(), amount)
     }
 
-    override fun canDeposit(pluginName: String, accountID: UUID, world: String, amount: BigDecimal): CompletableFuture<EconomyResponse?> {
+    override fun canDeposit(pluginName: String, accountID: UUID, world: String, amount: BigDecimal): CompletableFuture<EconomyResponse> {
         return canDeposit(pluginName, accountID, world, liteEco.currencyImpl.defaultCurrency(), amount)
     }
 
-    override fun canDeposit(pluginName: String, accountID: UUID, world: String, currency: String, amount: BigDecimal): CompletableFuture<EconomyResponse?> = liteEco.pluginScope.future {
+    override fun canDeposit(pluginName: String, accountID: UUID, world: String, currency: String, amount: BigDecimal): CompletableFuture<EconomyResponse> = liteEco.pluginScope.future {
         val currentBalance = liteEco.api.account().getBalance(accountID, currency)
         if (amount.isApproachingZero()) {
             return@future EconomyResponse(amount, currentBalance, EconomyResponse.ResponseType.FAILURE, AMOUNT_APPROACHING_ZERO)
@@ -287,17 +288,16 @@ class AsyncEconomyVaultUnlockedAPI(
         }
 
         try {
-            val hasAccountTo = liteEco.api.account().getUserByUUID(to, currency) != null
-            if (!hasAccountTo) {
+            if (liteEco.api.account().getUserByUUID(to, currency) == null) {
                 return@future MultiEconomyResponse(amount, EconomyResponse.ResponseType.FAILURE, FAIL_TRANSFER_TARGET_NOT_FOUND)
             }
 
             val withdrawRes = withdraw(pluginName, from, worldName, currency, amount).await()
 
-            if (withdrawRes?.transactionSuccess() == true) {
+            if (withdrawRes.transactionSuccess()) {
                 val depositRes = deposit(pluginName, to, worldName, currency, amount).await()
 
-                if (depositRes?.transactionSuccess() == true) {
+                if (depositRes.transactionSuccess()) {
                     MultiEconomyResponse(amount, withdrawRes.type, SUCCESS_TRANSFER)
                 } else {
                     try {

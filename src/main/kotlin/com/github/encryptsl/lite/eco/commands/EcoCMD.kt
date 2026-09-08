@@ -9,6 +9,7 @@ import com.github.encryptsl.lite.eco.commands.admin.subcommands.EcoConfigCmd
 import com.github.encryptsl.lite.eco.commands.admin.subcommands.EcoDatabaseCmd
 import com.github.encryptsl.lite.eco.commands.admin.subcommands.EcoDebugCmd
 import com.github.encryptsl.lite.eco.commands.admin.subcommands.EcoMonologCmd
+import com.github.encryptsl.lite.eco.commands.internal.ConfirmationPostprocessor
 import com.github.encryptsl.lite.eco.commands.internal.InternalCmd
 import com.github.encryptsl.lite.eco.common.manager.ExportManager
 import com.github.encryptsl.lite.eco.common.manager.ImportManager
@@ -24,7 +25,8 @@ import org.incendo.cloud.paper.PaperCommandManager
 import org.incendo.cloud.paper.util.sender.Source
 
 class EcoCMD(
-    private val liteEco: LiteEco
+    private val liteEco: LiteEco,
+    private val confirmationManager: ConfirmationPostprocessor<Source>
 ) : InternalCmd {
 
     companion object {
@@ -61,8 +63,8 @@ class EcoCMD(
                 EcoAddCmd(liteEco, economyDeposit, globalEconomyDeposit),
                 EcoSetCmd(liteEco, economySet, globalEconomySet),
                 EcoWithdrawCmd(liteEco, economyWithdraw, globalEconomyWithdraw),
-                EcoAccountManagementCmd(liteEco),
-                EcoDatabaseCmd(liteEco, importEconomy, purgeManager, exportManager, importManager),
+                EcoAccountManagementCmd(liteEco, confirmationManager),
+                EcoDatabaseCmd(liteEco, importEconomy, purgeManager, exportManager, importManager, confirmationManager),
                 EcoConfigCmd(liteEco),
                 EcoDebugCmd(helper),
                 EcoMonologCmd(monologManager)

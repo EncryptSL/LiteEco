@@ -68,6 +68,8 @@ dependencies {
     }
     implementation(libs.bundles.ktor)
 
+    implementation(libs.caffeine)
+
     // Internal implementations
     implementation(libs.bstats)
     implementation(libs.miniplaceholders)
@@ -113,7 +115,14 @@ tasks {
     shadowJar {
         archiveFileName.set("$pluginName-$pluginVersion.jar")
 
-        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+        duplicatesStrategy = DuplicatesStrategy.WARN
+
+        exclude("META-INF/LICENSE*")
+        exclude("META-INF/NOTICE*")
+        exclude("META-INF/*.SF")
+        exclude("META-INF/*.DSA")
+        exclude("META-INF/*.RSA")
+        exclude("META-INF/DEPENDENCIES")
 
         relocate("org.bstats", "com.github.encryptsl.metrics")
 
@@ -133,12 +142,11 @@ tasks {
             exclude(dependency("de.exlll:.*:.*"))
             exclude(dependency("com.tchristofferson:.*:.*"))
             exclude(dependency("org.apache.commons:.*:.*"))
+            exclude(dependency("com.github.ben-manes.caffeine:caffeine"))
         }
 
         mergeServiceFiles()
-        append("META-INF/*.kotlin_module")
     }
-
     test {
         useJUnitPlatform()
     }

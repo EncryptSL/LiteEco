@@ -4,6 +4,7 @@ import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.enums.ExportKeys
 import com.github.encryptsl.lite.eco.api.enums.PurgeKey
 import com.github.encryptsl.lite.eco.commands.internal.CommandFeature
+import com.github.encryptsl.lite.eco.commands.internal.ConfirmationPostprocessor
 import com.github.encryptsl.lite.eco.commands.parsers.CurrencyParser
 import com.github.encryptsl.lite.eco.commands.parsers.ImportEconomyParser
 import com.github.encryptsl.lite.eco.common.manager.ExportManager
@@ -24,7 +25,8 @@ class EcoDatabaseCmd(
     private val importEconomy: ImportEconomy,
     private val purgeManager: PurgeManager,
     private val exportManager: ExportManager,
-    private val importManager: ImportManager
+    private val importManager: ImportManager,
+    private val confirmationManager: ConfirmationPostprocessor<Source>
 ) : CommandFeature {
 
     private val importEconomyParser by lazy { ImportEconomyParser(importEconomy) }
@@ -40,6 +42,7 @@ class EcoDatabaseCmd(
             dbBase.literal("purge")
                 .commandDescription(CommandDescription.commandDescription(description))
                 .permission("lite.eco.admin.purge")
+                .apply(confirmationManager::applyToBuilder)
                 .required(
                     commandManager
                         .componentBuilder(PurgeKey::class.java, "argument")
@@ -62,6 +65,7 @@ class EcoDatabaseCmd(
             dbBase.literal("export")
                 .commandDescription(CommandDescription.commandDescription(description))
                 .permission("lite.eco.admin.export")
+                .apply(confirmationManager::applyToBuilder)
                 .required(
                     commandManager
                         .componentBuilder(ExportKeys::class.java, "argument")
@@ -84,6 +88,7 @@ class EcoDatabaseCmd(
             dbBase.literal("import")
                 .commandDescription(CommandDescription.commandDescription(description))
                 .permission("lite.eco.admin.import")
+                .apply(confirmationManager::applyToBuilder)
                 .required(commandManager
                     .componentBuilder(String::class.java, "economy")
                     .parser(importEconomyParser)

@@ -1,6 +1,7 @@
 package com.github.encryptsl.lite.eco.commands
 
 import com.github.encryptsl.lite.eco.LiteEco
+import com.github.encryptsl.lite.eco.commands.internal.ConfirmationPostprocessor
 import com.github.encryptsl.lite.eco.commands.internal.InternalCmd
 import com.github.encryptsl.lite.eco.commands.player.MoneyBalanceCmd
 import com.github.encryptsl.lite.eco.commands.player.MoneyPayCmd
@@ -14,7 +15,8 @@ import org.incendo.cloud.paper.PaperCommandManager
 import org.incendo.cloud.paper.util.sender.Source
 
 class MoneyCMD(
-    private val liteEco: LiteEco
+    private val liteEco: LiteEco,
+    private val confirmationManager: ConfirmationPostprocessor<Source>,
 ) : InternalCmd {
 
     companion object {
@@ -37,7 +39,7 @@ class MoneyCMD(
             val features = listOf(
                 MoneyBalanceCmd(liteEco, helper),
                 MoneyTopCmd(liteEco, helper),
-                MoneyPayCmd(liteEco, economyPay)
+                MoneyPayCmd(liteEco, economyPay, confirmationManager)
             )
 
             features.forEach { it.register(commandManager, commandBuilder) }

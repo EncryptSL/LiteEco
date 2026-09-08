@@ -3,9 +3,9 @@ messages:
   balance:
     format: "<prefix> <white>Stan konta <green><money></green> <gold><currency></gold> [!]"
     format_target: "<prefix> <white>Stan konta <gold><target></gold>, <green><money></green> <currency> [!]"
-    top_format: "<yellow><position># <gold><player></gold> <gray>- <green><money></green> <currency>"
-    top_header: "<gray><st>─━━━━━━─</st> <#64646F>[ <#F9AD47>TOP PIENIĘDZY</#F9AD47> ]</#64646F> <st>─━━━━━━─</st></gray>"
-    top_footer: "<gray><st>─━━━━━━─</st> <#64646F>[ <#F9AD47><pagination></#F9AD47>]</#64646F> <st>─━━━━━━─</st></gray>"
+    top_format: "<yellow><position># <white><player></white> <gray>- <green><money></green>"
+    top_header: "<gray><st>─━━━━━━─</st> <blue>[ <yellow>TOP PIENIĘDZY <blue>] <gray><st>─━━━━━━─</st>"
+    top_footer: "<gray><st>─━━━━━━─</st> <blue>[ <pagination> <blue>] <gray><st>─━━━━━━─</st>"
 
   # Self-transaction messages
   self:
@@ -43,20 +43,21 @@ messages:
   error:
     account_not_exist: "<prefix> <red>Konto <account> nie istnieje [!]"
     account_now_exist: "<prefix> <red>Konto <account> od teraz istnieje [!]"
-    missing_balance_others_permission: "<prefix> <red>You do not have permission to view the account balance of others [!]"
-    missing_currency_permission: "<prefix> <red>You do not have permission to use this currency [!]"
+    missing_balance_others_permission: "<prefix> <red>Nie masz uprawnień, aby przeglądać stan konta innych graczy [!]"
+    missing_currency_permission: "<prefix> <red>Nie masz uprawnień do używania tej waluty [!]"
     insufficient_funds: "<prefix> <red>Niewystarczająca kwota! [!]"
     maximum_page: "<red>Limit stron to <max_page>"
     export_argument: "<prefix> <red><argument> argument jest nieprawidłowy lub niegotowy do użycia."
     export_failed: "<prefix> <red>Wystąpił błąd podczas migracji. Sprawdź konsolę po więcej szczegółów."
-    import_failed: "<prefix> <red>There was an issue during the import or missing data !"
+    import_failed: "<prefix> <red>Wystąpił problem podczas importu lub brakuje danych! [!]"
     purge_argument: "<prefix> <red><argument> argument jest nieprawidłowy lub niegotowy do użycia."
-    purge_monolog_fail: "<prefix> <red>Nie możesz usunąć logów, ponieważ tabela jest pusta [!]"
+    purge_fail: "<prefix> <red>Nie można usunąć, ponieważ tabela jest pusta. [!]"
     player_is_null: "<prefix> <red>Podaj nick gracza [!]"
     self_pay: "<prefix> <red>Nie możesz wysłać pieniędzy samemu sobie [!]"
     amount_above_limit: "<prefix> <red>Kwota przekracza limit serwera !"
     balance_above_limit: "<prefix> <red>Stan konta <account> przekracza limit serwera !"
-    database_exception: "<prefix> <red>Something unexpected happened while working with the database: <exception> [!]"
+    command_require_confirm: "<prefix> <red>Wpisz komendę <command> ponownie w ciągu 15 sekund, aby potwierdzić."
+    database_exception: "<prefix> <red>Wystąpił nieoczekiwany błąd podczas pracy z bazą danych: <exception> [!]"
 
   # This messages not support MiniMessage and Style Formatting !
   # Please don't try edit this messages !
@@ -64,13 +65,13 @@ messages:
     error:
       format_amount: "Nieprawidłowa kwota. Użyj liczb zmienno przecinkowych lub kompaktowego rozwiązania (np. 1K) [!]"
       negative_amount: "Negatywne wartości są niedozwolone. [!]"
-      currency_not_exist: "These currency %s not exist [!]"
-      language_not_exist: "This %s language is not supported [!]"
+      currency_not_exist: "Waluta %s nie istnieje [!]"
+      language_not_exist: "Język %s nie jest obsługiwany [!]"
       convert_fail: "Wystąpił błąd podczas konwertowania, sprawdź konsolę [!]"
 
   # Monolog message formatting
   monolog:
-    header: "<gray><st>─━━━━━━─</st> <blue>[ <yellow>Transaction History <blue>] <gray><st>─━━━━━━─</st>"
+    header: "<gray><st>─━━━━━━─</st> <blue>[ <yellow>Historia Transakcji <blue>] <gray><st>─━━━━━━─</st>"
     footer: "<gray><st>─━━━━━━─</st> <blue>[ <pagination> <blue>] <gray><st>─━━━━━━─</st>"
     formatting: >-
       <blue>[<white><hover:show_text:'<timestamp>'><symbol></hover></white>]</blue> 
@@ -85,7 +86,7 @@ messages:
     translation_switch: "<prefix> <green>Tłumaczenie zmienione na <locale>."
     translation_missing: "<prefix> <red>Brakujące tłumaczenie dla <key>. Skontaktuj się z deweloperem pluginu."
     purge_accounts: "<prefix> <green>Konta wszystkich graczy zostały wyczyszczone."
-    purge_test_accounts: "<prefix> <green>All test accounts was purged !"
+    purge_test_accounts: "<prefix> <green>Wszystkie konta testowe zostały wyczyszczone [!]"
     purge_null_accounts: "<prefix> <green>Konta wszystkich graczy z nieprawidłową wartością zostały wyczyszczone."
     purge_default_accounts: "<prefix> <green>Konta wszystkich graczy z domyślną wartością zostały wyczyszczone."
     purge_monolog_success: "<prefix> <green>Wszytkie logi dotyczące aktywności ekonomii zostały wyczyszczone [!]"
@@ -96,9 +97,9 @@ messages:
   # Translation for pagination component
   # Is available with placeholder <pagination>
   pagination:
-    previous: "« Previous"
+    previous: "« Poprzednia"
     center: " <yellow><page>/<max_page> "
-    next: "Next »"
+    next: "Następna »"
 
   help:
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> LiteEco <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
@@ -114,17 +115,17 @@ messages:
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> LiteEco  <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
     - " "
     - "<red>[★] <gray><hover:show_text:'<#F39E9E> Dodaj pieniądze do innego gracza/graczy.'>/eco add <yellow><username> <#3EE84D><amount>"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E> Przekaż pieniądze innemu graczowi/graczom.'>/eco set <yellow><username> <#3EE84D><amount>"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E> Przekaż pieniądze innemu graczowi/graczy.'>/eco set <yellow><username> <#3EE84D><amount>"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E> Wypłać pieniądze od innego gracza/graczy.'>/eco withdraw <yellow><username> <#3EE84D><amount>"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E> Wyczyszść dane.'>/eco database purge <#b37dc7><argument>"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E> Exportuj bazę danych do innego rodzaju.'>/eco database export <#b37dc7><argument>"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E> Importuj pieniądze z innej ekonomii do LiteEco.'>/eco database import <#b37dc7><argument> <#3EE84D><into_currency> [--from <currency>]"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Toggles database error simulation on/off.'>/eco debug failmode"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Runs an automated test simulating a database error and $500.'>/eco debug test-janitor <yellow><username>"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Immediately triggers automatic synchronization.'>/eco debug janitor"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Displays a detailed readout of the player's internal cache.'>/eco debug inspect <yellow><username>"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Runs a concurrent stress test for transaction atomicity.'>/eco debug stress <yellow><username> <#3EE84D>[iterations]"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Runs a concurrent load test to store virtual players and create accounts in the database from the cache.'>/eco debug stress-shutdown <#3EE84D>[iterations]"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Włącza lub wyłącza symulację błędu bazy danych.'>/eco debug failmode"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Uruchamia automatyczny test symulujący błąd bazy danych i $500.'>/eco debug test-janitor <yellow><username>"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Natychmiast wyzwala automatyczną synchronizację.'>/eco debug janitor"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Wyświetla szczegółowy odczyt wewnętrznej pamięci podręcznej gracza.'>/eco debug inspect <yellow><username>"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Uruchamia współbieżny test obciążeniowy dla atomowości transakcji.'>/eco debug stress <yellow><username> <#3EE84D>[iterations]"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Uruchamia współbieżny test obciążeniowy, aby zapisać wirtualnych graczy i utworzyć konta w bazie danych z pamięci podręcznej.'>/eco debug stress-shutdown <#3EE84D>[iterations]"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E> Zmień tłumaczenie pluginu.'>/eco config lang <#b37dc7>[lang]"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E> Przeładuj konfiguracje.'>/eco config reload"
     - " "

@@ -36,7 +36,9 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
         return liteEco.currencyImpl.formatted(amount)
     }
 
-    override fun format(pluginName: String, amount: BigDecimal, currency: String): String = liteEco.currencyImpl.formatted(amount)
+    override fun format(pluginName: String, amount: BigDecimal, currency: String): String {
+        return liteEco.currencyImpl.formatted(amount)
+    }
 
     override fun hasCurrency(currencyName: String): Boolean = currencies().contains(currencyName)
 
@@ -51,16 +53,22 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
     }
 
     override fun createAccount(accountID: UUID, name: String, player: Boolean): Boolean {
-        if (!player) { return false }
+        if (!player) return false
         val offlinePlayer = Bukkit.getOfflinePlayer(accountID)
+        val accountName = offlinePlayer.name ?: name
 
-        return runBlocking { liteEco.api.createOrUpdateAccount(offlinePlayer.uniqueId, offlinePlayer.name.toString(), liteEco.currencyImpl.defaultCurrency(), liteEco.currencyImpl.defaultStartBalance()) }
+        return runBlocking {
+            liteEco.api.createOrUpdateAccount(
+                accountID,
+                accountName,
+                liteEco.currencyImpl.defaultCurrency(),
+                liteEco.currencyImpl.defaultStartBalance()
+            )
+        }
     }
 
     override fun createAccount(accountID: UUID, name: String, worldName: String, player: Boolean): Boolean {
-        if (!player) { return false }
-        val offlinePlayer = Bukkit.getOfflinePlayer(accountID)
-        return runBlocking { liteEco.api.createOrUpdateAccount(offlinePlayer.uniqueId, offlinePlayer.name.toString(), liteEco.currencyImpl.defaultCurrency(), liteEco.currencyImpl.defaultStartBalance()) }
+        return createAccount(accountID, name, player)
     }
 
     override fun deleteAccount(plugin: String, accountID: UUID): Boolean = false
@@ -71,9 +79,8 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
 
     override fun getAccountName(uuid: UUID): Optional<String> {
         return runBlocking {
-            liteEco.api.account().getUserByUUID(uuid, liteEco.currencyImpl.defaultCurrency())?.let {
-                Optional.of(it.userName)
-            } ?: Optional.empty()
+            val user = liteEco.api.account().getUserByUUID(uuid, liteEco.currencyImpl.defaultCurrency())
+            Optional.ofNullable(user?.userName)
         }
     }
 
@@ -88,15 +95,13 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
     override fun renameAccount(plugin: String, accountID: UUID, name: String): Boolean = false
 
     override fun accountSupportsCurrency(plugin: String, accountID: UUID, currency: String): Boolean {
-        val result: Boolean = try {
+        return try {
             runBlocking {
-                liteEco.api.account().getUserByUUID(accountID, currency)
-                true
+                liteEco.api.account().getUserByUUID(accountID, currency) != null
             }
         } catch (_: Exception) {
             false
         }
-        return result
     }
 
     override fun accountSupportsCurrency(plugin: String, accountID: UUID, currency: String, world: String): Boolean {
@@ -116,7 +121,7 @@ class AdaptiveEconomyVaultUnlockedAPI(private val liteEco: LiteEco) : UnusedVaul
     }
 
     override fun has(pluginName: String, accountID: UUID, amount: BigDecimal): Boolean {
-        return liteEco.api.account().has(accountID, liteEco.currencyImpl.defaultCurrency() , amount)
+        return liteEco.api.account().has(accountID, liteEco.currencyImpl.defaultCurrency(), amount)
     }
 
     override fun has(pluginName: String, accountID: UUID, worldName: String, amount: BigDecimal): Boolean {

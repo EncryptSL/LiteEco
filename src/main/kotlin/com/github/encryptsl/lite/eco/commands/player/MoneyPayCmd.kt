@@ -2,6 +2,7 @@ package com.github.encryptsl.lite.eco.commands.player
 
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.commands.internal.CommandFeature
+import com.github.encryptsl.lite.eco.commands.internal.ConfirmationPostprocessor
 import com.github.encryptsl.lite.eco.commands.parsers.AmountValidatorParser
 import com.github.encryptsl.lite.eco.commands.parsers.CurrencyParser
 import com.github.encryptsl.lite.eco.common.manager.economy.PlayerEconomyPayHandler
@@ -18,13 +19,16 @@ import java.math.BigDecimal
 class MoneyPayCmd(
     private val liteEco: LiteEco,
     private val economyPay: PlayerEconomyPayHandler,
+    private val confirmationManager: ConfirmationPostprocessor<Source>,
 ) : CommandFeature {
+
     override fun register(
         commandManager: PaperCommandManager<Source>,
         base: Command.Builder<Source>
     ) {
         val pay = base.literal("pay")
             .senderType(PlayerSource::class.java)
+            .apply(confirmationManager::applyToBuilder)
             .permission("lite.eco.pay")
             .required(
                 "target",
@@ -51,7 +55,10 @@ class MoneyPayCmd(
             }
 
         commandManager.command(pay)
-        commandManager.command(commandManager.commandBuilder("pay").proxies(pay.build()))
+        commandManager.command(commandManager.commandBuilder("pay")
+            .apply(confirmationManager::applyToBuilder)
+            .proxies(pay.build())
+        )
     }
 
     fun payCommand(sender: Player, target: OfflinePlayer, amount: BigDecimal, currency: String) {

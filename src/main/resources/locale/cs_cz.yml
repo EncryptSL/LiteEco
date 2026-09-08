@@ -1,76 +1,77 @@
 messages:
   # Balance messages
   balance:
-    format: "<prefix> <white>Zůstatek měny <gold><currency></gold> tvého úču je <green><money></green> [!]"
-    format_target: "<prefix> <white>Zůstatek <#13AFFE><target></#13AFFE> v <gold><currency></gold> je <green><money></green>. [!]"
-    top_format: "<yellow><position># <gold><player></gold> <gray>- <green><money></green>"
-    top_header: "<gray><st>─━━━━━━─</st> <#64646F>[ <#F9AD47>BOHATÍ HRÁČI</#F9AD47> ]</#64646F> <st>─━━━━━━─</st></gray>"
-    top_footer: "<gray><st>─━━━━━━─</st> <#64646F>[ <#F9AD47><pagination></#F9AD47> ]</#64646F> <st>─━━━━━━─</st></gray>"
+    format: "<prefix> <white>Zůstatek měny <gold><currency></gold> na tvém účtu je <green><money></green>. [!]"
+    format_target: "<prefix> <white>Zůstatek hráče <#13AFFE><target></#13AFFE> v měně <gold><currency></gold> je <green><money></green>. [!]"
+    top_format: "<yellow><position># <white><player></white> <gray>- <green><money></green>"
+    top_header: "<gray><st>─━━━━━━─</st> <blue>[ <yellow>Bohatí Hráči <blue>] <gray><st>─━━━━━━─</st>"
+    top_footer: "<gray><st>─━━━━━━─</st> <blue>[ <pagination> <blue>] <gray><st>─━━━━━━─</st>"
 
   # Self-transaction messages
   self:
-    add_money: "<prefix> <white>Přidal jsi si <green><money></green> <currency>."
-    withdraw_money: "<prefix> <white>Odebral jsi si <green><money></green> <gold><currency>."
-    set_money: "<prefix> <white>Nastavil jsi si <green><money></green> <currency>."
+    add_money: "<prefix> <white>Přidal sis <green><money></green> <currency>."
+    withdraw_money: "<prefix> <white>Odebral sis <green><money></green> <currency>."
+    set_money: "<prefix> <white>Nastavil sis <green><money></green> <currency>."
 
   # Transaction messages for target
   target:
-    add_money: "<prefix> <#13AFFE><sender></#13AFFE> <white>vám poslal <green><money></green> <currency>."
+    add_money: "<prefix> <#13AFFE><sender></#13AFFE> <white>ti poslal <green><money></green> <currency>."
     add_money_silent: "<gray>+ <green><money>"
-    withdraw_money: "<prefix> <#13AFFE><sender></#13AFFE> <white>vám odebral <green><money></green> <currency>."
+    withdraw_money: "<prefix> <#13AFFE><sender></#13AFFE> <white>ti odebral <green><money></green> <currency>."
     withdraw_money_silent: "<gray>- <red><money>"
-    set_money: "<prefix> <#13AFFE><sender></#13AFFE> <white>vám nastavil <green><money></green> <currency>."
+    set_money: "<prefix> <#13AFFE><sender></#13AFFE> <white>ti nastavil <green><money></green> <currency>."
 
   # Transaction messages for sender
   sender:
-    add_money: "<prefix> <white>Poslal jsi <#13AFFE><target></#13AFFE> <green><money></green> <currency>."
-    withdraw_money: "<prefix> <white>Odebral jsi <#13AFFE><target></#13AFFE> <green><money></green> <currency>."
-    set_money: "<prefix> <white>Nastavil jsi <#13AFFE><target></#13AFFE> <green><money></green> <currency>."
+    add_money: "<prefix> <white>Poslal jsi hráči <#13AFFE><target></#13AFFE> <green><money></green> <currency>."
+    withdraw_money: "<prefix> <white>Odebral jsi hráči <#13AFFE><target></#13AFFE> <green><money></green> <currency>."
+    set_money: "<prefix> <white>Nastavil jsi hráči <#13AFFE><target></#13AFFE> <green><money></green> <currency>."
 
   # Global actions messages (sent to the sender who made the global action)
   global:
     add_money: "<prefix> <white>Přidal jsi všem <green><money></green> <currency>."
-    withdraw_money: "<prefix> <white>Odstranil jsi všem <green><money></green> <currency>."
+    withdraw_money: "<prefix> <white>Odebral jsi všem <green><money></green> <currency>."
     set_money: "<prefix> <white>Nastavil jsi všem <green><money></green> <currency>."
 
   # Broadcast messages (sent to all players after a global action)
   broadcast:
     add_money: "<prefix> <#13AFFE><sender></#13AFFE> <white>přidal všem <green><money></green> <currency>."
-    withdraw_money: "<prefix> <#13AFFE><sender></#13AFFE> <white>odstranil jsi všem <green><money></green> <currency>."
+    withdraw_money: "<prefix> <#13AFFE><sender></#13AFFE> <white>odebral všem <green><money></green> <currency>."
     set_money: "<prefix> <#13AFFE><sender></#13AFFE> <white>nastavil všem <green><money></green> <currency>."
 
   # Error messages
   error:
     account_not_exist: "<prefix> <red>Účet <account> neexistuje [!]"
-    account_now_exist: "<prefix> <red>Účet <account> existuje [!]"
+    account_now_exist: "<prefix> <red>Účet <account> již existuje [!]"
     missing_balance_others_permission: "<prefix> <red>Nemáš oprávnění zobrazit zůstatek účtu ostatních [!]"
     missing_currency_permission: "<prefix> <red>Nemáš oprávnění pro využívání této měny [!]"
     insufficient_funds: "<prefix> <red>Nedostatek finančních prostředků [!]"
-    maximum_page: "<red>Limit stránkování je <max_page>"
-    export_argument: "<prefix> <red>Tento <argument> argument není validní nebo není připraven do produkce."
-    export_failed: "<prefix> <red>Při exportu došlo k chybě. Podrobnosti naleznete v konzoli." # TEMP #
-    import_failed: "<prefix> <red>Při importu došlo k chybě nebo chybí data pro import !"
-    purge_argument: "<prefix> <red>Tento <argument> argument není validní nebo není připraven do produkce."
-    purge_monolog_fail: "<prefix> <red>Nemůžeš provést smazání logů, tabulka je prázdná [!]"
+    maximum_page: "<red>Limit stránkování je <max_page>."
+    export_argument: "<prefix> <red>Argument <argument> není platný nebo není připraven pro produkční použití."
+    export_failed: "<prefix> <red>Při exportu došlo k chybě. Podrobnosti naleznete v konzoli."
+    import_failed: "<prefix> <red>Při importu došlo k chybě nebo chybí data pro import [!]"
+    purge_argument: "<prefix> <red>Argument <argument> není platný nebo není připraven pro produkční použití."
+    purge_fail: "<prefix> <red>Nelze smazat, protože tabulka je prázdná. [!]"
     player_is_null: "<prefix> <red>Jméno hráče musí být vyplněno [!]"
-    self_pay: "<prefix> <red>Nemůžeš sám sobě poslat peníze [!]"
-    amount_above_limit: "<prefix> <red>Částka přesahuje, povolený limit serverem [!]"
-    balance_above_limit: "<prefix> <red>Stav účtu <account> přesahuje, povolený limit serverem [!]"
-    database_exception: "<prefix> <red>Při práci s databází se stalo něco neočekávaného: <exception> [!]"
+    self_pay: "<prefix> <red>Nemůžeš poslat peníze sám sobě [!]"
+    amount_above_limit: "<prefix> <red>Částka přesahuje povolený limit serveru [!]"
+    balance_above_limit: "<prefix> <red>Stav účtu <account> přesahuje povolený limit serveru [!]"
+    command_require_confirm: "<prefix> <red>Pro potvrzení zadej prosím příkaz <command> znovu do 15 sekund!"
+    database_exception: "<prefix> <red>Při práci s databází došlo k neočekávané chybě: <exception> [!]"
 
   # This messages not support MiniMessage and Style Formatting !
   # Please don't try edit this messages !
   parser:
     error:
-      format_amount: "Neplatná částka. Použijte desetinná čísla nebo kompaktní reprezentace (např. 1K) [!]"
-      negative_amount: "Detekovano negativní číslo [!]"
+      format_amount: "Neplatná částka. Použij desetinná čísla nebo kompaktní zápis (např. 1K) [!]"
+      negative_amount: "Detekováno záporné číslo [!]"
       currency_not_exist: "Tato měna %s neexistuje [!]"
-      language_not_exist: "Tato %s jazyková sada není podporovaná [!]"
-      convert_fail: "Něco se pokazilo během konvertování, podívej se do konzole [!]"
+      language_not_exist: "Tato jazyková sada (%s) není podporována [!]"
+      convert_fail: "Něco se pokazilo během převodu, podívej se do konzole [!]"
 
   # Monolog message formatting
   monolog:
-    header: "<gray><st>─━━━━━━─</st> <blue>[ <yellow>Historie Transakcí <blue>] <gray><st>─━━━━━━─</st>"
+    header: "<gray><st>─━━━━━━─</st> <blue>[ <yellow>Historie transakcí <blue>] <gray><st>─━━━━━━─</st>"
     footer: "<gray><st>─━━━━━━─</st> <blue>[ <pagination> <blue>] <gray><st>─━━━━━━─</st>"
     formatting: >-
       <blue>[<white><hover:show_text:'<timestamp>'><symbol></hover></white>]</blue> 
@@ -78,21 +79,20 @@ messages:
       <hover:show_text:'<diff>'><st><red><previous_balance></red></st> <green><new_balance></green></hover>
       <gold>[<currency>]</gold>
 
-
   # Admins commands
   admin:
     create_account: "<prefix> <green>Účet <account> byl vytvořen [!]"
-    config_reload: "<prefix> <green>Config byl znovu načten [!]"
-    translation_switch: "<prefix> <green>Překlad byl přepnut na <locale>"
-    translation_missing: "<prefix> <red>Překlad <key> chybí.... kontaktuj vývojáře tohoto pluginu."
+    config_reload: "<prefix> <green>Konfigurace byla znovu načtena [!]"
+    translation_switch: "<prefix> <green>Překlad byl přepnut na <locale>."
+    translation_missing: "<prefix> <red>Překlad <key> chybí... kontaktuj vývojáře tohoto pluginu."
     purge_accounts: "<prefix> <green>Smazal jsi všechny účty."
-    purge_test_accounts: "<prefix> <green>Smazal jsi všechny testovací účty !"
-    purge_null_accounts: "<prefix> <green> Všechny hráčské účty s nulovými hodnotami byly smazány." # TEMP #
-    purge_default_accounts: "<prefix> <green>Smazal jsi účty s defaultní hodnotou."
-    purge_monolog_success: "<prefix> <green>Záznam o ekonomických aktivitách byl smazán, <deleted> [!]"
-    delete_account: "<prefix> <green>Účet hráče <account> byl smazán !"
-    export_success: "<prefix> <green>Migrace <type> byla úspěšně vytvořena [!]"
-    import_success: "<prefix> <green>Převod <converted> účtů a <balances> peněz z <economy> do LiteEco bylo úspěšné !"
+    purge_test_accounts: "<prefix> <green>Smazal jsi všechny testovací účty [!]"
+    purge_null_accounts: "<prefix> <green>Všechny hráčské účty s nulovými hodnotami byly smazány."
+    purge_default_accounts: "<prefix> <green>Smazal jsi účty s výchozí hodnotou."
+    purge_monolog_success: "<prefix> <green>Záznamy o ekonomických aktivitách byly smazány, celkem: <deleted> [!]"
+    delete_account: "<prefix> <green>Účet hráče <account> byl smazán [!]"
+    export_success: "<prefix> <green>Migrace <type> byla úspěšně dokončena [!]"
+    import_success: "<prefix> <green>Převod <converted> účtů a <balances> zůstatků z <economy> do LiteEco byl úspěšný [!]"
 
   # Translation for pagination component
   # Is available with placeholder <pagination>
@@ -104,29 +104,29 @@ messages:
   help:
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> LiteEco <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
     - " "
-    - "<white>[+] <gray><hover:show_text:'<#CFE7F0> Vypíše příkazy pluginu'>/money help"
-    - "<white>[+] <gray><hover:show_text:'<#CFE7F0> Vypíše nejbohatší hráče'>/money top <#b37dc7>[page] <#b37dc7>[currency]"
-    - "<white>[+] <gray><hover:show_text:'<#CFE7F0> Ukáže stav tvého účtu nebo jiného hráče.'>/money bal <yellow>[username] <#3EE84D>[currency]"
-    - "<white>[+] <gray><hover:show_text:'<#CFE7F0> Pošle hráči peníze'>/money pay <yellow>[username] <#3EE84D><amount> <#3EE84D>[currency]"
+    - "<white>[+] <gray><hover:show_text:'<#CFE7F0>Vypíše příkazy pluginu'>/money help"
+    - "<white>[+] <gray><hover:show_text:'<#CFE7F0>Vypíše nejbohatší hráče'>/money top <#b37dc7>[stránka] <#b37dc7>[měna]"
+    - "<white>[+] <gray><hover:show_text:'<#CFE7F0>Ukáže stav tvého účtu nebo jiného hráče'>/money bal <yellow>[hráč] <#3EE84D>[měna]"
+    - "<white>[+] <gray><hover:show_text:'<#CFE7F0>Pošle hráči peníze'>/money pay <yellow>[hráč] <#3EE84D><částka> <#3EE84D>[měna]"
     - " "
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> LiteEco <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
 
   admin-help:
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> LiteEco <st>─━━━━━━━━━━━━━━━━━─</st></gray>"
     - " "
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Přičte hráčům/či peníze'>/eco add <yellow><username> <#3EE84D><amount> <#3EE84D>[currency]"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Nastaví hráčům/či určitou částku.'>/eco set <yellow><username> <#3EE84D><amount> <#3EE84D>[currency]"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Odstraní hráčům/či peníze.'>/eco withdraw <yellow><username> <#3EE84D><amount> <#3EE84D>[currency]"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Čištění dat.'>/eco database purge <#b37dc7><argument> <#3EE84D>[currency]"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Export databáze do různých formátů.'>/eco database export <#b37dc7><argument> <#3EE84D>[currency]"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Import z jiného Economy pluginu do LiteEco.'>/eco database import <#b37dc7><argument> <#3EE84D><into_currency> [--from <currency>]"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Zapne/vypne simulaci chyby připojení do databáze'>/eco debug failmode"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Spustí automatický test chyby připojení do databáze a připíše $500.'>/eco debug test-janitor <yellow><username>"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Zapne okamžitou synchronizaci.'>/eco debug janitor"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Vypíše detailní výpis uložený v paměti.'>/eco debug inspect <yellow><username>"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Spustí souběžný zátěžový test pro atomickost transakcí.'>/eco debug stress <yellow><username> <#3EE84D>[iterations]"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Spustí souběžný zátěžový test pro uložení virtuálních hráčů do databáze.'>/eco debug stress-shutdown <#3EE84D>[iterations]"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Přepne překlad zpráv.'>/eco config lang <#b37dc7>[lang]"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Znovu načte konfiguraci.'>/eco config reload"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Přičte hráčům/hráči peníze'>/eco add <yellow><hráč> <#3EE84D><částka> <#3EE84D>[měna]"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Nastaví hráčům/hráči určitou částku'>/eco set <yellow><hráč> <#3EE84D><částka> <#3EE84D>[měna]"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Odebere hráčům/hráči peníze'>/eco withdraw <yellow><hráč> <#3EE84D><částka> <#3EE84D>[měna]"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Čištění databáze'>/eco database purge <#b37dc7><argument> <#3EE84D>[měna]"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Export databáze do různých formátů'>/eco database export <#b37dc7><argument> <#3EE84D>[měna]"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Import z jiného ekonomického pluginu do LiteEco'>/eco database import <#b37dc7><argument> <#3EE84D><do_měny> [--from <měna>]"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Zapne/vypne simulaci chyby připojení k databázi'>/eco debug failmode"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Spustí automatický test chyby databáze a připíše $500'>/eco debug test-janitor <yellow><hráč>"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Spustí okamžitou synchronizaci'>/eco debug janitor"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Zobrazí detailní výpis hráče uložený v paměti'>/eco debug inspect <yellow><hráč>"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Spustí souběžný zátěžový test pro atomicitu transakcí'>/eco debug stress <yellow><hráč> <#3EE84D>[opakování]"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Spustí souběžný zátěžový test pro uložení virtuálních hráčů do databáze'>/eco debug stress-shutdown <#3EE84D>[opakování]"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Přepne jazyk překladu'>/eco config lang <#b37dc7>[jazyk]"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Znovu načte konfiguraci'>/eco config reload"
     - " "
     - "<gray><st>─━━━━━━━━━━━━━━━━━─</st> LiteEco <st>─━━━━━━━━━━━━━━━━━─</st></gray>"

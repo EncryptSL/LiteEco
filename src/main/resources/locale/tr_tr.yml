@@ -3,9 +3,9 @@ messages:
   balance:
     format: "<prefix> <white>Bakiyeniz <currency> para biriminde <green><money></green>. [!]"
     format_target: "<prefix> <white><target></#13AFFE>'nin <gold><currency></gold> bakiyesi <green><money></green>. [!]"
-    top_format: "<yellow><position># <gold><player></gold> <gray>- <green><money></green>"
-    top_header: "<gray><st>─━━━━━━─</st> <#64646F>[ <#F9AD47>BALTOP</#F9AD47> ]</#64646F> <st>─━━━━━━─</st></gray>"
-    top_footer: "<gray><st>─━━━━━━─</st> <#64646F>[ <#F9AD47><pagination></#F9AD47> ]</#64646F> <st>─━━━━━━─</st></gray>"
+    top_format: "<yellow><position># <white><player></white> <gray>- <green><money></green>"
+    top_header: "<gray><st>─━━━━━━─</st> <blue>[ <yellow>BALTOP <blue>] <gray><st>─━━━━━━─</st>"
+    top_footer: "<gray><st>─━━━━━━─</st> <blue>[ <pagination> <blue>] <gray><st>─━━━━━━─</st>"
 
   # Self-transaction messages (Kendi işlem mesajları)
   self:
@@ -43,7 +43,7 @@ messages:
   error:
     account_not_exist: "<prefix> <red><account> hesabı mevcut değil [!]"
     account_now_exist: "<prefix> <red><account> hesabı şimdi mevcut [!]"
-    missing_balance_others_permission: "<prefix> <red>You do not have permission to view the account balance of others [!]"
+    missing_balance_others_permission: "<prefix> <red>Diğer oyuncuların hesap bakiyesini görüntüleme yetkiniz yok [!]"
     missing_currency_permission: "<prefix> <red>Bu para birimini kullanma yetkiniz yok [!]"
     insufficient_funds: "<prefix> <red>Yetersiz bakiye! [!]"
     maximum_page: "<red>Sayfalama limitinin <max_page> olduğunu unutmayın."
@@ -51,11 +51,12 @@ messages:
     export_failed: "<prefix> <red>Taşıma işlemi sırasında bir sorun oluştu. Detaylar için konsolu kontrol edin."
     import_failed: "<prefix> <red>İçe aktarma sırasında bir sorun oluştu veya veriler eksik!"
     purge_argument: "<prefix> <red>Bu <argument> argümanı geçerli değil ya da üretime hazır değil."
-    purge_monolog_fail: "<prefix> <red>Logları silemezsiniz, çünkü tablo boş [!]"
+    purge_fail: "<prefix> <red>Tablo boş olduğu için silinemiyor. [!]"
     player_is_null: "<prefix> <red>Lütfen bir oyuncu adı girin [!]"
     self_pay: "<prefix> <red>Kendinize para gönderemezsiniz [!]"
     amount_above_limit: "<prefix> <red>Miktar, serverda izin verilen limitin üzerinde!"
     balance_above_limit: "<prefix> <red><account> hesabının bakiyesi, izin verilen limitin üzerinde!"
+    command_require_confirm: "<prefix> <red>Onaylamak için lütfen 15 saniye içinde <command> komutunu tekrar yazın."
     database_exception: "<prefix> <red>Veritabanı ile çalışırken beklenmedik bir hata oluştu: <exception> [!]"
 
   # This messages not support MiniMessage and Style Formatting !
@@ -65,12 +66,12 @@ messages:
       format_amount: "Geçersiz miktar. Lütfen ondalıklı sayılar veya sıkıştırılmış gösterimler kullanın (örneğin 1K) [!]"
       negative_amount: "Negatif miktarlar kabul edilmez. [!]"
       currency_not_exist: "Bu %s para birimi mevcut değil!"
-      language_not_exist: "This %s language is not supported [!]"
+      language_not_exist: "%s dili desteklenmiyor [!]"
       convert_fail: "Bir hata oluştu, lütfen konsolu kontrol edin [!]"
 
   # Monolog message formatting
   monolog:
-    header: "<gray><st>─━━━━━━─</st> <blue>[ <yellow>Transaction History <blue>] <gray><st>─━━━━━━─</st>"
+    header: "<gray><st>─━━━━━━─</st> <blue>[ <yellow>İşlem Geçmişi <blue>] <gray><st>─━━━━━━─</st>"
     footer: "<gray><st>─━━━━━━─</st> <blue>[ <pagination> <blue>] <gray><st>─━━━━━━─</st>"
     formatting: >-
       <blue>[<white><hover:show_text:'<timestamp>'><symbol></hover></white>]</blue> 
@@ -87,7 +88,7 @@ messages:
     translation_switch: "<prefix> <green>Çeviri <locale>'ye değiştirildi."
     translation_missing: "<prefix> <red><key> için çeviri eksik. Lütfen plugin geliştiricisi ile iletişime geçin."
     purge_accounts: "<prefix> <green>Tüm oyuncu hesapları temizlendi."
-    purge_test_accounts: "<prefix> <green>All test accounts was purged !"
+    purge_test_accounts: "<prefix> <green>Tüm test hesapları temizlendi [!]"
     purge_null_accounts: "<prefix> <green>Null değerli tüm oyuncu hesapları temizlendi."
     purge_default_accounts: "<prefix> <green>Varsayılan değerli tüm oyuncu hesapları temizlendi."
     purge_monolog_success: "<prefix> <green>Tüm ekonomi faaliyetlerine dair loglar temizlendi [!]"
@@ -98,9 +99,9 @@ messages:
   # Translation for pagination component
   # Is available with placeholder <pagination>
   pagination:
-    previous: "« Previous"
+    previous: "« Önceki"
     center: " <yellow><page>/<max_page> "
-    next: "Next »"
+    next: "Sonraki »"
 
   # Help messages (Yardım mesajları)
   help:
@@ -123,12 +124,12 @@ messages:
     - "<red>[★] <gray><hover:show_text:'<#F39E9E>Veritabanı temizleme.'>/eco database purge <#b37dc7><argument> <#3EE84D>[para birimi]"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E>Veritabanı taşıma.'>/eco database export <#b37dc7><argument> <#3EE84D>[para birimi]"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E>Başka bir ekonomi plugininden LiteEco'ya dönüştürme.'>/eco database import <#b37dc7><argument> <#3EE84D>[para birimi] <#3EE84D><into_currency> [--from <currency>]"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Toggles database error simulation on/off.'>/eco debug failmode"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Runs an automated test simulating a database error and $500.'>/eco debug test-janitor <yellow><username>"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Immediately triggers automatic synchronization.'>/eco debug janitor"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Displays a detailed readout of the player's internal cache.'>/eco debug inspect <yellow><username>"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Runs a concurrent stress test for transaction atomicity.'>/eco debug stress <yellow><username> <#3EE84D>[iterations]"
-    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Runs a concurrent load test to store virtual players and create accounts in the database from the cache.'>/eco debug stress-shutdown <#3EE84D>[iterations]"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Veritabanı hata simülasyonunu açar/kapatır.'>/eco debug failmode"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Bir veritabanı hatasını ve $500 miktarını simüle eden otomatik testi çalıştırır.'>/eco debug test-janitor <yellow><kullanıcı>"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Otomatik senkronizasyonu anında tetikler.'>/eco debug janitor"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Oyuncunun dahili önbelleğinin detaylı okumasını gösterir.'>/eco debug inspect <yellow><kullanıcı>"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>İşlem bölünmezliği (atomicity) için eşzamanlı stres testi çalıştırır.'>/eco debug stress <yellow><kullanıcı> <#3EE84D>[iterations]"
+    - "<red>[★] <gray><hover:show_text:'<#F39E9E>Sanal oyuncuları kaydetmek ve önbellekten veritabanında hesap oluşturmak için eşzamanlı yük testi çalıştırır.'>/eco debug stress-shutdown <#3EE84D>[iterations]"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E>Çeviriyi değiştirir.'>/eco config lang <#b37dc7>[dil]"
     - "<red>[★] <gray><hover:show_text:'<#F39E9E>Konfigürasyonu yeniden yükler.'>/eco config reload"
     - " "
