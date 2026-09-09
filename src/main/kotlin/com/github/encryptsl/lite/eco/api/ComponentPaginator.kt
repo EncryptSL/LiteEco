@@ -105,8 +105,8 @@ class ComponentPaginator(
     private fun injectIntoFormat(format: String, paginationComponent: Component): Component {
         val template = format.replace("<pagination>", "<insertion>")
         val built = ModernText.miniModernText(template)
-        return built.replaceText {
-            it.matchLiteral("<insertion>").replacement(paginationComponent)
+        return built.replaceText { e ->
+            e.matchLiteral("<insertion>").replacement(paginationComponent)
         }
     }
 
