@@ -1,6 +1,7 @@
 package com.github.encryptsl.lite.eco.commands.parsers
 
 import com.github.encryptsl.lite.eco.LiteEco
+import com.github.encryptsl.lite.eco.api.errors.LangParserException
 import org.incendo.cloud.context.CommandContext
 import org.incendo.cloud.context.CommandInput
 import org.incendo.cloud.paper.util.sender.Source
@@ -21,7 +22,7 @@ class LangParser(
             return ArgumentParseResult.success(input)
         } else {
             val message = liteEco.locale.getMessage("messages.parser.error.language_not_exist")
-            return ArgumentParseResult.failure(Exception(String.format(message, input)))
+            return ArgumentParseResult.failure(LangParserException(String.format(message, input)))
         }
     }
 

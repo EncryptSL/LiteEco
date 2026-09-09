@@ -1,6 +1,7 @@
 package com.github.encryptsl.lite.eco.commands.parsers
 
 import com.github.encryptsl.lite.eco.LiteEco
+import com.github.encryptsl.lite.eco.api.errors.CurrencyParserException
 import org.bukkit.command.CommandSender
 import org.incendo.cloud.context.CommandContext
 import org.incendo.cloud.context.CommandInput
@@ -20,7 +21,7 @@ class CurrencyParser : ArgumentParser<Source, String> {
 
         if (!LiteEco.instance.currencyImpl.getCurrencyNameExist(input)) {
             val message = LiteEco.instance.locale.getMessage("messages.parser.error.currency_not_exist")
-            return ArgumentParseResult.failure(Exception(String.format(message, input)))
+            return ArgumentParseResult.failure(CurrencyParserException(String.format(message, input)))
         }
         return ArgumentParseResult.success(input)
     }

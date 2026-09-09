@@ -2,6 +2,7 @@ package com.github.encryptsl.lite.eco.commands.parsers
 
 import com.github.encryptsl.lite.eco.LiteEco
 import com.github.encryptsl.lite.eco.api.enums.CheckLevel
+import com.github.encryptsl.lite.eco.api.errors.AmountValidatorException
 import com.github.encryptsl.lite.eco.common.extensions.isApproachingZero
 import com.github.encryptsl.lite.eco.common.extensions.isNegative
 import com.github.encryptsl.lite.eco.common.extensions.toValidDecimal
@@ -24,7 +25,7 @@ class AmountValidatorParser(
         val amountStr = commandInput.readString()
 
         val amount = amountStr.toValidDecimal() ?:
-            return ArgumentParseResult.failure(Exception(LiteEco.instance.locale.getMessage("messages.parser.error.format_amount")))
+            return ArgumentParseResult.failure(AmountValidatorException(LiteEco.instance.locale.getMessage("messages.parser.error.format_amount")))
 
         val isInvalid = when (level) {
             CheckLevel.ONLY_NEGATIVE -> amount.isNegative()
@@ -32,7 +33,7 @@ class AmountValidatorParser(
         }
 
         if (isInvalid) {
-            return ArgumentParseResult.failure(Exception(LiteEco.instance.locale.getMessage("messages.parser.error.negative_amount")))
+            return ArgumentParseResult.failure(AmountValidatorException(LiteEco.instance.locale.getMessage("messages.parser.error.negative_amount")))
         }
 
         return ArgumentParseResult.success(amount)

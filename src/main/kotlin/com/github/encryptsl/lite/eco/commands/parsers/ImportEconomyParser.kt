@@ -1,6 +1,7 @@
 package com.github.encryptsl.lite.eco.commands.parsers
 
 import com.github.encryptsl.lite.eco.LiteEco
+import com.github.encryptsl.lite.eco.api.errors.ImportEconomyException
 import com.github.encryptsl.lite.eco.common.manager.importer.ImportEconomy
 import org.incendo.cloud.context.CommandContext
 import org.incendo.cloud.context.CommandInput
@@ -22,7 +23,7 @@ class ImportEconomyParser(private val importer: ImportEconomy) : ArgumentParser<
             return ArgumentParseResult.success(input)
         }
 
-        return ArgumentParseResult.failure(Exception(LiteEco.instance.locale.getMessage("messages.parser.error.convert_fail")))
+        return ArgumentParseResult.failure(ImportEconomyException(LiteEco.instance.locale.getMessage("messages.parser.error.convert_fail")))
     }
 
     override fun suggestionProvider(): SuggestionProvider<Source> {
