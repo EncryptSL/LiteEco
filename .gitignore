@@ -1,6 +1,8 @@
 /.gradle
 /.idea
 /.kotlin
+/buildSrc/.gradle
+/buildSrc/build
 /build/
 /gradlew.bat
 /logs
