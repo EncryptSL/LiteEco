@@ -23,7 +23,7 @@ scruffyeconomy = "2.3"
 ezeconomy = "3.1.2"
 simpleeconomy = "3.4"
 theosiseconomy = "1.46"
-playerpoints = "3.3.4"
+playerpoints = "3.3.5"
 
 [plugins]
 gradleup-shadow = { id = "com.gradleup.shadow", version = "9.6.1" }
@@ -56,6 +56,7 @@ configlib = { module = "de.exlll:configlib-yaml", version.ref = "configlib" }
 commons-csv = { module = "org.apache.commons:commons-csv", version.ref = "csv" }
 
 cloud-core = { module = "org.incendo:cloud-core", version.ref = "cloud" }
+cloud-bukkit = { module = "org.incendo:cloud-bukkit", version = "2.0.1" }
 cloud-paper = { module = "org.incendo:cloud-paper", version = "2.0.0" }
 cloud-extras = { module = "org.incendo:cloud-minecraft-extras", version = "2.0.0" }
 cloud-kotlin = { module = "org.incendo:cloud-kotlin-extensions", version.ref = "cloud" }
@@ -83,6 +84,6 @@ kotlin = ["kotlin-reflection", "kotlin-stdlib"]
 exposed = ["exposed-core", "exposed-jdbc", "exposed-kotlin-datetime", "exposed-migration"]
 flyway = ["flyway-core", "flyway-mysql"]
 ktor = ["ktor-client-content-negotiation", "ktor-client-java", "ktor-serialization-gson"]
-cloud = ["cloud-core", "cloud-paper", "cloud-extras", "cloud-kotlin"]
+cloud = ["cloud-core", "cloud-bukkit", "cloud-paper", "cloud-extras", "cloud-kotlin"]
 database-drivers = ["sqlite", "mariadb", "postqresql"]
 economy-plugins = ["bettereconomy", "cmi", "scruffyeconomy", "ezeconomy", "simpleeconomy", "theosiseconomy", "playerpoints"]
