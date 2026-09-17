@@ -3,6 +3,7 @@ package com.github.encryptsl.lite.eco
 import com.github.encryptsl.lite.eco.api.ConfigAPI
 import com.github.encryptsl.lite.eco.api.MetricsCollector
 import com.github.encryptsl.lite.eco.api.UpdateNotifier
+import com.github.encryptsl.lite.eco.api.UpdateProvider
 import com.github.encryptsl.lite.eco.api.economy.Currency
 import com.github.encryptsl.lite.eco.api.economy.SuspendLiteEcoEconomyWrapper
 import com.github.encryptsl.lite.eco.api.economy.account.AccountCache
@@ -52,7 +53,12 @@ class LiteEco : JavaPlugin() {
     val logger = componentLogger
 
     private val countTransactions = ConcurrentHashMap<String, Int>()
-    private val updateNotifier: UpdateNotifier by lazy { UpdateNotifier(this,"101934", pluginMeta.version) }
+    private val updateNotifier: UpdateNotifier by lazy { UpdateNotifier(
+        this,
+        pluginMeta.version,
+        listOf(UpdateProvider.HANGAR, UpdateProvider.SPIGET),
+        "encryptsl/LiteEco","101934")
+    }
     private val metricsCollector: MetricsCollector by lazy { MetricsCollector(this,15144, countTransactions) }
 
     val api: SuspendLiteEcoEconomyWrapper by lazy { SuspendLiteEcoEconomyWrapper() }
