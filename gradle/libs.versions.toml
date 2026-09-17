@@ -2,7 +2,7 @@
 kotlin = "2.4.20"
 exposed = "1.4.0"
 caffeine = "3.2.4"
-cloud = "2.0.0"
+cloud = "2.1.0"
 flyway = "12.8.1"
 hikari = "7.1.0"
 vaultunlocked = "2.20"
@@ -56,8 +56,8 @@ configlib = { module = "de.exlll:configlib-yaml", version.ref = "configlib" }
 commons-csv = { module = "org.apache.commons:commons-csv", version.ref = "csv" }
 
 cloud-core = { module = "org.incendo:cloud-core", version.ref = "cloud" }
-cloud-paper = { module = "org.incendo:cloud-paper", version = "2.0.0-beta.16" }
-cloud-extras = { module = "org.incendo:cloud-minecraft-extras", version = "2.0.0-beta.16" }
+cloud-paper = { module = "org.incendo:cloud-paper", version = "2.0.0" }
+cloud-extras = { module = "org.incendo:cloud-minecraft-extras", version = "2.0.0" }
 cloud-kotlin = { module = "org.incendo:cloud-kotlin-extensions", version.ref = "cloud" }
 
 bettereconomy = { module = "me.hsgamer:bettereconomy", version.ref = "bettereconomy" }
