@@ -32,10 +32,10 @@ libraries:
   - org.jetbrains.exposed:exposed-jdbc:1.4.0
   - org.jetbrains.exposed:exposed-kotlin-datetime:1.4.0
   - org.jetbrains.exposed:exposed-migration:1.0.0-beta-5
-  - org.jetbrains.kotlin:kotlin-reflect:2.4.10
+  - org.jetbrains.kotlin:kotlin-reflect:2.4.20
   - org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.0.0
   - org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.0.0
-  - org.jetbrains.kotlin:kotlin-stdlib:2.4.10
+  - org.jetbrains.kotlin:kotlin-stdlib:2.4.20
   - org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.11.0
   - org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.11.0
   - org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:1.11.0

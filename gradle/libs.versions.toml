@@ -1,5 +1,5 @@
 [versions]
-kotlin = "2.4.10"
+kotlin = "2.4.20"
 exposed = "1.4.0"
 caffeine = "3.2.4"
 cloud = "2.0.0"

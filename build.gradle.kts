@@ -2,7 +2,7 @@ import io.papermc.paperweight.userdev.ReobfArtifactConfiguration
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    kotlin("jvm") version "2.4.10"
+    kotlin("jvm") version "2.4.20"
     id("generate-paper-libraries")
     alias(libs.plugins.gradleup.shadow)
     alias(libs.plugins.paperweight)
