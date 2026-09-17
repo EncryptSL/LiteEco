@@ -40,6 +40,9 @@ dependencies:
     PlayerPoints:
       required: false
       join-classpath: true
+    CMI:
+      required: false
+      join-classpath: true
 
 
 description: ${description}

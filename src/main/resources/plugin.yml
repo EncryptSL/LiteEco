@@ -12,7 +12,7 @@ contributors: [LcyDev, Schneidertm, sysnote8main, SnowCutieOwO, firestorm942, Ti
 website: https://encryptsl.github.io
 
 load: STARTUP
-softdepend: [PlaceholderAPI, Vault, MiniPlaceholders, BetterEconomy, TheosisEconomy, SimpleEconomy, Economy, EzEconomy, PlayerPoints]
+softdepend: [PlaceholderAPI, Vault, MiniPlaceholders, BetterEconomy, TheosisEconomy, SimpleEconomy, Economy, EzEconomy, PlayerPoints, CMI]
 libraries:
   - com.github.ben-manes.caffeine:caffeine:3.2.4
   - com.tchristofferson:ConfigUpdater:2.2
@@ -36,20 +36,20 @@ libraries:
   - org.apache.commons:commons-csv:1.14.1
   - org.flywaydb:flyway-core:12.8.1
   - org.flywaydb:flyway-mysql:12.8.1
-  - org.incendo:cloud-brigadier:2.0.0-beta.16
-  - org.incendo:cloud-bukkit:2.0.0-beta.16
-  - org.incendo:cloud-core:2.0.0
-  - org.incendo:cloud-kotlin-extensions:2.0.0
-  - org.incendo:cloud-minecraft-extras:2.0.0-beta.16
-  - org.incendo:cloud-paper:2.0.0-beta.16
-  - org.incendo:cloud-services:2.0.0
+  - org.incendo:cloud-brigadier:2.0.0
+  - org.incendo:cloud-bukkit:2.0.0
+  - org.incendo:cloud-core:2.1.0
+  - org.incendo:cloud-kotlin-extensions:2.1.0
+  - org.incendo:cloud-minecraft-extras:2.0.0
+  - org.incendo:cloud-paper:2.0.0
+  - org.incendo:cloud-services:2.1.0
   - org.jetbrains.exposed:exposed-core:1.4.0
   - org.jetbrains.exposed:exposed-jdbc:1.4.0
   - org.jetbrains.exposed:exposed-kotlin-datetime:1.4.0
   - org.jetbrains.exposed:exposed-migration:1.0.0-beta-5
   - org.jetbrains.kotlin:kotlin-reflect:2.4.20
-  - org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.0.0
-  - org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.0.0
+  - org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.0.20
+  - org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.0.20
   - org.jetbrains.kotlin:kotlin-stdlib:2.4.20
   - org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.11.0
   - org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.11.0
