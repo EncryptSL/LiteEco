@@ -44,6 +44,7 @@ class DatabaseConnector(
                 this.password = pass
                 this.poolName = liteEco.javaClass.simpleName
                 this.maximumPoolSize = 20
+                this.maxLifetime = 300
                 this.isReadOnly = false
                 this.transactionIsolation = "TRANSACTION_SERIALIZABLE"
             }
