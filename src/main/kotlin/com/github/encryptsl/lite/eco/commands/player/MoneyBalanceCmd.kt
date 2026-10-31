@@ -42,7 +42,9 @@ class MoneyBalanceCmd(
             )
             .optional(
                 "currency", commandManager.componentBuilder(String::class.java, "currency")
-                    .parser(CurrencyParser()).defaultValue(DefaultValue.parsed("dollars"))
+                    .parser(CurrencyParser()).defaultValue(
+                        DefaultValue.parsed(liteEco.currencyImpl.defaultCurrency())
+                    )
             )
             .handler { ctx ->
                 val sender = ctx.sender().source()

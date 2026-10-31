@@ -24,6 +24,7 @@ import java.util.*
 import kotlin.system.measureTimeMillis
 
 class EcoDebugCmd(
+    private val liteEco: LiteEco,
     private val helper: Helper
 ) : CommandFeature {
 
@@ -99,14 +100,14 @@ class EcoDebugCmd(
 
                     val startMsg = ModernText.miniModernText("<yellow>[LiteEco Debug] Preparing $accountCount test accounts in database and cache...</yellow>")
                     sender.sendMessage(startMsg)
-                    LiteEco.instance.logger.info(startMsg)
+                    liteEco.logger.info(startMsg)
 
                     val generatedAccounts = Collections.synchronizedMap(mutableMapOf<UUID, BigDecimal>())
-                    val currency = LiteEco.instance.currencyImpl.defaultCurrency()
+                    val currency = liteEco.currencyImpl.defaultCurrency()
                     val initialDbAmount = BigDecimal.ZERO
                     val random = kotlin.random.Random
 
-                    LiteEco.instance.pluginScope.launch {
+                    liteEco.pluginScope.launch {
                         val preparationTime = measureTimeMillis {
                             (0 until accountCount).chunked(50).forEach { batch ->
                                 batch.forEach { index ->
@@ -114,7 +115,7 @@ class EcoDebugCmd(
                                     val testUsername = "TestPlayer_$index"
                                     val randomAmount = BigDecimal(random.nextInt(1, 10_000))
 
-                                    LiteEco.instance.databaseEcoModel.createPlayerAccount(
+                                    liteEco.databaseEcoModel.createPlayerAccount(
                                         testUsername,
                                         testUuid,
                                         currency,
@@ -166,7 +167,11 @@ class EcoDebugCmd(
                 .optional("source", OfflinePlayerParser.offlinePlayerParser(), commandManager.parserRegistry().getSuggestionProvider("players").get())
                 .optional("amount", DoubleParser.doubleParser(0.01), DefaultValue.constant(10.0))
                 .optional("requests", IntegerParser.integerParser(1), DefaultValue.constant(20))
-                .optional("currency", commandManager.componentBuilder(String::class.java, "currency").parser(CurrencyParser()).defaultValue(DefaultValue.parsed("dollars")))
+                .optional("currency", commandManager.componentBuilder(String::class.java, "currency")
+                    .parser(CurrencyParser()).defaultValue(
+                        DefaultValue.parsed(liteEco.currencyImpl.defaultCurrency())
+                    )
+                )
                 .permission("lite.eco.admin.debug.stress")
                 .handler { context ->
                     val sender = context.sender().source()
@@ -188,7 +193,7 @@ class EcoDebugCmd(
                     val amount = BigDecimal.valueOf(amountValue)
 
                     val requestsCount = context.getOrDefault("requests", 20)
-                    val currency = context.getOrDefault("currency", "dollars")
+                    val currency = context.getOrDefault("currency",liteEco.currencyImpl.defaultCurrency())
 
                     val targetUuid = target.uniqueId
                     val targetName = target.name ?: "Unknown"

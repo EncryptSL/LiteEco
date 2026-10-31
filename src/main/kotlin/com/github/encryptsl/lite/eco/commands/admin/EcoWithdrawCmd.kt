@@ -17,7 +17,7 @@ import org.incendo.cloud.parser.standard.BooleanParser
 import java.math.BigDecimal
 
 class EcoWithdrawCmd(
-    liteEco: LiteEco,
+    private val liteEco: LiteEco,
     private val economyWithdraw: EconomyMoneyWithdrawHandler,
     private val economyWithdrawGlobal: EconomyGlobalWithdrawHandler,
 ) : EconomyCommand(liteEco) {
@@ -43,7 +43,9 @@ class EcoWithdrawCmd(
                     commandManager
                         .componentBuilder(String::class.java, "currency")
                         .parser(CurrencyParser())
-                        .defaultValue(DefaultValue.parsed("dollars"))
+                        .defaultValue(
+                            DefaultValue.parsed(liteEco.currencyImpl.defaultCurrency())
+                        )
                 )
                 .optional(
                     "silent",

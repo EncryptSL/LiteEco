@@ -66,7 +66,7 @@ class EcoCMD(
                 EcoAccountManagementCmd(liteEco, confirmationManager),
                 EcoDatabaseCmd(liteEco, importEconomy, purgeManager, exportManager, importManager, confirmationManager),
                 EcoConfigCmd(liteEco),
-                EcoDebugCmd(helper),
+                EcoDebugCmd(liteEco, helper),
                 EcoMonologCmd(monologManager)
             )
 

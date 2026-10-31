@@ -42,7 +42,9 @@ class EcoAccountManagementCmd(
                     commandManager
                         .componentBuilder(String::class.java, "currency")
                         .parser(CurrencyParser())
-                        .defaultValue(DefaultValue.parsed("dollars"))
+                        .defaultValue(
+                            DefaultValue.parsed(liteEco.currencyImpl.defaultCurrency())
+                        )
                 )
                 .handler { ctx ->
                     val sender: CommandSender = ctx.sender().source()
@@ -85,7 +87,9 @@ class EcoAccountManagementCmd(
                     commandManager
                         .componentBuilder(String::class.java, "currency")
                         .parser(CurrencyParser())
-                        .defaultValue(DefaultValue.parsed("dollars"))
+                        .defaultValue(
+                            DefaultValue.parsed(liteEco.currencyImpl.defaultCurrency())
+                        )
                 )
                 .handler { ctx ->
                     val sender: CommandSender = ctx.sender().source()

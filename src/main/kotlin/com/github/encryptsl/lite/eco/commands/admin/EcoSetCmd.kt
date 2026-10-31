@@ -16,7 +16,7 @@ import org.incendo.cloud.paper.util.sender.Source
 import java.math.BigDecimal
 
 class EcoSetCmd(
-    liteEco: LiteEco,
+    private val liteEco: LiteEco,
     private val economySet: EconomyMoneySetHandler,
     private val economyGlobalSet: EconomyGlobalSetHandler,
 ) : EconomyCommand(liteEco) {
@@ -39,7 +39,9 @@ class EcoSetCmd(
                     commandManager
                         .componentBuilder(String::class.java, "currency")
                         .parser(CurrencyParser())
-                        .defaultValue(DefaultValue.parsed("dollars"))
+                        .defaultValue(
+                            DefaultValue.parsed(liteEco.currencyImpl.defaultCurrency())
+                        )
                 )
                 .handler { ctx ->
                     val sender: CommandSender = ctx.sender().source()
