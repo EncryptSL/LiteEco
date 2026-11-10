@@ -3,7 +3,9 @@ package com.github.encryptsl.lite.eco.common.migrator
 import com.github.encryptsl.lite.eco.common.extensions.io
 import com.github.encryptsl.lite.eco.common.migrator.entity.PlayerBalances
 import com.github.encryptsl.lite.eco.common.migrator.interfaces.Export
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVPrinter
@@ -59,6 +61,9 @@ class CSVFileExporter(
             plugin.logger.severe("CSV Export failed for currency '$currency': ${e.message}")
             false
         } catch (e: Exception) {
+            if (e is CancellationException) {
+                ensureActive()
+            }
             plugin.logger.severe("Unexpected error during CSV Export for currency '$currency': ${e.message}")
             false
         }
