@@ -1,12 +1,12 @@
 package com.github.encryptsl.lite.eco.commands.admin
 
 import com.github.encryptsl.lite.eco.LiteEco
-import com.github.encryptsl.lite.eco.api.enums.CheckLevel
 import com.github.encryptsl.lite.eco.commands.internal.EconomyCommand
 import com.github.encryptsl.lite.eco.commands.parsers.AmountValidatorParser
 import com.github.encryptsl.lite.eco.commands.parsers.CurrencyParser
 import com.github.encryptsl.lite.eco.common.manager.economy.admin.EconomyGlobalSetHandler
 import com.github.encryptsl.lite.eco.common.manager.economy.admin.EconomyMoneySetHandler
+import com.github.encryptsl.lite.eco.enums.CheckLevel
 import org.bukkit.command.CommandSender
 import org.incendo.cloud.Command
 import org.incendo.cloud.bukkit.parser.selector.MultiplePlayerSelectorParser
@@ -30,18 +30,13 @@ class EcoSetCmd(
                 .permission("lite.eco.admin.set")
                 .required("target", MultiplePlayerSelectorParser.multiplePlayerSelectorParser())
                 .required(
-                    commandManager
-                        .componentBuilder(BigDecimal::class.java, "amount")
-                        .parser(AmountValidatorParser(CheckLevel.ONLY_NEGATIVE))
-                        .defaultValue(DefaultValue.constant(BigDecimal.ONE))
+                    "amount",
+                    AmountValidatorParser.amountValidatorParser(CheckLevel.ONLY_NEGATIVE),
                 )
                 .optional(
-                    commandManager
-                        .componentBuilder(String::class.java, "currency")
-                        .parser(CurrencyParser())
-                        .defaultValue(
-                            DefaultValue.parsed(liteEco.currencyImpl.defaultCurrency())
-                        )
+                    "currency",
+                    CurrencyParser.currencyParser(),
+                    DefaultValue.parsed(liteEco.currencyImpl.defaultCurrency())
                 )
                 .handler { ctx ->
                     val sender: CommandSender = ctx.sender().source()

@@ -1,13 +1,14 @@
 package com.github.encryptsl.lite.eco.commands.parsers
 
 import com.github.encryptsl.lite.eco.LiteEco
-import com.github.encryptsl.lite.eco.api.errors.CurrencyParserException
+import com.github.encryptsl.lite.eco.commands.errors.CurrencyParserException
 import org.bukkit.command.CommandSender
 import org.incendo.cloud.context.CommandContext
 import org.incendo.cloud.context.CommandInput
 import org.incendo.cloud.paper.util.sender.Source
 import org.incendo.cloud.parser.ArgumentParseResult
 import org.incendo.cloud.parser.ArgumentParser
+import org.incendo.cloud.parser.ParserDescriptor
 import org.incendo.cloud.suggestion.Suggestion
 import org.incendo.cloud.suggestion.SuggestionProvider
 
@@ -32,6 +33,12 @@ class CurrencyParser : ArgumentParser<Source, String> {
                 val sender: CommandSender = s.sender().source()
                 sender.hasPermission("lite.eco.balance.$it") || sender.hasPermission("lite.eco.balance.*")
             }.map { Suggestion.suggestion(it).suggestion() }
+        }
+    }
+
+    companion object {
+        fun currencyParser(): ParserDescriptor<Source, String> {
+            return ParserDescriptor.of(CurrencyParser(), String::class.java)
         }
     }
 }

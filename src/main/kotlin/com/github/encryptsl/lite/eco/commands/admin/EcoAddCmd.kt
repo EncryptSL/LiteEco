@@ -6,6 +6,7 @@ import com.github.encryptsl.lite.eco.commands.parsers.AmountValidatorParser
 import com.github.encryptsl.lite.eco.commands.parsers.CurrencyParser
 import com.github.encryptsl.lite.eco.common.manager.economy.admin.EconomyGlobalDepositHandler
 import com.github.encryptsl.lite.eco.common.manager.economy.admin.EconomyMoneyDepositHandler
+import com.github.encryptsl.lite.eco.enums.CheckLevel
 import org.incendo.cloud.Command
 import org.incendo.cloud.bukkit.parser.selector.MultiplePlayerSelectorParser
 import org.incendo.cloud.component.DefaultValue
@@ -29,18 +30,13 @@ class EcoAddCmd(
                 .permission("lite.eco.admin.add")
                 .required("target", MultiplePlayerSelectorParser.multiplePlayerSelectorParser())
                 .required(
-                    commandManager
-                        .componentBuilder(BigDecimal::class.java, "amount")
-                        .parser(AmountValidatorParser())
-                        .defaultValue(DefaultValue.constant(BigDecimal.ONE))
+                    "amount",
+                    AmountValidatorParser.amountValidatorParser(CheckLevel.FULL),
                 )
                 .optional(
-                    commandManager
-                        .componentBuilder(String::class.java, "currency")
-                        .parser(CurrencyParser())
-                        .defaultValue(
-                            DefaultValue.parsed(liteEco.currencyImpl.defaultCurrency())
-                        )
+                    "currency",
+                    CurrencyParser.currencyParser(),
+                    DefaultValue.parsed(liteEco.currencyImpl.defaultCurrency())
                 )
                 .optional(
                     "silent",

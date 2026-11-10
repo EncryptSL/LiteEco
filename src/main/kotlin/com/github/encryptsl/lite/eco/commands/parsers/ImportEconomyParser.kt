@@ -1,13 +1,14 @@
 package com.github.encryptsl.lite.eco.commands.parsers
 
 import com.github.encryptsl.lite.eco.LiteEco
-import com.github.encryptsl.lite.eco.api.errors.ImportEconomyException
+import com.github.encryptsl.lite.eco.commands.errors.ImportEconomyException
 import com.github.encryptsl.lite.eco.common.manager.importer.ImportEconomy
 import org.incendo.cloud.context.CommandContext
 import org.incendo.cloud.context.CommandInput
 import org.incendo.cloud.paper.util.sender.Source
 import org.incendo.cloud.parser.ArgumentParseResult
 import org.incendo.cloud.parser.ArgumentParser
+import org.incendo.cloud.parser.ParserDescriptor
 import org.incendo.cloud.suggestion.Suggestion
 import org.incendo.cloud.suggestion.SuggestionProvider
 
@@ -29,5 +30,11 @@ class ImportEconomyParser(private val importer: ImportEconomy) : ArgumentParser<
     override fun suggestionProvider(): SuggestionProvider<Source> {
         val keys = importer.importers.keys
         return SuggestionProvider.suggesting(keys.map { Suggestion.suggestion(it) })
+    }
+
+    companion object {
+        fun importEconomyParser(importer: ImportEconomy): ParserDescriptor<Source?, String?> {
+            return ParserDescriptor.of(ImportEconomyParser(importer), String::class.java)
+        }
     }
 }

@@ -41,10 +41,9 @@ class MoneyBalanceCmd(
                 commandManager.parserRegistry().getSuggestionProvider("players").get()
             )
             .optional(
-                "currency", commandManager.componentBuilder(String::class.java, "currency")
-                    .parser(CurrencyParser()).defaultValue(
-                        DefaultValue.parsed(liteEco.currencyImpl.defaultCurrency())
-                    )
+                "currency",
+                CurrencyParser.currencyParser(),
+                DefaultValue.parsed(liteEco.currencyImpl.defaultCurrency())
             )
             .handler { ctx ->
                 val sender = ctx.sender().source()

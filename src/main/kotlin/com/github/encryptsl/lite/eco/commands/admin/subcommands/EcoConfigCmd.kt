@@ -23,9 +23,8 @@ class EcoConfigCmd(
             configSubCommand.literal("lang")
                 .permission("lite.eco.admin.lang")
                 .required(
-                    commandManager
-                        .componentBuilder(String::class.java, "isoKey")
-                        .parser(LangParser(liteEco))
+                    "isoKey",
+                    LangParser.langParser(liteEco)
                 ).handler { ctx ->
                     val sender: CommandSender = ctx.sender().source()
                     val lang: String = ctx.get("isoKey")

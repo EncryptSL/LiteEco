@@ -1,12 +1,13 @@
 package com.github.encryptsl.lite.eco.commands.parsers
 
 import com.github.encryptsl.lite.eco.LiteEco
-import com.github.encryptsl.lite.eco.api.errors.LangParserException
+import com.github.encryptsl.lite.eco.commands.errors.LangParserException
 import org.incendo.cloud.context.CommandContext
 import org.incendo.cloud.context.CommandInput
 import org.incendo.cloud.paper.util.sender.Source
 import org.incendo.cloud.parser.ArgumentParseResult
 import org.incendo.cloud.parser.ArgumentParser
+import org.incendo.cloud.parser.ParserDescriptor
 import org.incendo.cloud.suggestion.SuggestionProvider
 
 class LangParser(
@@ -28,5 +29,11 @@ class LangParser(
 
     override fun suggestionProvider(): SuggestionProvider<Source> {
         return SuggestionProvider.suggestingStrings(liteEco.locale.availableLocales())
+    }
+
+    companion object {
+        fun langParser(liteEco: LiteEco): ParserDescriptor<Source?, String?> {
+            return ParserDescriptor.of(LangParser(liteEco), String::class.java)
+        }
     }
 }

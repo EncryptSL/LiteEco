@@ -6,7 +6,9 @@ import com.github.encryptsl.lite.eco.api.objects.ModernText
 import com.github.encryptsl.lite.eco.commands.internal.CommandFeature
 import com.github.encryptsl.lite.eco.commands.parsers.CurrencyParser
 import com.github.encryptsl.lite.eco.utils.Helper
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
@@ -29,9 +31,9 @@ class MoneyTopCmd(
             .permission("lite.eco.top")
             .optional("page", IntegerParser.integerParser(1), DefaultValue.constant(1))
             .optional(
-                commandManager.componentBuilder(String::class.java, "currency")
-                    .parser(CurrencyParser())
-                    .defaultValue(DefaultValue.parsed(liteEco.currencyImpl.defaultCurrency()))
+                "currency",
+                CurrencyParser.currencyParser(),
+                DefaultValue.parsed(liteEco.currencyImpl.defaultCurrency())
             )
             .handler { ctx ->
                 val sender = ctx.sender().source()
@@ -76,6 +78,9 @@ class MoneyTopCmd(
                 sender.sendMessage(pagination.navigationBar("money top", currency))
 
             } catch (e: Exception) {
+                if (e is CancellationException) {
+                    ensureActive()
+                }
                 liteEco.componentLogger.error("Failed to display balance top for ${sender.name}", e)
                 sender.sendMessage(ModernText.miniModernText("<red>An internal error occurred while fetching the leaderboards."))
             }

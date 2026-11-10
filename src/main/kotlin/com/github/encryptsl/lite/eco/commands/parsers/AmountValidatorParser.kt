@@ -1,16 +1,17 @@
 package com.github.encryptsl.lite.eco.commands.parsers
 
 import com.github.encryptsl.lite.eco.LiteEco
-import com.github.encryptsl.lite.eco.api.enums.CheckLevel
-import com.github.encryptsl.lite.eco.api.errors.AmountValidatorException
+import com.github.encryptsl.lite.eco.commands.errors.AmountValidatorException
 import com.github.encryptsl.lite.eco.common.extensions.isApproachingZero
 import com.github.encryptsl.lite.eco.common.extensions.isNegative
 import com.github.encryptsl.lite.eco.common.extensions.toValidDecimal
+import com.github.encryptsl.lite.eco.enums.CheckLevel
 import org.incendo.cloud.context.CommandContext
 import org.incendo.cloud.context.CommandInput
 import org.incendo.cloud.paper.util.sender.Source
 import org.incendo.cloud.parser.ArgumentParseResult
 import org.incendo.cloud.parser.ArgumentParser
+import org.incendo.cloud.parser.ParserDescriptor
 import org.incendo.cloud.suggestion.Suggestion
 import org.incendo.cloud.suggestion.SuggestionProvider
 import java.math.BigDecimal
@@ -80,5 +81,11 @@ class AmountValidatorParser(
                 }
             }
         }*/
+    }
+
+    companion object {
+        fun amountValidatorParser(level: CheckLevel = CheckLevel.FULL): ParserDescriptor<Source, BigDecimal> {
+            return ParserDescriptor.of(AmountValidatorParser(level), BigDecimal::class.java)
+        }
     }
 }

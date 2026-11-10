@@ -1,8 +1,6 @@
 package com.github.encryptsl.lite.eco.commands.admin.subcommands
 
 import com.github.encryptsl.lite.eco.LiteEco
-import com.github.encryptsl.lite.eco.api.enums.ExportKeys
-import com.github.encryptsl.lite.eco.api.enums.PurgeKey
 import com.github.encryptsl.lite.eco.commands.internal.CommandFeature
 import com.github.encryptsl.lite.eco.commands.internal.ConfirmationPostprocessor
 import com.github.encryptsl.lite.eco.commands.parsers.CurrencyParser
@@ -11,6 +9,8 @@ import com.github.encryptsl.lite.eco.common.manager.ExportManager
 import com.github.encryptsl.lite.eco.common.manager.ImportManager
 import com.github.encryptsl.lite.eco.common.manager.PurgeManager
 import com.github.encryptsl.lite.eco.common.manager.importer.ImportEconomy
+import com.github.encryptsl.lite.eco.enums.ExportKeys
+import com.github.encryptsl.lite.eco.enums.PurgeKey
 import kotlinx.coroutines.launch
 import org.bukkit.command.CommandSender
 import org.incendo.cloud.Command
@@ -29,9 +29,6 @@ class EcoDatabaseCmd(
     private val confirmationManager: ConfirmationPostprocessor<Source>
 ) : CommandFeature {
 
-    private val importEconomyParser by lazy { ImportEconomyParser(importEconomy) }
-    private val currencyParser by lazy { CurrencyParser() }
-
     override fun register(
         commandManager: PaperCommandManager<Source>,
         base: Command.Builder<Source>
@@ -49,12 +46,9 @@ class EcoDatabaseCmd(
                         .suggestionProvider(commandManager.parserRegistry().getSuggestionProvider("purgeKeys").get())
                 )
                 .optional(
-                    commandManager
-                        .componentBuilder(String::class.java, "currency")
-                        .parser(CurrencyParser())
-                        .defaultValue(
-                            DefaultValue.parsed(liteEco.currencyImpl.defaultCurrency())
-                        )
+                    "currency",
+                    CurrencyParser.currencyParser(),
+                    DefaultValue.parsed(liteEco.currencyImpl.defaultCurrency())
                 )
                 .handler { ctx ->
                     val sender: CommandSender = ctx.sender().source()
@@ -74,10 +68,9 @@ class EcoDatabaseCmd(
                         .suggestionProvider(commandManager.parserRegistry().getSuggestionProvider("exportKeys").get())
                 )
                 .optional(
-                    commandManager
-                        .componentBuilder(String::class.java, "currency")
-                        .parser(CurrencyParser())
-                        .defaultValue(DefaultValue.parsed("dollars"))
+                    "currency",
+                    CurrencyParser.currencyParser(),
+                    DefaultValue.parsed(liteEco.currencyImpl.defaultCurrency())
                 )
                 .handler { ctx ->
                     val sender: CommandSender = ctx.sender().source()
@@ -91,13 +84,13 @@ class EcoDatabaseCmd(
                 .commandDescription(CommandDescription.commandDescription(description))
                 .permission("lite.eco.admin.import")
                 .apply(confirmationManager::applyToBuilder)
-                .required(commandManager
-                    .componentBuilder(String::class.java, "economy")
-                    .parser(importEconomyParser)
+                .required(
+                    "economy",
+                    ImportEconomyParser.importEconomyParser(importEconomy),
                 )
-                .required(commandManager
-                    .componentBuilder(String::class.java, "lite_eco_currency")
-                    .parser(currencyParser)
+                .required(
+                    "lite_eco_currency",
+                    CurrencyParser.currencyParser(),
                 ).flag(
                     commandManager.flagBuilder("from")
                         .withAliases("f")
