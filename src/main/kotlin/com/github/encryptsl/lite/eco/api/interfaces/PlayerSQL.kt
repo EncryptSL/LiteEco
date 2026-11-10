@@ -1,7 +1,7 @@
 package com.github.encryptsl.lite.eco.api.interfaces
 
-import com.github.encryptsl.lite.eco.api.migrator.entity.PlayerBalances
 import com.github.encryptsl.lite.eco.common.database.entity.UserEntity
+import com.github.encryptsl.lite.eco.common.migrator.entity.PlayerBalances
 import java.math.BigDecimal
 import java.util.*
 

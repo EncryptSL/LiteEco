@@ -1,8 +1,10 @@
 package com.github.encryptsl.lite.eco.common.hook.vault.unlocked.async
 
 import com.github.encryptsl.lite.eco.LiteEco
-import com.github.encryptsl.lite.eco.api.enums.TypeLogger
 import com.github.encryptsl.lite.eco.common.database.entity.TransactionContextEntity
+import com.github.encryptsl.lite.eco.enums.TypeLogger
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.future.await
 import kotlinx.coroutines.future.future
 import net.milkbowl.vault2.economy.EconomyResponse
@@ -80,6 +82,7 @@ class AsyncEconomyVaultUnlockedAPI(
         try {
             liteEco.api.account().getUserByUUID(accountID, currency) != null
         } catch (_: Exception) {
+            ensureActive()
             false
         }
     }
@@ -153,6 +156,9 @@ class AsyncEconomyVaultUnlockedAPI(
                 EconomyResponse(amount, balanceBefore, EconomyResponse.ResponseType.FAILURE, FAIL_SET)
             }
         } catch (e: Exception) {
+            if (e is CancellationException) {
+                ensureActive()
+            }
             liteEco.logger.error("VaultUnlocked async set error: ${e.message}")
             EconomyResponse(amount, balanceBefore, EconomyResponse.ResponseType.FAILURE, FAIL_SET)
         }
@@ -210,6 +216,9 @@ class AsyncEconomyVaultUnlockedAPI(
                 EconomyResponse(amount, currentBalance, EconomyResponse.ResponseType.FAILURE, FAIL_WITHDRAW)
             }
         } catch (e: Exception) {
+            if (e is CancellationException) {
+                ensureActive()
+            }
             liteEco.logger.error("VaultUnlocked async withdraw error: ${e.message}")
             EconomyResponse(amount, currentBalance, EconomyResponse.ResponseType.FAILURE, FAIL_WITHDRAW)
         }
@@ -269,6 +278,9 @@ class AsyncEconomyVaultUnlockedAPI(
                 EconomyResponse(amount, currentBalance, EconomyResponse.ResponseType.FAILURE, FAIL_DEPOSIT)
             }
         } catch (e: Exception) {
+            if (e is CancellationException) {
+                ensureActive()
+            }
             liteEco.logger.error("VaultUnlocked async deposit error: ${e.message}")
             EconomyResponse(amount, currentBalance, EconomyResponse.ResponseType.FAILURE, FAIL_DEPOSIT)
         }
@@ -303,6 +315,9 @@ class AsyncEconomyVaultUnlockedAPI(
                     try {
                         liteEco.api.account().deposit(from, currency, amount)
                     } catch (e: Exception) {
+                        if (e is CancellationException) {
+                            ensureActive()
+                        }
                         liteEco.logger.error("Failed to refund money back to $from during transfer: ${e.message}")
                     }
 
@@ -312,6 +327,9 @@ class AsyncEconomyVaultUnlockedAPI(
                 MultiEconomyResponse(amount, EconomyResponse.ResponseType.FAILURE, FAIL_TRANSFER_INSUFFICIENT_FUNDS)
             }
         } catch (e: Exception) {
+            if (e is CancellationException) {
+                ensureActive()
+            }
             liteEco.logger.error("VaultUnlocked async transfer error: ${e.message}")
             MultiEconomyResponse(amount, EconomyResponse.ResponseType.FAILURE, FAIL_TRANSFER)
         }

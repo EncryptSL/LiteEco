@@ -10,6 +10,8 @@ private val units = arrayOf(
     "", "K", "M", "B", "T", "Q", "Qn", "S", "Se", "O", "N", "D"
 )
 
+fun BigDecimal.moneyScale(): BigDecimal = this.setScale(2, RoundingMode.HALF_UP)
+
 fun String.toValidDecimal(): BigDecimal? {
     val s = this.trim()
     if (s.isBlank() || s.contains(" ")) return null

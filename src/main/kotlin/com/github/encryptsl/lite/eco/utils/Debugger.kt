@@ -1,7 +1,7 @@
 package com.github.encryptsl.lite.eco.utils
 
 import com.github.encryptsl.lite.eco.LiteEco
-import com.github.encryptsl.lite.eco.api.account.Wallet
+import com.github.encryptsl.lite.eco.api.account.AccountState
 import com.github.encryptsl.lite.eco.api.objects.ModernText
 import java.io.File
 import java.math.BigDecimal
@@ -16,7 +16,7 @@ class Debugger(private val liteEco: LiteEco) {
         }
     }
 
-    fun dumpUnsavedAccounts(failedAccounts: Map<UUID, Wallet>, reason: String, isSqlite: Boolean = false) {
+    fun dumpUnsavedAccounts(failedAccounts: Map<UUID, AccountState>, reason: String, isSqlite: Boolean = false) {
         if (failedAccounts.isEmpty()) return
 
         try {

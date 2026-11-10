@@ -1,6 +1,8 @@
 package com.github.encryptsl.lite.eco.common.database.entity
 
-import com.github.encryptsl.lite.eco.api.enums.TypeLogger
+import com.github.encryptsl.lite.eco.common.database.tables.MonologTable
+import com.github.encryptsl.lite.eco.enums.TypeLogger
+import org.jetbrains.exposed.v1.core.ResultRow
 import java.math.BigDecimal
 import kotlin.time.Clock
 import kotlin.time.Instant
@@ -24,4 +26,18 @@ data class TransactionContextEntity(
     val previousBalance: BigDecimal,
     val newBalance: BigDecimal,
     val timestamp: Instant = Clock.System.now()
-)
+) {
+    companion object {
+        fun fromRow(row: ResultRow): TransactionContextEntity {
+            return TransactionContextEntity(
+                type = TypeLogger.valueOf(row[MonologTable.action]),
+                sender = row[MonologTable.sender],
+                target = row[MonologTable.target],
+                currency = row[MonologTable.currency],
+                previousBalance = row[MonologTable.previousBalance],
+                newBalance = row[MonologTable.newBalance],
+                timestamp = row[MonologTable.timestamp]
+            )
+        }
+    }
+}

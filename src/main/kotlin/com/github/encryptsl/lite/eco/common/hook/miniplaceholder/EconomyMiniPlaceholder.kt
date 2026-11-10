@@ -24,7 +24,7 @@ class EconomyMiniPlaceholder(private val liteEco: LiteEco) {
 
             audience<Player>("balance_formatted") { p, s, _ ->
                 val currency = liteEco.placeholderHelper.parseCurrency(s)
-                liteEco.currencyImpl.fullFormatting(liteEco.placeholderHelper.getBalance(p.uniqueId, currency)).toTag()
+                liteEco.currencyImpl.fullFormatting(liteEco.placeholderHelper.getBalance(p.uniqueId, currency), currency).toTag()
             }
 
             audience<Player>("balance_compacted") { p, s, _ ->
@@ -44,7 +44,7 @@ class EconomyMiniPlaceholder(private val liteEco: LiteEco) {
 
             global("top_balance_formatted") { i, _ ->
                 val (rank, currency) = liteEco.placeholderHelper.parseRankAndCurrency(i) ?: return@global null
-                liteEco.currencyImpl.fullFormatting(liteEco.placeholderHelper.getBalanceByRank(rank, currency)).toTag()
+                liteEco.currencyImpl.fullFormatting(liteEco.placeholderHelper.getBalanceByRank(rank, currency), currency).toTag()
             }
 
             global("top_balance_compacted") { i, _ ->

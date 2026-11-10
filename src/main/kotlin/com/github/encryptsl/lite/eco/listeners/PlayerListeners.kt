@@ -1,7 +1,7 @@
 package com.github.encryptsl.lite.eco.listeners
 
 import com.github.encryptsl.lite.eco.LiteEco
-import com.github.encryptsl.lite.eco.api.economy.account.AccountCache
+import com.github.encryptsl.lite.eco.api.economy.account.InMemoryAccountStoreRepository
 import com.github.encryptsl.lite.eco.api.objects.ModernText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -29,7 +29,7 @@ class PlayerListeners(
         val username = event.name
 
         try {
-            if (AccountCache.isAccountCached(uuid, null)) {
+            if (InMemoryAccountStoreRepository.isAccountCached(uuid, null)) {
                 preventSync.add(uuid)
                 liteEco.logger.warn("Duplicate login detected for $username ($uuid). Flagged preventSync.")
             }

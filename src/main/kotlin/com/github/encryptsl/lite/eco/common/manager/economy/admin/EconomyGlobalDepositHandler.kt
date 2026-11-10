@@ -1,8 +1,8 @@
 package com.github.encryptsl.lite.eco.common.manager.economy.admin
 
 import com.github.encryptsl.lite.eco.LiteEco
-import com.github.encryptsl.lite.eco.api.enums.TypeLogger
 import com.github.encryptsl.lite.eco.common.database.entity.TransactionContextEntity
+import com.github.encryptsl.lite.eco.enums.TypeLogger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
@@ -26,7 +26,7 @@ class EconomyGlobalDepositHandler(
         val isPlayerBypassing = (sender is Player) && sender.hasPermission("lite.eco.admin.bypass.limit")
 
         // Synchronous validation before launching async coroutine
-        if (liteEco.currencyImpl.getCheckBalanceLimit(money) && !isPlayerBypassing) {
+        if (liteEco.currencyImpl.getCheckBalanceLimit(money, currency) && !isPlayerBypassing) {
             liteEco.schedulerHelper.sendMessageSync(
                 sender,
                 liteEco.locale.translation("messages.error.amount_above_limit")

@@ -22,7 +22,7 @@ class LegacyEconomyVaultAPI(private val liteEco: LiteEco) : LegacyDeprecatedEcon
 
     override fun fractionalDigits(): Int = -1
 
-    override fun format(amount: Double): String = liteEco.currencyImpl.fullFormatting(amount.toBigDecimal())
+    override fun format(amount: Double): String = liteEco.currencyImpl.fullFormatting(amount.toBigDecimal(), liteEco.currencyImpl.defaultCurrency())
 
     override fun currencyNamePlural(): String? = null
 

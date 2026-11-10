@@ -5,16 +5,16 @@ import com.github.encryptsl.lite.eco.api.MetricsCollector
 import com.github.encryptsl.lite.eco.api.UpdateNotifier
 import com.github.encryptsl.lite.eco.api.UpdateProvider
 import com.github.encryptsl.lite.eco.api.economy.Currency
-import com.github.encryptsl.lite.eco.api.economy.SuspendLiteEcoEconomyWrapper
-import com.github.encryptsl.lite.eco.api.economy.account.AccountCache
+import com.github.encryptsl.lite.eco.api.economy.LiteEcoEconomy
+import com.github.encryptsl.lite.eco.api.economy.account.InMemoryAccountStoreRepository
 import com.github.encryptsl.lite.eco.api.objects.ModernText
 import com.github.encryptsl.lite.eco.commands.CommandFeatureManager
 import com.github.encryptsl.lite.eco.common.AccountManager
 import com.github.encryptsl.lite.eco.common.config.BaseConfig
 import com.github.encryptsl.lite.eco.common.config.Locales
 import com.github.encryptsl.lite.eco.common.database.DatabaseConnector
-import com.github.encryptsl.lite.eco.common.database.models.DatabaseEcoModel
-import com.github.encryptsl.lite.eco.common.database.models.DatabaseMonologModel
+import com.github.encryptsl.lite.eco.common.database.models.AccountRepository
+import com.github.encryptsl.lite.eco.common.database.models.MonologRepository
 import com.github.encryptsl.lite.eco.common.hook.HookManager
 import com.github.encryptsl.lite.eco.listeners.PlayerListeners
 import com.github.encryptsl.lite.eco.utils.ClassUtil
@@ -61,10 +61,10 @@ class LiteEco : JavaPlugin() {
     }
     private val metricsCollector: MetricsCollector by lazy { MetricsCollector(this,15144, countTransactions) }
 
-    val api: SuspendLiteEcoEconomyWrapper by lazy { SuspendLiteEcoEconomyWrapper() }
+    val api: LiteEcoEconomy by lazy { LiteEcoEconomy() }
     val locale: Locales by lazy { Locales(this) }
-    val databaseEcoModel: DatabaseEcoModel by lazy { DatabaseEcoModel() }
-    val loggerModel: DatabaseMonologModel by lazy { DatabaseMonologModel(this) }
+    val accountRepository: AccountRepository by lazy { AccountRepository() }
+    val loggerModel: MonologRepository by lazy { MonologRepository(this) }
     val currencyImpl: Currency by lazy { Currency(this) }
     val databaseConnector: DatabaseConnector by lazy { DatabaseConnector(this) }
     val accountManager: AccountManager by lazy { AccountManager(this) }
@@ -103,7 +103,7 @@ class LiteEco : JavaPlugin() {
             commandFeatureManager.createCommandManager()
             registerListeners()
         }
-        AccountCache.startJanitor(this)
+        InMemoryAccountStoreRepository.startAccountSyncEvictionWorker(this)
         val pluginRunningOnFolia = if (isFolia()) "<blue>[Folia]</blue>" else "<yellow>[PaperMC]</yellow>"
         logger.info(ModernText.miniModernText("Contribute to other updates <yellow>https://ko-fi.com/encryptsl"))
         logger.info(ModernText.miniModernText("<green>Plugin enabled on $pluginRunningOnFolia in time $timeTaken ms"))

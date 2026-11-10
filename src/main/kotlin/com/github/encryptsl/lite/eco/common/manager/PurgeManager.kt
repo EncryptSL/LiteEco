@@ -1,7 +1,7 @@
 package com.github.encryptsl.lite.eco.common.manager
 
 import com.github.encryptsl.lite.eco.LiteEco
-import com.github.encryptsl.lite.eco.api.enums.PurgeKey
+import com.github.encryptsl.lite.eco.enums.PurgeKey
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver

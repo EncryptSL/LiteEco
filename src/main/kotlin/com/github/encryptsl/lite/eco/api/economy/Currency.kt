@@ -9,21 +9,28 @@ import java.math.BigDecimal
 
 class Currency(private val liteEco: LiteEco) {
 
+    companion object {
+        private val DEFAULT_STARTING_BALANCE = BigDecimal.valueOf(30.0)
+    }
+
     private val config get() = liteEco.baseConfig
 
-    private fun getCurrencyData(currency: String) = config.economy.currencies[currency]
+    private fun getCurrencyData(currency: String) = config.economy.currencies[currency.lowercase()]
 
-    fun defaultCurrency(): String = getCurrenciesKeys().first()
+    fun defaultCurrency(): String {
+        return getCurrenciesKeys().firstOrNull() ?: throw Exception("You must provide a default currency")
+    }
 
-    fun defaultStartBalance(): BigDecimal =
-        getCurrencyData(defaultCurrency())?.startingBalance?.toBigDecimal() ?: BigDecimal.valueOf(30.0)
+    fun defaultStartBalance(): BigDecimal {
+        return getCurrencyStartBalance(defaultCurrency())
+    }
 
     fun getCurrencyPlural(currency: String): String {
-        return getCurrencyData(currency)?.currencyPluralName ?: "dollars"
+        return getCurrencyData(currency)?.currencyPluralName ?: ""
     }
 
     fun getCurrencySingular(currency: String): String {
-        return getCurrencyData(currency)?.currencySingularName ?: "dollar"
+        return getCurrencyData(currency)?.currencySingularName ?: ""
     }
 
     private fun getCurrencyFormat(currency: String): String {
@@ -31,19 +38,19 @@ class Currency(private val liteEco: LiteEco) {
     }
 
     fun getCurrencyStartBalance(currency: String): BigDecimal {
-        return getCurrencyData(currency)?.startingBalance?.toBigDecimal() ?: BigDecimal.valueOf(30.0)
+        return getCurrencyData(currency)?.startingBalance?.toBigDecimal() ?: DEFAULT_STARTING_BALANCE
     }
 
     fun getCurrencyLimit(currency: String): BigDecimal {
         return getCurrencyData(currency)?.balanceLimit?.toBigDecimal() ?: BigDecimal.ZERO
     }
 
-    fun getCheckBalanceLimit(amount: BigDecimal, currency: String = "dollars"): Boolean {
-        return (amount > getCurrencyLimit(currency)) && getCurrencyLimitEnabled(currency)
+    fun getCheckBalanceLimit(amount: BigDecimal, currency: String): Boolean {
+        return getCurrencyLimitEnabled(currency) && amount > getCurrencyLimit(currency)
     }
 
-    fun getCheckBalanceLimit(currentBalance: BigDecimal, currency: String = "dollars", amount: BigDecimal): Boolean {
-        return ((currentBalance.plus(amount) > getCurrencyLimit(currency)) && getCurrencyLimitEnabled(currency))
+    fun getCheckBalanceLimit(currentBalance: BigDecimal, currency: String, amount: BigDecimal): Boolean {
+        return getCurrencyLimitEnabled(currency) && (currentBalance.plus(amount) > getCurrencyLimit(currency))
     }
 
     fun getCurrencyLimitEnabled(currency: String): Boolean {
@@ -55,7 +62,7 @@ class Currency(private val liteEco: LiteEco) {
     }
 
     fun getCurrencyNameExist(currency: String): Boolean {
-        return config.economy.currencies.containsKey(currency)
+        return config.economy.currencies.containsKey(currency.lowercase())
     }
 
     fun getCurrenciesKeys(): Set<String> {
@@ -81,10 +88,11 @@ class Currency(private val liteEco: LiteEco) {
         config.formatting.currencyLocale
     )
 
-    fun fullFormatting(amount: BigDecimal, currency: String = "dollars"): String {
-        val value = when(isCurrencyDisplayCompactEnabled(currency)) {
-            true -> compacted(amount)
-            false -> formatted(amount)
+    fun fullFormatting(amount: BigDecimal, currency: String): String {
+        val value = if (isCurrencyDisplayCompactEnabled(currency)) {
+            compacted(amount)
+        } else {
+            formatted(amount)
         }
 
         val format = getCurrencyFormat(currency)

@@ -1,7 +1,8 @@
 package com.github.encryptsl.lite.eco.api.interfaces
 
-import com.github.encryptsl.lite.eco.api.enums.TypeLogger
 import com.github.encryptsl.lite.eco.common.database.entity.TransactionContextEntity
+import com.github.encryptsl.lite.eco.common.manager.monolog.MonologFilter
+import com.github.encryptsl.lite.eco.enums.TypeLogger
 
 /**
  * Interface defining the contract for logging economic transactions.
@@ -30,17 +31,9 @@ interface TransactionLogger {
      */
     fun clearLogs(): Int
 
-    suspend fun hasLogs(targetFilter: String?): Boolean
-
-    /**
-     * Asynchronously retrieves stored transaction logs, optionally filtered by a target identifier.
-     *
-     * @param targetFilter The identifier (e.g., player UUID) to filter logs by.
-     * If null or "all", retrieves logs for all entities.
-     * @return A list of [TransactionContextEntity] objects representing the transaction history,
-     * typically ordered from newest to oldest.
-     */
-    suspend fun getLog(targetFilter: String? = null): List<TransactionContextEntity>
-
-    suspend fun getLogPage(targetFilter: String?, page: Int, pageSize: Int): Pair<List<TransactionContextEntity>, Int>
+    suspend fun getLogPage(
+        filter: MonologFilter,
+        page: Int,
+        pageSize: Int
+    ): Pair<List<TransactionContextEntity>, Int>
 }

@@ -12,9 +12,9 @@ class MonologManager(
     private val helper: Helper
 ) {
 
-    fun displayMonolog(sender: CommandSender, parameter: String, page: Int) {
+    fun displayMonolog(sender: CommandSender, filter: MonologFilter, page: Int) {
         liteEco.pluginScope.launch {
-            val result = helper.validateLog(parameter, page)
+            val result = helper.validateLog(filter, page)
 
             val pagination = ComponentPaginator(result.components) {
                 selectedPage = page
@@ -25,8 +25,11 @@ class MonologManager(
             }
 
             if (page > result.totalPages || result.components.isEmpty()) {
-                sender.sendMessage(liteEco.locale.translation("messages.error.maximum_page",
-                    Placeholder.parsed("max_page", result.totalPages.toString()))
+                sender.sendMessage(
+                    liteEco.locale.translation(
+                        "messages.error.maximum_page",
+                        Placeholder.parsed("max_page", result.totalPages.toString())
+                    )
                 )
                 return@launch
             }
@@ -35,7 +38,15 @@ class MonologManager(
 
             result.components.forEach { sender.sendMessage(it) }
 
-            sender.sendMessage(pagination.navigationBar("eco monolog", parameter))
+            val filterQuery = filter.toCommandString()
+
+            val navigationCommand = if (filterQuery.isNotBlank()) {
+                "eco monolog $filterQuery"
+            } else {
+                "eco monolog"
+            }
+
+            sender.sendMessage(pagination.navigationBar(navigationCommand, page.toString()))
         }
     }
 }

@@ -1,14 +1,14 @@
 package com.github.encryptsl.lite.eco.common.manager
 
 import com.github.encryptsl.lite.eco.LiteEco
-import com.github.encryptsl.lite.eco.api.enums.ExportKeys
-import com.github.encryptsl.lite.eco.api.migrator.CSVFileExporter
-import com.github.encryptsl.lite.eco.api.migrator.LegacyTableExporter
-import com.github.encryptsl.lite.eco.api.migrator.SQLFileExporter
-import com.github.encryptsl.lite.eco.api.migrator.entity.PlayerBalances
-import com.github.encryptsl.lite.eco.api.migrator.interfaces.Export
 import com.github.encryptsl.lite.eco.api.objects.ModernText
-import com.github.encryptsl.lite.eco.common.database.models.legacy.LegacyDatabaseEcoModel
+import com.github.encryptsl.lite.eco.common.database.models.legacy.LegacyAccountRepository
+import com.github.encryptsl.lite.eco.common.migrator.CSVFileExporter
+import com.github.encryptsl.lite.eco.common.migrator.LegacyTableExporter
+import com.github.encryptsl.lite.eco.common.migrator.SQLFileExporter
+import com.github.encryptsl.lite.eco.common.migrator.entity.PlayerBalances
+import com.github.encryptsl.lite.eco.common.migrator.interfaces.Export
+import com.github.encryptsl.lite.eco.enums.ExportKeys
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
@@ -29,7 +29,7 @@ class ExportManager(
 
                     // 1. Fetch data efficiently
                     val balances: List<PlayerBalances.PlayerBalance> = if (exportKeys == ExportKeys.LEGACY_TO_NEW) {
-                        val legacyModel = LegacyDatabaseEcoModel(liteEco)
+                        val legacyModel = LegacyAccountRepository(liteEco)
                         legacyModel.getPlayerBalances().values.toList()
                     } else {
                         // Pre-fetch all balances in bulk directly from database/API to avoid N+1 queries

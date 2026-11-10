@@ -1,6 +1,6 @@
 package com.github.encryptsl.lite.eco.api.interfaces
 
-import com.github.encryptsl.lite.eco.api.migrator.entity.PlayerBalances
+import com.github.encryptsl.lite.eco.common.migrator.entity.PlayerBalances
 import java.math.BigDecimal
 import java.util.*
 
@@ -119,5 +119,5 @@ interface LiteEconomyAPI {
      */
     fun getUUIDNameMap(currency: String = "dollars"): MutableMap<UUID, String>
 
-    fun account(): IAccountHolder
+    fun account(): AccountService
 }
