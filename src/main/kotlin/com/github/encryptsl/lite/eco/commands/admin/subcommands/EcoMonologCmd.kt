@@ -1,11 +1,11 @@
 package com.github.encryptsl.lite.eco.commands.admin.subcommands
 
 import com.github.encryptsl.lite.eco.commands.internal.CommandFeature
+import com.github.encryptsl.lite.eco.commands.parsers.MonologFilterParser
 import com.github.encryptsl.lite.eco.common.manager.monolog.MonologManager
 import org.bukkit.command.CommandSender
 import org.incendo.cloud.Command
 import org.incendo.cloud.component.DefaultValue
-import org.incendo.cloud.description.CommandDescription
 import org.incendo.cloud.paper.PaperCommandManager
 import org.incendo.cloud.paper.util.sender.Source
 import org.incendo.cloud.parser.standard.IntegerParser
@@ -20,18 +20,32 @@ class EcoMonologCmd(
     ) {
         commandManager.command(
             base.literal("monolog")
-                .commandDescription(CommandDescription.commandDescription(description))
                 .permission("lite.eco.admin.monolog")
                 .optional("page", IntegerParser.integerParser(1), DefaultValue.constant(1))
                 .optional(
-                    "target",
-                    StringParser.stringParser(),
-                    commandManager.parserRegistry().getSuggestionProvider("players").get()
-                ).handler { ctx ->
-                    val sender: CommandSender = ctx.sender().source()
+                    commandManager.componentBuilder(String::class.java, "filter")
+                        .parser(StringParser.quotedStringParser())
+                        .suggestionProvider(MonologFilterParser())
+                )
+                .handler { ctx ->
+                    val sender = extractSender(ctx.sender()) ?: return@handler
                     val page: Int = ctx.get("page")
-                    val target: String = ctx.getOrDefault("target", "all")
-                    monologManager.displayMonolog(sender, target, page)
-                })
+                    val filter: String = ctx.getOrDefault("filter", "")
+
+                    val filteredQuery = MonologFilterParser.parseFromString(filter)
+
+                    monologManager.displayMonolog(sender, filteredQuery, page)
+                }
+        )
+    }
+
+    private fun extractSender(senderObj: Any?): CommandSender? {
+        if (senderObj == null) return null
+        if (senderObj is CommandSender) return senderObj
+        return try {
+            senderObj.javaClass.getMethod("source").invoke(senderObj) as? CommandSender
+        } catch (_: Exception) {
+            null
+        }
     }
 }
