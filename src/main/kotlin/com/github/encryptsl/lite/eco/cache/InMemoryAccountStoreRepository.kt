@@ -1,20 +1,21 @@
 package com.github.encryptsl.lite.eco.api.economy.account
 
 import com.github.encryptsl.lite.eco.LiteEco
-import com.github.encryptsl.lite.eco.api.account.Wallet
-import com.github.encryptsl.lite.eco.api.interfaces.IAccount
-import com.github.encryptsl.lite.eco.common.database.models.DatabaseEcoModel
+import com.github.encryptsl.lite.eco.api.account.AccountState
+import com.github.encryptsl.lite.eco.api.interfaces.AccountStore
+import com.github.encryptsl.lite.eco.common.database.models.AccountRepository
 import com.github.encryptsl.lite.eco.common.extensions.io
+import com.github.encryptsl.lite.eco.common.extensions.moneyScale
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.bukkit.Bukkit
 import java.math.BigDecimal
-import java.math.RoundingMode
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-object AccountCache : IAccount {
+object InMemoryAccountStoreRepository : AccountStore {
 
     private const val SYNC_BLOCKED = "Sync BLOCKED for {}: Data integrity risk (isSuccessfullyLoaded = false)."
     private const val SYNC_FAIL_NO_ROWS_UPDATE = "Sync FAIL (No rows updated): {} -> {} ({})"
@@ -25,12 +26,11 @@ object AccountCache : IAccount {
 
     private const val SHUTDOWN_INIT = "Initiating global shutdown synchronization..."
     private const val SHUTDOWN_SKIP_UNLOADED = "Skipping shutdown sync for {}: Data integrity flag is FALSE."
-    private const val SHUTDOWN_CRITICAL_LOSS = "CRITICAL LOSS: Could not save {} ({}) during shutdown! Error: {}"
     private const val SHUTDOWN_SUCCESS = "SUCCESS: All accounts successfully backed up to database. Cache cleared."
     private const val SHUTDOWN_ERROR_WARNING = "WARNING: Shutdown sync completed with errors. Cache was NOT cleared to prevent data loss."
 
-    private val databaseEcoModel: DatabaseEcoModel by lazy { DatabaseEcoModel() }
-    internal val cache = ConcurrentHashMap<UUID, Wallet>()
+    private val sqlAccountRepository: AccountRepository by lazy { AccountRepository() }
+    internal val cache = ConcurrentHashMap<UUID, AccountState>()
     private val locks = ConcurrentHashMap<UUID, Mutex>()
 
     fun getLock(uuid: UUID): Mutex {
@@ -38,13 +38,7 @@ object AccountCache : IAccount {
     }
 
     suspend inline fun <T> withLock(uuid: UUID, crossinline block: suspend () -> T): T {
-        return getLock(uuid).withLock {
-            block()
-        }
-    }
-
-    fun removeLock(uuid: UUID) {
-        locks.remove(uuid)
+        return getLock(uuid).withLock { block() }
     }
 
     override fun updateBalance(
@@ -52,18 +46,18 @@ object AccountCache : IAccount {
         currency: String,
         transform: (BigDecimal) -> BigDecimal
     ): BigDecimal {
-        val account = cache.getOrPut(uuid) { Wallet() }
+        val account = cache.getOrPut(uuid) { AccountState() }
         account.isSuccessfullyLoaded = true
 
         return account.balances.compute(currency) { _, currentAmount ->
             val present = currentAmount ?: BigDecimal.ZERO
-            transform(present.setScale(2, RoundingMode.HALF_UP))
+            transform(present).moneyScale()
         } ?: BigDecimal.ZERO
     }
 
-    override fun startJanitor(liteEco: LiteEco) {
-        val delay = 20L * 300
-        val period = 20L * 300
+    override fun startAccountSyncEvictionWorker(liteEco: LiteEco) {
+        val delay = 300L
+        val period = 300L
 
         val janitorTask = Runnable {
             if (cache.isEmpty()) return@Runnable
@@ -73,7 +67,6 @@ object AccountCache : IAccount {
             offlineUUIDs.forEach { uuid ->
                 liteEco.pluginScope.launch {
                     withLock(uuid) {
-                        // Re-check player status inside lock to prevent race conditions on reconnect
                         if (!isPlayerOnline(uuid)) {
                             syncUnsafe(uuid, shouldUnload = true)
                         }
@@ -86,8 +79,8 @@ object AccountCache : IAccount {
     }
 
     override fun cache(uuid: UUID, username: String?, currency: String, value: BigDecimal) {
-        val account = cache.getOrPut(uuid) { Wallet() }
-        account.balances[currency] = value
+        val account = cache.getOrPut(uuid) { AccountState() }
+        account.balances[currency] = value.moneyScale()
         username?.let { account.username = it }
         account.isSuccessfullyLoaded = true
     }
@@ -96,20 +89,14 @@ object AccountCache : IAccount {
         return cache[uuid]?.balances?.getOrDefault(currency, BigDecimal.ZERO) ?: BigDecimal.ZERO
     }
 
-    /**
-     * Suspendable thread-safe sync method to be called from exterior scopes.
-     */
     override suspend fun sync(uuid: UUID, shouldUnload: Boolean): Boolean {
         return withLock(uuid) {
             syncUnsafe(uuid, shouldUnload)
         }
     }
 
-    /**
-     * Unsafe sync implementation to be executed ONLY within an existing lock scope.
-     */
     suspend fun syncUnsafe(uuid: UUID, shouldUnload: Boolean): Boolean = io {
-        val account = cache[uuid] ?: return@io false
+        val account = cache[uuid] ?: return@io true
 
         if (!account.isSuccessfullyLoaded) {
             LiteEco.instance.logger.error(SYNC_BLOCKED, uuid)
@@ -122,13 +109,12 @@ object AccountCache : IAccount {
             if (amount < BigDecimal.ZERO) return@forEach
 
             try {
-                val isSaved = databaseEcoModel.set(uuid, currency, amount)
-
+                val isSaved = sqlAccountRepository.set(uuid, currency, amount)
                 if (!isSaved) {
                     isAllSavedSuccessfully = false
                     LiteEco.instance.logger.error(SYNC_FAIL_NO_ROWS_UPDATE, uuid, currency, amount)
                 } else {
-                    LiteEco.instance.debugger.debug(AccountCache::class.java, "Sync OK: $uuid -> $currency ($amount)")
+                    LiteEco.instance.debugger.debug(InMemoryAccountStoreRepository::class.java, "Sync OK: $uuid -> $currency ($amount)")
                 }
             } catch (e: Exception) {
                 isAllSavedSuccessfully = false
@@ -139,7 +125,6 @@ object AccountCache : IAccount {
         if (isAllSavedSuccessfully) {
             if (shouldUnload) {
                 cache.remove(uuid)
-                removeLock(uuid) // Clean up unused mutex
                 LiteEco.instance.logger.info(SYNC_SUCCESS_CLEARED, uuid)
             } else {
                 LiteEco.instance.logger.info(SYNC_SUCCESS_RETAINED, uuid)
@@ -153,32 +138,24 @@ object AccountCache : IAccount {
 
     override fun syncAccounts() {
         LiteEco.instance.logger.info(SHUTDOWN_INIT)
-
-        val uuids = cache.keys.toList()
         var hasErrorOccurred = false
 
-        for (uuid in uuids) {
-            val account = cache[uuid] ?: continue
+        cache.keys.toList().forEach { uuid ->
+            val account = cache[uuid] ?: return@forEach
 
             if (!account.isSuccessfullyLoaded) {
                 LiteEco.instance.logger.warn(SHUTDOWN_SKIP_UNLOADED, uuid)
-                continue
+                return@forEach
             }
 
-            account.balances.forEach { (currency, amount) ->
-                if (amount < BigDecimal.ZERO) return@forEach
-
-                try {
-                    val isSaved = databaseEcoModel.set(uuid, currency, amount)
-
-                    if (!isSaved) {
-                        hasErrorOccurred = true
-                        LiteEco.instance.logger.error(SYNC_FAIL_NO_ROWS_UPDATE, uuid, currency, amount)
-                    }
-                } catch (e: Exception) {
-                    hasErrorOccurred = true
-                    LiteEco.instance.logger.error(SHUTDOWN_CRITICAL_LOSS, uuid, currency, e.message, e)
+            try {
+                runBlocking {
+                    val success = syncUnsafe(uuid, shouldUnload = false)
+                    if (!success) hasErrorOccurred = true
                 }
+            } catch (e: Exception) {
+                hasErrorOccurred = true
+                LiteEco.instance.logger.error("Critical error syncing account $uuid during shutdown: ${e.message}", e)
             }
         }
 
@@ -198,12 +175,11 @@ object AccountCache : IAccount {
 
     override fun clear(uuid: UUID) {
         cache.remove(uuid)
-        removeLock(uuid)
     }
 
     override fun isAccountCached(uuid: UUID, currency: String?): Boolean {
-        val wallet = cache[uuid] ?: return false
-        return currency?.let { wallet.balances.containsKey(it) } ?: true
+        val accountState = cache[uuid] ?: return false
+        return currency?.let { accountState.balances.containsKey(it) } ?: true
     }
 
     override fun isPlayerOnline(uuid: UUID): Boolean {

@@ -4,7 +4,7 @@ import com.github.encryptsl.lite.eco.common.database.entity.UserEntity
 import java.math.BigDecimal
 import java.util.*
 
-interface IAccountHolder {
+interface AccountService {
 
     /**
      * Atomically updates the balance of a player account using a transformation function.

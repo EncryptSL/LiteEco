@@ -1,22 +1,26 @@
 package com.github.encryptsl.lite.eco.common.database.models
 
 import com.github.encryptsl.lite.eco.LiteEco
-import com.github.encryptsl.lite.eco.api.enums.TypeLogger
 import com.github.encryptsl.lite.eco.api.interfaces.TransactionLogger
 import com.github.encryptsl.lite.eco.common.database.entity.TransactionContextEntity
 import com.github.encryptsl.lite.eco.common.database.tables.MonologTable
 import com.github.encryptsl.lite.eco.common.extensions.io
 import com.github.encryptsl.lite.eco.common.extensions.loggedTransaction
+import com.github.encryptsl.lite.eco.common.manager.monolog.MonologFilter
+import com.github.encryptsl.lite.eco.enums.TypeLogger
 import org.jetbrains.exposed.v1.core.ResultRow
 import org.jetbrains.exposed.v1.core.SortOrder
 import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.core.greaterEq
+import org.jetbrains.exposed.v1.core.minus
 import org.jetbrains.exposed.v1.jdbc.Query
+import org.jetbrains.exposed.v1.jdbc.andWhere
 import org.jetbrains.exposed.v1.jdbc.deleteAll
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.selectAll
 import kotlin.math.ceil
 
-class DatabaseMonologModel(
+class MonologRepository(
     val liteEco: LiteEco
 ) : TransactionLogger {
 
@@ -49,27 +53,14 @@ class DatabaseMonologModel(
         return loggedTransaction { MonologTable.deleteAll() }
     }
 
-    override suspend fun hasLogs(targetFilter: String?): Boolean = io {
-        loggedTransaction {
-            !createQuery(targetFilter).empty()
-        }
-    }
-
-    override suspend fun getLog(targetFilter: String?): List<TransactionContextEntity> = io {
-        loggedTransaction {
-            createQuery(targetFilter)
-                .orderBy(MonologTable.timestamp, SortOrder.DESC)
-                .map { it.toEconomyLog() }
-        }
-    }
 
     override suspend fun getLogPage(
-        targetFilter: String?,
+        filter: MonologFilter,
         page: Int,
         pageSize: Int
     ): Pair<List<TransactionContextEntity>, Int> = io {
         loggedTransaction {
-            val query = createQuery(targetFilter)
+            val query = createQuery(filter)
 
             val totalCount = query.count()
             val totalPages = ceil(totalCount.toDouble() / pageSize).toInt().coerceAtLeast(1)
@@ -85,12 +76,26 @@ class DatabaseMonologModel(
         }
     }
 
-    private fun createQuery(targetFilter: String?): Query {
-        return if (targetFilter != null && targetFilter != "all") {
-            MonologTable.selectAll().where { MonologTable.target eq targetFilter }
-        } else {
-            MonologTable.selectAll()
+    private fun createQuery(filter: MonologFilter): Query {
+        val query = MonologTable.selectAll()
+
+        filter.action?.let { action ->
+            query.andWhere { MonologTable.action eq action }
         }
+        filter.sender?.let { sender ->
+            query.andWhere { MonologTable.sender eq sender }
+        }
+        filter.target?.let { target ->
+            query.andWhere { MonologTable.target eq target }
+        }
+        filter.currency?.let { currency ->
+            query.andWhere { MonologTable.currency eq currency }
+        }
+        filter.minAmount?.let { minAmount ->
+            query.andWhere { (MonologTable.newBalance - MonologTable.previousBalance) greaterEq minAmount }
+        }
+
+        return query
     }
 
     private fun ResultRow.toEconomyLog() = TransactionContextEntity(

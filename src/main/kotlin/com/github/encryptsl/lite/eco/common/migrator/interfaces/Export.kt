@@ -1,6 +1,6 @@
-package com.github.encryptsl.lite.eco.api.migrator.interfaces
+package com.github.encryptsl.lite.eco.common.migrator.interfaces
 
-import com.github.encryptsl.lite.eco.api.migrator.entity.PlayerBalances
+import com.github.encryptsl.lite.eco.common.migrator.entity.PlayerBalances
 import java.text.SimpleDateFormat
 import java.util.*
 

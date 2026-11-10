@@ -1,4 +1,4 @@
-package com.github.encryptsl.lite.eco.api.migrator.entity
+package com.github.encryptsl.lite.eco.common.migrator.entity
 
 import java.math.BigDecimal
 import java.util.*

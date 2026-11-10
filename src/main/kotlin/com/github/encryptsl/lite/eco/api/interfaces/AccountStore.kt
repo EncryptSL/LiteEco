@@ -11,7 +11,7 @@ import java.util.*
  * This API is typically used to provide fast access to player data (like balances)
  * without constantly hitting the main database (SQL).
  */
-interface IAccount {
+interface AccountStore {
 
     /**
      * Atomically updates a player's cached balance using a transformation function.
@@ -27,14 +27,15 @@ interface IAccount {
     fun updateBalance(uuid: UUID, currency: String, transform: (BigDecimal) -> BigDecimal): BigDecimal
 
     /**
-     * Starts the Janitor service task that periodically synchronizes offline players' data.
+     * Starts the account synchronization and eviction worker task that periodically processes offline players.
      *
-     * This service iterates through the cache and identifies players who are no longer online.
-     * It attempts to synchronize their cached balances back to the database asynchronously.
+     * This background worker scans the active memory cache to identify players who are no longer online.
+     * For each offline account, it safely acquires a thread-safe lock, synchronizes their cached balances
+     * back to the database asynchronously, and evicts them from memory to free up resources.
      *
-     * @param liteEco The plugin instance used to schedule the task and access the logger.
+     * @param liteEco The plugin instance used to schedule the task, access logging, and manage coroutine scopes.
      */
-    fun startJanitor(liteEco: LiteEco)
+    fun startAccountSyncEvictionWorker(liteEco: LiteEco)
 
     /**
      * Caches the player's account balance and username in memory or a fast storage layer.
