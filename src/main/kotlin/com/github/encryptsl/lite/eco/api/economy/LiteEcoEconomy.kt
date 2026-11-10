@@ -115,7 +115,7 @@ class LiteEcoEconomy : LiteEconomyAPI {
 
         return dbBalances.map { player ->
             if (InMemoryAccountStoreRepository.isAccountCached(player.uuid, cleanCurrency)) {
-                val cachedBalance = InMemoryAccountStoreRepository.getBalance(player.uuid, cleanCurrency) ?: player.money
+                val cachedBalance = InMemoryAccountStoreRepository.getBalance(player.uuid, cleanCurrency)
                 player.copy(money = cachedBalance)
             } else {
                 player

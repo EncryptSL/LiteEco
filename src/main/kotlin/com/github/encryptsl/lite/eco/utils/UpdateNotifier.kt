@@ -11,6 +11,8 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.gson.*
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
 import kotlin.concurrent.atomics.AtomicBoolean
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
@@ -49,6 +51,9 @@ class UpdateNotifier(
                             UpdateProvider.SPIGET -> fetchSpigetVersion(client)
                         }
                     } catch (e: Exception) {
+                        if (e is CancellationException) {
+                            ensureActive()
+                        }
                         logError("Failed to fetch update from $provider: ${e.localizedMessage}")
                         null
                     }

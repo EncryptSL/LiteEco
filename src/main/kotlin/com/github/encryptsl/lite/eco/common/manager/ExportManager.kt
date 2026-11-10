@@ -9,7 +9,9 @@ import com.github.encryptsl.lite.eco.common.migrator.SQLFileExporter
 import com.github.encryptsl.lite.eco.common.migrator.entity.PlayerBalances
 import com.github.encryptsl.lite.eco.common.migrator.interfaces.Export
 import com.github.encryptsl.lite.eco.enums.ExportKeys
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
@@ -63,6 +65,9 @@ class ExportManager(
                 liteEco.componentLogger.info(ModernText.miniModernText("Export of ${exportKeys.name} elapsed ${timer}ms"))
 
             } catch (e: Exception) {
+                if (e is CancellationException) {
+                    ensureActive()
+                }
                 liteEco.componentLogger.error("Export error for ${exportKeys.name}: ${e.message}", e)
                 sender.sendMessage(ModernText.miniModernText("<red>Export failed! Check console for details."))
             }

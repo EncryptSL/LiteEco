@@ -110,7 +110,7 @@ class ComponentPaginator(
         }
     }
 
-    inner class PaginationOptions(
+    class PaginationOptions(
         var selectedPage: Int = 1,
         var itemsPerPage: Int = 10,
         var manualMaxPages: Int? = null,

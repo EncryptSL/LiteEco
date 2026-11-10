@@ -3,6 +3,8 @@ package com.github.encryptsl.lite.eco.common.migrator
 import com.github.encryptsl.lite.eco.common.extensions.io
 import com.github.encryptsl.lite.eco.common.migrator.entity.PlayerBalances
 import com.github.encryptsl.lite.eco.common.migrator.interfaces.Export
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVPrinter
 import org.bukkit.plugin.Plugin
@@ -37,7 +39,9 @@ class CSVFileExporter(
                 .setDelimiter(',')
                 .get()
 
-            Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8).use { writer ->
+            withContext(Dispatchers.IO) {
+                Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8)
+            }.use { writer ->
                 CSVPrinter(writer, csvFormat).use { printer ->
                     balances.forEach { balance ->
                         printer.printRecord(
