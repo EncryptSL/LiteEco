@@ -56,6 +56,8 @@ object InMemoryAccountStoreRepository : AccountStore {
     }
 
     override fun startAccountSyncEvictionWorker(liteEco: LiteEco) {
+        if (!liteEco.baseConfig.plugin.cache) return
+
         val delay = 300L
         val period = 300L
 

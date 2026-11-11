@@ -77,7 +77,8 @@ class LiteEcoEconomy : LiteEconomyAPI {
         uuid: UUID,
         username: String,
         currency: String,
-        start: BigDecimal
+        start: BigDecimal,
+        isCacheEnabled: Boolean,
     ) {
         InMemoryAccountStoreRepository.withLock(uuid) {
             val user = economyService.getUserByUUID(uuid, currency)
@@ -89,7 +90,9 @@ class LiteEcoEconomy : LiteEconomyAPI {
                 accountRepository.updatePlayerName(uuid, username, currency)
             }
 
-            InMemoryAccountStoreRepository.cache(uuid, username, currency, balanceToCache)
+            if (isCacheEnabled) {
+                InMemoryAccountStoreRepository.cache(uuid, username, currency, balanceToCache)
+            }
         }
     }
 

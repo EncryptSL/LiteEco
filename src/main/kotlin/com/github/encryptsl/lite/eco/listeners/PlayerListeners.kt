@@ -29,10 +29,11 @@ class PlayerListeners(
         val username = event.name
 
         try {
-            if (InMemoryAccountStoreRepository.isAccountCached(uuid, null)) {
+            if (liteEco.baseConfig.plugin.cache && InMemoryAccountStoreRepository.isAccountCached(uuid, null)) {
                 preventSync.add(uuid)
                 liteEco.logger.warn("Duplicate login detected for $username ($uuid). Flagged preventSync.")
             }
+
             runBlocking(Dispatchers.IO) {
                 liteEco.accountManager.createOrUpdateAndCache(uuid, username)
             }
@@ -48,6 +49,8 @@ class PlayerListeners(
 
     @EventHandler(priority = EventPriority.LOWEST)
     fun onKick(event: PlayerKickEvent) {
+        if (!liteEco.baseConfig.plugin.cache) return
+
         val reason = PlainTextComponentSerializer.plainText().serialize(event.reason())
         if (reason.contains("logged in from another location", ignoreCase = true)) {
             preventSync.add(event.player.uniqueId)
@@ -59,6 +62,8 @@ class PlayerListeners(
     fun onQuit(event: PlayerQuitEvent) {
         val player = event.player
         val uuid = player.uniqueId
+
+        if (!liteEco.baseConfig.plugin.cache) return
 
         if (preventSync.remove(uuid)) {
             liteEco.logger.warn("Skipping account sync for ${player.name} (Duplicate login detected - data protection).")

@@ -42,7 +42,8 @@ interface LiteEconomyAPI {
         uuid: UUID,
         username: String,
         currency: String = "dollars",
-        start: BigDecimal
+        start: BigDecimal,
+        isCacheEnabled: Boolean = true,
     )
 
     /**

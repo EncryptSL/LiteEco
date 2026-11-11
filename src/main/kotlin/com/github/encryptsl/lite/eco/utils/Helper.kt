@@ -236,7 +236,9 @@ class Helper(private val liteEco: LiteEco) {
                         val randomAmount = BigDecimal(random.nextInt(1, 10_000))
 
                         liteEco.accountRepository.createPlayerAccount(testUsername, testUuid, currency, BigDecimal.ZERO)
-                        InMemoryAccountStoreRepository.cache(testUuid, testUsername, currency, randomAmount)
+                        if (liteEco.baseConfig.plugin.cache) {
+                            InMemoryAccountStoreRepository.cache(testUuid, testUsername, currency, randomAmount)
+                        }
                         generatedAccounts[testUuid] = randomAmount
                     }
                     yield()

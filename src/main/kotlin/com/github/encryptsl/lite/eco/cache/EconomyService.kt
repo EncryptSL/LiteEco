@@ -25,7 +25,7 @@ class EconomyService : AccountService {
         currency: String,
         transform: (BigDecimal) -> BigDecimal
     ): BigDecimal {
-        if (InMemoryAccountStoreRepository.isAccountCached(uuid, currency)) {
+        if (InMemoryAccountStoreRepository.isAccountCached(uuid, currency) && LiteEco.instance.baseConfig.plugin.cache) {
             return InMemoryAccountStoreRepository.updateBalance(uuid, currency, transform)
         } else {
             val current = getBalance(uuid, currency)
@@ -47,7 +47,7 @@ class EconomyService : AccountService {
 
     override suspend fun set(uuid: UUID, currency: String, amount: BigDecimal) {
         InMemoryAccountStoreRepository.withLock(uuid) {
-            if (InMemoryAccountStoreRepository.isAccountCached(uuid, currency)) {
+            if (InMemoryAccountStoreRepository.isAccountCached(uuid, currency) && LiteEco.instance.baseConfig.plugin.cache) {
                 InMemoryAccountStoreRepository.cache(uuid, null, currency, amount)
             } else {
                 //InMemoryAccountStoreRepository.cache(uuid, null, currency, amount)
@@ -90,7 +90,7 @@ class EconomyService : AccountService {
     }
 
     override suspend fun getUserByUUID(uuid: UUID, currency: String): UserEntity? {
-        if (InMemoryAccountStoreRepository.isAccountCached(uuid, currency)) {
+        if (InMemoryAccountStoreRepository.isAccountCached(uuid, currency) && LiteEco.instance.baseConfig.plugin.cache) {
             val balance = InMemoryAccountStoreRepository.getBalance(uuid, currency)
             val account = InMemoryAccountStoreRepository.cache[uuid]
             return UserEntity(account?.username ?: "Unknown", uuid, balance)
@@ -101,13 +101,19 @@ class EconomyService : AccountService {
     override suspend fun delete(uuid: UUID, currency: String): Boolean {
         return InMemoryAccountStoreRepository.withLock(uuid) {
             val exists = hasAccount(uuid, currency)
-            InMemoryAccountStoreRepository.clear(uuid)
+            if (LiteEco.instance.baseConfig.plugin.cache) {
+                InMemoryAccountStoreRepository.clear(uuid)
+            }
             io { LiteEco.instance.accountRepository.deletePlayerAccount(uuid, currency) }
             exists
         }
     }
 
     override suspend fun sync(uuid: UUID, shouldUnload: Boolean): Boolean {
+        if (!LiteEco.instance.baseConfig.plugin.cache) {
+            return false
+        }
+
         return InMemoryAccountStoreRepository.sync(uuid, shouldUnload)
     }
 
@@ -116,7 +122,7 @@ class EconomyService : AccountService {
     }
 
     override fun hasAccount(uuid: UUID, currency: String): Boolean {
-        if (InMemoryAccountStoreRepository.isAccountCached(uuid, currency)) {
+        if (InMemoryAccountStoreRepository.isAccountCached(uuid, currency) && LiteEco.instance.baseConfig.plugin.cache) {
             return true
         }
 
@@ -124,7 +130,7 @@ class EconomyService : AccountService {
     }
 
     override fun has(uuid: UUID, currency: String, requiredAmount: BigDecimal): Boolean {
-        if (InMemoryAccountStoreRepository.isAccountCached(uuid, currency)) {
+        if (InMemoryAccountStoreRepository.isAccountCached(uuid, currency) && LiteEco.instance.baseConfig.plugin.cache) {
             val cachedBalance = InMemoryAccountStoreRepository.getBalance(uuid, currency)
             return cachedBalance >= requiredAmount
         } else {

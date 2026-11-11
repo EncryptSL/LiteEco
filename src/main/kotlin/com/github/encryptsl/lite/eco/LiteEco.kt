@@ -115,7 +115,9 @@ class LiteEco : JavaPlugin() {
             hookManager.unregisterHooks()
         } finally {
             try {
-                api.account().syncAccounts()
+                if (baseConfig.plugin.cache) {
+                    api.account().syncAccounts()
+                }
             } finally {
                 pluginScope.cancel()
                 databaseConnector.onDisable()

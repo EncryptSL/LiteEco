@@ -32,6 +32,9 @@ class BaseConfig {
         @Comment("Enable or disable Vault debug messages.")
         var vaultDebug = false
 
+        @Comment("Enable or disable cache", "", "This mean all operations will be saved instantly to database.")
+        var cache = false
+
         @Comment("Settings for player suggestions in commands", "", "true: Suggests offline players" ,"false: Suggests only online players.")
         var offlineSuggestionPlayers = true
     }

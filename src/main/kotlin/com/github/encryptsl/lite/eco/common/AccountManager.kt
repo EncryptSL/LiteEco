@@ -14,7 +14,7 @@ class AccountManager(private val liteEco: LiteEco) {
             currencies.map { currency ->
                 async {
                     val startBalance = liteEco.currencyImpl.getCurrencyStartBalance(currency)
-                    liteEco.api.createOrUpdateAndCache(uuid, username, currency, startBalance)
+                    liteEco.api.createOrUpdateAndCache(uuid, username, currency, startBalance, liteEco.baseConfig.plugin.cache)
                 }
             }.awaitAll()
         }
